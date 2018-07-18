@@ -1,98 +1,46 @@
-html {
-	margin: 0;
-	padding: 0;
-}
-
 body {
-	font-size: 14px;
+	font-family: Cambria, Georgia, serif;
 	margin: 0;
-	padding: 0 0 10px 0;
+	padding: 20px 20px;
 }
 
 .header {
-	background-color: #bfbfbf;
-	width: 100%;
-	padding: 20px 0;
+	background-color: #9e9e9e;
+	padding: 35px 20px;
+	color: #ffffff;
 }
 
 .header h1 {
-	color: #fff;
+	margin: 0;
 }
 
-h1 span {
-	text-transform: uppercase;
-}
-
-h3 {
-	margin-top: 40px;
-	padding: 5px;
-	max-width: 40%;
-	text-transform: uppercase;
-}
-
-h1, h2, h3, p, table, img {
-	margin-left: 20px;
+.header span.subtitle {
+	display: block;
 }
 
 ul {
 	list-style-type: square;
-	font-size: 16px;
-}
-
-li {
-	margin-top: 5px;
-	padding: 3px;
-}
-
-li:hover {
-	background-color: #f2f2f2;
 }
 
 li a {
-	text-decoration: none;
-	color: #000;
+	display: block;
 }
 
-p {
-	font-size: 16px;
-}
-
-
-tr:nth-child(even) {
-    background-color: #edf8ef;
+li a:hover {
+	background-color: #f2f2f2;
 }
 
 table {
-	width: 90%;
-	border: 1px solid darkgrey;
+	border: 1px solid #a7a7a7;
 	border-collapse: collapse;
     font-family: Arial, sans-serif;
 }
-/*
-table.audit-info {
-    table-layout: fixed;
-}
-
-table.audit-info td:first-child {
-    width: 10%;
-    max-width: 12px;
-}
-table.audit-info td:nth-child(2) {
-	width: 30%;
-}
-table.audit-info td:nth-child(3) {
-	width: 45%;
-}
-table.audit-info td:nth-child(4) {
-	width: 15%;
-} */
 
 th {
-	background-color: #d6d6c2;
+	background-color: #cacaca;
 	color: white;
 	text-transform: uppercase;
-	font-size: 1.5em;
-	border-bottom: 1px solid darkgray;
+	border-bottom: 1px solid #a7a7a7;
 }
 
 th, td {
@@ -102,36 +50,45 @@ th, td {
 }
 
 tr:nth-child(even) {
-	background-color: #e6e6e6;
+	background-color: #efefef;
+}
+
+table th:nth-child(1), table td:nth-child(1) {
+	text-align: right;
+    width: 40px;
+}
+
+table th:last-child, table td:last-child {
+	text-align: center;
+    width: 70px;
+}
+
+.passed, .green, .failed, .red, .green, .red, .orange {
+	color: #fff;
 }
 
 .passed, .green {
 	background-color: #33cc33;
-	color: #fff;
 }
 
 .failed, .red {
 	background-color: #cc0000;
-	color: #fff;
 }
 
 .warning, .orange {
 	background-color: #ff9933;
-	color: #fff;
 }
 
-.green, .red, .orange {
-	width: 25px;
-	height: auto;
+h2.passed, h2.failed, h2.warning, h3.passed, h3.failed, h3.warning {
 	display: inline-block;
-	text-align: center;
+	padding: 5px 10px;
+	border-radius: 8px;
 }
 
-span.passed, span.failed, span.warning {
+span.audit {
 	display: block;
-	padding: 5px;
-	border-radius: 30px;
-	text-align: center;
+	padding: 5px 10px;
+	border-radius: 8px;
 	font-weight: bold;
 	margin: auto;
 }

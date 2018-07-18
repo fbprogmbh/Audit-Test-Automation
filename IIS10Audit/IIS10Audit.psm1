@@ -86,35 +86,90 @@ function Get-IISSiteVirtualPaths {
         [switch] $AllVirtualDirectories
     )
 
-    foreach ($App in $Site.Applications) {
-        Write-Output ($App.Path)
+    process {
+        foreach ($App in $Site.Applications) {
+            Write-Output ($App.Path)
 
-        if ($AllVirtualDirectories) {
-            foreach ($VirtualDirectory in $App.VirtualDirectories) {
-                if ($VirtualDirectory.Path -ne "/") {
-                    $AppPath = if ($App.Path -ne "/") {
-                        $App.Path
+            if ($AllVirtualDirectories) {
+                foreach ($VirtualDirectory in $App.VirtualDirectories) {
+                    if ($VirtualDirectory.Path -ne "/") {
+                        $AppPath = if ($App.Path -ne "/") {
+                            $App.Path
+                        }
+                        else {
+                            ""
+                        }
+                        Write-Output ($AppPath + $VirtualDirectory.Path)
                     }
-                    else {
-                        ""
-                    }
-                    Write-Output ($AppPath + $VirtualDirectory.Path)
                 }
             }
         }
     }
-
 }
 
-function Select-Zip {
-    [CmdletBinding()]
-    Param(
-        $First,
-        $Second,
-        [Func[Object, Object, Boolean]] $ResultSelector
+
+function Get-AuditInfosStatus {
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [AuditInfo[]] $AuditInfos
     )
 
-    [System.Linq.Enumerable]::Zip($First, $Second, [Func[Object, Object, Boolean]]$ResultSelector)
+    process {
+        if ($AuditInfos.Audit -contains [AuditStatus]::False) {
+            [AuditStatus]::False
+        }
+        elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
+            [AuditStatus]::Warning
+        }
+        elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
+            [AuditStatus]::True
+        }
+        else {
+            [AuditStatus]::None
+        }
+    }
+}
+
+function Get-VirtualPathAuditStatus {
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [VirtualPathAudit] $VirtualPathAudit
+    )
+
+    process {
+        Get-AuditInfosStatus -AuditInfos $VirtualPathAudit.AuditInfos
+    }
+}
+
+function Get-SiteAuditStatus {
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [SiteAudit] $SiteAudit
+    )
+
+    process {
+        $VirtualPathAuditStatus = $SiteAudit.VirtualPathAudits | Get-VirtualPathAuditStatus
+        $SiteAuditStatus = (Get-AuditInfosStatus -AuditInfos $SiteAudit.AuditInfos)
+
+        if (($VirtualPathAuditStatus -contains [AuditStatus]::False) -or `
+            ($SiteAuditStatus -contains [AuditStatus]::False)) {
+            [AuditStatus]::False
+        }
+        elseif (($VirtualPathAuditStatus -contains [AuditStatus]::Warning) -or `
+            ($SiteAuditStatus -contains [AuditStatus]::Warning)) {
+            [AuditStatus]::Warning
+        }
+        elseif (($VirtualPathAuditStatus -contains [AuditStatus]::True) -or `
+            ($SiteAuditStatus -contains [AuditStatus]::True)) {
+            [AuditStatus]::True
+        }
+        else {
+            [AuditStatus]::None
+        }
+    }
 }
 #endregion
 
@@ -178,7 +233,7 @@ function Test-IISHostHeaders {
         $Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
 
         if ($Bindings.Count -gt 0) {
-            $message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ";")
+            $message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ", ")
             $audit = [AuditStatus]::False
         }
 
@@ -298,7 +353,7 @@ function Test-IISUniqueSiteAppPool {
         | Where-Object -Property Count -gt 1
 
     if ($Findings.Count -gt 0) {
-        $message = "Following sites do not have unique Application Pools: " + ($findings.Group.VirtualPath -join ";")
+        $message = "Following sites do not have unique Application Pools: " + ($findings.Group.VirtualPath -join ", ")
         $audit = [AuditStatus]::False
     }
 
@@ -2578,6 +2633,22 @@ function Get-IIS10SiteReport {
     }
 }
 
+function Get-IISHtmlAuditStatusClass {
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [AuditStatus] $AuditStatus
+    )
+
+    process {
+        switch ($AuditStatus) {
+            "True"    { "passed" }
+            "False"   { "failed" }
+            "Warning" { "warning" }
+            Default { "" }
+        }
+    }
+}
+
 function Get-IISSiteHtmlId {
     param(
         [Parameter(Mandatory = $true)]
@@ -2604,14 +2675,8 @@ function Get-IIS10HtmlTableRow {
             $value = $Property.GetValue($AuditInfo, $null)
 
             if ($Property.Name -eq "Audit") {
-                $auditClass = switch ($value) {
-                    "True"    { "passed" }
-                    "False"   { "failed" }
-                    "Warning" { "warning" }
-                    Default { "" }
-                }
-
-                $value = "<span class=`"$auditClass`">$value</span>"
+                $auditClass = Get-IISHtmlAuditStatusClass -AuditStatus $value
+                $value = "<span class=`"audit $auditClass`">$value</span>"
             }
 
             "<td>$value</td>"
@@ -2639,17 +2704,20 @@ function Get-IIS10HtmlSiteAudit {
         [SiteAudit] $SiteAudit
     )
 
+    $SiteAuditStatusClass = Get-SiteAuditStatus -SiteAudit $SiteAudit | Get-IISHtmlAuditStatusClass
     $VirtualPaths = $SiteAudit.VirtualPathAudits.VirtualPath | ForEach-Object { "<li>$_</li>" }
 
     $html = ""
-    $html += "<h2 id=`"$(Get-IISSiteHtmlId -SiteName $SiteAudit.SiteName)`">Full site report for: $($SiteAudit.SiteName)</h2>"
+    $html += "<h2 id=`"$(Get-IISSiteHtmlId -SiteName $SiteAudit.SiteName)`" class=`"$SiteAuditStatusClass`">Full site report for: $($SiteAudit.SiteName)</h2>"
     $html += "<p>This site has the following virtual paths:<p>"
     $html += "<ul>$VirtualPaths</ul>"
     $html += "<h3>Report for site-Level exclusive benchmarks</h3>"
     $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $SiteAudit.AuditInfos
 
     foreach ($VirtualPathAudit in $SiteAudit.VirtualPathAudits) {
-        $html += "<h3>Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
+        $VirtualPathAuditStatusClass =  $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
+
+        $html += "<h3 class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
         $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $VirtualPathAudit.AuditInfos
     }
 
@@ -2684,6 +2752,8 @@ function Get-IISHtmlReport {
     $cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
     $css = Get-Content $cssPath
 
+    $SystemAuditStatus = $SystemAuditInfos | Get-AuditInfosStatus | Get-IISHtmlAuditStatusClass
+
     $siteLinks = $SiteAudits.SiteName `
         | ForEach-Object { "<a href=`"#$(Get-IISSiteHtmlId -SiteName $_)`">$_</a>" } `
         | ForEach-Object { "<li>$_</li>" }
@@ -2697,10 +2767,10 @@ function Get-IISHtmlReport {
 "@
 
     $body = ""
-    $body += "<div class=`"header`"><h1>IIS 10 Benchmarks</h1></div>"
+    $body += "<div class=`"header`"><h1>IIS 10 Benchmarks</h1><span class=`"subtitle`">Generated by the <i>IIS10Audit</i> Module by FB Pro GmbH. Get it in the <a href=`"https://github.com/fbprogmbh/Audit-Test-Automation`">Audit Test Automation Package</a>.</span></div>"
     $body += "<p>This report was generated at $((Get-Date)). Click the links below for quick access to the site reports.</p>"
     $body += "<ul>$siteLinks</ul>"
-    $body += "<h2>System Report</h2>"
+    $body += "<h2 class=`"$SystemAuditStatus`">System Report</h2>"
     $body += Get-IIS10HtmlAuditInfoTable -AuditInfos $SystemAuditInfos
     $body += $SiteAudits | ForEach-Object {  Get-IIS10HtmlSiteAudit -SiteAudit $_ }
 
