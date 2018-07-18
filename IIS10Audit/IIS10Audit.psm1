@@ -111,10 +111,10 @@ function Select-Zip {
     Param(
         $First,
         $Second,
-        $ResultSelector
+        [Func[Object, Object, Boolean]] $ResultSelector
     )
 
-    [System.Linq.Enumerable]::Zip($First, $Second, [Func[Object, Object, Object[]]]$ResultSelector)
+    [System.Linq.Enumerable]::Zip($First, $Second, [Func[Object, Object, Boolean]]$ResultSelector)
 }
 #endregion
 
@@ -175,9 +175,9 @@ function Test-IISHostHeaders {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
-        $Bindings = $Site.Bindings | Where-Object {[string]::IsNullOrEmpty($Binding.Host)}
+        $Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
 
-        if ($findings.Count -gt 0) {
+        if ($Bindings.Count -gt 0) {
             $message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ";")
             $audit = [AuditStatus]::False
         }
@@ -295,9 +295,9 @@ function Test-IISUniqueSiteAppPool {
 
     $Findings = $Apps `
         | Group-Object -Property ApplicationPoolName `
-        |  Where-Object -Property Count -gt 1
+        | Where-Object -Property Count -gt 1
 
-    if ($Findings.Count -ne 0) {
+    if ($Findings.Count -gt 0) {
         $message = "Following sites do not have unique Application Pools: " + ($findings.Group.VirtualPath -join ";")
         $audit = [AuditStatus]::False
     }
@@ -1451,7 +1451,7 @@ function Test-IISHTTPTraceMethodeDisabled {
                     | Where-Object {
                     $trace   = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
                     $allowed = $_ | Get-IISConfigAttributeValue -AttributeName "allowed"
-                    ($trace -eq "trace") -and $allowed
+                    ($trace -eq "trace") -and (-not $allowed)
                 }
 
                 if ($httpTraceMethod.Count -gt 0) {
@@ -2392,7 +2392,7 @@ function Test-IISTLSCipherOrder {
 		Cipher suites are a named combination of authentication, encryption, message authentication code, and key exchange algorithms used for the security settings of a network connection using TLS protocol. Clients send a cipher list and a list of ciphers that it supports in order of preference to a server. The server then replies with the cipher suite that it selects from the client cipher suite list.
 	#>
 
-    $cipherList = @(
+    [String[]]$cipherList = @(
         "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
         "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
         "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
@@ -2413,10 +2413,11 @@ function Test-IISTLSCipherOrder {
         $Key = Get-Item $path
         if ($null -ne $Key.GetValue("Functions", $null)) {
             $functions = (Get-ItemProperty $path).Functions
-            $equalOrdering = Select-Zip -First $cipherList -Second $functions -ResultSelector {
-                param($cipher, $function)
-                $cipher -eq $function
-            }
+            $equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
+                [Func[String, String, Boolean]] {
+                    param($cipher, $function)
+                    $cipher -eq $function
+                })
 
             if (-not ($equalOrdering -contains $false)) {
                 $message = $MESSAGE_ALLGOOD

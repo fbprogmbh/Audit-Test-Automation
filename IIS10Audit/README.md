@@ -10,7 +10,7 @@ The `IIS10Audit`-Module benchmarks the current systems settings with current har
 
 * Windows Server 2016 which comes with:
     * IIS 10
-    * PowerShell PowerShell 5.1
+    * PowerShell 5.1
 
 ### Quick Start
 
