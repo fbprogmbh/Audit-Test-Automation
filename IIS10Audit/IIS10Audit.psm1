@@ -390,7 +390,10 @@ function Test-IISGlobalAuthorization {
                     $audit = [AuditStatus]::False
                 }
             }
-
+        }
+        else {
+            $message = "URL Authorization is not installed"
+            $audit = [AuditStatus]::Warning
         }
 
         New-Object -TypeName AuditInfo -Property @{
@@ -593,20 +596,24 @@ function Test-IISTLSForBasicAuth {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
-        $httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
+        if ((Get-WindowsFeature Web-Basic-Auth).InstallState -eq [InstallState]::Installed) {
+            $httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
 
-        # Ensure site has https bindings
-        if ($httpsBindings.Count -ne 0) {
             $sslFlags = Get-IISConfigSection -Location $Site.Name `
-                -SectionPath "system.webServer/security/access" `
-                | Get-IISConfigAttributeValue -AttributeName "sslFlags"
+            -SectionPath "system.webServer/security/access" `
+            | Get-IISConfigAttributeValue -AttributeName "sslFlags"
 
             # split the flags into an array
             $sslValues = $sslFlags.Split("{,}")
 
-            # we are only interested, if the ssl-flag is set
+            # Ensure ssl-flag is set
             if (-not ($sslValues -contains "ssl")) {
                 $message = "SSL is not required in configuration"
+                $audit = [AuditStatus]::False
+            }
+            # Ensure site has https bindings
+            elseif ($httpsBindings.Count -ne 0) {
+                $message = "Site has no secure protocol binding"
                 $audit = [AuditStatus]::False
             }
         }
