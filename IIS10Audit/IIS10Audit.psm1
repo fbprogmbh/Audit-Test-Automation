@@ -204,10 +204,10 @@ function Test-IISVirtualDirPartition {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "1.1"
-            Task        = "Ensure web content is on non-system partition"
-            Message     = $message
-            Audit       = $audit
+            Id      = "1.1"
+            Task    = "Ensure web content is on non-system partition"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -238,10 +238,10 @@ function Test-IISHostHeaders {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "1.2"
-            Task        = "Ensure 'host headers' is set"
-            Message     = $message
-            Audit       = $audit
+            Id      = "1.2"
+            Task    = "Ensure 'host headers' is set"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -287,10 +287,10 @@ function Test-IISDirectoryBrowsing {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "1.3"
-            Task        = "Ensure 'directory browsing' is set to disabled"
-            Message     = $message
-            Audit       = $audit
+            Id      = "1.3"
+            Task    = "Ensure 'directory browsing' is set to disabled"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -319,10 +319,10 @@ function Test-IISAppPoolIdentity {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "1.4"
-            Task        = "Ensure 'application pool identity' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "1.4"
+            Task    = "Ensure 'application pool identity' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -358,10 +358,10 @@ function Test-IISUniqueSiteAppPool {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id          = "1.5"
-        Task        = "Ensure 'unique application pools' is set for sites"
-        Message     = $message
-        Audit       = $audit
+        Id      = "1.5"
+        Task    = "Ensure 'unique application pools' is set for sites"
+        Message = $message
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -394,10 +394,10 @@ function Test-IISAnonymouseUserIdentity {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "1.6"
-            Task        = "Ensure 'application pool identity' is configured for anonymous user identity"
-            Message     = $message
-            Audit       = $audit
+            Id      = "1.6"
+            Task    = "Ensure 'application pool identity' is configured for anonymous user identity"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -435,8 +435,8 @@ function Test-IISGlobalAuthorization {
                 $elements = $section | Get-IISConfigCollection | Get-IISConfigCollectionElement `
                     | Where-Object {
                     $accessType = $_ | Get-IISConfigAttributeValue -AttributeName "accessType"
-                    $users      = $_ | Get-IISConfigAttributeValue -AttributeName "users"
-                    $roles      = $_ | Get-IISConfigAttributeValue -AttributeName "roles"
+                    $users = $_ | Get-IISConfigAttributeValue -AttributeName "users"
+                    $roles = $_ | Get-IISConfigAttributeValue -AttributeName "roles"
                     ($accessType -eq "Allow") -and ($users -eq "*" -or $roles -eq "?")
                 }
 
@@ -452,10 +452,10 @@ function Test-IISGlobalAuthorization {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.1"
-            Task        = "Ensure 'global authorization rule' is set to restrict access"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.1"
+            Task    = "Ensure 'global authorization rule' is set to restrict access"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 
@@ -492,10 +492,10 @@ function Test-IISAuthenticatedPricipals {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.2"
-            Task        = "Ensure access to sensitive site features is restricted to authenticated principals only"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.2"
+            Task    = "Ensure access to sensitive site features is restricted to authenticated principals only"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 
@@ -538,10 +538,10 @@ function Test-IISFormsAuthenticationSSL {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.3"
-            Task        = "Ensure 'forms authentication' require SSL"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.3"
+            Task    = "Ensure 'forms authentication' require SSL"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -580,10 +580,10 @@ function Test-IISFormsAuthenticationCookies {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.4"
-            Task        = "Ensure 'forms authentication' is set to use cookies"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.4"
+            Task    = "Ensure 'forms authentication' is set to use cookies"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -625,10 +625,10 @@ function Test-IISFormsAuthenticationProtection {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.5"
-            Task        = "Ensure 'cookie protection mode' is configured for forms authentication"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.5"
+            Task    = "Ensure 'cookie protection mode' is configured for forms authentication"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -674,10 +674,10 @@ function Test-IISTLSForBasicAuth {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.6"
-            Task        = "Ensure transport layer security for 'basic authentication' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.6"
+            Task    = "Ensure transport layer security for 'basic authentication' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -714,10 +714,10 @@ function Test-IISPasswordFormatNotClear {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.7"
-            Task        = "Ensure 'passwordFormat' is not set to clear"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.7"
+            Task    = "Ensure 'passwordFormat' is not set to clear"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -743,10 +743,10 @@ function Test-IISPasswordFormatNotClearMachineLevel {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id          = "2.7"
-        Task        = "Ensure 'passwordFormat' is not set to clear"
+        Id      = "2.7"
+        Task    = "Ensure 'passwordFormat' is not set to clear"
         Message = $message
-        Audit       = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -781,10 +781,10 @@ function Test-IISCredentialsNotStored {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "2.8"
-            Task        = "Ensure 'credentials' are not stored in configuration files"
-            Message     = $message
-            Audit       = $audit
+            Id      = "2.8"
+            Task    = "Ensure 'credentials' are not stored in configuration files"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -810,10 +810,10 @@ function Test-IISCredentialsNotStoredMachineLevel {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id          = "2.8"
-        Task        = "Ensure 'credentials' are not stored in configuration files"
+        Id      = "2.8"
+        Task    = "Ensure 'credentials' are not stored in configuration files"
         Message = $message
-        Audit       = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -844,10 +844,10 @@ function Test-IISDeploymentMethodRetail {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id          = "3.1"
-        Task        = "Ensure 'deployment method retail' is set"
+        Id      = "3.1"
+        Task    = "Ensure 'deployment method retail' is set"
         Message = $message
-        Audit       = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -882,10 +882,10 @@ function Test-IISDebugOff {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.2"
-            Task        = "Ensure 'debug' is turned off"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.2"
+            Task    = "Ensure 'debug' is turned off"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -921,10 +921,10 @@ function Test-IISCustomErrorsNotOff {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.3"
-            Task        = "Ensure custom error messages are not off"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.3"
+            Task    = "Ensure custom error messages are not off"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -958,10 +958,10 @@ function Test-IISHttpErrorsHidden {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.4"
-            Task        = "Ensure IIS HTTP detailed errors are hidden from displaying remotely"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.4"
+            Task    = "Ensure IIS HTTP detailed errors are hidden from displaying remotely"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -995,10 +995,10 @@ function Test-IISAspNetTracingDisabled {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.5"
-            Task        = "Ensure ASP.NET stack tracing is not enabled"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.5"
+            Task    = "Ensure ASP.NET stack tracing is not enabled"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1024,10 +1024,10 @@ function Test-IISAspNetTracingDisabledMachineLevel {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id          = "3.5"
-        Task        = "Ensure ASP.NET stack tracing is not enabled"
+        Id      = "3.5"
+        Task    = "Ensure ASP.NET stack tracing is not enabled"
         Message = $message
-        Audit       = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -1062,10 +1062,10 @@ function Test-IISCookielessSessionState {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.6"
-            Task        = "Ensure 'httpcookie' mode is configured for session state"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.6"
+            Task    = "Ensure 'httpcookie' mode is configured for session state"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1099,10 +1099,10 @@ function Test-IISCookiesHttpOnly {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.7"
-            Task        = "Ensure 'cookies' are set with HttpOnly attribute"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.7"
+            Task    = "Ensure 'cookies' are set with HttpOnly attribute"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1144,10 +1144,10 @@ function Test-IISMachineKeyValidation {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.8"
-            Task        = "Ensure 'MachineKey validation method - .Net 3.5' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.8"
+            Task    = "Ensure 'MachineKey validation method - .Net 3.5' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1188,10 +1188,10 @@ function Test-IISMachineKeyValidationV45 {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.9"
-            Task        = "Ensure 'MachineKey validation method - .Net 4.5' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.9"
+            Task    = "Ensure 'MachineKey validation method - .Net 4.5' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1232,10 +1232,10 @@ function Test-IISDotNetTrustLevel {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "3.10"
-            Task        = "Ensure global .NET trust level is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "3.10"
+            Task    = "Ensure global .NET trust level is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1288,10 +1288,10 @@ function Test-IISMaxAllowedContentLength {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.1"
-            Task        = "Ensure 'maxAllowedContentLength' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.1"
+            Task    = "Ensure 'maxAllowedContentLength' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1338,10 +1338,10 @@ function Test-IISMaxURLRequestFilter {
 
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.2"
-            Task        = "Ensure 'maxURL request filter' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.2"
+            Task    = "Ensure 'maxURL request filter' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1387,10 +1387,10 @@ function Test-IISMaxQueryStringRequestFilter {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.3"
-            Task        = "Ensure 'MaxQueryString request filter' is configured"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.3"
+            Task    = "Ensure 'MaxQueryString request filter' is configured"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1432,10 +1432,10 @@ function Test-IISNonASCIICharURLForbidden {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.4"
-            Task        = "Ensure non-ASCII characters in URLs are not allowed"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.4"
+            Task    = "Ensure non-ASCII characters in URLs are not allowed"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1476,10 +1476,10 @@ function Test-IISRejectDoubleEncodedRequests {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.5"
-            Task        = "Ensure Double-Encoded requests will be rejected"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.5"
+            Task    = "Ensure Double-Encoded requests will be rejected"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1511,7 +1511,7 @@ function Test-IISHTTPTraceMethodeDisabled {
                 $httpTraceMethod = $section `
                     | Get-IISConfigCollection -CollectionName "verbs" | Get-IISConfigCollectionElement `
                     | Where-Object {
-                    $trace   = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
+                    $trace = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
                     $allowed = $_ | Get-IISConfigAttributeValue -AttributeName "allowed"
                     ($trace -eq "trace") -and (-not $allowed)
                 }
@@ -1528,10 +1528,10 @@ function Test-IISHTTPTraceMethodeDisabled {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.6"
-            Task        = "Ensure 'HTTP Trace Method' is disabled"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.6"
+            Task    = "Ensure 'HTTP Trace Method' is disabled"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1575,10 +1575,10 @@ function Test-IISBlockUnlistedFileExtensions {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.7"
-            Task        = "Ensure Unlisted File Extensions are not allowed"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.7"
+            Task    = "Ensure Unlisted File Extensions are not allowed"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1593,10 +1593,10 @@ function Test-IISHandlerDenyWrite {
 	#>
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "4.8"
-        Task   = "Ensure Handler is not granted Write and Script/Execute"
+        Id      = "4.8"
+        Task    = "Ensure Handler is not granted Write and Script/Execute"
         Message = "Test not implemented yet."
-        Audit  = [AuditStatus]::None
+        Audit   = [AuditStatus]::None
     } | Write-Output
 }
 
@@ -1629,10 +1629,10 @@ function Test-IISIsapisNotAllowed {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "4.9"
-        Task   = "Ensure 'notListedIsapisAllowed' is set to false"
+        Id      = "4.9"
+        Task    = "Ensure 'notListedIsapisAllowed' is set to false"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -1665,10 +1665,10 @@ function Test-IISCgisNotAllowed {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "4.10"
-        Task   = "Ensure 'notListedCgisAllowed' is set to false"
+        Id      = "4.10"
+        Task    = "Ensure 'notListedCgisAllowed' is set to false"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -1722,10 +1722,10 @@ function Test-IISDynamicIPRestrictionEnabled {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "4.11"
-            Task        = "Ensure 'Dynamic IP Address Restrictions' is enabled"
-            Message     = $message
-            Audit       = $audit
+            Id      = "4.11"
+            Task    = "Ensure 'Dynamic IP Address Restrictions' is enabled"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1762,10 +1762,10 @@ function Test-IISLogFileLocation {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "5.1"
-            Task        = "Ensure Default IIS web log location is moved"
-            Message     = $message
-            Audit       = $audit
+            Id      = "5.1"
+            Task    = "Ensure Default IIS web log location is moved"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1782,10 +1782,10 @@ function Test-IISAdvancedLoggingEnabled {
     # check site defaults
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "5.2"
-        Task   = "Ensure Advanced IIS logging is enabled"
+        Id      = "5.2"
+        Task    = "Ensure Advanced IIS logging is enabled"
         Message = "Advanced Logging is not available for IIS 10. See enhanced logging instead."
-        Audit  = [AuditStatus]::None
+        Audit   = [AuditStatus]::None
     } | Write-Output
 }
 
@@ -1813,10 +1813,10 @@ function Test-IISETWLoggingEnabled {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "5.3"
-            Task        = "Ensure 'ETW Logging' is enabled"
-            Message     = $message
-            Audit       = $audit
+            Id      = "5.3"
+            Task    = "Ensure 'ETW Logging' is enabled"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1853,10 +1853,10 @@ function Test-IISFtpIsDisabled {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id     = "6.0"
-            Task   = "Ensure FTP is disabled"
+            Id      = "6.0"
+            Task    = "Ensure FTP is disabled"
             Message = $message
-            Audit  = $audit
+            Audit   = $audit
         } | Write-Output
     }
 }
@@ -1898,10 +1898,10 @@ function Test-IISFtpRequestsEncrypted {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "6.1"
-        Task   = "Ensure FTP requests are encrypted"
+        Id      = "6.1"
+        Task    = "Ensure FTP requests are encrypted"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -1952,10 +1952,10 @@ function Test-IISFtpLogonAttemptRestriction {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "6.2"
-        Task   = "Ensure FTP Logon attempt restrictions is enabled"
+        Id      = "6.2"
+        Task    = "Ensure FTP Logon attempt restrictions is enabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2000,10 +2000,10 @@ function Test-IISHSTSHeaderSet {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id          = "7.1"
-            Task        = "Ensure HSTS Header is set"
-            Message     = $message
-            Audit       = $audit
+            Id      = "7.1"
+            Task    = "Ensure HSTS Header is set"
+            Message = $message
+            Audit   = $audit
         } | Write-Output
     }
 
@@ -2039,10 +2039,10 @@ function Test-IISSSL2Disabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.2"
-        Task   = "Ensure SSLv2 is disabled"
+        Id      = "7.2"
+        Task    = "Ensure SSLv2 is disabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2076,10 +2076,10 @@ function Test-IISSSL3Disabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.3"
-        Task   = "Ensure SSLv3 is disabled"
+        Id      = "7.3"
+        Task    = "Ensure SSLv3 is disabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2114,10 +2114,10 @@ function Test-IISTLSDisabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.4"
-        Task   = "Ensure TLS 1.0 is disabled"
+        Id      = "7.4"
+        Task    = "Ensure TLS 1.0 is disabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2151,10 +2151,10 @@ function Test-IISTLS1_1Enabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.5"
-        Task   = "Ensure TLS 1.1 is enabled"
+        Id      = "7.5"
+        Task    = "Ensure TLS 1.1 is enabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2195,10 +2195,10 @@ function Test-IISTLS1_2Enabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.6"
-        Task   = "Ensure TLS 1.2 is enabled"
+        Id      = "7.6"
+        Task    = "Ensure TLS 1.2 is enabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2231,10 +2231,10 @@ function Test-IISNullCipherDisabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.7"
-        Task   = "Ensure NULL Cipher Suites is disabled"
+        Id      = "7.7"
+        Task    = "Ensure NULL Cipher Suites is disabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2267,10 +2267,10 @@ function Test-IISDESCipherDisabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.8"
-        Task   = "Ensure DES Cipher Suites is disabled"
+        Id      = "7.8"
+        Task    = "Ensure DES Cipher Suites is disabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2310,10 +2310,10 @@ function Test-IISRC4CipherDisabled {
         }
 
         New-Object -TypeName AuditInfo -Property @{
-            Id     = "7.9.$index"
-            Task   = "Ensure RC4 Cipher Suites is disabled"
+            Id      = "7.9.$index"
+            Task    = "Ensure RC4 Cipher Suites is disabled"
             Message = $message
-            Audit  = $audit
+            Audit   = $audit
         } | Write-Output
 
         $index++
@@ -2352,10 +2352,10 @@ function Test-IISTripleDESEnabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.10"
-        Task   = "Ensure Triple DES Cipher Suite is Disabled"
+        Id      = "7.10"
+        Task    = "Ensure Triple DES Cipher Suite is Disabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2399,10 +2399,10 @@ function Test-IISAES128Enabled {
 
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.11"
-        Task   = "Ensure AES 128/128 Cipher Suite is configured"
+        Id      = "7.11"
+        Task    = "Ensure AES 128/128 Cipher Suite is configured"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2438,10 +2438,10 @@ function Test-IISAES256Enabled {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.12"
-        Task   = "Ensure AES 256/256 Cipher Suite is enabled"
+        Id      = "7.12"
+        Task    = "Ensure AES 256/256 Cipher Suite is enabled"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2489,10 +2489,10 @@ function Test-IISTLSCipherOrder {
     }
 
     New-Object -TypeName AuditInfo -Property @{
-        Id     = "7.13"
-        Task   = "Ensure TLS Cipher Suite ordering is configured"
+        Id      = "7.13"
+        Task    = "Ensure TLS Cipher Suite ordering is configured"
         Message = $message
-        Audit  = $audit
+        Audit   = $audit
     } | Write-Output
 }
 
@@ -2620,13 +2620,13 @@ function Get-IIS10SiteReport {
 
             New-Object -TypeName VirtualPathAudit -Property @{
                 VirtualPath = $VirtualPath
-                AuditInfos = $VirtualPathAuditInfos
+                AuditInfos  = $VirtualPathAuditInfos
             }
         }
 
         New-Object -TypeName SiteAudit -Property @{
-            SiteName = $Site.Name
-            AuditInfos = $AuditInfos
+            SiteName          = $Site.Name
+            AuditInfos        = $AuditInfos
 
             VirtualPathAudits = $VirtualPathAudits
         }
@@ -2641,8 +2641,8 @@ function Get-IISHtmlAuditStatusClass {
 
     process {
         switch ($AuditStatus) {
-            "True"    { "passed" }
-            "False"   { "failed" }
+            "True" { "passed" }
+            "False" { "failed" }
             "Warning" { "warning" }
             Default { "" }
         }
@@ -2715,7 +2715,7 @@ function Get-IIS10HtmlSiteAudit {
     $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $SiteAudit.AuditInfos
 
     foreach ($VirtualPathAudit in $SiteAudit.VirtualPathAudits) {
-        $VirtualPathAuditStatusClass =  $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
+        $VirtualPathAuditStatusClass = $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
 
         $html += "<h3 class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
         $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $VirtualPathAudit.AuditInfos
