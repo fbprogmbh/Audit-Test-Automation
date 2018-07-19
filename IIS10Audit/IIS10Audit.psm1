@@ -171,6 +171,13 @@ function Get-SiteAuditStatus {
         }
     }
 }
+
+function Get-IISModules {
+    Get-IISConfigSection -SectionPath "system.webServer/modules" `
+        | Get-IISConfigCollection `
+        | Get-IISConfigCollectionElement `
+        | Get-IISConfigAttributeValue -AttributeName "Name"
+}
 #endregion
 
 #region 1 Basic Configuration
@@ -511,9 +518,9 @@ function Test-IISFormsAuthenticationSSL {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -524,17 +531,23 @@ function Test-IISFormsAuthenticationSSL {
 
         $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        # Ensure authentication mode is set to Forms
-        if ($mode -eq "Forms") {
+        if ((Get-IISModules) -contains "FormsAuthentication") {
+            # Ensure authentication mode is set to Forms
+            if ($mode -eq "Forms") {
 
-            $requireSSL = $section `
-                | Get-IISConfigElement -ChildElementName "forms" `
-                | Get-IISConfigAttributeValue -AttributeName "requireSSL"
+                $requireSSL = $section `
+                    | Get-IISConfigElement -ChildElementName "forms" `
+                    | Get-IISConfigAttributeValue -AttributeName "requireSSL"
 
-            if (-not $requireSSL) {
-                $message = "Forms authentication does not require SSL"
-                $audit = [AuditStatus]::False
+                if (-not $requireSSL) {
+                    $message = "Forms authentication does not require SSL"
+                    $audit = [AuditStatus]::False
+                }
             }
+        }
+        else {
+            $message = "Forms authentication is not installed"
+            $audit = [AuditStatus]::Warning
         }
 
         New-Object -TypeName AuditInfo -Property @{
@@ -556,9 +569,9 @@ function Test-IISFormsAuthenticationCookies {
 	#>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -569,14 +582,20 @@ function Test-IISFormsAuthenticationCookies {
 
         $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if ($mode -eq "Forms") {
-            $cookieless = $section | Get-IISConfigElement -ChildElementName "forms" `
-                | Get-IISConfigAttributeValue -AttributeName "cookieless"
+        if ((Get-IISModules) -contains "FormsAuthentication") {
+            if ($mode -eq "Forms") {
+                $cookieless = $section | Get-IISConfigElement -ChildElementName "forms" `
+                    | Get-IISConfigAttributeValue -AttributeName "cookieless"
 
-            if ($cookieless -ne "UseCookies") {
-                $message = "Forms authentication is not set to use cookies"
-                $audit = [AuditStatus]::False
+                if ($cookieless -ne "UseCookies") {
+                    $message = "Forms authentication is not set to use cookies"
+                    $audit = [AuditStatus]::False
+                }
             }
+        }
+        else {
+            $message = "Forms authentication is not installed"
+            $audit = [AuditStatus]::Warning
         }
 
         New-Object -TypeName AuditInfo -Property @{
@@ -600,9 +619,9 @@ function Test-IISFormsAuthenticationProtection {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -613,15 +632,21 @@ function Test-IISFormsAuthenticationProtection {
 
         $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if ($mode -ieq "Forms") {
-            $protection = $section `
-                | Get-IISConfigElement -ChildElementName "forms" `
-                | Get-IISConfigAttributeValue -AttributeName "protection"
+        if ((Get-IISModules) -contains "FormsAuthentication") {
+            if ($mode -ieq "Forms") {
+                $protection = $section `
+                    | Get-IISConfigElement -ChildElementName "forms" `
+                    | Get-IISConfigAttributeValue -AttributeName "protection"
 
-            if ($protection -ne "All") {
-                $message = "Cookie Protection Mode is not set to ALL"
-                $audit = [AuditStatus]::False
+                if ($protection -ne "All") {
+                    $message = "Cookie Protection Mode is not set to ALL"
+                    $audit = [AuditStatus]::False
+                }
             }
+        }
+        else {
+            $message = "Forms authentication is not installed"
+            $audit = [AuditStatus]::Warning
         }
 
         New-Object -TypeName AuditInfo -Property @{
@@ -655,8 +680,8 @@ function Test-IISTLSForBasicAuth {
             $httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
 
             $sslFlags = Get-IISConfigSection -Location $Site.Name `
-            -SectionPath "system.webServer/security/access" `
-            | Get-IISConfigAttributeValue -AttributeName "sslFlags"
+                -SectionPath "system.webServer/security/access" `
+                | Get-IISConfigAttributeValue -AttributeName "sslFlags"
 
             # split the flags into an array
             $sslValues = $sslFlags.Split("{,}")
@@ -692,9 +717,9 @@ function Test-IISPasswordFormatNotClear {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -760,9 +785,9 @@ function Test-IISCredentialsNotStored {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -863,9 +888,9 @@ function Test-IISDebugOff {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -902,9 +927,9 @@ function Test-IISCustomErrorsNotOff {
 	#>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -939,9 +964,9 @@ function Test-IISHttpErrorsHidden {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -976,9 +1001,9 @@ function Test-IISAspNetTracingDisabled {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1043,9 +1068,9 @@ function Test-IISCookielessSessionState {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1080,9 +1105,9 @@ function Test-IISCookiesHttpOnly {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1257,9 +1282,9 @@ function Test-IISMaxAllowedContentLength {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1306,9 +1331,9 @@ function Test-IISMaxURLRequestFilter {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1356,9 +1381,9 @@ function Test-IISMaxQueryStringRequestFilter {
 	#>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1405,9 +1430,9 @@ function Test-IISNonASCIICharURLForbidden {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1449,9 +1474,9 @@ function Test-IISRejectDoubleEncodedRequests {
 		This Request Filter feature prevents attacks that rely on double-encoded requests and applies if an attacker submits a double-encoded request to IIS. When the double-encoded requests filter is enabled, IIS will go through a two iteration process of normalizing the request. If the first normalization differs from the second, the request is rejected and the error code is logged as a 404.11. The double-encoded requests filter was the VerifyNormalization option in UrlScan. It is recommended that double-encoded requests be rejected.
     #>
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1494,9 +1519,9 @@ function Test-IISHTTPTraceMethodeDisabled {
 	#>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1546,9 +1571,9 @@ function Test-IISBlockUnlistedFileExtensions {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1975,9 +2000,9 @@ function Test-IISHSTSHeaderSet {
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -2476,7 +2501,7 @@ function Test-IISTLSCipherOrder {
         if ($null -ne $Key.GetValue("Functions", $null)) {
             $functions = (Get-ItemProperty $path).Functions
             $equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
-                [Func[String, String, Boolean]] {
+                    [Func[String, String, Boolean]] {
                     param($cipher, $function)
                     $cipher -eq $function
                 })
@@ -2656,12 +2681,12 @@ function Get-IISSiteHtmlId {
     )
 
     return ([char[]]$SiteName | ForEach-Object {
-        switch ($_) {
-            ' ' { "-" }
-            '-' { "--" }
-            Default {$_}
-        }
-    }) -join ""
+            switch ($_) {
+                ' ' { "-" }
+                '-' { "--" }
+                Default {$_}
+            }
+        }) -join ""
 }
 
 function Get-IIS10HtmlTableRow {
