@@ -24,4 +24,4 @@ This is important because the manifest tells Powershell about the assemblies and
 
 ## Sample report
 
-You can find a sample report in the [Sample](Sample/sample_report.html) folder.
+You can find a sample report in the [Sample](Sample) folder.
