@@ -2005,23 +2005,38 @@ function Test-IISHSTSHeaderSet {
     )
 
     process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+        $message = "HSTS Header not set"
+        $audit = [AuditStatus]::False
 
         $path = "system.webServer/httpProtocol"
         $section = $Configuration.GetSection($path)
 
-        $customHeader = $section `
-            | Get-IISConfigCollection -CollectionName "customHeaders" | Get-IISConfigCollectionElement `
+        [array]$customHeaders = $section.GetCollection("customHeaders") `
             | Where-Object {
-            $name = $_ | Get-IISConfigAttributeValue -AttributeName "name"
-            $value = $_ | Get-IISConfigAttributeValue -AttributeName "value"
-            ($name -eq "Strict-Transport-Security") -and ([int]$value -gt 0)
+                $name  = $_ | Get-IISConfigAttributeValue -AttributeName "name"
+                $name -eq "Strict-Transport-Security"
         }
 
-        if ($customHeader.Count -eq 0) {
-            $message = "HSTS Header not set"
+        if ($customHeaders.Count -eq 1) {
+            $value = $customHeaders[0] | Get-IISConfigAttributeValue -AttributeName "value"
+            $pattern = [regex]::new("max-age=(?<maxage>[0-9]*)")
+            $match = $pattern.Match($value)
+
+            if ($match.Success) {
+                [int]$maxAge = $match.Groups["maxage"].Value
+                if ($maxAge -eq 0) {
+                    $message = "Max-age should be at least be higher than 0. It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
             $audit = [AuditStatus]::False
+        }
+                elseif ($maxAge -lt 480) {
+                    $message = "It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
+                    $audit = [AuditStatus]::Warning
+                }
+                else {
+                    $message = $MESSAGE_ALLGOOD + ". Max-age is set at $maxAge"
+                    $audit = [AuditStatus]::True
+                }
+            }
         }
 
         New-Object -TypeName AuditInfo -Property @{
