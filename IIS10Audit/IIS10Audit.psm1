@@ -111,23 +111,21 @@ function Get-IISSiteVirtualPaths {
 function Get-AuditInfosStatus {
 
     param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true)]
         [AuditInfo[]] $AuditInfos
     )
 
-    process {
-        if ($AuditInfos.Audit -contains [AuditStatus]::False) {
-            [AuditStatus]::False
-        }
-        elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
-            [AuditStatus]::Warning
-        }
-        elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
-            [AuditStatus]::True
-        }
-        else {
-            [AuditStatus]::None
-        }
+    if ($AuditInfos.Audit -contains [AuditStatus]::False) {
+        [AuditStatus]::False
+    }
+    elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
+        [AuditStatus]::Warning
+    }
+    elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
+        [AuditStatus]::True
+    }
+    else {
+        [AuditStatus]::None
     }
 }
 
@@ -173,9 +171,7 @@ function Get-SiteAuditStatus {
 }
 
 function Get-IISModules {
-    Get-IISConfigSection -SectionPath "system.webServer/modules" `
-        | Get-IISConfigCollection `
-        | Get-IISConfigCollectionElement `
+    (Get-IISConfigSection -SectionPath "system.webServer/modules").GetCollection() `
         | Get-IISConfigAttributeValue -AttributeName "Name"
 }
 #endregion
@@ -237,7 +233,7 @@ function Test-IISHostHeaders {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
-        $Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
+        [array]$Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
 
         if ($Bindings.Count -gt 0) {
             $message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ", ")
@@ -355,7 +351,7 @@ function Test-IISUniqueSiteAppPool {
         }
     }
 
-    $Findings = $Apps `
+    [array]$Findings = $Apps `
         | Group-Object -Property ApplicationPoolName `
         | Where-Object -Property Count -gt 1
 
@@ -438,19 +434,17 @@ function Test-IISGlobalAuthorization {
             $path = "system.webServer/security/authorization"
             $section = $Configuration.GetSection($path)
 
-            if (($section | Get-IISConfigCollection).Count -gt 0) {
-                $elements = $section | Get-IISConfigCollection | Get-IISConfigCollectionElement `
-                    | Where-Object {
+            [array]$elements = $section.GetCollection() `
+                | Where-Object {
                     $accessType = $_ | Get-IISConfigAttributeValue -AttributeName "accessType"
                     $users = $_ | Get-IISConfigAttributeValue -AttributeName "users"
                     $roles = $_ | Get-IISConfigAttributeValue -AttributeName "roles"
                     ($accessType -eq "Allow") -and ($users -eq "*" -or $roles -eq "?")
                 }
 
-                if ($elements.Count -ne 0) {
-                    $message = "Authorization rule to allow all or anonymous users is set"
-                    $audit = [AuditStatus]::False
-                }
+            if ($elements.Count -ne 0) {
+                $message = "Authorization rule to allow all or anonymous users is set"
+                $audit = [AuditStatus]::False
             }
         }
         else {
@@ -677,7 +671,7 @@ function Test-IISTLSForBasicAuth {
         $audit = [AuditStatus]::True
 
         if ((Get-WindowsFeature Web-Basic-Auth).InstallState -eq [InstallState]::Installed) {
-            $httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
+            [array]$httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
 
             $sslFlags = Get-IISConfigSection -Location $Site.Name `
                 -SectionPath "system.webServer/security/access" `
@@ -692,7 +686,7 @@ function Test-IISTLSForBasicAuth {
                 $audit = [AuditStatus]::False
             }
             # Ensure site has https bindings
-            elseif ($httpsBindings.Count -ne 0) {
+            elseif ($httpsBindings.Count -eq 0) {
                 $message = "Site has no secure protocol binding"
                 $audit = [AuditStatus]::False
             }
@@ -1524,27 +1518,24 @@ function Test-IISHTTPTraceMethodeDisabled {
     )
 
     process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+        $message = "HTTP Trace Method is not filtered"
+        $audit = [AuditStatus]::False
 
         # Ensure request filering is installed
         if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
             $path = "system.webServer/security/requestFiltering"
             $section = $Configuration.GetSection($path)
 
-            if (($section | Get-IISConfigCollection -CollectionName "verbs").Count -gt 0) {
-                $httpTraceMethod = $section `
-                    | Get-IISConfigCollection -CollectionName "verbs" | Get-IISConfigCollectionElement `
-                    | Where-Object {
+            [array]$httpTraceMethod = $section.GetCollection("verbs") `
+                | Where-Object {
                     $trace = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
                     $allowed = $_ | Get-IISConfigAttributeValue -AttributeName "allowed"
                     ($trace -eq "trace") -and (-not $allowed)
                 }
 
-                if ($httpTraceMethod.Count -gt 0) {
-                    $message = "HTTP Trace Method enabled"
-                    $audit = [AuditStatus]::False
-                }
+            if ($httpTraceMethod.Count -eq 1) {
+                $message = $MESSAGE_ALLGOOD
+                $audit = [AuditStatus]::True
             }
         }
         else {
@@ -1870,7 +1861,7 @@ function Test-IISFtpIsDisabled {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
-        $ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
+        [array]$ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
 
         if ($ftpBindings.Count -gt 0) {
             $message = "FTP is not disabled"
@@ -2015,7 +2006,7 @@ function Test-IISHSTSHeaderSet {
             | Where-Object {
                 $name  = $_ | Get-IISConfigAttributeValue -AttributeName "name"
                 $name -eq "Strict-Transport-Security"
-        }
+            }
 
         if ($customHeaders.Count -eq 1) {
             $value = $customHeaders[0] | Get-IISConfigAttributeValue -AttributeName "value"
@@ -2026,8 +2017,8 @@ function Test-IISHSTSHeaderSet {
                 [int]$maxAge = $match.Groups["maxage"].Value
                 if ($maxAge -eq 0) {
                     $message = "Max-age should be at least be higher than 0. It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
-            $audit = [AuditStatus]::False
-        }
+                    $audit = [AuditStatus]::False
+                }
                 elseif ($maxAge -lt 480) {
                     $message = "It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
                     $audit = [AuditStatus]::Warning
@@ -2515,15 +2506,22 @@ function Test-IISTLSCipherOrder {
         $Key = Get-Item $path
         if ($null -ne $Key.GetValue("Functions", $null)) {
             $functions = (Get-ItemProperty $path).Functions
-            $equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
-                    [Func[String, String, Boolean]] {
-                    param($cipher, $function)
-                    $cipher -eq $function
-                })
 
-            if (-not ($equalOrdering -contains $false)) {
-                $message = $MESSAGE_ALLGOOD
-                $audit = [AuditStatus]::True
+            if ($cipherList.Count -ge $functions.Count) {
+                $equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
+                        [Func[String, String, Boolean]] {
+                        param($cipher, $function)
+                        $cipher -eq $function
+                    })
+
+                if (-not ($equalOrdering -contains $false)) {
+                    $message = $MESSAGE_ALLGOOD
+                    $audit = [AuditStatus]::True
+                }
+            }
+            else {
+                $message = "TLS Cipher Suite contains more ciphers"
+                $audit = [AuditStatus]::Warning
             }
         }
     }
@@ -2792,7 +2790,7 @@ function Get-IISHtmlReport {
     $cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
     $css = Get-Content $cssPath
 
-    $SystemAuditStatus = $SystemAuditInfos | Get-AuditInfosStatus | Get-IISHtmlAuditStatusClass
+    $SystemAuditStatus = Get-AuditInfosStatus -AuditInfos $SystemAuditInfos | Get-IISHtmlAuditStatusClass
 
     $siteLinks = $SiteAudits.SiteName `
         | ForEach-Object { "<a href=`"#$(Get-IISSiteHtmlId -SiteName $_)`">$_</a>" } `
