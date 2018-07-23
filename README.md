@@ -8,6 +8,7 @@ The Audit Test Automation Package gives you the ability to get an overview about
 
 The package consists of the following Modules:
 
+* [IIS8Audit](IIS8Audit/README.md)
 * [IIS10Audit](IIS10Audit/README.md)
 
 Read the the READMEs of each module to get specific information about a module.
