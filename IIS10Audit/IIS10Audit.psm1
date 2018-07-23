@@ -40,6 +40,9 @@ Date:             31/05/2018
 using namespace Microsoft.Web.Administration
 using namespace Microsoft.Windows.ServerManager.Commands
 
+# Import setting from file
+$ConfigFile = Import-LocalizedData -FileName Settings.psd1
+
 #region Helper Functions
 $MESSAGE_ALLGOOD = "All Good"
 
@@ -2671,6 +2674,22 @@ function Get-IIS10SiteReport {
     }
 }
 
+function Get-HostInformation {
+    $infos = Get-CimInstance Win32_OperatingSystem
+    $disk = Get-WmiObject Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
+
+    $IISinstallPath = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\InetStp").Installpath
+
+    New-Object -TypeName psobject -Property @{
+        Hostname = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
+        OS = $infos.Caption
+        OSBuildNumber = $infos.BuildNumber
+        IISVersion = (Get-ItemProperty -Path ("$IISinstallPath\w3wp.exe")).VersionInfo.ProductVersion
+        FreeRAM = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
+        FreeDiskSpace = "{0:N1}" -f ($disk.FreeSpace / 1GB)
+    }
+}
+
 function Get-IISHtmlAuditStatusClass {
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -2687,13 +2706,13 @@ function Get-IISHtmlAuditStatusClass {
     }
 }
 
-function Get-IISSiteHtmlId {
+function Get-HtmlId {
     param(
         [Parameter(Mandatory = $true)]
-        [string] $SiteName
+        [string] $Id
     )
 
-    return ([char[]]$SiteName | ForEach-Object {
+    return ([char[]]$Id | ForEach-Object {
             switch ($_) {
                 ' ' { "-" }
                 '-' { "--" }
@@ -2714,7 +2733,7 @@ function Get-IIS10HtmlTableRow {
 
             if ($Property.Name -eq "Audit") {
                 $auditClass = Get-IISHtmlAuditStatusClass -AuditStatus $value
-                $value = "<span class=`"audit $auditClass`">$value</span>"
+                $value = "<span class=`"auditstatus $auditClass`">$value</span>"
             }
 
             "<td>$value</td>"
@@ -2743,10 +2762,11 @@ function Get-IIS10HtmlSiteAudit {
     )
 
     $SiteAuditStatusClass = Get-SiteAuditStatus -SiteAudit $SiteAudit | Get-IISHtmlAuditStatusClass
-    $VirtualPaths = $SiteAudit.VirtualPathAudits.VirtualPath | ForEach-Object { "<li>$_</li>" }
+    $VirtualPaths = $SiteAudit.VirtualPathAudits.VirtualPath `
+        | ForEach-Object { "<a href=`"#$(Get-HtmlId -Id $SiteAudit.SiteName)$(Get-HtmlId -Id $_)`">$_</a>" } `
+        | ForEach-Object { "<li>$_</li>" }
 
-    $html = ""
-    $html += "<h2 id=`"$(Get-IISSiteHtmlId -SiteName $SiteAudit.SiteName)`" class=`"$SiteAuditStatusClass`">Full site report for: $($SiteAudit.SiteName)</h2>"
+    $html = "<h2 id=`"$(Get-HtmlId -Id $SiteAudit.SiteName)`" class=`"$SiteAuditStatusClass`">Full site report for: $($SiteAudit.SiteName)</h2>"
     $html += "<p>This site has the following virtual paths:<p>"
     $html += "<ul>$VirtualPaths</ul>"
     $html += "<h3>Report for site-Level exclusive benchmarks</h3>"
@@ -2754,10 +2774,35 @@ function Get-IIS10HtmlSiteAudit {
 
     foreach ($VirtualPathAudit in $SiteAudit.VirtualPathAudits) {
         $VirtualPathAuditStatusClass = $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
+        $VirtualPathId = (Get-HtmlId -Id $SiteAudit.SiteName) + (Get-HtmlId -Id $VirtualPathAudit.VirtualPath)
 
-        $html += "<h3 class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
+        $html += "<h3 id=`"$VirtualPathId`" class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
         $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $VirtualPathAudit.AuditInfos
     }
+
+    return $html
+}
+
+function Get-HtmlHostInformation {
+    param(
+        [string] $TableClass = "",
+        [psobject] $HostInformation = (Get-HostInformation)
+    )
+
+    $rows = @(
+        @("Hostname", $HostInformation.HostName),
+        @("Operating System", $HostInformation.OS),
+        @("Build Number", $HostInformation.OSBuildNumber),
+        @("IIS Version", $HostInformation.IISVersion),
+        @("Free physical memory (GB):", $HostInformation.FreeRAM),
+        @("Free disk space(GB):", $HostInformation.FreeDiskSpace)
+    ) | Foreach-Object {
+        "<th scope=`"row`">$($_[0])</th><td>$($_[1])</td>"
+    }
+
+    $html = (($rows | ForEach-Object { "<tr>$_</tr>" }) -join "") `
+        | ForEach-Object { "<tbody>$_</tbody>" } `
+        | ForEach-Object { "<table class=`"$TableClass`">$_</table>" }
 
     return $html
 }
@@ -2790,39 +2835,35 @@ function Get-IISHtmlReport {
     $cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
     $css = Get-Content $cssPath
 
+    $hostInfo = Get-HostInformation
     $SystemAuditStatus = Get-AuditInfosStatus -AuditInfos $SystemAuditInfos | Get-IISHtmlAuditStatusClass
 
     $siteLinks = $SiteAudits.SiteName `
-        | ForEach-Object { "<a href=`"#$(Get-IISSiteHtmlId -SiteName $_)`">$_</a>" } `
+        | ForEach-Object { "<a href=`"#$(Get-HtmlId -Id $_)`">$_</a>" } `
         | ForEach-Object { "<li>$_</li>" }
 
-    $head = @"
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>IIS 10 Benchmarkt Report [$(Get-Date)]</title>
-    <style>$css</style>
-"@
+    $header = "<img alt=`"FB-Pro GmbH`" src=`"$($ConfigFile.Settings.Logo)`">"
+    $header += "<h1>IIS 10 Benchmarks</h1>"
+    $header += "<span class=`"subtitle`">Generated by the <i>IIS10Audit</i> Module by FB Pro GmbH. Get it in the <a href=`"https://github.com/fbprogmbh/Audit-Test-Automation`">Audit Test Automation Package</a>.</span>"
 
-    $body = ""
-    $body += "<div class=`"header`"><h1>IIS 10 Benchmarks</h1><span class=`"subtitle`">Generated by the <i>IIS10Audit</i> Module by FB Pro GmbH. Get it in the <a href=`"https://github.com/fbprogmbh/Audit-Test-Automation`">Audit Test Automation Package</a>.</span></div>"
-    $body += "<p>This report was generated at $((Get-Date)). Click the links below for quick access to the site reports.</p>"
+    $hostInfoHtml = Get-HtmlHostInformation -TableClass "hostinformation" -HostInformation $hostInfo
+
+    $head = "<meta charset=`"UTF-8`">"
+    $head += "<meta name=`"viewport`" content=`"width=device-width, initial-scale=1.0`">"
+    $head += "<meta http-equiv=`"X-UA-Compatible`" content=`"ie=edge`">"
+    $head += "<title>IIS 10 Benchmarkt Report [$(Get-Date)]</title>"
+    $head += "<style>$css</style>"
+
+    $body = "<div class=`"header`">$header</div>"
+    $body += "<p>This report was generated at $((Get-Date)) on $($hostInfo.Hostname).</p>"
+    $body += $hostInfoHtml
+    $body += "<p>Click the links below for quick access to the site reports.</p>"
     $body += "<ul>$siteLinks</ul>"
     $body += "<h2 class=`"$SystemAuditStatus`">System Report</h2>"
     $body += Get-IIS10HtmlAuditInfoTable -AuditInfos $SystemAuditInfos
     $body += $SiteAudits | ForEach-Object {  Get-IIS10HtmlSiteAudit -SiteAudit $_ }
 
-    $html = @"
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    $head
-</head>
-<body>
-    $body
-</body>
-</html>
-"@
+    $html = "<!DOCTYPE html><html lang=`"en`"><head>$head</head><body>$body</body></html> "
 
     $html > $Path
 }
