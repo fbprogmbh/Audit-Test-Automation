@@ -20,6 +20,12 @@ body {
 	color: #595959;
 }
 
+.header span.subtitle {
+	display: block;
+    margin-left: 20px;
+    font-size: 1.5em;
+}
+
 h1 span {
 	text-transform: uppercase;
 }
@@ -69,10 +75,6 @@ table {
 	border-collapse: collapse;
     font-family: Arial, sans-serif;
 }
-/*
-table.audit-info {
-    table-layout: fixed;
-}
 
 table.audit-info td:first-child {
     width: 10%;
@@ -86,7 +88,7 @@ table.audit-info td:nth-child(3) {
 }
 table.audit-info td:nth-child(4) {
 	width: 15%;
-} */
+} 
 
 th {
 	background-color: #d6d6c2;
@@ -126,6 +128,12 @@ tr:nth-child(even) {
 	height: auto;
 	display: inline-block;
 	text-align: center;
+}
+
+h2.passed, h2.failed, h2.warning, h3.passed, h3.failed, h3.warning {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 8px;
 }
 
 span.passed, span.failed, span.warning {

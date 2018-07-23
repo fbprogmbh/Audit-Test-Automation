@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #    Author(s):        Benedikt Böhme
 #    Date:             31/05/2018
 #    Last change:      16/07/2018
-#    Version:          0.1
+#    Version:          1.0.0.0
 #
 #    Module manifest for module 'IIS8Audit'
 #endregion

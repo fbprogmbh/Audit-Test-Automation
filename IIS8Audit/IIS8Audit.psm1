@@ -33,8 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #    Author(s):        Benedikt Böhme
 #                      Dennis Esly
 #    Date:             31/05/2018
-#    Last change:      07/20/2018
-#    Version:          1.0.0.0
+#    Last change:      07/23/2018
+#    Version:          1.0.0.1
 #
 #endregion
 
@@ -73,12 +73,35 @@ class SiteAudit {
     [VirtualPathAudit[]] $VirtualPathAudits
 }
 
-
 class AuditConfiguration {
     [string] $SiteName
     [string] $VirtualPath
 
     [Configuration] $Configuration
+}
+
+
+function Get-AuditInfosStatus {
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [AuditInfo[]] $AuditInfos
+    )
+
+    process {
+        if ($AuditInfos.Audit -contains [AuditStatus]::False) {
+            [AuditStatus]::False
+        }
+        elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
+            [AuditStatus]::Warning
+        }
+        elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
+            [AuditStatus]::True
+        }
+        else {
+            [AuditStatus]::None
+        }
+    }
 }
 
 function Get-IISSiteVirtualPaths {
@@ -108,6 +131,47 @@ function Get-IISSiteVirtualPaths {
         }
     }
 
+}
+
+function Get-VirtualPathAuditStatus {
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [VirtualPathAudit] $VirtualPathAudit
+    )
+
+    process {
+        Get-AuditInfosStatus -AuditInfos $VirtualPathAudit.AuditInfos
+    }
+}
+
+function Get-SiteAuditStatus {
+
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [SiteAudit] $SiteAudit
+    )
+
+    process {
+        $VirtualPathAuditStatus = $SiteAudit.VirtualPathAudits | Get-VirtualPathAuditStatus
+        $SiteAuditStatus = (Get-AuditInfosStatus -AuditInfos $SiteAudit.AuditInfos)
+
+        if (($VirtualPathAuditStatus -contains [AuditStatus]::False) -or `
+            ($SiteAuditStatus -contains [AuditStatus]::False)) {
+            [AuditStatus]::False
+        }
+        elseif (($VirtualPathAuditStatus -contains [AuditStatus]::Warning) -or `
+            ($SiteAuditStatus -contains [AuditStatus]::Warning)) {
+            [AuditStatus]::Warning
+        }
+        elseif (($VirtualPathAuditStatus -contains [AuditStatus]::True) -or `
+            ($SiteAuditStatus -contains [AuditStatus]::True)) {
+            [AuditStatus]::True
+        }
+        else {
+            [AuditStatus]::None
+        }
+    }
 }
 
 function Select-Zip {
@@ -1714,21 +1778,94 @@ function Test-IISLogFileLocation {
 
 # 5.2
 function Test-IISAdvancedLoggingEnabled {
-    <#
-	.Synopsis
-		Ensure Advanced IIS logging is enabled
-	.Description
-		IIS Advanced Logging is a module which provides flexibility in logging requests and client data. It provides controls that allow businesses to specify what fields are important, easily add additional fields, and provide policies pertaining to log file rollover and Request Filtering. HTTP request/response headers, server variables, and client-side fields can be easily logged with minor configuration in the IIS management console. It is recommended that Advanced Logging be enabled, and the fields which could be of value to the type of business or application in the event of a security incident, be identified and logged.
-	#>
+<#
+.Synopsis
+	Ensure Advanced IIS logging is enabled
+.Description
+	5.2 - Ensure Advanced IIS logging is enabled.
+    
+    IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. 
+    Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
+.PARAMETER site
+    IIS site to check for enabled Advanced Logging
+#>
+[CmdletBinding()]
+Param(
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+    $Site
+)
 
-    # check site defaults
+    # Advanced Logging is not installed per default. Check, if module is installed.
+    # No try/catch because functions simply delivers a $null value if module is not present
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id     = "5.2"
-        Task   = "Ensure Advanced IIS logging is enabled"
-        Message = "Advanced Logging is not available for IIS 10. See enhanced logging instead."
-        Audit  = [AuditStatus]::None
-    } | Write-Output
+    Begin
+    {
+        # Check if Advanced Logging module is installed
+        $advLogModule = Get-WebGlobalModule -Name AdvancedLoggingModule
+
+        # Check if Advanced Logging module is enabled for server 
+        # no try/catch because we will check it in process part
+        $serverState = Get-WebConfiguration -filter "system.webServer/advancedLogging/server" -ErrorAction SilentlyContinue | select -ExpandProperty enabled 
+    
+        $task = "Ensure Advanced IIS logging is enabled"
+    }
+
+    Process
+    {
+        $task = "Ensure Advanced IIS logging is enabled"
+        $message = "An error occured"
+        $audit = [AuditStatus]::False
+
+        if ( $null -eq $advLogModule ) 
+        { 
+            $message = "Advanced Logging Module not installed"
+            $audit = [AuditStatus]::False
+        }
+        elseif ( $null -eq $serverState )
+        {
+            $message = "Advanced Logging settings not found  for server."
+            $audit = [AuditStatus]::False
+               
+            Write-LogFile   -Path $LogPath `
+                            -name $LogName `
+                            -message "Advanced Logging settings for server not found, check applicationhost.config file (XPath system.webServer/advancedLogging/server)  `n $_.Exception"  `
+                            -Level Error
+        }
+        # do further checking
+        else
+        {
+
+            $task = "Ensure Advanced IIS logging is enabled for site $($site.name)"
+
+            $siteState = Get-WebConfigurationProperty -Filter "system.webServer/advancedLogging/server" -PSPath "IIS:\Sites\$($site.name)" `
+                                                        -Name enabled | select `
+                                                        -ExpandProperty Value
+
+            if ( $siteState -and (-not $site.advancedLogging.directory.StartsWith("%SystemDrive%")) )
+            {
+                $message = "Advanced Logging enabled"
+                $audit = [AuditStatus]::True
+            }
+            elseif ( $siteState -and ($site.advancedLogging.directory.StartsWith("%SystemDrive%")) )
+            {
+                $message = "Advanced Logging enabled, but logging on system drive"
+                $audit = [AuditStatus]::Warning
+            }
+            else
+            {
+                $message = "Advanced Logging disabled"
+                $audit = [AuditStatus]::False  
+            }           
+        }#end else
+
+        New-Object -TypeName AuditInfo -Property @{
+            Id     = "5.2"
+            Task   = $task
+            Message = $message
+            Audit  = $audit
+        } | Write-Output
+    
+    }#end process
 }
 
 # 5.3
@@ -2459,7 +2596,7 @@ function Get-IIS8SystemReport {
     Test-IISCgisNotAllowed
 
     # Section 5
-    Test-IISAdvancedLoggingEnabled
+    #Test-IISAdvancedLoggingEnabled
 
     # Section 6
     Test-IISFtpRequestsEncrypted
@@ -2487,7 +2624,7 @@ function Get-IIS8SiteReport {
         [Site] $Site
     )
 
-    process {
+    process { 
         $AppPools = $Site.Applications.ApplicationPoolName | Sort-Object | Get-Unique | Get-IISAppPool
 
         $AuditInfos = @()
@@ -2510,6 +2647,7 @@ function Get-IIS8SiteReport {
 
         # Section 5
         $AuditInfos += $Site | Test-IISLogFileLocation
+        $AuditInfos += (Get-Website $Site.Name) | Test-IISAdvancedLoggingEnabled
         $AuditInfos += $Site | Test-IISETWLoggingEnabled
 
         # Section 6
@@ -2570,6 +2708,22 @@ function Get-IIS8SiteReport {
             AuditInfos = $AuditInfos
 
             VirtualPathAudits = $VirtualPathAudits
+        }
+    }
+}
+
+function Get-IISHtmlAuditStatusClass {
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [AuditStatus] $AuditStatus
+    )
+
+    process {
+        switch ($AuditStatus) {
+            "True" { "passed" }
+            "False" { "failed" }
+            "Warning" { "warning" }
+            Default { "" }
         }
     }
 }
@@ -2635,17 +2789,20 @@ function Get-IIS8HtmlSiteAudit {
         [SiteAudit] $SiteAudit
     )
 
+    $SiteAuditStatusClass = Get-SiteAuditStatus -SiteAudit $SiteAudit | Get-IISHtmlAuditStatusClass
     $VirtualPaths = $SiteAudit.VirtualPathAudits.VirtualPath | ForEach-Object { "<li>$_</li>" }
 
     $html = ""
-    $html += "<h2 id=`"$(Get-IISSiteHtmlId -SiteName $SiteAudit.SiteName)`">Full site report for: $($SiteAudit.SiteName)</h2>"
+    $html += "<h2 id=`"$(Get-IISSiteHtmlId -SiteName $SiteAudit.SiteName)`" class=`"$SiteAuditStatusClass`">Full site report for: $($SiteAudit.SiteName)</h2>"
     $html += "<p>This site has the following virtual paths:<p>"
     $html += "<ul>$VirtualPaths</ul>"
     $html += "<h3>Report for site-Level exclusive benchmarks</h3>"
     $html += Get-IIS8HtmlAuditInfoTable -AuditInfos $SiteAudit.AuditInfos
 
     foreach ($VirtualPathAudit in $SiteAudit.VirtualPathAudits) {
-        $html += "<h3>Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
+        $VirtualPathAuditStatusClass = $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
+
+        $html += "<h3 class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
         $html += Get-IIS8HtmlAuditInfoTable -AuditInfos $VirtualPathAudit.AuditInfos
     }
 
@@ -2667,6 +2824,8 @@ function Get-IIS8HtmlReport {
     $cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
     $css = Get-Content $cssPath
 
+    $SystemAuditStatus = $SystemAuditInfos | Get-AuditInfosStatus | Get-IISHtmlAuditStatusClass
+
     $siteLinks = $SiteAudits.SiteName `
         | ForEach-Object { "<a href=`"#$(Get-IISSiteHtmlId -SiteName $_)`">$_</a>" } `
         | ForEach-Object { "<li>$_</li>" }
@@ -2680,13 +2839,15 @@ function Get-IIS8HtmlReport {
 "@
 
     $body = ""
-    $body += "<div class=`"header`"> <img src=`"$($ConfigFile.Settings.Logo)`">
+    $body += "<div class=`"header`">
+                <img src=`"$($Configfile.Settings.Logo)`">
                 <h1>IIS 8 Audit Report</h1>
+                <span class=`"subtitle`">Generated by the <i>IIS8Audit</i> Module by FB Pro GmbH. Get it in the <a href=`"https://github.com/fbprogmbh/Audit-Test-Automation`">Audit Test Automation Package</a>.</span>
                 <div class=`"cis-version`">based on CIS Microsoft IIS 8 Benchmark  v1.5.0 - 12-30-2016</div>
               </div>"
     $body += "<p>This report was generated at $((Get-Date)). Click the links below for quick access to the site reports.</p>"
     $body += "<ul>$siteLinks</ul>"
-    $body += "<h2>System Report</h2>"
+    $body += "<h2 class=`"$SystemAuditStatus`">System Report</h2>"
     $body += Get-IIS8HtmlAuditInfoTable -AuditInfos $SystemAuditInfos
     $body += $SiteAudits | ForEach-Object {  Get-IIS8HtmlSiteAudit -SiteAudit $_ }
 
