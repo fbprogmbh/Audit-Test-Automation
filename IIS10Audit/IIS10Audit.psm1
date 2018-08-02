@@ -47,135 +47,135 @@ $ConfigFile = Import-LocalizedData -FileName Settings.psd1
 $MESSAGE_ALLGOOD = "All Good"
 
 enum AuditStatus {
-    True
-    False
-    Warning
-    None
+	True
+	False
+	Warning
+	None
 }
 
 class AuditInfo {
-    [string] $Id
-    [string] $Task
-    [string] $Message
-    [AuditStatus] $Audit
+	[string] $Id
+	[string] $Task
+	[string] $Message
+	[AuditStatus] $Audit
 }
 
 class VirtualPathAudit {
-    [string] $VirtualPath
-    [AuditInfo[]] $AuditInfos
+	[string] $VirtualPath
+	[AuditInfo[]] $AuditInfos
 }
 
 class SiteAudit {
-    [string] $SiteName
-    [AuditInfo[]] $AuditInfos
+	[string] $SiteName
+	[AuditInfo[]] $AuditInfos
 
-    [VirtualPathAudit[]] $VirtualPathAudits
+	[VirtualPathAudit[]] $VirtualPathAudits
 }
 
 
 class AuditConfiguration {
-    [string] $SiteName
-    [string] $VirtualPath
+	[string] $SiteName
+	[string] $VirtualPath
 
-    [Configuration] $Configuration
+	[Configuration] $Configuration
 }
 
 function Get-IISSiteVirtualPaths {
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site,
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site,
 
-        [switch] $AllVirtualDirectories
-    )
+		[switch] $AllVirtualDirectories
+	)
 
-    process {
-        foreach ($App in $Site.Applications) {
-            Write-Output ($App.Path)
+	process {
+		foreach ($App in $Site.Applications) {
+			Write-Output ($App.Path)
 
-            if ($AllVirtualDirectories) {
-                foreach ($VirtualDirectory in $App.VirtualDirectories) {
-                    if ($VirtualDirectory.Path -ne "/") {
-                        $AppPath = if ($App.Path -ne "/") {
-                            $App.Path
-                        }
-                        else {
-                            ""
-                        }
-                        Write-Output ($AppPath + $VirtualDirectory.Path)
-                    }
-                }
-            }
-        }
-    }
+			if ($AllVirtualDirectories) {
+				foreach ($VirtualDirectory in $App.VirtualDirectories) {
+					if ($VirtualDirectory.Path -ne "/") {
+						$AppPath = if ($App.Path -ne "/") {
+							$App.Path
+						}
+						else {
+							""
+						}
+						Write-Output ($AppPath + $VirtualDirectory.Path)
+					}
+				}
+			}
+		}
+	}
 }
 
 
 function Get-AuditInfosStatus {
 
-    param(
-        [Parameter(Mandatory = $true)]
-        [AuditInfo[]] $AuditInfos
-    )
+	param(
+		[Parameter(Mandatory = $true)]
+		[AuditInfo[]] $AuditInfos
+	)
 
-    if ($AuditInfos.Audit -contains [AuditStatus]::False) {
-        [AuditStatus]::False
-    }
-    elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
-        [AuditStatus]::Warning
-    }
-    elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
-        [AuditStatus]::True
-    }
-    else {
-        [AuditStatus]::None
-    }
+	if ($AuditInfos.Audit -contains [AuditStatus]::False) {
+		[AuditStatus]::False
+	}
+	elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
+		[AuditStatus]::Warning
+	}
+	elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
+		[AuditStatus]::True
+	}
+	else {
+		[AuditStatus]::None
+	}
 }
 
 function Get-VirtualPathAuditStatus {
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [VirtualPathAudit] $VirtualPathAudit
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[VirtualPathAudit] $VirtualPathAudit
+	)
 
-    process {
-        Get-AuditInfosStatus -AuditInfos $VirtualPathAudit.AuditInfos
-    }
+	process {
+		Get-AuditInfosStatus -AuditInfos $VirtualPathAudit.AuditInfos
+	}
 }
 
 function Get-SiteAuditStatus {
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [SiteAudit] $SiteAudit
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[SiteAudit] $SiteAudit
+	)
 
-    process {
-        $VirtualPathAuditStatus = $SiteAudit.VirtualPathAudits | Get-VirtualPathAuditStatus
-        $SiteAuditStatus = (Get-AuditInfosStatus -AuditInfos $SiteAudit.AuditInfos)
+	process {
+		$VirtualPathAuditStatus = $SiteAudit.VirtualPathAudits | Get-VirtualPathAuditStatus
+		$SiteAuditStatus = (Get-AuditInfosStatus -AuditInfos $SiteAudit.AuditInfos)
 
-        if (($VirtualPathAuditStatus -contains [AuditStatus]::False) -or `
-            ($SiteAuditStatus -contains [AuditStatus]::False)) {
-            [AuditStatus]::False
-        }
-        elseif (($VirtualPathAuditStatus -contains [AuditStatus]::Warning) -or `
-            ($SiteAuditStatus -contains [AuditStatus]::Warning)) {
-            [AuditStatus]::Warning
-        }
-        elseif (($VirtualPathAuditStatus -contains [AuditStatus]::True) -or `
-            ($SiteAuditStatus -contains [AuditStatus]::True)) {
-            [AuditStatus]::True
-        }
-        else {
-            [AuditStatus]::None
-        }
-    }
+		if (($VirtualPathAuditStatus -contains [AuditStatus]::False) -or `
+			($SiteAuditStatus -contains [AuditStatus]::False)) {
+			[AuditStatus]::False
+		}
+		elseif (($VirtualPathAuditStatus -contains [AuditStatus]::Warning) -or `
+			($SiteAuditStatus -contains [AuditStatus]::Warning)) {
+			[AuditStatus]::Warning
+		}
+		elseif (($VirtualPathAuditStatus -contains [AuditStatus]::True) -or `
+			($SiteAuditStatus -contains [AuditStatus]::True)) {
+			[AuditStatus]::True
+		}
+		else {
+			[AuditStatus]::None
+		}
+	}
 }
 
 function Get-IISModules {
-    (Get-IISConfigSection -SectionPath "system.webServer/modules").GetCollection() `
-        | Get-IISConfigAttributeValue -AttributeName "Name"
+	(Get-IISConfigSection -SectionPath "system.webServer/modules").GetCollection() `
+		| Get-IISConfigAttributeValue -AttributeName "Name"
 }
 #endregion
 
@@ -185,76 +185,76 @@ function Get-IISModules {
 
 # 1.1
 function Test-IISVirtualDirPartition {
-    <#
+	<#
 	.Synopsis
 		Ensure web content is on non-system partition
 	.Description
 		Web resources published through IIS are mapped, via Virtual Directories, to physical locations on disk. It is recommended to map all Virtual Directories to a non-system disk volume.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $SystemDrive = [system.environment]::getenvironmentvariable("SystemDrive")
-        $Path = $Site.Applications["/"].VirtualDirectories["/"].PhysicalPath
+		$SystemDrive = [system.environment]::getenvironmentvariable("SystemDrive")
+		$Path = $Site.Applications["/"].VirtualDirectories["/"].PhysicalPath
 
-        if ($Path.StartsWith("%SystemDrive%") -or $Path.StartsWith($SystemDrive)) {
-            $message = "Web content is on system partition"
-            $audit = [AuditStatus]::False
-        }
+		if ($Path.StartsWith("%SystemDrive%") -or $Path.StartsWith($SystemDrive)) {
+			$message = "Web content is on system partition"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "1.1"
-            Task    = "Ensure web content is on non-system partition"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "1.1"
+			Task    = "Ensure web content is on non-system partition"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 1.2
 function Test-IISHostHeaders {
-    <#
+	<#
 	.Synopsis
 		Ensure 'host headers' are on all sites
 	.DESCRIPTION
  		Host headers provide the ability to host multiple websites on the same IP address and port. It is recommended that host headers be configured for all sites. Wildcard host headers are now supported.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        [array]$Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
+		[array]$Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
 
-        if ($Bindings.Count -gt 0) {
-            $message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ", ")
-            $audit = [AuditStatus]::False
-        }
+		if ($Bindings.Count -gt 0) {
+			$message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ", ")
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "1.2"
-            Task    = "Ensure 'host headers' is set"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "1.2"
+			Task    = "Ensure 'host headers' is set"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 1.3
 function Test-IISDirectoryBrowsing {
-    <#
+	<#
 	.Synopsis
 		Ensure 'directory browsing' is set to disabled
 	.Description
@@ -266,146 +266,146 @@ function Test-IISDirectoryBrowsing {
 		It is recommended that directory browsing be disabled.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure directory browsing is installed
-        if ((Get-WindowsFeature Web-Dir-Browsing).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/directoryBrowse"
-            $section = $Configuration.GetSection($path)
+		# Ensure directory browsing is installed
+		if ((Get-WindowsFeature Web-Dir-Browsing).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/directoryBrowse"
+			$section = $Configuration.GetSection($path)
 
-            $Enabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
+			$Enabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
 
-            if ($Enabled -eq $true) {
-                $message = "Directory Browsing is enabled"
-                $audit = [AuditStatus]::False
-            }
-            elseif ($null -eq $Enabled) {
-                $message = "Directory Browsing not explicit set to false"
-                $audit = [AuditStatus]::Warning
-            }
-        }
+			if ($Enabled -eq $true) {
+				$message = "Directory Browsing is enabled"
+				$audit = [AuditStatus]::False
+			}
+			elseif ($null -eq $Enabled) {
+				$message = "Directory Browsing not explicit set to false"
+				$audit = [AuditStatus]::Warning
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "1.3"
-            Task    = "Ensure 'directory browsing' is set to disabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "1.3"
+			Task    = "Ensure 'directory browsing' is set to disabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 1.4
 function Test-IISAppPoolIdentity {
-    <#
+	<#
 	.Synopsis
 		Ensure 'application pool identity' is configured for all application pools
 	.Description
 		Application Pool Identities are the actual users/authorities that will run the worker process - w3wp.exe. Assigning the correct user authority will help ensure that applications can function properly, while not giving overly permissive permissions on the system. These identities can further be used in ACLs to protect system content. It is recommended that each Application Pool run under a unique identity.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [ApplicationPool] $AppPool
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[ApplicationPool] $AppPool
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        if ($AppPool.ProcessModel.IdentityType -ne [ProcessModelIdentityType]::ApplicationPoolIdentity)	{
-            $message = "ApplicationPoolIdentity is not set"
-            $audit = [AuditStatus]::False
-        }
+		if ($AppPool.ProcessModel.IdentityType -ne [ProcessModelIdentityType]::ApplicationPoolIdentity)	{
+			$message = "ApplicationPoolIdentity is not set"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "1.4"
-            Task    = "Ensure 'application pool identity' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "1.4"
+			Task    = "Ensure 'application pool identity' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 1.5
 function Test-IISUniqueSiteAppPool {
-    <#
+	<#
 	.Synopsis
 		Ensure 'unique application pools' is set for sites
 	.Description
 		IIS introduced a new security feature called Application Pool Identities that allows Application Pools to be run under unique accounts without the need to create and manage local or domain accounts. It is recommended that all Sites run under unique, dedicated Application Pools.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $Apps = foreach ($Site in (Get-IISSite)) {
-        foreach ($App in $Site.Applications) {
-            New-Object -TypeName PSObject -Property @{
-                VirtualPath         = $Site.name + $App.path
-                ApplicationPoolName = $App.ApplicationPoolName
-            }
-        }
-    }
+	$Apps = foreach ($Site in (Get-IISSite)) {
+		foreach ($App in $Site.Applications) {
+			New-Object -TypeName PSObject -Property @{
+				VirtualPath         = $Site.name + $App.path
+				ApplicationPoolName = $App.ApplicationPoolName
+			}
+		}
+	}
 
-    [array]$Findings = $Apps `
-        | Group-Object -Property ApplicationPoolName `
-        | Where-Object -Property Count -gt 1
+	[array]$Findings = $Apps `
+		| Group-Object -Property ApplicationPoolName `
+		| Where-Object -Property Count -gt 1
 
-    if ($Findings.Count -gt 0) {
-        $message = "Following sites do not have unique Application Pools: " + ($findings.Group.VirtualPath -join ", ")
-        $audit = [AuditStatus]::False
-    }
+	if ($Findings.Count -gt 0) {
+		$message = "Following sites do not have unique Application Pools: " + ($findings.Group.VirtualPath -join ", ")
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "1.5"
-        Task    = "Ensure 'unique application pools' is set for sites"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "1.5"
+		Task    = "Ensure 'unique application pools' is set for sites"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 1.6
 function Test-IISAnonymouseUserIdentity {
-    <#
+	<#
 	.Synopsis
 		Ensure 'application pool identity' is configured for anonymous user identity
 	.Description
 		To achieve isolation in IIS, application pools can be run as separate identities. IIS can be configured to automatically use the application pool identity if no anonymous user account is configured for a Web site. This can greatly reduce the number of accounts needed for Web sites and make management of the accounts easier. It is recommended the Application Pool Identity be set as the Anonymous User Identity.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.webServer/security/authentication/anonymousAuthentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.webServer/security/authentication/anonymousAuthentication"
+		$section = $Configuration.GetSection($path)
 
-        $username = $section | Get-IISConfigAttributeValue -AttributeName "userName"
+		$username = $section | Get-IISConfigAttributeValue -AttributeName "userName"
 
-        if ($username -ne "") {
-            $message = "Username is set to: $username"
-            $audit = [AuditStatus]::False
-        }
+		if ($username -ne "") {
+			$message = "Username is set to: $username"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "1.6"
-            Task    = "Ensure 'application pool identity' is configured for anonymous user identity"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "1.6"
+			Task    = "Ensure 'application pool identity' is configured for anonymous user identity"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 #endregion
@@ -416,427 +416,427 @@ function Test-IISAnonymouseUserIdentity {
 
 # 2.1
 function Test-IISGlobalAuthorization {
-    <#
+	<#
 	.Synopsis
 		Ensure 'global authorization rule' is set to restrict access
 	.Description
 		IIS introduced URL Authorization, which allows the addition of Authorization rules to the actual URL, instead of the underlying file system resource, as a way to protect it. Authorization rules can be configured at the server, web site, folder (including Virtual Directories), or file level. The native URL Authorization module applies to all requests, whether they are .NET managed or other types of files (e.g. static files or ASP files). It is recommended that URL Authorization be configured to only grant access to the necessary security principals.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure URL Authentication is installed
-        if ((Get-WindowsFeature Web-Url-Auth).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/authorization"
-            $section = $Configuration.GetSection($path)
+		# Ensure URL Authentication is installed
+		if ((Get-WindowsFeature Web-Url-Auth).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/authorization"
+			$section = $Configuration.GetSection($path)
 
-            [array]$elements = $section.GetCollection() `
-                | Where-Object {
-                    $accessType = $_ | Get-IISConfigAttributeValue -AttributeName "accessType"
-                    $users = $_ | Get-IISConfigAttributeValue -AttributeName "users"
-                    $roles = $_ | Get-IISConfigAttributeValue -AttributeName "roles"
-                    ($accessType -eq "Allow") -and ($users -eq "*" -or $roles -eq "?")
-                }
+			[array]$elements = $section.GetCollection() `
+				| Where-Object {
+					$accessType = $_ | Get-IISConfigAttributeValue -AttributeName "accessType"
+					$users = $_ | Get-IISConfigAttributeValue -AttributeName "users"
+					$roles = $_ | Get-IISConfigAttributeValue -AttributeName "roles"
+					($accessType -eq "Allow") -and ($users -eq "*" -or $roles -eq "?")
+				}
 
-            if ($elements.Count -ne 0) {
-                $message = "Authorization rule to allow all or anonymous users is set"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "URL Authorization is not installed"
-            $audit = [AuditStatus]::Warning
-        }
+			if ($elements.Count -ne 0) {
+				$message = "Authorization rule to allow all or anonymous users is set"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "URL Authorization is not installed"
+			$audit = [AuditStatus]::Warning
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.1"
-            Task    = "Ensure 'global authorization rule' is set to restrict access"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.1"
+			Task    = "Ensure 'global authorization rule' is set to restrict access"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 
 }
 
 # 2.2
 function Test-IISAuthenticatedPricipals {
-    <#
+	<#
 	.Synopsis
 		Ensure access to sensitive site features is restricted to authenticated principals only
 	.Description
 		IIS supports both challenge-based and login redirection-based authentication methods. Challenge-based authentication methods, such as Integrated Windows Authentication, require a client to respond correctly to a server-initiated challenge. A login redirection-based authentication method such as Forms Authentication relies on redirection to a login page to determine the identity of the principal. Challenge-based authentication and login redirection-based authentication methods cannot be used in conjunction with one another.
 
 		It is recommended that sites containing sensitive information, confidential data, or non-public web services be configured with a credentials-based authentication mechanism.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/authentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/authentication"
+		$section = $Configuration.GetSection($path)
 
-        $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if (($mode -ne "Windows") -and ($mode -ne "Forms")) {
-            $message = "Check authentication principals"
-            $audit = [AuditStatus]::False
-        }
+		if (($mode -ne "Windows") -and ($mode -ne "Forms")) {
+			$message = "Check authentication principals"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.2"
-            Task    = "Ensure access to sensitive site features is restricted to authenticated principals only"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.2"
+			Task    = "Ensure access to sensitive site features is restricted to authenticated principals only"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 
 }
 
 # 2.3
 function Test-IISFormsAuthenticationSSL {
-    <#
+	<#
 	.Synopsis
 		Ensure 'forms authentication' require SSL
 	.Description
 		Forms-based authentication can pass credentials across the network in clear text. It is therefore imperative that the traffic between client and server be encrypted using SSL, especially in cases where the site is publicly accessible. It is recommended that communications with any portion of a site using Forms Authentication be encrypted using SSL.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/authentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/authentication"
+		$section = $Configuration.GetSection($path)
 
-        $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if ((Get-IISModules) -contains "FormsAuthentication") {
-            # Ensure authentication mode is set to Forms
-            if ($mode -eq "Forms") {
+		if ((Get-IISModules) -contains "FormsAuthentication") {
+			# Ensure authentication mode is set to Forms
+			if ($mode -eq "Forms") {
 
-                $requireSSL = $section `
-                    | Get-IISConfigElement -ChildElementName "forms" `
-                    | Get-IISConfigAttributeValue -AttributeName "requireSSL"
+				$requireSSL = $section `
+					| Get-IISConfigElement -ChildElementName "forms" `
+					| Get-IISConfigAttributeValue -AttributeName "requireSSL"
 
-                if (-not $requireSSL) {
-                    $message = "Forms authentication does not require SSL"
-                    $audit = [AuditStatus]::False
-                }
-            }
-        }
-        else {
-            $message = "Forms authentication is not installed"
-            $audit = [AuditStatus]::Warning
-        }
+				if (-not $requireSSL) {
+					$message = "Forms authentication does not require SSL"
+					$audit = [AuditStatus]::False
+				}
+			}
+		}
+		else {
+			$message = "Forms authentication is not installed"
+			$audit = [AuditStatus]::Warning
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.3"
-            Task    = "Ensure 'forms authentication' require SSL"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.3"
+			Task    = "Ensure 'forms authentication' require SSL"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 2.4
 function Test-IISFormsAuthenticationCookies {
-    <#
+	<#
 	.Synopsis
 		Ensure 'forms authentication' is set to use cookies
 	.Description
 		Forms Authentication can be configured to maintain the site visitor's session identifier in either a URI or cookie. It is recommended that Forms Authentication be set to use cookies.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/authentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/authentication"
+		$section = $Configuration.GetSection($path)
 
-        $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if ((Get-IISModules) -contains "FormsAuthentication") {
-            if ($mode -eq "Forms") {
-                $cookieless = $section | Get-IISConfigElement -ChildElementName "forms" `
-                    | Get-IISConfigAttributeValue -AttributeName "cookieless"
+		if ((Get-IISModules) -contains "FormsAuthentication") {
+			if ($mode -eq "Forms") {
+				$cookieless = $section | Get-IISConfigElement -ChildElementName "forms" `
+					| Get-IISConfigAttributeValue -AttributeName "cookieless"
 
-                if ($cookieless -ne "UseCookies") {
-                    $message = "Forms authentication is not set to use cookies"
-                    $audit = [AuditStatus]::False
-                }
-            }
-        }
-        else {
-            $message = "Forms authentication is not installed"
-            $audit = [AuditStatus]::Warning
-        }
+				if ($cookieless -ne "UseCookies") {
+					$message = "Forms authentication is not set to use cookies"
+					$audit = [AuditStatus]::False
+				}
+			}
+		}
+		else {
+			$message = "Forms authentication is not installed"
+			$audit = [AuditStatus]::Warning
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.4"
-            Task    = "Ensure 'forms authentication' is set to use cookies"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.4"
+			Task    = "Ensure 'forms authentication' is set to use cookies"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 2.5
 function Test-IISFormsAuthenticationProtection {
-    <#
+	<#
 	.Synopsis
 		Ensure 'cookie protection mode' is configured for forms authentication
 	.Description
 		The cookie protection mode defines the protection Forms Authentication cookies will be given within a configured application.
 
 		It is recommended that cookie protection mode always encrypt and validate Forms Authentication cookies.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/authentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/authentication"
+		$section = $Configuration.GetSection($path)
 
-        $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if ((Get-IISModules) -contains "FormsAuthentication") {
-            if ($mode -ieq "Forms") {
-                $protection = $section `
-                    | Get-IISConfigElement -ChildElementName "forms" `
-                    | Get-IISConfigAttributeValue -AttributeName "protection"
+		if ((Get-IISModules) -contains "FormsAuthentication") {
+			if ($mode -ieq "Forms") {
+				$protection = $section `
+					| Get-IISConfigElement -ChildElementName "forms" `
+					| Get-IISConfigAttributeValue -AttributeName "protection"
 
-                if ($protection -ne "All") {
-                    $message = "Cookie Protection Mode is not set to ALL"
-                    $audit = [AuditStatus]::False
-                }
-            }
-        }
-        else {
-            $message = "Forms authentication is not installed"
-            $audit = [AuditStatus]::Warning
-        }
+				if ($protection -ne "All") {
+					$message = "Cookie Protection Mode is not set to ALL"
+					$audit = [AuditStatus]::False
+				}
+			}
+		}
+		else {
+			$message = "Forms authentication is not installed"
+			$audit = [AuditStatus]::Warning
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.5"
-            Task    = "Ensure 'cookie protection mode' is configured for forms authentication"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.5"
+			Task    = "Ensure 'cookie protection mode' is configured for forms authentication"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 2.6
 function Test-IISTLSForBasicAuth {
-    <#
+	<#
 	.Synopsis
 		Ensure transport layer security for 'basic authentication' is configured
 	.Description
 		Basic Authentication can pass credentials across the network in clear text. It is therefore imperative that the traffic between client and server be encrypted, especially in cases where the site is publicly accessible and is recommended that TLS be configured and required for any Site or Application using Basic Authentication.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        if ((Get-WindowsFeature Web-Basic-Auth).InstallState -eq [InstallState]::Installed) {
-            [array]$httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
+		if ((Get-WindowsFeature Web-Basic-Auth).InstallState -eq [InstallState]::Installed) {
+			[array]$httpsBindings = $Site.Bindings | Where-Object -Property Protocol -eq "https"
 
-            $sslFlags = Get-IISConfigSection -Location $Site.Name `
-                -SectionPath "system.webServer/security/access" `
-                | Get-IISConfigAttributeValue -AttributeName "sslFlags"
+			$sslFlags = Get-IISConfigSection -Location $Site.Name `
+				-SectionPath "system.webServer/security/access" `
+				| Get-IISConfigAttributeValue -AttributeName "sslFlags"
 
-            # split the flags into an array
-            $sslValues = $sslFlags.Split("{,}")
+			# split the flags into an array
+			$sslValues = $sslFlags.Split("{,}")
 
-            # Ensure ssl-flag is set
-            if (-not ($sslValues -contains "ssl")) {
-                $message = "SSL is not required in configuration"
-                $audit = [AuditStatus]::False
-            }
-            # Ensure site has https bindings
-            elseif ($httpsBindings.Count -eq 0) {
-                $message = "Site has no secure protocol binding"
-                $audit = [AuditStatus]::False
-            }
-        }
+			# Ensure ssl-flag is set
+			if (-not ($sslValues -contains "ssl")) {
+				$message = "SSL is not required in configuration"
+				$audit = [AuditStatus]::False
+			}
+			# Ensure site has https bindings
+			elseif ($httpsBindings.Count -eq 0) {
+				$message = "Site has no secure protocol binding"
+				$audit = [AuditStatus]::False
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.6"
-            Task    = "Ensure transport layer security for 'basic authentication' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.6"
+			Task    = "Ensure transport layer security for 'basic authentication' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 2.7
 function Test-IISPasswordFormatNotClear {
-    <#
+	<#
 	.Synopsis
 		Ensure 'passwordFormat' is not set to clear
 	.Description
 		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended that passwordFormat be set to a value other than Clear, such as SHA1.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/authentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/authentication"
+		$section = $Configuration.GetSection($path)
 
-        $passwordFormat = $section `
-            | Get-IISConfigElement -ChildElementName "forms" `
-            | Get-IISConfigElement -ChildElementName "credentials" `
-            | Get-IISConfigAttributeValue -AttributeName "passwordFormat"
+		$passwordFormat = $section `
+			| Get-IISConfigElement -ChildElementName "forms" `
+			| Get-IISConfigElement -ChildElementName "credentials" `
+			| Get-IISConfigAttributeValue -AttributeName "passwordFormat"
 
-        if ($passwordFormat -eq "Clear" ) {
-            $message = "Credentials passwordFormat set to 'Clear'"
-            $audit = [AuditStatus]::False
-        }
+		if ($passwordFormat -eq "Clear" ) {
+			$message = "Credentials passwordFormat set to 'Clear'"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.7"
-            Task    = "Ensure 'passwordFormat' is not set to clear"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.7"
+			Task    = "Ensure 'passwordFormat' is not set to clear"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 2.7
 function Test-IISPasswordFormatNotClearMachineLevel {
-    <#
+	<#
 	.Synopsis
 		Ensure 'passwordFormat' is not set to clear
 	.Description
 		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended that passwordFormat be set to a value other than Clear, such as SHA1.
-    #>
+	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
-    $passwordFormat = $machineConfig.GetSection("system.web/authentication").forms.credentials.passwordFormat
+	$machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
+	$passwordFormat = $machineConfig.GetSection("system.web/authentication").forms.credentials.passwordFormat
 
-    if ($passwordFormat -eq "Clear" ) {
-        $message = "Credentials passwordFormat set to 'Clear'"
-        $audit = [AuditStatus]::False
-    }
+	if ($passwordFormat -eq "Clear" ) {
+		$message = "Credentials passwordFormat set to 'Clear'"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "2.7"
-        Task    = "Ensure 'passwordFormat' is not set to clear"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "2.7"
+		Task    = "Ensure 'passwordFormat' is not set to clear"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 2.8
 function Test-IISCredentialsNotStored {
-    <#
+	<#
 	.Synopsis
 		Ensure 'credentials' are not stored in configuration files
 	.Description
 		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended to avoid storing passwords in the configuration file even in form of hash.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/authentication"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/authentication"
+		$section = $Configuration.GetSection($path)
 
-        $credentials = $section `
-            | Get-IISConfigElement -ChildElementName "forms" `
-            | Get-IISConfigElement -ChildElementName "credentials"
+		$credentials = $section `
+			| Get-IISConfigElement -ChildElementName "forms" `
+			| Get-IISConfigElement -ChildElementName "credentials"
 
-        if ($credentials.IsLocallyStored) {
-            $message = "'credentials' is stored in configuration"
-            $audit = [AuditStatus]::False
-        }
+		if ($credentials.IsLocallyStored) {
+			$message = "'credentials' is stored in configuration"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "2.8"
-            Task    = "Ensure 'credentials' are not stored in configuration files"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "2.8"
+			Task    = "Ensure 'credentials' are not stored in configuration files"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 2.8
 function Test-IISCredentialsNotStoredMachineLevel {
-    <#
+	<#
 	.Synopsis
 		Ensure 'credentials' are not stored in configuration files
 	.Description
 		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended to avoid storing passwords in the configuration file even in form of hash.
-    #>
+	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
-    $credentials = $machineConfig.GetSection("system.web/authentication").forms.credentials
+	$machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
+	$credentials = $machineConfig.GetSection("system.web/authentication").forms.credentials
 
-    if ($credentials.ElementInformation.IsPresent) {
-        $message = "'credentials' is stored in configuration"
-        $audit = [AuditStatus]::False
-    }
+	if ($credentials.ElementInformation.IsPresent) {
+		$message = "'credentials' is stored in configuration"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "2.8"
-        Task    = "Ensure 'credentials' are not stored in configuration files"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "2.8"
+		Task    = "Ensure 'credentials' are not stored in configuration files"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 #endregion
@@ -847,74 +847,74 @@ function Test-IISCredentialsNotStoredMachineLevel {
 
 # 3.1
 function Test-IISDeploymentMethodRetail {
-    <#
+	<#
 	.Synopsis
 		Ensure 'deployment method retail' is set
 	.Description
 		The <deployment retail> switch is intended for use by production IIS servers. This switch is used to help applications run with the best possible performance and least possible security information leakages by disabling the application's ability to generate trace output on a page, disabling the ability to display detailed error messages to end users, and disabling the debug switch. Often times, switches and options that are developer-focused, such as failed request tracing and debugging, are enabled during active development. It is recommended that the deployment method on any production server be set to retail.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
-    $deployment = $machineConfig.GetSection("system.web/deployment")
+	$machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
+	$deployment = $machineConfig.GetSection("system.web/deployment")
 
-    if (-not $deployment.retail) {
-        $message = "retail is not enabled in machine.config"
-        $audit = [AuditStatus]::False
-    }
+	if (-not $deployment.retail) {
+		$message = "retail is not enabled in machine.config"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "3.1"
-        Task    = "Ensure 'deployment method retail' is set"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "3.1"
+		Task    = "Ensure 'deployment method retail' is set"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 3.2
 function Test-IISDebugOff {
-    <#
+	<#
 	.Synopsis
 		Ensure 'debug' is turned off
 	.Description
 		Developers often enable the debug mode during active ASP.NET development so that they do not have to continually clear their browsers cache every time they make a change to a resource handler. The problem would arise from this being left "on" or set to "true". Compilation debug output is displayed to the end user, allowing malicious persons to obtain detailed information about applications.
 
 		is recommended that debugging still be turned off.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/compilation"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/compilation"
+		$section = $Configuration.GetSection($path)
 
-        $debug = $section | Get-IISConfigAttributeValue -AttributeName "debug"
+		$debug = $section | Get-IISConfigAttributeValue -AttributeName "debug"
 
-        if ($debug) {
-            $message = "Debug is ON"
-            $audit = [AuditStatus]::False
-        }
+		if ($debug) {
+			$message = "Debug is ON"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.2"
-            Task    = "Ensure 'debug' is turned off"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.2"
+			Task    = "Ensure 'debug' is turned off"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.3
 function Test-IISCustomErrorsNotOff {
-    <#
+	<#
 	.Synopsis
 		Ensure custom error messages are not off
 	.Description
@@ -923,260 +923,260 @@ function Test-IISCustomErrorsNotOff {
 		It is recommended that customErrors still be turned to On or RemoteOnly.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/customErrors"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/customErrors"
+		$section = $Configuration.GetSection($path)
 
-        $mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-        if ($mode -eq "Off") {
-            $message = "Custom errors are 'OFF'"
-            $audit = [AuditStatus]::False
-        }
+		if ($mode -eq "Off") {
+			$message = "Custom errors are 'OFF'"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.3"
-            Task    = "Ensure custom error messages are not off"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.3"
+			Task    = "Ensure custom error messages are not off"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.4
 function Test-IISHttpErrorsHidden {
-    <#
+	<#
 	.Synopsis
 		Ensure IIS HTTP detailed errors are hidden from displaying remotely
 	.Description
 		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.webServer/httpErrors"
-        $section = $Configuration.GetSection($path)
+		$path = "system.webServer/httpErrors"
+		$section = $Configuration.GetSection($path)
 
-        $errorMode = $section | Get-IISConfigAttributeValue -AttributeName "errorMode"
+		$errorMode = $section | Get-IISConfigAttributeValue -AttributeName "errorMode"
 
-        if (($errorMode -ne "Custom") -and ($errorMode -ne "DetailedLocalOnly")) {
-            $message = "HTTP detailed errors are set to 'Detailed'"
-            $audit = [AuditStatus]::False
-        }
+		if (($errorMode -ne "Custom") -and ($errorMode -ne "DetailedLocalOnly")) {
+			$message = "HTTP detailed errors are set to 'Detailed'"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.4"
-            Task    = "Ensure IIS HTTP detailed errors are hidden from displaying remotely"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.4"
+			Task    = "Ensure IIS HTTP detailed errors are hidden from displaying remotely"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.5
 function Test-IISAspNetTracingDisabled {
-    <#
-	.Synopsis
-		Ensure ASP.NET stack tracing is not enabled
-	.Description
-		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
-    #>
-
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
-
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
-
-        $path = "system.web/trace"
-        $section = $Configuration.GetSection($path)
-
-        $traceEnabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
-
-        if ($traceEnabled) {
-            $message = "trace is enabled"
-            $audit = [AuditStatus]::FALSE
-        }
-
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.5"
-            Task    = "Ensure ASP.NET stack tracing is not enabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
-}
-
-# 3.5
-function Test-IISAspNetTracingDisabledMachineLevel {
-    <#
+	<#
 	.Synopsis
 		Ensure ASP.NET stack tracing is not enabled
 	.Description
 		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    $machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
-    $trace = $machineConfig.GetSection("system.web/trace")
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-    if ($trace.enabled) {
-        $message = "trace is enabled in machine.config"
-        $audit = [AuditStatus]::FALSE
-    }
+		$path = "system.web/trace"
+		$section = $Configuration.GetSection($path)
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "3.5"
-        Task    = "Ensure ASP.NET stack tracing is not enabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+		$traceEnabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
+
+		if ($traceEnabled) {
+			$message = "trace is enabled"
+			$audit = [AuditStatus]::FALSE
+		}
+
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.5"
+			Task    = "Ensure ASP.NET stack tracing is not enabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
+}
+
+# 3.5
+function Test-IISAspNetTracingDisabledMachineLevel {
+	<#
+	.Synopsis
+		Ensure ASP.NET stack tracing is not enabled
+	.Description
+		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
+	#>
+
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
+
+	$machineConfig = [System.Configuration.ConfigurationManager]::OpenMachineConfiguration()
+	$trace = $machineConfig.GetSection("system.web/trace")
+
+	if ($trace.enabled) {
+		$message = "trace is enabled in machine.config"
+		$audit = [AuditStatus]::FALSE
+	}
+
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "3.5"
+		Task    = "Ensure ASP.NET stack tracing is not enabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 3.6
 function Test-IISCookielessSessionState {
-    <#
+	<#
 	.Synopsis
 		Ensure 'httpcookie' mode is configured for session state
 	.Description
 		A session cookie associates session information with client information for that session, which can be the duration of a user's connection to a site. The cookie is passed in a HTTP header together with all requests between the client and server.
 
 		It is recommended that session state be configured to UseCookies.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/sessionState"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/sessionState"
+		$section = $Configuration.GetSection($path)
 
-        $cookieless = $section | Get-IISConfigAttributeValue -AttributeName "cookieless"
+		$cookieless = $section | Get-IISConfigAttributeValue -AttributeName "cookieless"
 
-        if (($cookieless -ne "UseCookies") -and ($cookieless -ne "False")) {
-            $message = "sessionState set to $cookieless"
-            $audit = [AuditStatus]::False
-        }
+		if (($cookieless -ne "UseCookies") -and ($cookieless -ne "False")) {
+			$message = "sessionState set to $cookieless"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.6"
-            Task    = "Ensure 'httpcookie' mode is configured for session state"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.6"
+			Task    = "Ensure 'httpcookie' mode is configured for session state"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.7
 function Test-IISCookiesHttpOnly {
-    <#
+	<#
 	.Synopsis
 		Ensure 'cookies' are set with HttpOnly attribute
 	.Description
 		The httpOnlyCookies attribute of the httpCookies node determines if IIS will set the HttpOnly flag on HTTP cookies it sets. The HttpOnly flag indicates to the user agent that the cookie must not be accessible by client-side script (i.e document.cookie). It is recommended that the httpOnlyCookies attribute be set to true.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $path = "system.web/httpCookies"
-        $section = $Configuration.GetSection($path)
+		$path = "system.web/httpCookies"
+		$section = $Configuration.GetSection($path)
 
-        $httpOnlyCookies = $section | Get-IISConfigAttributeValue -AttributeName "httpOnlyCookies"
+		$httpOnlyCookies = $section | Get-IISConfigAttributeValue -AttributeName "httpOnlyCookies"
 
-        if (-not $httpOnlyCookie) {
-            $message = "httpOnlyCookies set to $httpOnlyCookies"
-            $audit = [AuditStatus]::False
-        }
+		if (-not $httpOnlyCookie) {
+			$message = "httpOnlyCookies set to $httpOnlyCookies"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.7"
-            Task    = "Ensure 'cookies' are set with HttpOnly attribute"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.7"
+			Task    = "Ensure 'cookies' are set with HttpOnly attribute"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.8
 function Test-IISMachineKeyValidation {
-    <#
+	<#
 	.Synopsis
 		Ensure 'MachineKey validation method - .Net 3.5' is configured
 	.Description
 		The machineKey element of the ASP.NET web.config specifies the algorithm and keys that ASP.NET will use for encryption. The Machine Key feature can be managed to specify hashing and encryption settings for application services such as view state, Forms authentication, membership and roles, and anonymous identification.
 
 		It is recommended that AES or SHA1 methods be configured for use at the global level.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $siteAppPool = $Site.Applications["/"].ApplicationPoolName
-        $appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
+		$siteAppPool = $Site.Applications["/"].ApplicationPoolName
+		$appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
 
-        # Ensure  ApplicationPool running is .NET 3.5 (which is an extension of 2.0 so we look for 2.*)
-        if ($appPoolVersion -like "v2.*") {
+		# Ensure  ApplicationPool running is .NET 3.5 (which is an extension of 2.0 so we look for 2.*)
+		if ($appPoolVersion -like "v2.*") {
 
-            $validation = Get-IISConfigSection -CommitPath $Site.Name `
-                -SectionPath "system.web/machineKey" `
-                | Get-IISConfigAttributeValue -AttributeName "Validation"
+			$validation = Get-IISConfigSection -CommitPath $Site.Name `
+				-SectionPath "system.web/machineKey" `
+				| Get-IISConfigAttributeValue -AttributeName "Validation"
 
-            if ($validation -ne "SHA1") {
-                $message = "Validation set to $validation"
-                $audit = [AuditStatus]::False
-            }
-        }
+			if ($validation -ne "SHA1") {
+				$message = "Validation set to $validation"
+				$audit = [AuditStatus]::False
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.8"
-            Task    = "Ensure 'MachineKey validation method - .Net 3.5' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.8"
+			Task    = "Ensure 'MachineKey validation method - .Net 3.5' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.9
 function Test-IISMachineKeyValidationV45 {
-    <#
+	<#
 	.Synopsis
 		Ensure 'MachineKey validation method - .Net 4.5' is configured
 	.Description
@@ -1185,42 +1185,42 @@ function Test-IISMachineKeyValidationV45 {
 		It is recommended that SHA-2 methods be configured for use at the global level.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $siteAppPool = $site.Applications["/"].ApplicationPoolName
-        $appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
+		$siteAppPool = $site.Applications["/"].ApplicationPoolName
+		$appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
 
-        # Ensure an ApplicationPool is running .NET 4.5
-        if ($appPoolVersion -like "v4.*") {
-            $validation = Get-IISConfigSection -CommitPath $Site.name `
-                -SectionPath "system.web/machineKey" `
-                | Get-IISConfigAttributeValue -AttributeName "Validation"
+		# Ensure an ApplicationPool is running .NET 4.5
+		if ($appPoolVersion -like "v4.*") {
+			$validation = Get-IISConfigSection -CommitPath $Site.name `
+				-SectionPath "system.web/machineKey" `
+				| Get-IISConfigAttributeValue -AttributeName "Validation"
 
-            if (($validation -ne "HMACSHA256") -and ($validation -ne "HMACSHA512")) {
-                $message = "Validation set to $validation"
-                $audit = [AuditStatus]::False
-            }
-        }
+			if (($validation -ne "HMACSHA256") -and ($validation -ne "HMACSHA512")) {
+				$message = "Validation set to $validation"
+				$audit = [AuditStatus]::False
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.9"
-            Task    = "Ensure 'MachineKey validation method - .Net 4.5' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.9"
+			Task    = "Ensure 'MachineKey validation method - .Net 4.5' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 3.10
 function Test-IISDotNetTrustLevel {
-    <#
+	<#
 	.Synopsis
 		Ensure global .NET trust level is configured
 	.Description
@@ -1229,37 +1229,37 @@ function Test-IISDotNetTrustLevel {
 		It is recommended that the global .NET Trust Level be set to Medium or lower.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        $siteAppPool = $site.Applications["/"].ApplicationPoolName
-        $appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
+		$siteAppPool = $site.Applications["/"].ApplicationPoolName
+		$appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
 
-        $level = Get-IISConfigSection -CommitPath $Site.name `
-            -SectionPath "system.web/trust" `
-            | Get-IISConfigAttributeValue -AttributeName "level"
+		$level = Get-IISConfigSection -CommitPath $Site.name `
+			-SectionPath "system.web/trust" `
+			| Get-IISConfigAttributeValue -AttributeName "level"
 
-        if (($level -ne "medium") `
-                -or (-not ($appPoolVersion -like "v2.*")) `
-                -or (-not $appPoolVersion -like "v4.*")) {
+		if (($level -ne "medium") `
+				-or (-not ($appPoolVersion -like "v2.*")) `
+				-or (-not $appPoolVersion -like "v4.*")) {
 
-            $message = "TrustLevel set to $level"
-            $audit = [AuditStatus]::False
-        }
+			$message = "TrustLevel set to $level"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "3.10"
-            Task    = "Ensure global .NET trust level is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "3.10"
+			Task    = "Ensure global .NET trust level is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 #endregion
@@ -1271,482 +1271,502 @@ function Test-IISDotNetTrustLevel {
 
 # 4.1
 function Test-IISMaxAllowedContentLength {
-    <#
+	<#
 	.Synopsis
 		Ensure 'maxAllowedContentLength' is configured
 	.Description
 		The maxAllowedContentLength Request Filter is the maximum size of the http request, measured in bytes, which can be sent from a client to the server. Configuring this value enables the total request size to be restricted to a configured value. It is recommended that the overall size of requests be restricted to a maximum value appropriate for the server, site, or application.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure request filering is installed
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
-            $section = $Configuration.GetSection($path)
+		# Ensure request filering is installed
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
+			$section = $Configuration.GetSection($path)
 
-            $maxContentLength = $section `
-                | Get-IISConfigElement -ChildElementName "requestLimits" `
-                | Get-IISConfigAttributeValue -AttributeName "maxAllowedContentLength"
+			$maxContentLength = $section `
+				| Get-IISConfigElement -ChildElementName "requestLimits" `
+				| Get-IISConfigAttributeValue -AttributeName "maxAllowedContentLength"
 
-            if ($maxContentLength -ge 0) {
-                $message += "`n maxContentLength: $maxContentLength"
-            }
-            else {
-                $message = "maxContentLength not configured"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "Request Filering is not installed"
-            $audit = [AuditStatus]::False
-        }
+			if ($maxContentLength -ge 0) {
+				$message += "`n maxContentLength: $maxContentLength"
+			}
+			else {
+				$message = "maxContentLength not configured"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.1"
-            Task    = "Ensure 'maxAllowedContentLength' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.1"
+			Task    = "Ensure 'maxAllowedContentLength' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.2
 function Test-IISMaxURLRequestFilter {
-    <#
+	<#
 	.Synopsis
 		Ensure 'maxURL request filter' is configured
 	.Description
 		The maxURL attribute of the <requestLimits> property is the maximum length (in Bytes) in which a requested URL can be (excluding query string) in order for IIS to accept. Configuring this Request Filter enables administrators to restrict the length of the requests that the server will accept. It is recommended that a limit be put on the length of URL.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure request filering is installed
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
-            $section = $Configuration.GetSection($path)
+		# Ensure request filering is installed
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
+			$section = $Configuration.GetSection($path)
 
-            $maxURLRequestFilter = $section `
-                | Get-IISConfigElement -ChildElementName "requestLimits" `
-                | Get-IISConfigAttributeValue -AttributeName "maxURL"
+			$maxURLRequestFilter = $section `
+				| Get-IISConfigElement -ChildElementName "requestLimits" `
+				| Get-IISConfigAttributeValue -AttributeName "maxURL"
 
-            if ($maxURLRequestFilter -ge 1) {
-                $message += "`n maxURLRequestFilter: $maxURLRequestFilter"
-            }
-            else {
-                $message = "maxURLRequestFilter not configured"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "Request Filering is not installed"
-            $audit = [AuditStatus]::False
-        }
+			if ($maxURLRequestFilter -ge 1) {
+				$message += "`n maxURLRequestFilter: $maxURLRequestFilter"
+			}
+			else {
+				$message = "maxURLRequestFilter not configured"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
+		}
 
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.2"
-            Task    = "Ensure 'maxURL request filter' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.2"
+			Task    = "Ensure 'maxURL request filter' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.3
 function Test-IISMaxQueryStringRequestFilter {
-    <#
+	<#
 	.Synopsis
 		Ensure 'MaxQueryString request filter' is configured
 	.Description
 		The MaxQueryString Request Filter describes the upper limit on the length of the query string that the configured IIS server will allow for websites or applications. It is recommended that values always be established to limit the amount of data will can be accepted in the query string.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure request filering is installed
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
-            $section = $Configuration.GetSection($path)
+		# Ensure request filering is installed
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
+			$section = $Configuration.GetSection($path)
 
-            $maxQueryStringRequestFilter = $section `
-                | Get-IISConfigElement -ChildElementName "requestLimits" `
-                | Get-IISConfigAttributeValue -AttributeName "maxQueryString"
+			$maxQueryStringRequestFilter = $section `
+				| Get-IISConfigElement -ChildElementName "requestLimits" `
+				| Get-IISConfigAttributeValue -AttributeName "maxQueryString"
 
-            if ($maxQueryStringRequestFilter -ge 1) {
-                $message += "`n maxQueryStringRequestFilter: $maxQueryStringRequestFilter"
-            }
-            else {
-                $message = "maxQueryStringRequestFilter not configured"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "Request Filering is not installed"
-            $audit = [AuditStatus]::False
-        }
+			if ($maxQueryStringRequestFilter -ge 1) {
+				$message += "`n maxQueryStringRequestFilter: $maxQueryStringRequestFilter"
+			}
+			else {
+				$message = "maxQueryStringRequestFilter not configured"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.3"
-            Task    = "Ensure 'MaxQueryString request filter' is configured"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.3"
+			Task    = "Ensure 'MaxQueryString request filter' is configured"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.4
 function Test-IISNonASCIICharURLForbidden {
-    <#
+	<#
 	.Synopsis
 		Ensure non-ASCII characters in URLs are not allowed
 	.Description
 		This feature is used to allow or reject all requests to IIS that contain non-ASCII characters. When using this feature, Request Filtering will deny the request if high-bit characters are present in the URL. The UrlScan equivalent is AllowHighBitCharacters. It is recommended that requests containing non-ASCII characters be rejected, where possible.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure request filering is installed
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
-            $section = $Configuration.GetSection($path)
+		# Ensure request filering is installed
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
+			$section = $Configuration.GetSection($path)
 
-            $allowHighBitCharacters = $section `
-                | Get-IISConfigAttributeValue -AttributeName "allowHighBitCharacters"
+			$allowHighBitCharacters = $section `
+				| Get-IISConfigAttributeValue -AttributeName "allowHighBitCharacters"
 
-            if ($allowHighBitCharacters) {
-                $message = "non-ASCII characters in URLs are allowed"
-                $audit = [AuditStatus]::False
-            }
-            else {
-                $message = "Request Filering is not installed"
-                $audit = [AuditStatus]::False
-            }
-        }
+			if ($allowHighBitCharacters) {
+				$message = "non-ASCII characters in URLs are allowed"
+				$audit = [AuditStatus]::False
+			}
+			else {
+				$message = "Request Filering is not installed"
+				$audit = [AuditStatus]::False
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.4"
-            Task    = "Ensure non-ASCII characters in URLs are not allowed"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.4"
+			Task    = "Ensure non-ASCII characters in URLs are not allowed"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.5
 function Test-IISRejectDoubleEncodedRequests {
-    <#
+	<#
 	.Synopsis
 		Ensure Double-Encoded requests will be rejected
 	.Description
 		This Request Filter feature prevents attacks that rely on double-encoded requests and applies if an attacker submits a double-encoded request to IIS. When the double-encoded requests filter is enabled, IIS will go through a two iteration process of normalizing the request. If the first normalization differs from the second, the request is rejected and the error code is logged as a 404.11. The double-encoded requests filter was the VerifyNormalization option in UrlScan. It is recommended that double-encoded requests be rejected.
-    #>
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	#>
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure request filering is installed
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
-            $section = $Configuration.GetSection($path)
+		# Ensure request filering is installed
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
+			$section = $Configuration.GetSection($path)
 
-            $allowDoubleEscaping = $section`
-                | Get-IISConfigAttributeValue -AttributeName "allowDoubleEscaping"
+			$allowDoubleEscaping = $section`
+				| Get-IISConfigAttributeValue -AttributeName "allowDoubleEscaping"
 
-            if ($allowDoubleEscaping) {
-                $message = "Rejecting Double-Encoded requests not set"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "Request Filering is not installed"
-            $audit = [AuditStatus]::False
-        }
+			if ($allowDoubleEscaping) {
+				$message = "Rejecting Double-Encoded requests not set"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.5"
-            Task    = "Ensure Double-Encoded requests will be rejected"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.5"
+			Task    = "Ensure Double-Encoded requests will be rejected"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.6
 function Test-IISHTTPTraceMethodeDisabled {
-    <#
+	<#
 	.Synopsis
 		Ensure 'HTTP Trace Method' is disabled
 	.Description
 		The HTTP TRACE method returns the contents of client HTTP requests in the entity-body of the TRACE response. Attackers could leverage this behavior to access sensitive information, such as authentication data or cookies, contained in the HTTP headers of the request. One such way to mitigate this is by using the <verbs> element of the <requestFiltering> collection. The <verbs> element replaces the [AllowVerbs] and [DenyVerbs] features in UrlScan. It is recommended the HTTP TRACE method be denied.
 	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = "HTTP Trace Method is not filtered"
-        $audit = [AuditStatus]::False
+	process {
+		$message = "HTTP Trace Method is not filtered"
+		$audit = [AuditStatus]::False
 
-        # Ensure request filering is installed
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
-            $section = $Configuration.GetSection($path)
+		# Ensure request filering is installed
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
+			$section = $Configuration.GetSection($path)
 
-            [array]$httpTraceMethod = $section.GetCollection("verbs") `
-                | Where-Object {
-                    $trace = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
-                    $allowed = $_ | Get-IISConfigAttributeValue -AttributeName "allowed"
-                    ($trace -eq "trace") -and (-not $allowed)
-                }
+			[array]$httpTraceMethod = $section.GetCollection("verbs") `
+				| Where-Object {
+					$trace = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
+					$allowed = $_ | Get-IISConfigAttributeValue -AttributeName "allowed"
+					($trace -eq "trace") -and (-not $allowed)
+				}
 
-            if ($httpTraceMethod.Count -eq 1) {
-                $message = $MESSAGE_ALLGOOD
-                $audit = [AuditStatus]::True
-            }
-        }
-        else {
-            $message = "Request Filering is not installed"
-            $audit = [AuditStatus]::False
-        }
+			if ($httpTraceMethod.Count -eq 1) {
+				$message = $MESSAGE_ALLGOOD
+				$audit = [AuditStatus]::True
+			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.6"
-            Task    = "Ensure 'HTTP Trace Method' is disabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.6"
+			Task    = "Ensure 'HTTP Trace Method' is disabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.7
 function Test-IISBlockUnlistedFileExtensions {
-    <#
+	<#
 	.Synopsis
 		Ensure Unlisted File Extensions are not allowed
 	.Description
 		The FileExtensions Request Filter allows administrators to define specific extensions their web server(s) will allow and disallow. The property allowUnlisted will cover all other file extensions not explicitly allowed or denied. Often times, extensions such as .config, .bat, .exe, to name a few, should never be served. The AllowExtensions and DenyExtensions options are the UrlScan equivalents. It is recommended that all extensions be unallowed at the most global level possible, with only those necessary being allowed.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-            $path = "system.webServer/security/requestFiltering"
+		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+			$path = "system.webServer/security/requestFiltering"
 
-            $section = $Configuration.GetSection($path)
+			$section = $Configuration.GetSection($path)
 
-            $allowUnlisted = $section `
-                | Get-IISConfigElement -ChildElementName "fileExtensions" `
-                | Get-IISConfigAttributeValue -AttributeName "allowUnlisted"
+			$allowUnlisted = $section `
+				| Get-IISConfigElement -ChildElementName "fileExtensions" `
+				| Get-IISConfigAttributeValue -AttributeName "allowUnlisted"
 
 
-            if ($allowUnlisted) {
-                $message = "Unlisted file extensions allowed"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "Request Filering is not installed"
-            $audit = [AuditStatus]::False
-        }
+			if ($allowUnlisted) {
+				$message = "Unlisted file extensions allowed"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.7"
-            Task    = "Ensure Unlisted File Extensions are not allowed"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.7"
+			Task    = "Ensure Unlisted File Extensions are not allowed"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.8
 function Test-IISHandlerDenyWrite {
-    <#
+	<#
 	.Synopsis
 		Ensure Handler is not granted Write and Script/Execute
 	.Description
 		Handler mappings can be configured to give permissions to Read, Write, Script, or Execute depending on what the use is for - reading static content, uploading files, executing scripts, etc. It is recommended to grant a handler either Execute/``Script or Write permissions, but not both.
 	#>
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "4.8"
-        Task    = "Ensure Handler is not granted Write and Script/Execute"
-        Message = "Test not implemented yet."
-        Audit   = [AuditStatus]::None
-    } | Write-Output
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
+
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
+
+		$path = "system.webServer/handlers"
+		$section = $Configuration.GetSection($path)
+		$accessPolicy = ($section | Get-IISConfigAttributeValue -AttributeName "accessPolicy").Split(",")
+
+		if ((($accessPolicy -contains "Script") -or ($accessPolicy -contains "Execute")) `
+			-and ($accessPolicy -contains "Write")) {
+			$message = "Handler is granted write and script/execute"
+			$audit = [AuditStatus]::False
+		}
+
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.8"
+			Task    = "Ensure Handler is not granted Write and Script/Execute"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.9
 function Test-IISIsapisNotAllowed {
-    <#
+	<#
 	.Synopsis
 		Ensure 'notListedIsapisAllowed' is set to false
 	.Description
 		The notListedIsapisAllowed attribute is a server-level setting that is located in the ApplicationHost.config file in the <isapiCgiRestriction> element of the <system.webServer> section under <security>. This element ensures that malicious users cannot copy unauthorized ISAPI binaries to the Web server and then run them. It is recommended that notListedIsapisAllowed be set to false.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $isapiCgiRestriction = Get-IISConfigSection `
-            -SectionPath "system.webServer/security/isapiCgiRestriction" `
-            | Get-IISConfigAttributeValue -AttributeName "notListedIsapisAllowed"
+	try {
+		$isapiCgiRestriction = Get-IISConfigSection `
+			-SectionPath "system.webServer/security/isapiCgiRestriction" `
+			| Get-IISConfigAttributeValue -AttributeName "notListedIsapisAllowed"
 
-        # Verify that the notListedIsapisAllowed attribute in the <isapiCgiRestriction> element is set to false
-        if ($isapiCgiRestriction) {
-            $message = "IsapiCgiRestriction 'notListedIsapisAllowed' not set to false"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        $message = "Cannot get setting 'notListedIsapisAllowed' for IsapiCgiRestriction"
-        $audit = [AuditStatus]::False
-    }
+		# Verify that the notListedIsapisAllowed attribute in the <isapiCgiRestriction> element is set to false
+		if ($isapiCgiRestriction) {
+			$message = "IsapiCgiRestriction 'notListedIsapisAllowed' not set to false"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		$message = "Cannot get setting 'notListedIsapisAllowed' for IsapiCgiRestriction"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "4.9"
-        Task    = "Ensure 'notListedIsapisAllowed' is set to false"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "4.9"
+		Task    = "Ensure 'notListedIsapisAllowed' is set to false"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 4.10
 function Test-IISCgisNotAllowed {
-    <#
+	<#
 	.Synopsis
 		Ensure 'notListedCgisAllowed' is set to false
 	.Description
 		The notListedCgisAllowed attribute is a server-level setting that is located in the ApplicationHost.config file in the <isapiCgiRestriction> element of the <system.webServer> section under <security>. This element ensures that malicious users cannot copy unauthorized CGI binaries to the Web server and then run them. It is recommended that notListedCgisAllowed be set to false.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $isapiCgiRestriction = Get-IISConfigSection `
-            -SectionPath "system.webServer/security/isapiCgiRestriction" `
-            | Get-IISConfigAttributeValue -AttributeName "notListedCgisAllowed"
+	try {
+		$isapiCgiRestriction = Get-IISConfigSection `
+			-SectionPath "system.webServer/security/isapiCgiRestriction" `
+			| Get-IISConfigAttributeValue -AttributeName "notListedCgisAllowed"
 
-        # Verify that the notListedCgisAllowed attribute in the <isapiCgiRestriction> element is set to false
-        if ($isapiCgiRestriction) {
-            $message = "IsapiCgiRestriction 'notListedCgisAllowed' not set to false"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        $message = "Cannot get setting 'notListedCgisAllowed' for IsapiCgiRestriction"
-        $audit = [AuditStatus]::False
-    }
+		# Verify that the notListedCgisAllowed attribute in the <isapiCgiRestriction> element is set to false
+		if ($isapiCgiRestriction) {
+			$message = "IsapiCgiRestriction 'notListedCgisAllowed' not set to false"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		$message = "Cannot get setting 'notListedCgisAllowed' for IsapiCgiRestriction"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "4.10"
-        Task    = "Ensure 'notListedCgisAllowed' is set to false"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "4.10"
+		Task    = "Ensure 'notListedCgisAllowed' is set to false"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 4.11
 function Test-IISDynamicIPRestrictionEnabled {
-    <#
+	<#
 	.Synopsis
 		Ensure 'Dynamic IP Address Restrictions' is enabled
 	.Description
 		IIS Dynamic IP Address Restrictions capability can be used to thwart DDos attacks. This is complimentary to the IP Addresses and Domain names Restrictions lists that can be manually maintained within IIS. In contrast, Dynamic IP address filtering allows administrators to configure the server to block access for IPs that exceed the specified request threshold. The default action Deny action for restrictions is to return a Forbidden response to the client.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        # Ensure the windows feature is installed
-        if ((Get-WindowsFeature Web-Ip-Security).InstallState -ne [InstallState]::Installed) {
-            $message = "`"IP and Domain Restrictions`" must be installed to enabled `"Dynamic IP Address Restrictions`""
-            $audit = [AuditStatus]::False
-        }
-        else {
-            $dynamicIpSecurity = Get-IISConfigSection -Location $Site.Name `
-                -SectionPath "system.webServer/security/dynamicIpSecurity"
+		# Ensure the windows feature is installed
+		if ((Get-WindowsFeature Web-Ip-Security).InstallState -ne [InstallState]::Installed) {
+			$message = "`"IP and Domain Restrictions`" must be installed to enabled `"Dynamic IP Address Restrictions`""
+			$audit = [AuditStatus]::False
+		}
+		else {
+			$dynamicIpSecurity = Get-IISConfigSection -Location $Site.Name `
+				-SectionPath "system.webServer/security/dynamicIpSecurity"
 
-            $denyByConcurrentRequests = $dynamicIpSecurity `
-                | Get-IISConfigElement -ChildElementName "denyByConcurrentRequests" `
-                | Get-IISConfigAttributeValue -AttributeName "enabled"
+			$denyByConcurrentRequests = $dynamicIpSecurity `
+				| Get-IISConfigElement -ChildElementName "denyByConcurrentRequests" `
+				| Get-IISConfigAttributeValue -AttributeName "enabled"
 
-            $denyByRequestRate = $dynamicIpSecurity `
-                | Get-IISConfigElement -ChildElementName "denyByRequestRate" `
-                | Get-IISConfigAttributeValue -AttributeName "enabled"
+			$denyByRequestRate = $dynamicIpSecurity `
+				| Get-IISConfigElement -ChildElementName "denyByRequestRate" `
+				| Get-IISConfigAttributeValue -AttributeName "enabled"
 
-            if ($denyByConcurrentRequests -and -not $denyByRequestRate) {
-                $message = "Deny IP Address based on the number of requests over a period of time disabled"
-                $audit = [AuditStatus]::False
-            }
-            elseif (-not $denyByConcurrentRequests -and $denyByRequestRate) {
-                $message = "Deny IP Address based on the number of concurrent requests disabled"
-                $audit = [AuditStatus]::False
-            }
-            elseif (-not $denyByConcurrentRequests -and -not $denyByRequestRate) {
-                $message = "Dynamic IP Restriction disabled"
-                $audit = [AuditStatus]::False
-            }
-        }
+			if ($denyByConcurrentRequests -and -not $denyByRequestRate) {
+				$message = "Deny IP Address based on the number of requests over a period of time disabled"
+				$audit = [AuditStatus]::False
+			}
+			elseif (-not $denyByConcurrentRequests -and $denyByRequestRate) {
+				$message = "Deny IP Address based on the number of concurrent requests disabled"
+				$audit = [AuditStatus]::False
+			}
+			elseif (-not $denyByConcurrentRequests -and -not $denyByRequestRate) {
+				$message = "Dynamic IP Restriction disabled"
+				$audit = [AuditStatus]::False
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "4.11"
-            Task    = "Ensure 'Dynamic IP Address Restrictions' is enabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.11"
+			Task    = "Ensure 'Dynamic IP Address Restrictions' is enabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 #endregion
@@ -1757,87 +1777,87 @@ function Test-IISDynamicIPRestrictionEnabled {
 
 # 5.1
 function Test-IISLogFileLocation {
-    <#
+	<#
 	.Synopsis
 		Ensure Default IIS web log location is moved
 	.Description
 		IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $logFileLocation = ($Site.logFile.Directory).replace("%SystemDrive%", $env:SystemDrive)
+	process {
+		$logFileLocation = ($Site.logFile.Directory).replace("%SystemDrive%", $env:SystemDrive)
 
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        if ($logFileLocation.StartsWith($env:SystemDrive)) {
-            $message = "Logfile location is on system drive: $logFileLocation"
-            $audit = [AuditStatus]::False
-        }
+		if ($logFileLocation.StartsWith($env:SystemDrive)) {
+			$message = "Logfile location is on system drive: $logFileLocation"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "5.1"
-            Task    = "Ensure Default IIS web log location is moved"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "5.1"
+			Task    = "Ensure Default IIS web log location is moved"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 5.2
 function Test-IISAdvancedLoggingEnabled {
-    <#
+	<#
 	.Synopsis
 		Ensure Advanced IIS logging is enabled
 	.Description
 		IIS Advanced Logging is a module which provides flexibility in logging requests and client data. It provides controls that allow businesses to specify what fields are important, easily add additional fields, and provide policies pertaining to log file rollover and Request Filtering. HTTP request/response headers, server variables, and client-side fields can be easily logged with minor configuration in the IIS management console. It is recommended that Advanced Logging be enabled, and the fields which could be of value to the type of business or application in the event of a security incident, be identified and logged.
 	#>
 
-    # check site defaults
+	# check site defaults
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "5.2"
-        Task    = "Ensure Advanced IIS logging is enabled"
-        Message = "Advanced Logging is not available for IIS 10. See enhanced logging instead."
-        Audit   = [AuditStatus]::None
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "5.2"
+		Task    = "Ensure Advanced IIS logging is enabled"
+		Message = "Advanced Logging is not available for IIS 10. See enhanced logging instead."
+		Audit   = [AuditStatus]::None
+	} | Write-Output
 }
 
 # 5.3
 function Test-IISETWLoggingEnabled {
-    <#
+	<#
 	.Synopsis
 		Ensure 'ETW Logging' is enabled
 	.Description
 		IIS introduces a new logging method. Administrators can now send logging information to Event Tracing for Windows (ETW)
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        if (-not ($Site.logFile.logTargetW3C -like "*ETW*")) {
-            $message = "ETW Logging disabled"
-            $audit = [AuditStatus]::False
-        }
+		if (-not ($Site.logFile.logTargetW3C -like "*ETW*")) {
+			$message = "ETW Logging disabled"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "5.3"
-            Task    = "Ensure 'ETW Logging' is enabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "5.3"
+			Task    = "Ensure 'ETW Logging' is enabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 #endregion
@@ -1848,134 +1868,134 @@ function Test-IISETWLoggingEnabled {
 
 # 6.0
 function Test-IISFtpIsDisabled {
-    <#
+	<#
 	.Synopsis
 		Ensure FTP is disabled
 	.Description
 
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        [array]$ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
+		[array]$ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
 
-        if ($ftpBindings.Count -gt 0) {
-            $message = "FTP is not disabled"
-            $audit = [AuditStatus]::False
-        }
+		if ($ftpBindings.Count -gt 0) {
+			$message = "FTP is not disabled"
+			$audit = [AuditStatus]::False
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "6.0"
-            Task    = "Ensure FTP is disabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "6.0"
+			Task    = "Ensure FTP is disabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 6.1
 function Test-IISFtpRequestsEncrypted {
-    <#
+	<#
 	.Synopsis
 		Ensure FTP requests are encrypted
 	.Description
 		The new FTP Publishing Service for IIS supports adding an SSL certificate to an FTP site. Using an SSL certificate with an FTP site is also known as FTP-S or FTP over Secure Socket Layers (SSL). FTP-S is an RFC standard (RFC 4217) where an SSL certificate is added to an FTP site and thereby making it possible to perform secure file transfers.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $sslConfigElement = Get-IISConfigSection `
-            -SectionPath "system.applicationHost/sites" `
-            | Get-IISConfigElement -ChildElementName "siteDefaults" `
-            | Get-IISConfigElement -ChildElementName "ftpServer" `
-            | Get-IISConfigElement -ChildElementName "security" `
-            | Get-IISConfigElement -ChildElementName "ssl"
+	try {
+		$sslConfigElement = Get-IISConfigSection `
+			-SectionPath "system.applicationHost/sites" `
+			| Get-IISConfigElement -ChildElementName "siteDefaults" `
+			| Get-IISConfigElement -ChildElementName "ftpServer" `
+			| Get-IISConfigElement -ChildElementName "security" `
+			| Get-IISConfigElement -ChildElementName "ssl"
 
-        $controlChannelPolicy = $sslConfigElement `
-            | Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
+		$controlChannelPolicy = $sslConfigElement `
+			| Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
 
-        $dataChannelPolicy = $sslConfigElement `
-            | Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
+		$dataChannelPolicy = $sslConfigElement `
+			| Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
 
-        if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
-            $message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        $message = "Cannot get FTP security setting"
-        $audit = [AuditStatus]::False
-    }
+		if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
+			$message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		$message = "Cannot get FTP security setting"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "6.1"
-        Task    = "Ensure FTP requests are encrypted"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "6.1"
+		Task    = "Ensure FTP requests are encrypted"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 6.2
 function Test-IISFtpLogonAttemptRestriction {
-    <#
+	<#
 	.Synopsis
 		Ensure FTP Logon attempt restrictions is enabled
 	.Description
 		IIS introduced a built-in network security feature to automatically block brute force FTP attacks. This can be used to mitigate a malicious client from attempting a brute-force attack on a discovered account, such as the local administrator account.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $denyByFailure = Get-IISConfigSection `
-            -SectionPath "system.ftpServer/security/authentication" `
-            | Get-IISConfigElement -ChildElementName "denyByFailure"
+	try {
+		$denyByFailure = Get-IISConfigSection `
+			-SectionPath "system.ftpServer/security/authentication" `
+			| Get-IISConfigElement -ChildElementName "denyByFailure"
 
-        $enabled = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "enabled"
-        $maxFailure = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "maxFailure"
-        $entryExpiration = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "entryExpiration"
-        $loggingOnlyMode = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "loggingOnlyMode"
+		$enabled = $denyByFailure `
+			| Get-IISConfigAttributeValue -AttributeName "enabled"
+		$maxFailure = $denyByFailure `
+			| Get-IISConfigAttributeValue -AttributeName "maxFailure"
+		$entryExpiration = $denyByFailure `
+			| Get-IISConfigAttributeValue -AttributeName "entryExpiration"
+		$loggingOnlyMode = $denyByFailure `
+			| Get-IISConfigAttributeValue -AttributeName "loggingOnlyMode"
 
-        if (($enabled) -and ($maxFailure -gt 0) -and ($entryExpiration -gt 0) -and (-not $loggingOnlyMode)) {
-            # All good
-        }
-        elseif (-not $enabled ) {
-            $message = "Feature disabled"
-            $audit = [AuditStatus]::False
-        }
-        else {
-            $message = "Feature enabled, but check settings. Found: `n maxFailure: " `
-                + $maxFailure + "`n entryExpiration: " `
-                + $entryExpiration + "`n Only logging mode: " `
-                + $loggingOnlyMode
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        $audit = [AuditStatus]::False
-        $message = "Cannot get FTP Logon attempt settings"
-    }
+		if (($enabled) -and ($maxFailure -gt 0) -and ($entryExpiration -gt 0) -and (-not $loggingOnlyMode)) {
+			# All good
+		}
+		elseif (-not $enabled ) {
+			$message = "Feature disabled"
+			$audit = [AuditStatus]::False
+		}
+		else {
+			$message = "Feature enabled, but check settings. Found: `n maxFailure: " `
+				+ $maxFailure + "`n entryExpiration: " `
+				+ $entryExpiration + "`n Only logging mode: " `
+				+ $loggingOnlyMode
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		$audit = [AuditStatus]::False
+		$message = "Cannot get FTP Logon attempt settings"
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "6.2"
-        Task    = "Ensure FTP Logon attempt restrictions is enabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "6.2"
+		Task    = "Ensure FTP Logon attempt restrictions is enabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 #endregion
@@ -1986,140 +2006,140 @@ function Test-IISFtpLogonAttemptRestriction {
 
 # 7.1
 function Test-IISHSTSHeaderSet {
-    <#
+	<#
 	.Synopsis
 		Ensure HSTS Header is set
 	.Description
 		HTTP Strict Transport Security (HSTS) allows a site to inform the user agent to communicate with the site only over HTTPS. This header takes two parameters: max-age, "specifies the number of seconds, after the reception of the STS header field, during which the user agent regards the host (from whom the message was received) as a Known HSTS Host [speaks only HTTPS]"; and includeSubDomains. includeSubDomains is an optional directive that defines how this policy is applied to subdomains. If includeSubDomains is included in the header, it provides the following definition: this HSTS Policy also applies to any hosts whose domain names are subdomains of the Known HSTS Host's domain name.
-    #>
+	#>
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Configuration] $Configuration
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
 
-    process {
-        $message = "HSTS Header not set"
-        $audit = [AuditStatus]::False
+	process {
+		$message = "HSTS Header not set"
+		$audit = [AuditStatus]::False
 
-        $path = "system.webServer/httpProtocol"
-        $section = $Configuration.GetSection($path)
+		$path = "system.webServer/httpProtocol"
+		$section = $Configuration.GetSection($path)
 
-        [array]$customHeaders = $section.GetCollection("customHeaders") `
-            | Where-Object {
-                $name  = $_ | Get-IISConfigAttributeValue -AttributeName "name"
-                $name -eq "Strict-Transport-Security"
-            }
+		[array]$customHeaders = $section.GetCollection("customHeaders") `
+			| Where-Object {
+				$name  = $_ | Get-IISConfigAttributeValue -AttributeName "name"
+				$name -eq "Strict-Transport-Security"
+			}
 
-        if ($customHeaders.Count -eq 1) {
-            $value = $customHeaders[0] | Get-IISConfigAttributeValue -AttributeName "value"
-            $pattern = [regex]::new("max-age=(?<maxage>[0-9]*)")
-            $match = $pattern.Match($value)
+		if ($customHeaders.Count -eq 1) {
+			$value = $customHeaders[0] | Get-IISConfigAttributeValue -AttributeName "value"
+			$pattern = [regex]::new("max-age=(?<maxage>[0-9]*)")
+			$match = $pattern.Match($value)
 
-            if ($match.Success) {
-                [int]$maxAge = $match.Groups["maxage"].Value
-                if ($maxAge -eq 0) {
-                    $message = "Max-age should be at least be higher than 0. It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
-                    $audit = [AuditStatus]::False
-                }
-                elseif ($maxAge -lt 480) {
-                    $message = "It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
-                    $audit = [AuditStatus]::Warning
-                }
-                else {
-                    $message = $MESSAGE_ALLGOOD + ". Max-age is set at $maxAge"
-                    $audit = [AuditStatus]::True
-                }
-            }
-        }
+			if ($match.Success) {
+				[int]$maxAge = $match.Groups["maxage"].Value
+				if ($maxAge -eq 0) {
+					$message = "Max-age should be at least be higher than 0. It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
+					$audit = [AuditStatus]::False
+				}
+				elseif ($maxAge -lt 480) {
+					$message = "It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
+					$audit = [AuditStatus]::Warning
+				}
+				else {
+					$message = $MESSAGE_ALLGOOD + ". Max-age is set at $maxAge"
+					$audit = [AuditStatus]::True
+				}
+			}
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "7.1"
-            Task    = "Ensure HSTS Header is set"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
-    }
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "7.1"
+			Task    = "Ensure HSTS Header is set"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 
 }
 
 # 7.2
 function Test-IISSSL2Disabled {
-    <#
+	<#
 	.Synopsis
 		Ensure SSLv2 is disabled
 	.Description
 		This protocol is not considered cryptographically secure. Disabling it is recommended. This protocol is disabled by default if the registry key is not present. A reboot is required for these changes to be reflected.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0"
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0"
 
-    # SSL is disabled by default
-    # if $path exists, $path/server should also exist
-    if ((Test-Path $path) -and (Test-Path "$path\Server")) {
-        # Ensure the following key exists
-        $Key = Get-Item "$path\Server"
-        if ($null -ne $Key.GetValue("Enabled", $null)) {
-            $value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
-            # Ensure it is set to 0
-            if ($value -ne 0) {
-                $message = "SSL 2.0 is enabled"
-                $audit = [AuditStatus]::False
-            }
-        }
-    }
+	# SSL is disabled by default
+	# if $path exists, $path/server should also exist
+	if ((Test-Path $path) -and (Test-Path "$path\Server")) {
+		# Ensure the following key exists
+		$Key = Get-Item "$path\Server"
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
+			# Ensure it is set to 0
+			if ($value -ne 0) {
+				$message = "SSL 2.0 is enabled"
+				$audit = [AuditStatus]::False
+			}
+		}
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.2"
-        Task    = "Ensure SSLv2 is disabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.2"
+		Task    = "Ensure SSLv2 is disabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.3
 function Test-IISSSL3Disabled {
-    <#
+	<#
 	.Synopsis
 		Ensure SSLv3 is disabled
 	.Description
 		This protocol is not considered cryptographically secure. Disabling it is recommended.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0"
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0"
 
-    # SSL is disabled by default
-    # if $path exists, $path/server should also exist
-    if ((Test-Path $path) -and (Test-Path "$path\Server")) {
-        # Ensure the following key exists
-        $Key = Get-Item "$path\Server"
-        if ($null -ne $Key.GetValue("Enabled", $null)) {
-            $value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
-            # Ensure it is set to 0
-            if ($value -ne 0) {
-                $message = "SSL 3.0 is enabled"
-                $audit = [AuditStatus]::False
-            }
-        }
-    }
+	# SSL is disabled by default
+	# if $path exists, $path/server should also exist
+	if ((Test-Path $path) -and (Test-Path "$path\Server")) {
+		# Ensure the following key exists
+		$Key = Get-Item "$path\Server"
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
+			# Ensure it is set to 0
+			if ($value -ne 0) {
+				$message = "SSL 3.0 is enabled"
+				$audit = [AuditStatus]::False
+			}
+		}
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.3"
-        Task    = "Ensure SSLv3 is disabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.3"
+		Task    = "Ensure SSLv3 is disabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.4
 function Test-IISTLSDisabled {
-    <#
+	<#
 	.Synopsis
 		Ensure TLS 1.0 is disabled
 	.Description
@@ -2128,413 +2148,413 @@ function Test-IISTLSDisabled {
 		SSL and early TLS are not considered strong cryptography and cannot be used as a security control after June 30, 2016.
 	#>
 
-    $message = "TLS 1.0 not disabled"
-    $audit = [AuditStatus]::False
+	$message = "TLS 1.0 not disabled"
+	$audit = [AuditStatus]::False
 
-    $path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server"
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server"
 
-    # TLS 1.0 is enabled by default
-    if (Test-Path $path) {
-        # Ensure the following key exists
-        $Key = Get-Item $path
-        if ($null -ne $Key.GetValue("Enabled", $null)) {
-            $value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-            # Ensure it is set to 0
-            if ($value -eq 0) {
-                $message = $MESSAGE_ALLGOOD
-                $audit = [AuditStatus]::True
-            }
-        }
-    }
+	# TLS 1.0 is enabled by default
+	if (Test-Path $path) {
+		# Ensure the following key exists
+		$Key = Get-Item $path
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
+			# Ensure it is set to 0
+			if ($value -eq 0) {
+				$message = $MESSAGE_ALLGOOD
+				$audit = [AuditStatus]::True
+			}
+		}
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.4"
-        Task    = "Ensure TLS 1.0 is disabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.4"
+		Task    = "Ensure TLS 1.0 is disabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.5
 function Test-IISTLS1_1Enabled {
-    <#
+	<#
 	.Synopsis
 		Ensure TLS 1.1 is enabled
 	.Description
 		Enabling TLS 1.1 is required for backward compatibility.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
 
-    $path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server"
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server"
 
-    # TLS is enabled by default
-    if (Test-Path $path) {
-        # Ensure the following key exists
-        $Key = Get-Item $path
-        if ($null -ne $Key.GetValue("Enabled", $null)) {
-            $value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-            # Ensure it is enabled
-            if ($value -eq 0) {
-                $message = "TLS 1.1 disabled"
-                $audit = [AuditStatus]::False
-            }
-        }
-    }
+	# TLS is enabled by default
+	if (Test-Path $path) {
+		# Ensure the following key exists
+		$Key = Get-Item $path
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
+			# Ensure it is enabled
+			if ($value -eq 0) {
+				$message = "TLS 1.1 disabled"
+				$audit = [AuditStatus]::False
+			}
+		}
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.5"
-        Task    = "Ensure TLS 1.1 is enabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.5"
+		Task    = "Ensure TLS 1.1 is enabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.6
 function Test-IISTLS1_2Enabled {
-    <#
+	<#
 	.Synopsis
 		Ensure TLS 1.2 is enabled
 	.Description
 		TLS 1.2 is the most recent and mature protocol for protecting the confidentiality and integrity of HTTP traffic. Enabling TLS 1.2 is recommended. This protocol is enabled by default if the registry key is not present. As with any registry changes, a reboot is required for changes to take effect.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    $path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2"
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2"
 
-    # if $path exists, $path/server should also exist
-    # TLS 1.2 is enabled by default
-    if ((Test-Path $path) -and (Test-Path "$path\Server")) {
-        # Ensure the following key exists
-        $Key = Get-Item "$path\Server"
-        if ($null -ne $Key.GetValue("Enabled", $null)) {
-            # Get-ItemProperty returns a [UInt32]
-            $value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
-            # Ensure it is set to 0xFFFFFFFF(4294967295)
-            # [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-            # PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-            if ($value -ne 4294967295) {
-                $message = "TLS 1.2 is disabled"
-                $audit = [AuditStatus]::False
-            }
-        }
-        else {
-            $message = "TLS 1.2 is disabled"
-            $audit = [AuditStatus]::False
-        }
-    }
+	# if $path exists, $path/server should also exist
+	# TLS 1.2 is enabled by default
+	if ((Test-Path $path) -and (Test-Path "$path\Server")) {
+		# Ensure the following key exists
+		$Key = Get-Item "$path\Server"
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			# Get-ItemProperty returns a [UInt32]
+			$value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
+			# Ensure it is set to 0xFFFFFFFF(4294967295)
+			# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
+			# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
+			if ($value -ne 4294967295) {
+				$message = "TLS 1.2 is disabled"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "TLS 1.2 is disabled"
+			$audit = [AuditStatus]::False
+		}
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.6"
-        Task    = "Ensure TLS 1.2 is enabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.6"
+		Task    = "Ensure TLS 1.2 is enabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.7
 function Test-IISNullCipherDisabled {
-    <#
+	<#
 	.Synopsis
 		Ensure NULL Cipher Suites is disabled
 	.Description
 		The NULL cipher does not provide data confidentiality or integrity. It is recommended that the NULL cipher be disabled.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL\" `
-            -ErrorAction Stop `
-            | Select-Object `
-            -ExpandProperty Enabled
+	try {
+		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL\" `
+			-ErrorAction Stop `
+			| Select-Object `
+			-ExpandProperty Enabled
 
-        if ($enabled -ne 0) {
-            # If the key is not set to 0, NULL cipher is enabled
-            $message = "NULL cipher is enabled"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        # If the key/value is not present, NULL cipher is disabled
-    }
+		if ($enabled -ne 0) {
+			# If the key is not set to 0, NULL cipher is enabled
+			$message = "NULL cipher is enabled"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		# If the key/value is not present, NULL cipher is disabled
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.7"
-        Task    = "Ensure NULL Cipher Suites is disabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.7"
+		Task    = "Ensure NULL Cipher Suites is disabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.8
 function Test-IISDESCipherDisabled {
-    <#
+	<#
 	.Synopsis
 		Ensure DES Cipher Suites is disabled
 	.Description
 		DES is a weak symmetric-key cipher. It is recommended that it be disabled.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56\" `
-            -ErrorAction Stop `
-            | Select-Object `
-            -ExpandProperty Enabled
+	try {
+		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56\" `
+			-ErrorAction Stop `
+			| Select-Object `
+			-ExpandProperty Enabled
 
-        if ($enabled -ne 0) {
-            # If the key is not set to 0, DES cipher is enabled
-            $message = "DES cipher is enabled"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        # If the key/value is not present, DES cipher is disabled
-    }
+		if ($enabled -ne 0) {
+			# If the key is not set to 0, DES cipher is enabled
+			$message = "DES cipher is enabled"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		# If the key/value is not present, DES cipher is disabled
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.8"
-        Task    = "Ensure DES Cipher Suites is disabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.8"
+		Task    = "Ensure DES Cipher Suites is disabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.9
 function Test-IISRC4CipherDisabled {
-    <#
+	<#
 	.Synopsis
 		Ensure RC4 Cipher Suites is disabled
 	.Description
 		RC4 is a stream cipher that has known practical attacks. It is recommended that RC4 be disabled. The only RC4 cipher enabled by default on Server 2012 and 2012 R2 is RC4 128/128.
 	#>
 
-    $rc4Ciphers = @("RC4 40/128", "RC4 56/128", "RC4 64/128", "RC4 128/128")
+	$rc4Ciphers = @("RC4 40/128", "RC4 56/128", "RC4 64/128", "RC4 128/128")
 
-    $index = 1
-    foreach ($rc4Cipher in $rc4Ciphers) {
+	$index = 1
+	foreach ($rc4Cipher in $rc4Ciphers) {
 
-        $message = $MESSAGE_ALLGOOD
-        $audit = [AuditStatus]::True
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 
-        try {
-            $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\$rc4Cipher\" `
-                -ErrorAction Stop `
-                | Select-Object 1
-            -ExpandProperty Enabled
+		try {
+			$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\$rc4Cipher\" `
+				-ErrorAction Stop `
+				| Select-Object 1
+			-ExpandProperty Enabled
 
-            # If the key is $null, RC4 cipher is disabled
-            # If the key is set to 0, RC4 cipher is disabled
-            if (($null -ne $enabled) -and $enabled -ne 0) {
-                # If the key is not set to 0, RC4 cipher is enabled
-                $message = "$rc4Cipher cipher is enabled"
-                $audit = [AuditStatus]::False
-            }
-        }
-        catch {
-            # If the key/value is not present, RC4 cipher is disabled
-        }
+			# If the key is $null, RC4 cipher is disabled
+			# If the key is set to 0, RC4 cipher is disabled
+			if (($null -ne $enabled) -and $enabled -ne 0) {
+				# If the key is not set to 0, RC4 cipher is enabled
+				$message = "$rc4Cipher cipher is enabled"
+				$audit = [AuditStatus]::False
+			}
+		}
+		catch {
+			# If the key/value is not present, RC4 cipher is disabled
+		}
 
-        New-Object -TypeName AuditInfo -Property @{
-            Id      = "7.9.$index"
-            Task    = "Ensure RC4 Cipher Suites is disabled"
-            Message = $message
-            Audit   = $audit
-        } | Write-Output
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "7.9.$index"
+			Task    = "Ensure RC4 Cipher Suites is disabled"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
 
-        $index++
-    }
+		$index++
+	}
 }
 
 # 7.10
 function Test-IISTripleDESEnabled {
-    <#
+	<#
 	.Synopsis
 		Ensure Triple DES Cipher Suite is Disabled
 	.Description
 		Triple DES Cipher Suites is now considered a weak cipher and is not recommended for use.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168/168\" `
-            -ErrorAction Stop `
-            | Select-Object `
-            -ExpandProperty
+	try {
+		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168/168\" `
+			-ErrorAction Stop `
+			| Select-Object `
+			-ExpandProperty
 
-        if ($enabled -ne 0) {
-            # If the key is $null, Triple DES Cipher is enabled
-            $message = "Triple DES Cipher is enabled"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        # TODO: check if this is still true
-        # If the key/value is not present,Triple DES Cipher is enabled
-        $message = "Triple DES Cipher is enabled"
-        $audit = [AuditStatus]::False
-    }
+		if ($enabled -ne 0) {
+			# If the key is $null, Triple DES Cipher is enabled
+			$message = "Triple DES Cipher is enabled"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		# TODO: check if this is still true
+		# If the key/value is not present,Triple DES Cipher is enabled
+		$message = "Triple DES Cipher is enabled"
+		$audit = [AuditStatus]::False
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.10"
-        Task    = "Ensure Triple DES Cipher Suite is Disabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.10"
+		Task    = "Ensure Triple DES Cipher Suite is Disabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.11
 function Test-IISAES128Enabled {
-    <#
+	<#
 	.Synopsis
 		Ensure AES 128/128 Cipher Suite is configured
 	.Description
 		Enabling AES 128/128 may be required for client compatibility. Enable or disable this cipher suite accordingly.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        # Get-ItemProperty returns a [UInt32]
-        $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128\" `
-            -ErrorAction Stop `
-            | Select-Object `
-            -ExpandProperty Enabled
+	try {
+		# Get-ItemProperty returns a [UInt32]
+		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128\" `
+			-ErrorAction Stop `
+			| Select-Object `
+			-ExpandProperty Enabled
 
-        # [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-        # PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-        if ($null -eq $enabled) {
-            # If the key is $null, AES 128/128 Cipher is disabled
-            $message = "AES 128/128 Cipher is disbled"
-            $audit = [AuditStatus]::False
-        }
-        elseif (($enabled -ne 4294967295)) {
-            # If the key is not set to 0xFFFFFFFF(4294967295), AES 128/128 Cipher is disabled
-            $message = "AES 128/128 Cipher is disbled"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        # If the key/value is not present,Triple AES 128/128 Cipher is disabled
-        $message = "AES 128/128 Cipher is disbled"
-        $audit = [AuditStatus]::False
-    }
+		# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
+		# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
+		if ($null -eq $enabled) {
+			# If the key is $null, AES 128/128 Cipher is disabled
+			$message = "AES 128/128 Cipher is disbled"
+			$audit = [AuditStatus]::False
+		}
+		elseif (($enabled -ne 4294967295)) {
+			# If the key is not set to 0xFFFFFFFF(4294967295), AES 128/128 Cipher is disabled
+			$message = "AES 128/128 Cipher is disbled"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		# If the key/value is not present,Triple AES 128/128 Cipher is disabled
+		$message = "AES 128/128 Cipher is disbled"
+		$audit = [AuditStatus]::False
+	}
 
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.11"
-        Task    = "Ensure AES 128/128 Cipher Suite is configured"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.11"
+		Task    = "Ensure AES 128/128 Cipher Suite is configured"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.12
 function Test-IISAES256Enabled {
-    <#
+	<#
 	.Synopsis
 		Ensure AES 256/256 Cipher Suite is enabled
 	.Description
 		AES 256/256 is the most recent and mature cipher suite for protecting the confidentiality and integrity of HTTP traffic. Enabling AES 256/256 is recommended. This is enabled by default on Server 2012 and 2012 R2.
 	#>
 
-    $message = $MESSAGE_ALLGOOD
-    $audit = [AuditStatus]::True
+	$message = $MESSAGE_ALLGOOD
+	$audit = [AuditStatus]::True
 
-    try {
-        # Get-ItemProperty returns a [UInt32]
-        $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256\" `
-            -ErrorAction Stop `
-            | Select-Object `
-            -ExpandProperty Enabled
+	try {
+		# Get-ItemProperty returns a [UInt32]
+		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256\" `
+			-ErrorAction Stop `
+			| Select-Object `
+			-ExpandProperty Enabled
 
-        # [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-        # PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-        if ($enabled -ne 4294967295) {
-            # If the key is not set to 0xFFFFFFFF, AES 256/256 Cipher is disabled
-            $message = "AES 256/256 Cipher is disabled"
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        # If the key/value is not present, AES 256/256 Cipher is enabled by default
-    }
+		# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
+		# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
+		if ($enabled -ne 4294967295) {
+			# If the key is not set to 0xFFFFFFFF, AES 256/256 Cipher is disabled
+			$message = "AES 256/256 Cipher is disabled"
+			$audit = [AuditStatus]::False
+		}
+	}
+	catch {
+		# If the key/value is not present, AES 256/256 Cipher is enabled by default
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.12"
-        Task    = "Ensure AES 256/256 Cipher Suite is enabled"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.12"
+		Task    = "Ensure AES 256/256 Cipher Suite is enabled"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 # 7.13
 function Test-IISTLSCipherOrder {
-    <#
+	<#
 	.Synopsis
 		Ensure TLS Cipher Suite ordering is configured
 	.Description
 		Cipher suites are a named combination of authentication, encryption, message authentication code, and key exchange algorithms used for the security settings of a network connection using TLS protocol. Clients send a cipher list and a list of ciphers that it supports in order of preference to a server. The server then replies with the cipher suite that it selects from the client cipher suite list.
 	#>
 
-    [String[]]$cipherList = @(
-        "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
-        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
-        "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
-        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-    )
+	[String[]]$cipherList = @(
+		"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+		"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+		"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+		"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+		"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
+		"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
+		"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
+		"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+	)
 
-    $message = "TLS Cipher Suite ordering does not match reference"
-    $audit = [AuditStatus]::False
+	$message = "TLS Cipher Suite ordering does not match reference"
+	$audit = [AuditStatus]::False
 
 
-    $path = "HKLM:\System\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002\"
+	$path = "HKLM:\System\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002\"
 
-    if (Test-Path $path) {
-        $Key = Get-Item $path
-        if ($null -ne $Key.GetValue("Functions", $null)) {
-            $functions = (Get-ItemProperty $path).Functions
+	if (Test-Path $path) {
+		$Key = Get-Item $path
+		if ($null -ne $Key.GetValue("Functions", $null)) {
+			$functions = (Get-ItemProperty $path).Functions
 
-            if ($cipherList.Count -ge $functions.Count) {
-                $equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
-                        [Func[String, String, Boolean]] {
-                        param($cipher, $function)
-                        $cipher -eq $function
-                    })
+			if ($cipherList.Count -ge $functions.Count) {
+				$equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
+						[Func[String, String, Boolean]] {
+						param($cipher, $function)
+						$cipher -eq $function
+					})
 
-                if (-not ($equalOrdering -contains $false)) {
-                    $message = $MESSAGE_ALLGOOD
-                    $audit = [AuditStatus]::True
-                }
-            }
-            else {
-                $message = "TLS Cipher Suite contains more ciphers"
-                $audit = [AuditStatus]::Warning
-            }
-        }
-    }
+				if (-not ($equalOrdering -contains $false)) {
+					$message = $MESSAGE_ALLGOOD
+					$audit = [AuditStatus]::True
+				}
+			}
+			else {
+				$message = "TLS Cipher Suite contains more ciphers"
+				$audit = [AuditStatus]::Warning
+			}
+		}
+	}
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id      = "7.13"
-        Task    = "Ensure TLS Cipher Suite ordering is configured"
-        Message = $message
-        Audit   = $audit
-    } | Write-Output
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.13"
+		Task    = "Ensure TLS Cipher Suite ordering is configured"
+		Message = $message
+		Audit   = $audit
+	} | Write-Output
 }
 
 #endregion
@@ -2542,329 +2562,329 @@ function Test-IISTLSCipherOrder {
 #region Report Generation
 
 function Get-IIS10SystemReport {
-    # Section 1
-    Test-IISUniqueSiteAppPool
+	# Section 1
+	Test-IISUniqueSiteAppPool
 
-    # Section 2
-    Test-IISPasswordFormatNotClearMachineLevel
-    Test-IISCredentialsNotStoredMachineLevel
+	# Section 2
+	Test-IISPasswordFormatNotClearMachineLevel
+	Test-IISCredentialsNotStoredMachineLevel
 
-    # Section 3
-    Test-IISDeploymentMethodRetail
-    Test-IISAspNetTracingDisabledMachineLevel
+	# Section 3
+	Test-IISDeploymentMethodRetail
+	Test-IISAspNetTracingDisabledMachineLevel
 
-    # Section 4
-    Test-IISHandlerDenyWrite
-    Test-IISIsapisNotAllowed
-    Test-IISCgisNotAllowed
+	# Section 4
+	Test-IISIsapisNotAllowed
+	Test-IISCgisNotAllowed
 
-    # Section 5
-    Test-IISAdvancedLoggingEnabled
+	# Section 5
+	Test-IISAdvancedLoggingEnabled
 
-    # Section 6
-    Test-IISFtpRequestsEncrypted
-    Test-IISFtpLogonAttemptRestriction
+	# Section 6
+	Test-IISFtpRequestsEncrypted
+	Test-IISFtpLogonAttemptRestriction
 
-    # Section 7
-    Test-IISSSL2Disabled
-    Test-IISSSL3Disabled
-    Test-IISTLSDisabled
-    Test-IISTLS1_1Enabled
-    Test-IISTLS1_2Enabled
-    Test-IISNullCipherDisabled
-    Test-IISDESCipherDisabled
-    Test-IISRC4CipherDisabled
-    Test-IISTripleDESEnabled
-    Test-IISAES128Enabled
-    Test-IISAES256Enabled
-    Test-IISTLSCipherOrder
+	# Section 7
+	Test-IISSSL2Disabled
+	Test-IISSSL3Disabled
+	Test-IISTLSDisabled
+	Test-IISTLS1_1Enabled
+	Test-IISTLS1_2Enabled
+	Test-IISNullCipherDisabled
+	Test-IISDESCipherDisabled
+	Test-IISRC4CipherDisabled
+	Test-IISTripleDESEnabled
+	Test-IISAES128Enabled
+	Test-IISAES256Enabled
+	Test-IISTLSCipherOrder
 }
 
 function Get-IIS10SiteReport {
 
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Site] $Site
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Site] $Site
+	)
 
-    process {
-        $AppPools = $Site.Applications.ApplicationPoolName | Sort-Object | Get-Unique | Get-IISAppPool
+	process {
+		$AppPools = $Site.Applications.ApplicationPoolName | Sort-Object | Get-Unique | Get-IISAppPool
 
-        $AuditInfos = @()
+		$AuditInfos = @()
 
-        # Section 1
-        $AuditInfos += $Site | Test-IISVirtualDirPartition
-        $AuditInfos += $Site | Test-IISHostHeaders
-        $AuditInfos += $AppPools | Test-IISAppPoolIdentity
+		# Section 1
+		$AuditInfos += $Site | Test-IISVirtualDirPartition
+		$AuditInfos += $Site | Test-IISHostHeaders
+		$AuditInfos += $AppPools | Test-IISAppPoolIdentity
 
-        # Section 2
-        $AuditInfos += $Site | Test-IISTLSForBasicAuth
+		# Section 2
+		$AuditInfos += $Site | Test-IISTLSForBasicAuth
 
-        # Section 3
-        $AuditInfos += $Site | Test-IISMachineKeyValidation
-        $AuditInfos += $Site | Test-IISMachineKeyValidationV45
-        $AuditInfos += $Site | Test-IISDotNetTrustLevel
+		# Section 3
+		$AuditInfos += $Site | Test-IISMachineKeyValidation
+		$AuditInfos += $Site | Test-IISMachineKeyValidationV45
+		$AuditInfos += $Site | Test-IISDotNetTrustLevel
 
-        # Section 4
-        $AuditInfos += $Site | Test-IISDynamicIPRestrictionEnabled
+		# Section 4
+		$AuditInfos += $Site | Test-IISDynamicIPRestrictionEnabled
 
-        # Section 5
-        $AuditInfos += $Site | Test-IISLogFileLocation
-        $AuditInfos += $Site | Test-IISETWLoggingEnabled
+		# Section 5
+		$AuditInfos += $Site | Test-IISLogFileLocation
+		$AuditInfos += $Site | Test-IISETWLoggingEnabled
 
-        # Section 6
-        $AuditInfos += $Site | Test-IISFtpIsDisabled
+		# Section 6
+		$AuditInfos += $Site | Test-IISFtpIsDisabled
 
-        # Section 7
+		# Section 7
 
-        $VirtualPaths = $Site | Get-IISSiteVirtualPaths -AllVirtualDirectories
-        $VirtualPathAudits = foreach ($VirtualPath in $VirtualPaths) {
-            $Configuration = (Get-IISServerManager).GetWebConfiguration($Site.Name, $VirtualPath)
-            $VirtualPathAuditInfos = @()
+		$VirtualPaths = $Site | Get-IISSiteVirtualPaths -AllVirtualDirectories
+		$VirtualPathAudits = foreach ($VirtualPath in $VirtualPaths) {
+			$Configuration = (Get-IISServerManager).GetWebConfiguration($Site.Name, $VirtualPath)
+			$VirtualPathAuditInfos = @()
 
-            # Section 1
-            $VirtualPathAuditInfos += $Configuration | Test-IISDirectoryBrowsing
-            $VirtualPathAuditInfos += $Configuration | Test-IISAnonymouseUserIdentity
+			# Section 1
+			$VirtualPathAuditInfos += $Configuration | Test-IISDirectoryBrowsing
+			$VirtualPathAuditInfos += $Configuration | Test-IISAnonymouseUserIdentity
 
-            # Section 2
-            $VirtualPathAuditInfos += $Configuration | Test-IISGlobalAuthorization
-            $VirtualPathAuditInfos += $Configuration | Test-IISAuthenticatedPricipals
-            $VirtualPathAuditInfos += $Configuration | Test-IISFormsAuthenticationSSL
-            $VirtualPathAuditInfos += $Configuration | Test-IISFormsAuthenticationCookies
-            $VirtualPathAuditInfos += $Configuration | Test-IISFormsAuthenticationProtection
-            $VirtualPathAuditInfos += $Configuration | Test-IISPasswordFormatNotClear
-            $VirtualPathAuditInfos += $Configuration | Test-IISCredentialsNotStored
+			# Section 2
+			$VirtualPathAuditInfos += $Configuration | Test-IISGlobalAuthorization
+			$VirtualPathAuditInfos += $Configuration | Test-IISAuthenticatedPricipals
+			$VirtualPathAuditInfos += $Configuration | Test-IISFormsAuthenticationSSL
+			$VirtualPathAuditInfos += $Configuration | Test-IISFormsAuthenticationCookies
+			$VirtualPathAuditInfos += $Configuration | Test-IISFormsAuthenticationProtection
+			$VirtualPathAuditInfos += $Configuration | Test-IISPasswordFormatNotClear
+			$VirtualPathAuditInfos += $Configuration | Test-IISCredentialsNotStored
 
-            # Section 3
-            $VirtualPathAuditInfos += $Configuration | Test-IISDebugOff
-            $VirtualPathAuditInfos += $Configuration | Test-IISCustomErrorsNotOff
-            $VirtualPathAuditInfos += $Configuration | Test-IISHttpErrorsHidden
-            $VirtualPathAuditInfos += $Configuration | Test-IISAspNetTracingDisabled
-            $VirtualPathAuditInfos += $Configuration | Test-IISCookielessSessionState
-            $VirtualPathAuditInfos += $Configuration | Test-IISCookiesHttpOnly
+			# Section 3
+			$VirtualPathAuditInfos += $Configuration | Test-IISDebugOff
+			$VirtualPathAuditInfos += $Configuration | Test-IISCustomErrorsNotOff
+			$VirtualPathAuditInfos += $Configuration | Test-IISHttpErrorsHidden
+			$VirtualPathAuditInfos += $Configuration | Test-IISAspNetTracingDisabled
+			$VirtualPathAuditInfos += $Configuration | Test-IISCookielessSessionState
+			$VirtualPathAuditInfos += $Configuration | Test-IISCookiesHttpOnly
 
-            # Section 4
-            $VirtualPathAuditInfos += $Configuration | Test-IISMaxAllowedContentLength
-            $VirtualPathAuditInfos += $Configuration | Test-IISMaxURLRequestFilter
-            $VirtualPathAuditInfos += $Configuration | Test-IISMaxQueryStringRequestFilter
-            $VirtualPathAuditInfos += $Configuration | Test-IISNonASCIICharURLForbidden
-            $VirtualPathAuditInfos += $Configuration | Test-IISRejectDoubleEncodedRequests
-            $VirtualPathAuditInfos += $Configuration | Test-IISHTTPTraceMethodeDisabled
-            $VirtualPathAuditInfos += $Configuration | Test-IISBlockUnlistedFileExtensions
+			# Section 4
+			$VirtualPathAuditInfos += $Configuration | Test-IISMaxAllowedContentLength
+			$VirtualPathAuditInfos += $Configuration | Test-IISMaxURLRequestFilter
+			$VirtualPathAuditInfos += $Configuration | Test-IISMaxQueryStringRequestFilter
+			$VirtualPathAuditInfos += $Configuration | Test-IISNonASCIICharURLForbidden
+			$VirtualPathAuditInfos += $Configuration | Test-IISRejectDoubleEncodedRequests
+			$VirtualPathAuditInfos += $Configuration | Test-IISHTTPTraceMethodeDisabled
+			$VirtualPathAuditInfos += $Configuration | Test-IISBlockUnlistedFileExtensions
+			$VirtualPathAuditInfos += $Configuration | Test-IISHandlerDenyWrite
 
-            # Section 5
+			# Section 5
 
-            # Section 6
+			# Section 6
 
-            # Section 7
-            $VirtualPathAuditInfos += $Configuration | Test-IISHSTSHeaderSet
+			# Section 7
+			$VirtualPathAuditInfos += $Configuration | Test-IISHSTSHeaderSet
 
-            New-Object -TypeName VirtualPathAudit -Property @{
-                VirtualPath = $VirtualPath
-                AuditInfos  = $VirtualPathAuditInfos
-            }
-        }
+			New-Object -TypeName VirtualPathAudit -Property @{
+				VirtualPath = $VirtualPath
+				AuditInfos  = $VirtualPathAuditInfos
+			}
+		}
 
-        New-Object -TypeName SiteAudit -Property @{
-            SiteName          = $Site.Name
-            AuditInfos        = $AuditInfos
+		New-Object -TypeName SiteAudit -Property @{
+			SiteName          = $Site.Name
+			AuditInfos        = $AuditInfos
 
-            VirtualPathAudits = $VirtualPathAudits
-        }
-    }
+			VirtualPathAudits = $VirtualPathAudits
+		}
+	}
 }
 
 function Get-HostInformation {
-    $infos = Get-CimInstance Win32_OperatingSystem
-    $disk = Get-WmiObject Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
+	$infos = Get-CimInstance Win32_OperatingSystem
+	$disk = Get-WmiObject Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
 
-    $IISinstallPath = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\InetStp").Installpath
+	$IISinstallPath = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\InetStp").Installpath
 
-    New-Object -TypeName psobject -Property @{
-        Hostname = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
-        OS = $infos.Caption
-        OSBuildNumber = $infos.BuildNumber
-        IISVersion = (Get-ItemProperty -Path ("$IISinstallPath\w3wp.exe")).VersionInfo.ProductVersion
-        FreeRAM = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
-        FreeDiskSpace = "{0:N1}" -f ($disk.FreeSpace / 1GB)
-    }
+	New-Object -TypeName psobject -Property @{
+		Hostname = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
+		OS = $infos.Caption
+		OSBuildNumber = $infos.BuildNumber
+		IISVersion = (Get-ItemProperty -Path ("$IISinstallPath\w3wp.exe")).VersionInfo.ProductVersion
+		FreeRAM = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
+		FreeDiskSpace = "{0:N1}" -f ($disk.FreeSpace / 1GB)
+	}
 }
 
 function Get-IISHtmlAuditStatusClass {
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [AuditStatus] $AuditStatus
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[AuditStatus] $AuditStatus
+	)
 
-    process {
-        switch ($AuditStatus) {
-            "True" { "passed" }
-            "False" { "failed" }
-            "Warning" { "warning" }
-            Default { "" }
-        }
-    }
+	process {
+		switch ($AuditStatus) {
+			"True" { "passed" }
+			"False" { "failed" }
+			"Warning" { "warning" }
+			Default { "" }
+		}
+	}
 }
 
 function Get-HtmlId {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $Id
-    )
+	param(
+		[Parameter(Mandatory = $true)]
+		[string] $Id
+	)
 
-    return ([char[]]$Id | ForEach-Object {
-            switch ($_) {
-                ' ' { "-" }
-                '-' { "--" }
-                Default {$_}
-            }
-        }) -join ""
+	return ([char[]]$Id | ForEach-Object {
+			switch ($_) {
+				' ' { "-" }
+				'-' { "--" }
+				Default {$_}
+			}
+		}) -join ""
 }
 
 function Get-IIS10HtmlTableRow {
-    param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [AuditInfo] $AuditInfo
-    )
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[AuditInfo] $AuditInfo
+	)
 
-    process {
-        $tableData = foreach ($Property in [AuditInfo].GetProperties()) {
-            $value = $Property.GetValue($AuditInfo, $null)
+	process {
+		$tableData = foreach ($Property in [AuditInfo].GetProperties()) {
+			$value = $Property.GetValue($AuditInfo, $null)
 
-            if ($Property.Name -eq "Audit") {
-                $auditClass = Get-IISHtmlAuditStatusClass -AuditStatus $value
-                $value = "<span class=`"auditstatus $auditClass`">$value</span>"
-            }
+			if ($Property.Name -eq "Audit") {
+				$auditClass = Get-IISHtmlAuditStatusClass -AuditStatus $value
+				$value = "<span class=`"auditstatus $auditClass`">$value</span>"
+			}
 
-            "<td>$value</td>"
-        }
+			"<td>$value</td>"
+		}
 
-        return "<tr>$tableData</tr>"
-    }
+		return "<tr>$tableData</tr>"
+	}
 }
 
 function Get-IIS10HtmlAuditInfoTable {
-    param(
-        [Parameter(Mandatory = $true)]
-        [AuditInfo[]] $AuditInfos
-    )
+	param(
+		[Parameter(Mandatory = $true)]
+		[AuditInfo[]] $AuditInfos
+	)
 
-    $tableHead = [AuditInfo].GetProperties().Name | ForEach-Object { "<th>$_</th>" }
-    $tableRows = $AuditInfos | Get-IIS10HtmlTableRow
+	$tableHead = [AuditInfo].GetProperties().Name | ForEach-Object { "<th>$_</th>" }
+	$tableRows = $AuditInfos | Get-IIS10HtmlTableRow
 
-    return "<table class=`"audit-info`"><tbody><tr>$tableHead</tr>$tableRows</tbody><table>"
+	return "<table class=`"audit-info`"><tbody><tr>$tableHead</tr>$tableRows</tbody><table>"
 }
 
 function Get-IIS10HtmlSiteAudit {
-    param(
-        [Parameter(Mandatory = $true)]
-        [SiteAudit] $SiteAudit
-    )
+	param(
+		[Parameter(Mandatory = $true)]
+		[SiteAudit] $SiteAudit
+	)
 
-    $SiteAuditStatusClass = Get-SiteAuditStatus -SiteAudit $SiteAudit | Get-IISHtmlAuditStatusClass
-    $VirtualPaths = $SiteAudit.VirtualPathAudits.VirtualPath `
-        | ForEach-Object { "<a href=`"#$(Get-HtmlId -Id $SiteAudit.SiteName)$(Get-HtmlId -Id $_)`">$_</a>" } `
-        | ForEach-Object { "<li>$_</li>" }
+	$SiteAuditStatusClass = Get-SiteAuditStatus -SiteAudit $SiteAudit | Get-IISHtmlAuditStatusClass
+	$VirtualPaths = $SiteAudit.VirtualPathAudits.VirtualPath `
+		| ForEach-Object { "<a href=`"#$(Get-HtmlId -Id $SiteAudit.SiteName)$(Get-HtmlId -Id $_)`">$_</a>" } `
+		| ForEach-Object { "<li>$_</li>" }
 
-    $html = "<h2 id=`"$(Get-HtmlId -Id $SiteAudit.SiteName)`" class=`"$SiteAuditStatusClass`">Full site report for: $($SiteAudit.SiteName)</h2>"
-    $html += "<p>This site has the following virtual paths:<p>"
-    $html += "<ul>$VirtualPaths</ul>"
-    $html += "<h3>Report for site-Level exclusive benchmarks</h3>"
-    $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $SiteAudit.AuditInfos
+	$html = "<h2 id=`"$(Get-HtmlId -Id $SiteAudit.SiteName)`" class=`"$SiteAuditStatusClass`">Full site report for: $($SiteAudit.SiteName)</h2>"
+	$html += "<p>This site has the following virtual paths:<p>"
+	$html += "<ul>$VirtualPaths</ul>"
+	$html += "<h3>Report for site-Level exclusive benchmarks</h3>"
+	$html += Get-IIS10HtmlAuditInfoTable -AuditInfos $SiteAudit.AuditInfos
 
-    foreach ($VirtualPathAudit in $SiteAudit.VirtualPathAudits) {
-        $VirtualPathAuditStatusClass = $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
-        $VirtualPathId = (Get-HtmlId -Id $SiteAudit.SiteName) + (Get-HtmlId -Id $VirtualPathAudit.VirtualPath)
+	foreach ($VirtualPathAudit in $SiteAudit.VirtualPathAudits) {
+		$VirtualPathAuditStatusClass = $VirtualPathAudit | Get-VirtualPathAuditStatus | Get-IISHtmlAuditStatusClass
+		$VirtualPathId = (Get-HtmlId -Id $SiteAudit.SiteName) + (Get-HtmlId -Id $VirtualPathAudit.VirtualPath)
 
-        $html += "<h3 id=`"$VirtualPathId`" class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
-        $html += Get-IIS10HtmlAuditInfoTable -AuditInfos $VirtualPathAudit.AuditInfos
-    }
+		$html += "<h3 id=`"$VirtualPathId`" class=`"$VirtualPathAuditStatusClass`">Report for $($VirtualPathAudit.VirtualPath) benchmarks</h3>"
+		$html += Get-IIS10HtmlAuditInfoTable -AuditInfos $VirtualPathAudit.AuditInfos
+	}
 
-    return $html
+	return $html
 }
 
 function Get-HtmlHostInformation {
-    param(
-        [string] $TableClass = "",
-        [psobject] $HostInformation = (Get-HostInformation)
-    )
+	param(
+		[string] $TableClass = "",
+		[psobject] $HostInformation = (Get-HostInformation)
+	)
 
-    $rows = @(
-        @("Hostname", $HostInformation.HostName),
-        @("Operating System", $HostInformation.OS),
-        @("Build Number", $HostInformation.OSBuildNumber),
-        @("IIS Version", $HostInformation.IISVersion),
-        @("Free physical memory (GB):", $HostInformation.FreeRAM),
-        @("Free disk space(GB):", $HostInformation.FreeDiskSpace)
-    ) | Foreach-Object {
-        "<th scope=`"row`">$($_[0])</th><td>$($_[1])</td>"
-    }
+	$rows = @(
+		@("Hostname", $HostInformation.HostName),
+		@("Operating System", $HostInformation.OS),
+		@("Build Number", $HostInformation.OSBuildNumber),
+		@("IIS Version", $HostInformation.IISVersion),
+		@("Free physical memory (GB):", $HostInformation.FreeRAM),
+		@("Free disk space(GB):", $HostInformation.FreeDiskSpace)
+	) | Foreach-Object {
+		"<th scope=`"row`">$($_[0])</th><td>$($_[1])</td>"
+	}
 
-    $html = (($rows | ForEach-Object { "<tr>$_</tr>" }) -join "") `
-        | ForEach-Object { "<tbody>$_</tbody>" } `
-        | ForEach-Object { "<table class=`"$TableClass`">$_</table>" }
+	$html = (($rows | ForEach-Object { "<tr>$_</tr>" }) -join "") `
+		| ForEach-Object { "<tbody>$_</tbody>" } `
+		| ForEach-Object { "<table class=`"$TableClass`">$_</table>" }
 
-    return $html
+	return $html
 }
 
 function Get-IISHtmlReport {
-    <#
+	<#
 	.Synopsis
 		Generates an audit report in an html file.
-    .Description
-        The `Get-IISHtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
+	.Description
+		The `Get-IISHtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
 
-        It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the parameter `SystemAuditInfos` and `SiteAudits`.
-    .Parameter Path
-        Specifies the relative path to the file in which the report will be stored.
-    .Example
-        C:\PS> Get-IISHtmlReport -Path "MyReport.html"
+		It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the parameter `SystemAuditInfos` and `SiteAudits`.
+	.Parameter Path
+		Specifies the relative path to the file in which the report will be stored.
+	.Example
+		C:\PS> Get-IISHtmlReport -Path "MyReport.html"
 	#>
 
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true)]
-        [string] $Path,
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory = $true)]
+		[string] $Path,
 
-        [AuditInfo[]] $SystemAuditInfos = (Get-IIS10SystemReport),
+		[AuditInfo[]] $SystemAuditInfos = (Get-IIS10SystemReport),
 
-        [SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS10SiteReport)
-    )
+		[SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS10SiteReport)
+	)
 
-    $scriptRoot = Split-Path -Parent $PSCommandPath
-    $cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
-    $css = Get-Content $cssPath
+	$scriptRoot = Split-Path -Parent $PSCommandPath
+	$cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
+	$css = Get-Content $cssPath
 
-    $hostInfo = Get-HostInformation
-    $SystemAuditStatus = Get-AuditInfosStatus -AuditInfos $SystemAuditInfos | Get-IISHtmlAuditStatusClass
+	$hostInfo = Get-HostInformation
+	$SystemAuditStatus = Get-AuditInfosStatus -AuditInfos $SystemAuditInfos | Get-IISHtmlAuditStatusClass
 
-    $siteLinks = $SiteAudits.SiteName `
-        | ForEach-Object { "<a href=`"#$(Get-HtmlId -Id $_)`">$_</a>" } `
-        | ForEach-Object { "<li>$_</li>" }
+	$siteLinks = $SiteAudits.SiteName `
+		| ForEach-Object { "<a href=`"#$(Get-HtmlId -Id $_)`">$_</a>" } `
+		| ForEach-Object { "<li>$_</li>" }
 
-    $header = "<img alt=`"FB-Pro GmbH`" src=`"$($ConfigFile.Settings.Logo)`">"
-    $header += "<h1>IIS 10 Benchmarks</h1>"
-    $header += "<span class=`"subtitle`">Generated by the <i>IIS10Audit</i> Module by FB Pro GmbH. Get it in the <a href=`"https://github.com/fbprogmbh/Audit-Test-Automation`">Audit Test Automation Package</a>.</span>"
+	$header = "<img alt=`"FB-Pro GmbH`" src=`"$($ConfigFile.Settings.Logo)`">"
+	$header += "<h1>IIS 10 Benchmarks</h1>"
+	$header += "<span class=`"subtitle`">Generated by the <i>IIS10Audit</i> Module by FB Pro GmbH. Get it in the <a href=`"https://github.com/fbprogmbh/Audit-Test-Automation`">Audit Test Automation Package</a>.</span>"
 
-    $hostInfoHtml = Get-HtmlHostInformation -TableClass "hostinformation" -HostInformation $hostInfo
+	$hostInfoHtml = Get-HtmlHostInformation -TableClass "hostinformation" -HostInformation $hostInfo
 
-    $head = "<meta charset=`"UTF-8`">"
-    $head += "<meta name=`"viewport`" content=`"width=device-width, initial-scale=1.0`">"
-    $head += "<meta http-equiv=`"X-UA-Compatible`" content=`"ie=edge`">"
-    $head += "<title>IIS 10 Benchmarkt Report [$(Get-Date)]</title>"
-    $head += "<style>$css</style>"
+	$head = "<meta charset=`"UTF-8`">"
+	$head += "<meta name=`"viewport`" content=`"width=device-width, initial-scale=1.0`">"
+	$head += "<meta http-equiv=`"X-UA-Compatible`" content=`"ie=edge`">"
+	$head += "<title>IIS 10 Benchmarkt Report [$(Get-Date)]</title>"
+	$head += "<style>$css</style>"
 
-    $body = "<div class=`"header`">$header</div>"
-    $body += "<p>This report was generated at $((Get-Date)) on $($hostInfo.Hostname).</p>"
-    $body += $hostInfoHtml
-    $body += "<p>Click the links below for quick access to the site reports.</p>"
-    $body += "<ul>$siteLinks</ul>"
-    $body += "<h2 class=`"$SystemAuditStatus`">System Report</h2>"
-    $body += Get-IIS10HtmlAuditInfoTable -AuditInfos $SystemAuditInfos
-    $body += $SiteAudits | ForEach-Object {  Get-IIS10HtmlSiteAudit -SiteAudit $_ }
+	$body = "<div class=`"header`">$header</div>"
+	$body += "<p>This report was generated at $((Get-Date)) on $($hostInfo.Hostname).</p>"
+	$body += $hostInfoHtml
+	$body += "<p>Click the links below for quick access to the site reports.</p>"
+	$body += "<ul>$siteLinks</ul>"
+	$body += "<h2 class=`"$SystemAuditStatus`">System Report</h2>"
+	$body += Get-IIS10HtmlAuditInfoTable -AuditInfos $SystemAuditInfos
+	$body += $SiteAudits | ForEach-Object {  Get-IIS10HtmlSiteAudit -SiteAudit $_ }
 
-    $html = "<!DOCTYPE html><html lang=`"en`"><head>$head</head><body>$body</body></html> "
+	$html = "<!DOCTYPE html><html lang=`"en`"><head>$head</head><body>$body</body></html> "
 
-    $html > $Path
+	$html > $Path
 }
 #endregion
