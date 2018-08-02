@@ -1598,12 +1598,32 @@ function Test-IISHandlerDenyWrite {
         Handler mappings can be configured to give permissions to Read, Write, Script, or Execute depending on what the use is for - reading static content, uploading files, executing scripts, etc. It is recommended to grant a handler either Execute/``Script or Write permissions, but not both.
     #>
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id     = "4.8"
-        Task   = "Ensure Handler is not granted Write and Script/Execute"
-        Message = "Test not implemented yet."
-        Audit  = [AuditStatus]::None
-    } | Write-Output
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
+
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
+
+		$path = "system.webServer/handlers"
+		$section = $Configuration.GetSection($path)
+		$accessPolicy = ($section | Get-IISConfigAttributeValue -AttributeName "accessPolicy").Split(",")
+
+		if ((($accessPolicy -contains "Script") -or ($accessPolicy -contains "Execute")) `
+			-and ($accessPolicy -contains "Write")) {
+			$message = "Handler is granted write and script/execute"
+			$audit = [AuditStatus]::False
+		}
+
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.8"
+			Task    = "Ensure Handler is not granted Write and Script/Execute"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.9
@@ -2582,7 +2602,6 @@ function Get-IIS8SystemReport {
     Test-IISAspNetTracingDisabledMachineLevel
 
     # Section 4
-    Test-IISHandlerDenyWrite
     Test-IISIsapisNotAllowed
     Test-IISCgisNotAllowed
 
@@ -2680,6 +2699,7 @@ function Get-IIS8SiteReport {
             $VirtualPathAuditInfos += $Configuration | Test-IISRejectDoubleEncodedRequests
             $VirtualPathAuditInfos += $Configuration | Test-IISHTTPTraceMethodeDisabled
             $VirtualPathAuditInfos += $Configuration | Test-IISBlockUnlistedFileExtensions
+            $VirtualPathAuditInfos += $Configuration | Test-IISHandlerDenyWrite
 
             # Section 5
 
