@@ -236,7 +236,7 @@ function Test-IISHostHeaders {
 		$message = $MESSAGE_ALLGOOD
 		$audit = [AuditStatus]::True
 
-		[array]$Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($Binding.Host) }
+		[array]$Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($_.Host) }
 
 		if ($Bindings.Count -gt 0) {
 			$message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ", ")
@@ -1245,10 +1245,8 @@ function Test-IISDotNetTrustLevel {
 			-SectionPath "system.web/trust" `
 			| Get-IISConfigAttributeValue -AttributeName "level"
 
-		if (($level -ne "medium") `
-				-or (-not ($appPoolVersion -like "v2.*")) `
-				-or (-not $appPoolVersion -like "v4.*")) {
-
+		# medium trust level should be set in .NET 2.*, but not in later versions
+		if (($appPoolVersion -like "v2.*" -and $level -ne "medium") -or $appPoolVersion -notlike "v4.*") {
 			$message = "TrustLevel set to $level"
 			$audit = [AuditStatus]::False
 		}
@@ -1447,10 +1445,10 @@ function Test-IISNonASCIICharURLForbidden {
 				$message = "non-ASCII characters in URLs are allowed"
 				$audit = [AuditStatus]::False
 			}
-			else {
-				$message = "Request Filering is not installed"
-				$audit = [AuditStatus]::False
-			}
+		}
+		else {
+			$message = "Request Filering is not installed"
+			$audit = [AuditStatus]::False
 		}
 
 		New-Object -TypeName AuditInfo -Property @{
@@ -2165,6 +2163,14 @@ function Test-IISTLSDisabled {
 				$audit = [AuditStatus]::True
 			}
 		}
+		elseif ($null -ne $Key.GetValue("DisabledByDefault", $null)) {
+            $value = Get-ItemProperty $path | Select-Object -ExpandProperty "DisabledByDefault"
+            # Ensure it is set to 1
+            if ($value -eq 1) {
+                $message = $MESSAGE_ALLGOOD
+                $audit = [AuditStatus]::True
+            }
+        }
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
@@ -2390,7 +2396,7 @@ function Test-IISTripleDESEnabled {
 		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168/168\" `
 			-ErrorAction Stop `
 			| Select-Object `
-			-ExpandProperty
+			-ExpandProperty Enabled
 
 		if ($enabled -ne 0) {
 			# If the key is $null, Triple DES Cipher is enabled
