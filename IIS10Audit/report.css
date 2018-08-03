@@ -98,3 +98,8 @@ span.auditstatus {
 	font-weight: bold;
 	margin: auto;
 }
+
+span.cis-version {
+    float: right;
+    padding-right: 20px;
+}
