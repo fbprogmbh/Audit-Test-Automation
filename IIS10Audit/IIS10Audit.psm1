@@ -1884,7 +1884,7 @@ function Test-IISFtpIsDisabled {
 
 		[array]$ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
 
-		if ($ftpBindings.Count -gt 0) {
+		if ($ftpBindings.Count -gt 0 -or (Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Available) {
 			$message = "FTP is not disabled"
 			$audit = [AuditStatus]::False
 		}
@@ -1910,6 +1910,7 @@ function Test-IISFtpRequestsEncrypted {
 	$message = $MESSAGE_ALLGOOD
 	$audit = [AuditStatus]::True
 
+	if ((Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
 	try {
 		$sslConfigElement = Get-IISConfigSection `
 			-SectionPath "system.applicationHost/sites" `
@@ -1933,6 +1934,7 @@ function Test-IISFtpRequestsEncrypted {
 		$message = "Cannot get FTP security setting"
 		$audit = [AuditStatus]::False
 	}
+	}
 
 	New-Object -TypeName AuditInfo -Property @{
 		Id      = "6.1"
@@ -1954,6 +1956,7 @@ function Test-IISFtpLogonAttemptRestriction {
 	$message = $MESSAGE_ALLGOOD
 	$audit = [AuditStatus]::True
 
+	if ((Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
 	try {
 		$denyByFailure = Get-IISConfigSection `
 			-SectionPath "system.ftpServer/security/authentication" `
@@ -1986,6 +1989,7 @@ function Test-IISFtpLogonAttemptRestriction {
 	catch {
 		$audit = [AuditStatus]::False
 		$message = "Cannot get FTP Logon attempt settings"
+	}
 	}
 
 	New-Object -TypeName AuditInfo -Property @{

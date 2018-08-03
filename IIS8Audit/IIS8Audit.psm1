@@ -1935,7 +1935,7 @@ function Test-IISFtpIsDisabled {
 
         $ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
 
-        if ($ftpBindings.Count -gt 0) {
+        if ($ftpBindings.Count -gt 0 -or (Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Available) {
             $message = "FTP is not disabled"
             $audit = [AuditStatus]::False
         }
@@ -1961,28 +1961,30 @@ function Test-IISFtpRequestsEncrypted {
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
 
-    try {
-        $sslConfigElement = Get-IISConfigSection `
-            -SectionPath "system.applicationHost/sites" `
-            | Get-IISConfigElement -ChildElementName "siteDefaults" `
-            | Get-IISConfigElement -ChildElementName "ftpServer" `
-            | Get-IISConfigElement -ChildElementName "security" `
-            | Get-IISConfigElement -ChildElementName "ssl"
+    if ((Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
+        try {
+            $sslConfigElement = Get-IISConfigSection `
+                -SectionPath "system.applicationHost/sites" `
+                | Get-IISConfigElement -ChildElementName "siteDefaults" `
+                | Get-IISConfigElement -ChildElementName "ftpServer" `
+                | Get-IISConfigElement -ChildElementName "security" `
+                | Get-IISConfigElement -ChildElementName "ssl"
 
-        $controlChannelPolicy = $sslConfigElement `
-            | Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
+            $controlChannelPolicy = $sslConfigElement `
+                | Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
 
-        $dataChannelPolicy = $sslConfigElement `
-            | Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
+            $dataChannelPolicy = $sslConfigElement `
+                | Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
 
-        if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
-            $message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
+            if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
+                $message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
+                $audit = [AuditStatus]::False
+            }
+        }
+        catch {
+            $message = "Cannot get FTP security setting"
             $audit = [AuditStatus]::False
         }
-    }
-    catch {
-        $message = "Cannot get FTP security setting"
-        $audit = [AuditStatus]::False
     }
 
     New-Object -TypeName AuditInfo -Property @{
@@ -2005,38 +2007,40 @@ function Test-IISFtpLogonAttemptRestriction {
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
 
-    try {
-        $denyByFailure = Get-IISConfigSection `
-            -SectionPath "system.ftpServer/security/authentication" `
-            | Get-IISConfigElement -ChildElementName "denyByFailure"
+    if ((Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
+        try {
+            $denyByFailure = Get-IISConfigSection `
+                -SectionPath "system.ftpServer/security/authentication" `
+                | Get-IISConfigElement -ChildElementName "denyByFailure"
 
-        $enabled = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "enabled"
-        $maxFailure = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "maxFailure"
-        $entryExpiration = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "entryExpiration"
-        $loggingOnlyMode = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "loggingOnlyMode"
+            $enabled = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "enabled"
+            $maxFailure = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "maxFailure"
+            $entryExpiration = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "entryExpiration"
+            $loggingOnlyMode = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "loggingOnlyMode"
 
-        if (($enabled) -and ($maxFailure -gt 0) -and ($entryExpiration -gt 0) -and (-not $loggingOnlyMode)) {
-            # All good
+            if (($enabled) -and ($maxFailure -gt 0) -and ($entryExpiration -gt 0) -and (-not $loggingOnlyMode)) {
+                # All good
+            }
+            elseif (-not $enabled ) {
+                $message = "Feature disabled"
+                $audit = [AuditStatus]::False
+            }
+            else {
+                $message = "Feature enabled, but check settings. Found: `n maxFailure: " `
+                    + $maxFailure + "`n entryExpiration: " `
+                    + $entryExpiration + "`n Only logging mode: " `
+                    + $loggingOnlyMode
+                $audit = [AuditStatus]::False
+            }
         }
-        elseif (-not $enabled ) {
-            $message = "Feature disabled"
+        catch {
             $audit = [AuditStatus]::False
+            $message = "Cannot get FTP Logon attempt settings"
         }
-        else {
-            $message = "Feature enabled, but check settings. Found: `n maxFailure: " `
-                + $maxFailure + "`n entryExpiration: " `
-                + $entryExpiration + "`n Only logging mode: " `
-                + $loggingOnlyMode
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        $audit = [AuditStatus]::False
-        $message = "Cannot get FTP Logon attempt settings"
     }
 
     New-Object -TypeName AuditInfo -Property @{
