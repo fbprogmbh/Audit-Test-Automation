@@ -24,3 +24,7 @@ Import-Module -Name .\Audit-Test-Automation\IIS10Audit -Verbose
 ```PowerShell
 Get-IISHtmlReport -Path "MyReport.html"
 ```
+
+## Sample report
+
+You can find a sample report in the [Sample](Sample) folder.
