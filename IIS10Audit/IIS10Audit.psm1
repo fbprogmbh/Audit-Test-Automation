@@ -1882,10 +1882,10 @@ function Test-IISFtpIsDisabled {
 		$message = $MESSAGE_ALLGOOD
 		$audit = [AuditStatus]::True
 
-		[array]$ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
+		
 
-		if ($ftpBindings.Count -gt 0 -or (Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Available) {
-			$message = "FTP is not disabled"
+		if ($ftpBindings.Count -gt 0 -or (Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
+			$message = "FTP is not disabled. FTP is using bindings and/or is at least installed."
 			$audit = [AuditStatus]::False
 		}
 
