@@ -32,8 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <#
 
-Author(s):        Benedikt Böhme
-Date:             31/05/2018
+Author(s):          Benedikt Böhme
+                    Dennis Esly
+Date:               05/31/2018
+Last Change:        08/07/2018
 
 #>
 
@@ -319,7 +321,22 @@ function Test-IISAppPoolIdentity {
 		$message = $MESSAGE_ALLGOOD
 		$audit = [AuditStatus]::True
 
-		if ($AppPool.ProcessModel.IdentityType -ne [ProcessModelIdentityType]::ApplicationPoolIdentity)	{
+        if ($AppPool.ProcessModel.IdentityType -eq [ProcessModelIdentityType]::SpecificUSer) {
+            
+            # Get the username of the specific application
+            $username = $AppPool.ProcessModel.UserName
+            $AppPoolUsers = Get-IISAppPool | Select-Object -ExpandProperty ProcessModel | Select-Object -ExpandProperty Username | Group-Object -NoElement
+            
+            if ( ($AppPoolUsers | Where-Object Name -EQ $username | Select-Object -ExpandProperty Count) -gt 1) {
+                $message = "ApplicationPoolIdentity $username is used for more than one ApplicationPool"
+                $audit = [AuditStatus]::False
+            }
+            else {
+                $message = "Unique ApplicationPoolIdentity $username is used."
+            }
+        }
+
+		elseif ($AppPool.ProcessModel.IdentityType -ne [ProcessModelIdentityType]::ApplicationPoolIdentity)	{
 			$message = "ApplicationPoolIdentity is not set"
 			$audit = [AuditStatus]::False
 		}
