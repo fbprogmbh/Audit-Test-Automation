@@ -31,16 +31,8 @@ li a:hover {
 }
 
 table {
-	border: 1px solid #a7a7a7;
 	border-collapse: collapse;
     font-family: Arial, sans-serif;
-}
-
-th {
-	background-color: #cacaca;
-	color: white;
-	text-transform: uppercase;
-	border-bottom: 1px solid #a7a7a7;
 }
 
 th, td {
@@ -49,16 +41,30 @@ th, td {
     vertical-align: top;
 }
 
-tr:nth-child(even) {
+/* audit-info table */
+table.audit-info {
+	border: 1px solid #a7a7a7;
+}
+
+table.audit-info th {
+	background-color: #cacaca;
+	color: white;
+	text-transform: uppercase;
+	border-bottom: 1px solid #a7a7a7;
+}
+
+table.audit-info tr:nth-child(even) {
 	background-color: #efefef;
 }
 
-table th:nth-child(1), table td:nth-child(1) {
+/* First column in an audit-info table */
+table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
 	text-align: right;
     width: 40px;
 }
 
-table th:last-child, table td:last-child {
+/* Last column in an audit-info table */
+table.audit-info th:last-child, table.audit-info td:last-child {
 	text-align: center;
     width: 70px;
 }
@@ -85,10 +91,15 @@ h2.passed, h2.failed, h2.warning, h3.passed, h3.failed, h3.warning {
 	border-radius: 8px;
 }
 
-span.audit {
+span.auditstatus {
 	display: block;
 	padding: 5px 10px;
 	border-radius: 8px;
 	font-weight: bold;
 	margin: auto;
+}
+
+span.cis-version {
+    float: right;
+    padding-right: 20px;
 }

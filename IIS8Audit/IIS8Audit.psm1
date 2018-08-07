@@ -7,14 +7,14 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-		* Redistributions of source code must retain the above copyright
-			notice, this list of conditions and the following disclaimer.
-		* Redistributions in binary form must reproduce the above copyright
-			notice, this list of conditions and the following disclaimer in the
-			documentation and/or other materials provided with the distribution.
-		* Neither the name of the FB Pro GmbH nor the
-			names of its contributors may be used to endorse or promote products
-			derived from this software without specific prior written permission.
+        * Redistributions of source code must retain the above copyright
+            notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above copyright
+            notice, this list of conditions and the following disclaimer in the
+            documentation and/or other materials provided with the distribution.
+        * Neither the name of the FB Pro GmbH nor the
+            names of its contributors may be used to endorse or promote products
+            derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #region Authors(s)
 #
-#    Author(s):        Benedikt Böhme
+#    Author(s):        Benedikt Bï¿½hme
 #                      Dennis Esly
 #    Date:             31/05/2018
 #    Last change:      07/23/2018
@@ -193,11 +193,11 @@ function Select-Zip {
 # 1.1
 function Test-IISVirtualDirPartition {
     <#
-	.Synopsis
-		Ensure web content is on non-system partition
-	.Description
-		Web resources published through IIS are mapped, via Virtual Directories, to physical locations on disk. It is recommended to map all Virtual Directories to a non-system disk volume.
-	#>
+    .Synopsis
+        Ensure web content is on non-system partition
+    .Description
+        Web resources published through IIS are mapped, via Virtual Directories, to physical locations on disk. It is recommended to map all Virtual Directories to a non-system disk volume.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -228,11 +228,11 @@ function Test-IISVirtualDirPartition {
 # 1.2
 function Test-IISHostHeaders {
     <#
-	.Synopsis
-		Ensure 'host headers' are on all sites
-	.DESCRIPTION
- 		Host headers provide the ability to host multiple websites on the same IP address and port. It is recommended that host headers be configured for all sites. Wildcard host headers are now supported.
-	#>
+    .Synopsis
+        Ensure 'host headers' are on all sites
+    .DESCRIPTION
+         Host headers provide the ability to host multiple websites on the same IP address and port. It is recommended that host headers be configured for all sites. Wildcard host headers are now supported.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -243,7 +243,7 @@ function Test-IISHostHeaders {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
-        $Bindings = $Site.Bindings | Where-Object {[string]::IsNullOrEmpty($Binding.Host)}
+        $Bindings = $Site.Bindings | Where-Object { [string]::IsNullOrEmpty($_.Host) }
 
         if ($findings.Count -gt 0) {
             $message = "The following bindings do no specify a host: " + ($Bindings.bindingInformation -join ";")
@@ -262,16 +262,16 @@ function Test-IISHostHeaders {
 # 1.3
 function Test-IISDirectoryBrowsing {
     <#
-	.Synopsis
-		Ensure 'directory browsing' is set to disabled
-	.Description
-		Directory browsing allows the contents of a directory to be displayed upon request from a web client. If directory browsing is enabled for a directory in Internet Information Services, users receive a page that lists the contents of the directory when the following two conditions are met:
+    .Synopsis
+        Ensure 'directory browsing' is set to disabled
+    .Description
+        Directory browsing allows the contents of a directory to be displayed upon request from a web client. If directory browsing is enabled for a directory in Internet Information Services, users receive a page that lists the contents of the directory when the following two conditions are met:
 
-			1. No specific file is requested in the URL
-			2. The Default Documents feature is disabled in IIS, or if it is enabled, IIS is unable to locate a file in the directory that matches a name specified in the IIS default document list
+            1. No specific file is requested in the URL
+            2. The Default Documents feature is disabled in IIS, or if it is enabled, IIS is unable to locate a file in the directory that matches a name specified in the IIS default document list
 
-		It is recommended that directory browsing be disabled.
-	#>
+        It is recommended that directory browsing be disabled.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -311,11 +311,11 @@ function Test-IISDirectoryBrowsing {
 # 1.4
 function Test-IISAppPoolIdentity {
     <#
-	.Synopsis
-		Ensure 'application pool identity' is configured for all application pools
-	.Description
-		Application Pool Identities are the actual users/authorities that will run the worker process - w3wp.exe. Assigning the correct user authority will help ensure that applications can function properly, while not giving overly permissive permissions on the system. These identities can further be used in ACLs to protect system content. It is recommended that each Application Pool run under a unique identity.
-	#>
+    .Synopsis
+        Ensure 'application pool identity' is configured for all application pools
+    .Description
+        Application Pool Identities are the actual users/authorities that will run the worker process - w3wp.exe. Assigning the correct user authority will help ensure that applications can function properly, while not giving overly permissive permissions on the system. These identities can further be used in ACLs to protect system content. It is recommended that each Application Pool run under a unique identity.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -358,11 +358,11 @@ function Test-IISAppPoolIdentity {
 # 1.5
 function Test-IISUniqueSiteAppPool {
     <#
-	.Synopsis
-		Ensure 'unique application pools' is set for sites
-	.Description
-		IIS introduced a new security feature called Application Pool Identities that allows Application Pools to be run under unique accounts without the need to create and manage local or domain accounts. It is recommended that all Sites run under unique, dedicated Application Pools.
-	#>
+    .Synopsis
+        Ensure 'unique application pools' is set for sites
+    .Description
+        IIS introduced a new security feature called Application Pool Identities that allows Application Pools to be run under unique accounts without the need to create and manage local or domain accounts. It is recommended that all Sites run under unique, dedicated Application Pools.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -396,11 +396,11 @@ function Test-IISUniqueSiteAppPool {
 # 1.6
 function Test-IISAnonymouseUserIdentity {
     <#
-	.Synopsis
-		Ensure 'application pool identity' is configured for anonymous user identity
-	.Description
-		To achieve isolation in IIS, application pools can be run as separate identities. IIS can be configured to automatically use the application pool identity if no anonymous user account is configured for a Web site. This can greatly reduce the number of accounts needed for Web sites and make management of the accounts easier. It is recommended the Application Pool Identity be set as the Anonymous User Identity.
-	#>
+    .Synopsis
+        Ensure 'application pool identity' is configured for anonymous user identity
+    .Description
+        To achieve isolation in IIS, application pools can be run as separate identities. IIS can be configured to automatically use the application pool identity if no anonymous user account is configured for a Web site. This can greatly reduce the number of accounts needed for Web sites and make management of the accounts easier. It is recommended the Application Pool Identity be set as the Anonymous User Identity.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -439,11 +439,11 @@ function Test-IISAnonymouseUserIdentity {
 # 2.1
 function Test-IISGlobalAuthorization {
     <#
-	.Synopsis
-		Ensure 'global authorization rule' is set to restrict access
-	.Description
-		IIS introduced URL Authorization, which allows the addition of Authorization rules to the actual URL, instead of the underlying file system resource, as a way to protect it. Authorization rules can be configured at the server, web site, folder (including Virtual Directories), or file level. The native URL Authorization module applies to all requests, whether they are .NET managed or other types of files (e.g. static files or ASP files). It is recommended that URL Authorization be configured to only grant access to the necessary security principals.
-	#>
+    .Synopsis
+        Ensure 'global authorization rule' is set to restrict access
+    .Description
+        IIS introduced URL Authorization, which allows the addition of Authorization rules to the actual URL, instead of the underlying file system resource, as a way to protect it. Authorization rules can be configured at the server, web site, folder (including Virtual Directories), or file level. The native URL Authorization module applies to all requests, whether they are .NET managed or other types of files (e.g. static files or ASP files). It is recommended that URL Authorization be configured to only grant access to the necessary security principals.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -489,12 +489,12 @@ function Test-IISGlobalAuthorization {
 # 2.2
 function Test-IISAuthenticatedPricipals {
     <#
-	.Synopsis
-		Ensure access to sensitive site features is restricted to authenticated principals only
-	.Description
-		IIS supports both challenge-based and login redirection-based authentication methods. Challenge-based authentication methods, such as Integrated Windows Authentication, require a client to respond correctly to a server-initiated challenge. A login redirection-based authentication method such as Forms Authentication relies on redirection to a login page to determine the identity of the principal. Challenge-based authentication and login redirection-based authentication methods cannot be used in conjunction with one another.
+    .Synopsis
+        Ensure access to sensitive site features is restricted to authenticated principals only
+    .Description
+        IIS supports both challenge-based and login redirection-based authentication methods. Challenge-based authentication methods, such as Integrated Windows Authentication, require a client to respond correctly to a server-initiated challenge. A login redirection-based authentication method such as Forms Authentication relies on redirection to a login page to determine the identity of the principal. Challenge-based authentication and login redirection-based authentication methods cannot be used in conjunction with one another.
 
-		It is recommended that sites containing sensitive information, confidential data, or non-public web services be configured with a credentials-based authentication mechanism.
+        It is recommended that sites containing sensitive information, confidential data, or non-public web services be configured with a credentials-based authentication mechanism.
     #>
 
     param(
@@ -529,10 +529,10 @@ function Test-IISAuthenticatedPricipals {
 # 2.3
 function Test-IISFormsAuthenticationSSL {
     <#
-	.Synopsis
-		Ensure 'forms authentication' require SSL
-	.Description
-		Forms-based authentication can pass credentials across the network in clear text. It is therefore imperative that the traffic between client and server be encrypted using SSL, especially in cases where the site is publicly accessible. It is recommended that communications with any portion of a site using Forms Authentication be encrypted using SSL.
+    .Synopsis
+        Ensure 'forms authentication' require SSL
+    .Description
+        Forms-based authentication can pass credentials across the network in clear text. It is therefore imperative that the traffic between client and server be encrypted using SSL, especially in cases where the site is publicly accessible. It is recommended that communications with any portion of a site using Forms Authentication be encrypted using SSL.
     #>
 
     param(
@@ -574,11 +574,11 @@ function Test-IISFormsAuthenticationSSL {
 # 2.4
 function Test-IISFormsAuthenticationCookies {
     <#
-	.Synopsis
-		Ensure 'forms authentication' is set to use cookies
-	.Description
-		Forms Authentication can be configured to maintain the site visitor's session identifier in either a URI or cookie. It is recommended that Forms Authentication be set to use cookies.
-	#>
+    .Synopsis
+        Ensure 'forms authentication' is set to use cookies
+    .Description
+        Forms Authentication can be configured to maintain the site visitor's session identifier in either a URI or cookie. It is recommended that Forms Authentication be set to use cookies.
+    #>
 
     param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -616,12 +616,12 @@ function Test-IISFormsAuthenticationCookies {
 # 2.5
 function Test-IISFormsAuthenticationProtection {
     <#
-	.Synopsis
-		Ensure 'cookie protection mode' is configured for forms authentication
-	.Description
-		The cookie protection mode defines the protection Forms Authentication cookies will be given within a configured application.
+    .Synopsis
+        Ensure 'cookie protection mode' is configured for forms authentication
+    .Description
+        The cookie protection mode defines the protection Forms Authentication cookies will be given within a configured application.
 
-		It is recommended that cookie protection mode always encrypt and validate Forms Authentication cookies.
+        It is recommended that cookie protection mode always encrypt and validate Forms Authentication cookies.
     #>
 
     param(
@@ -661,10 +661,10 @@ function Test-IISFormsAuthenticationProtection {
 # 2.6
 function Test-IISTLSForBasicAuth {
     <#
-	.Synopsis
-		Ensure transport layer security for 'basic authentication' is configured
-	.Description
-		Basic Authentication can pass credentials across the network in clear text. It is therefore imperative that the traffic between client and server be encrypted, especially in cases where the site is publicly accessible and is recommended that TLS be configured and required for any Site or Application using Basic Authentication.
+    .Synopsis
+        Ensure transport layer security for 'basic authentication' is configured
+    .Description
+        Basic Authentication can pass credentials across the network in clear text. It is therefore imperative that the traffic between client and server be encrypted, especially in cases where the site is publicly accessible and is recommended that TLS be configured and required for any Site or Application using Basic Authentication.
     #>
 
     param(
@@ -706,10 +706,10 @@ function Test-IISTLSForBasicAuth {
 # 2.7
 function Test-IISPasswordFormatNotClear {
     <#
-	.Synopsis
-		Ensure 'passwordFormat' is not set to clear
-	.Description
-		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended that passwordFormat be set to a value other than Clear, such as SHA1.
+    .Synopsis
+        Ensure 'passwordFormat' is not set to clear
+    .Description
+        The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended that passwordFormat be set to a value other than Clear, such as SHA1.
     #>
 
     param(
@@ -746,10 +746,10 @@ function Test-IISPasswordFormatNotClear {
 # 2.7
 function Test-IISPasswordFormatNotClearMachineLevel {
     <#
-	.Synopsis
-		Ensure 'passwordFormat' is not set to clear
-	.Description
-		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended that passwordFormat be set to a value other than Clear, such as SHA1.
+    .Synopsis
+        Ensure 'passwordFormat' is not set to clear
+    .Description
+        The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended that passwordFormat be set to a value other than Clear, such as SHA1.
     #>
 
     $message = $MESSAGE_ALLGOOD
@@ -774,10 +774,10 @@ function Test-IISPasswordFormatNotClearMachineLevel {
 # 2.8
 function Test-IISCredentialsNotStored {
     <#
-	.Synopsis
-		Ensure 'credentials' are not stored in configuration files
-	.Description
-		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended to avoid storing passwords in the configuration file even in form of hash.
+    .Synopsis
+        Ensure 'credentials' are not stored in configuration files
+    .Description
+        The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended to avoid storing passwords in the configuration file even in form of hash.
     #>
 
     param(
@@ -813,10 +813,10 @@ function Test-IISCredentialsNotStored {
 # 2.8
 function Test-IISCredentialsNotStoredMachineLevel {
     <#
-	.Synopsis
-		Ensure 'credentials' are not stored in configuration files
-	.Description
-		The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended to avoid storing passwords in the configuration file even in form of hash.
+    .Synopsis
+        Ensure 'credentials' are not stored in configuration files
+    .Description
+        The <credentials> element of the <authentication> element allows optional definitions of name and password for IIS Manager User accounts within the configuration file. Forms based authentication also uses these elements to define the users. IIS Manager Users can use the administration interface to connect to sites and applications in which they've been granted authorization. Note that the <credentials> element only applies when the default provider, ConfigurationAuthenticationProvider, is configured as the authentication provider. It is recommended to avoid storing passwords in the configuration file even in form of hash.
     #>
 
     $message = $MESSAGE_ALLGOOD
@@ -847,11 +847,11 @@ function Test-IISCredentialsNotStoredMachineLevel {
 # 3.1
 function Test-IISDeploymentMethodRetail {
     <#
-	.Synopsis
-		Ensure 'deployment method retail' is set
-	.Description
-		The <deployment retail> switch is intended for use by production IIS servers. This switch is used to help applications run with the best possible performance and least possible security information leakages by disabling the application's ability to generate trace output on a page, disabling the ability to display detailed error messages to end users, and disabling the debug switch. Often times, switches and options that are developer-focused, such as failed request tracing and debugging, are enabled during active development. It is recommended that the deployment method on any production server be set to retail.
-	#>
+    .Synopsis
+        Ensure 'deployment method retail' is set
+    .Description
+        The <deployment retail> switch is intended for use by production IIS servers. This switch is used to help applications run with the best possible performance and least possible security information leakages by disabling the application's ability to generate trace output on a page, disabling the ability to display detailed error messages to end users, and disabling the debug switch. Often times, switches and options that are developer-focused, such as failed request tracing and debugging, are enabled during active development. It is recommended that the deployment method on any production server be set to retail.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -875,12 +875,12 @@ function Test-IISDeploymentMethodRetail {
 # 3.2
 function Test-IISDebugOff {
     <#
-	.Synopsis
-		Ensure 'debug' is turned off
-	.Description
-		Developers often enable the debug mode during active ASP.NET development so that they do not have to continually clear their browsers cache every time they make a change to a resource handler. The problem would arise from this being left "on" or set to "true". Compilation debug output is displayed to the end user, allowing malicious persons to obtain detailed information about applications.
+    .Synopsis
+        Ensure 'debug' is turned off
+    .Description
+        Developers often enable the debug mode during active ASP.NET development so that they do not have to continually clear their browsers cache every time they make a change to a resource handler. The problem would arise from this being left "on" or set to "true". Compilation debug output is displayed to the end user, allowing malicious persons to obtain detailed information about applications.
 
-		is recommended that debugging still be turned off.
+        is recommended that debugging still be turned off.
     #>
 
     param(
@@ -914,13 +914,13 @@ function Test-IISDebugOff {
 # 3.3
 function Test-IISCustomErrorsNotOff {
     <#
-	.Synopsis
-		Ensure custom error messages are not off
-	.Description
-		When an ASP.NET application fails and causes an HTTP/1.x 500 Internal Server Error, or a feature configuration (such as Request Filtering) prevents a page from being displayed, an error message will be generated. Administrators can choose whether or not the application should display a friendly message to the client, detailed error message to the client, or detailed error message to localhost only.
+    .Synopsis
+        Ensure custom error messages are not off
+    .Description
+        When an ASP.NET application fails and causes an HTTP/1.x 500 Internal Server Error, or a feature configuration (such as Request Filtering) prevents a page from being displayed, an error message will be generated. Administrators can choose whether or not the application should display a friendly message to the client, detailed error message to the client, or detailed error message to localhost only.
 
-		It is recommended that customErrors still be turned to On or RemoteOnly.
-	#>
+        It is recommended that customErrors still be turned to On or RemoteOnly.
+    #>
 
     param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -953,10 +953,10 @@ function Test-IISCustomErrorsNotOff {
 # 3.4
 function Test-IISHttpErrorsHidden {
     <#
-	.Synopsis
-		Ensure IIS HTTP detailed errors are hidden from displaying remotely
-	.Description
-		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
+    .Synopsis
+        Ensure IIS HTTP detailed errors are hidden from displaying remotely
+    .Description
+        A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
     #>
 
     param(
@@ -990,10 +990,10 @@ function Test-IISHttpErrorsHidden {
 # 3.5
 function Test-IISAspNetTracingDisabled {
     <#
-	.Synopsis
-		Ensure ASP.NET stack tracing is not enabled
-	.Description
-		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
+    .Synopsis
+        Ensure ASP.NET stack tracing is not enabled
+    .Description
+        A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
     #>
 
     param(
@@ -1027,11 +1027,11 @@ function Test-IISAspNetTracingDisabled {
 # 3.5
 function Test-IISAspNetTracingDisabledMachineLevel {
     <#
-	.Synopsis
-		Ensure ASP.NET stack tracing is not enabled
-	.Description
-		A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
-	#>
+    .Synopsis
+        Ensure ASP.NET stack tracing is not enabled
+    .Description
+        A Web site's error pages are often set to show detailed error information for troubleshooting purposes during testing or initial deployment. To prevent unauthorized users from viewing this privileged information, detailed error pages must not be seen by remote users. This setting can be modified in the errorMode attribute setting for a Web site's error pages. By default, the errorMode attribute is set in the Web.config file for the Web site or application and is located in the <httpErrors> element of the <system.webServer> section. It is recommended that custom errors be prevented from displaying remotely.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -1055,12 +1055,12 @@ function Test-IISAspNetTracingDisabledMachineLevel {
 # 3.6
 function Test-IISCookielessSessionState {
     <#
-	.Synopsis
-		Ensure 'httpcookie' mode is configured for session state
-	.Description
-		A session cookie associates session information with client information for that session, which can be the duration of a user's connection to a site. The cookie is passed in a HTTP header together with all requests between the client and server.
+    .Synopsis
+        Ensure 'httpcookie' mode is configured for session state
+    .Description
+        A session cookie associates session information with client information for that session, which can be the duration of a user's connection to a site. The cookie is passed in a HTTP header together with all requests between the client and server.
 
-		It is recommended that session state be configured to UseCookies.
+        It is recommended that session state be configured to UseCookies.
     #>
 
     param(
@@ -1094,16 +1094,16 @@ function Test-IISCookielessSessionState {
 # 3.7
 function Test-IISCookiesHttpOnly {
     <#
-	.Synopsis
-		Ensure 'cookies' are set with HttpOnly attribute
-	.Description
-		The httpOnlyCookies attribute of the httpCookies node determines if IIS will set the HttpOnly flag on HTTP cookies it sets. The HttpOnly flag indicates to the user agent that the cookie must not be accessible by client-side script (i.e document.cookie). It is recommended that the httpOnlyCookies attribute be set to true.
+    .Synopsis
+        Ensure 'cookies' are set with HttpOnly attribute
+    .Description
+        The httpOnlyCookies attribute of the httpCookies node determines if IIS will set the HttpOnly flag on HTTP cookies it sets. The HttpOnly flag indicates to the user agent that the cookie must not be accessible by client-side script (i.e document.cookie). It is recommended that the httpOnlyCookies attribute be set to true.
     #>
 
     param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [Configuration] $Configuration
-)
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [Configuration] $Configuration
+    )
 
     process {
         $message = $MESSAGE_ALLGOOD
@@ -1131,12 +1131,12 @@ function Test-IISCookiesHttpOnly {
 # 3.8
 function Test-IISMachineKeyValidation {
     <#
-	.Synopsis
-		Ensure 'MachineKey validation method - .Net 3.5' is configured
-	.Description
-		The machineKey element of the ASP.NET web.config specifies the algorithm and keys that ASP.NET will use for encryption. The Machine Key feature can be managed to specify hashing and encryption settings for application services such as view state, Forms authentication, membership and roles, and anonymous identification.
+    .Synopsis
+        Ensure 'MachineKey validation method - .Net 3.5' is configured
+    .Description
+        The machineKey element of the ASP.NET web.config specifies the algorithm and keys that ASP.NET will use for encryption. The Machine Key feature can be managed to specify hashing and encryption settings for application services such as view state, Forms authentication, membership and roles, and anonymous identification.
 
-		It is recommended that AES or SHA1 methods be configured for use at the global level.
+        It is recommended that AES or SHA1 methods be configured for use at the global level.
     #>
 
     param(
@@ -1176,13 +1176,13 @@ function Test-IISMachineKeyValidation {
 # 3.9
 function Test-IISMachineKeyValidationV45 {
     <#
-	.Synopsis
-		Ensure 'MachineKey validation method - .Net 4.5' is configured
-	.Description
-		The machineKey element of the ASP.NET web.config specifies the algorithm and keys that ASP.NET will use for encryption. The Machine Key feature can be managed to specify hashing and encryption settings for application services such as view state, Forms authentication, membership and roles, and anonymous identification.
+    .Synopsis
+        Ensure 'MachineKey validation method - .Net 4.5' is configured
+    .Description
+        The machineKey element of the ASP.NET web.config specifies the algorithm and keys that ASP.NET will use for encryption. The Machine Key feature can be managed to specify hashing and encryption settings for application services such as view state, Forms authentication, membership and roles, and anonymous identification.
 
-		It is recommended that SHA-2 methods be configured for use at the global level.
-	#>
+        It is recommended that SHA-2 methods be configured for use at the global level.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1220,13 +1220,13 @@ function Test-IISMachineKeyValidationV45 {
 # 3.10
 function Test-IISDotNetTrustLevel {
     <#
-	.Synopsis
-		Ensure global .NET trust level is configured
-	.Description
-		An application's trust level determines the permissions that are granted by the ASP.NET code access security (CAS) policy. CAS defines two trust categories: full trust and partial trust. An application that has full trust permissions may access all resource types on a server and perform privileged operations, while applications that run with partial trust have varying levels of operating permissions and access to resources.
+    .Synopsis
+        Ensure global .NET trust level is configured
+    .Description
+        An application's trust level determines the permissions that are granted by the ASP.NET code access security (CAS) policy. CAS defines two trust categories: full trust and partial trust. An application that has full trust permissions may access all resource types on a server and perform privileged operations, while applications that run with partial trust have varying levels of operating permissions and access to resources.
 
-		It is recommended that the global .NET Trust Level be set to Medium or lower.
-	#>
+        It is recommended that the global .NET Trust Level be set to Medium or lower.
+    #>
 
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1244,10 +1244,8 @@ function Test-IISDotNetTrustLevel {
             -SectionPath "system.web/trust" `
             | Get-IISConfigAttributeValue -AttributeName "level"
 
-        if (($level -ne "medium") `
-                -or (-not ($appPoolVersion -like "v2.*")) `
-                -or (-not $appPoolVersion -like "v4.*")) {
-
+        # medium trust level should be set in .NET 2.*, but not in later versions
+		if (($appPoolVersion -like "v2.*" -and $level -ne "medium") -or $appPoolVersion -notlike "v4.*") {
             $message = "TrustLevel set to $level"
             $audit = [AuditStatus]::False
         }
@@ -1271,10 +1269,10 @@ function Test-IISDotNetTrustLevel {
 # 4.1
 function Test-IISMaxAllowedContentLength {
     <#
-	.Synopsis
-		Ensure 'maxAllowedContentLength' is configured
-	.Description
-		The maxAllowedContentLength Request Filter is the maximum size of the http request, measured in bytes, which can be sent from a client to the server. Configuring this value enables the total request size to be restricted to a configured value. It is recommended that the overall size of requests be restricted to a maximum value appropriate for the server, site, or application.
+    .Synopsis
+        Ensure 'maxAllowedContentLength' is configured
+    .Description
+        The maxAllowedContentLength Request Filter is the maximum size of the http request, measured in bytes, which can be sent from a client to the server. Configuring this value enables the total request size to be restricted to a configured value. It is recommended that the overall size of requests be restricted to a maximum value appropriate for the server, site, or application.
     #>
 
     param(
@@ -1320,10 +1318,10 @@ function Test-IISMaxAllowedContentLength {
 # 4.2
 function Test-IISMaxURLRequestFilter {
     <#
-	.Synopsis
-		Ensure 'maxURL request filter' is configured
-	.Description
-		The maxURL attribute of the <requestLimits> property is the maximum length (in Bytes) in which a requested URL can be (excluding query string) in order for IIS to accept. Configuring this Request Filter enables administrators to restrict the length of the requests that the server will accept. It is recommended that a limit be put on the length of URL.
+    .Synopsis
+        Ensure 'maxURL request filter' is configured
+    .Description
+        The maxURL attribute of the <requestLimits> property is the maximum length (in Bytes) in which a requested URL can be (excluding query string) in order for IIS to accept. Configuring this Request Filter enables administrators to restrict the length of the requests that the server will accept. It is recommended that a limit be put on the length of URL.
     #>
 
     param(
@@ -1370,11 +1368,11 @@ function Test-IISMaxURLRequestFilter {
 # 4.3
 function Test-IISMaxQueryStringRequestFilter {
     <#
-	.Synopsis
-		Ensure 'MaxQueryString request filter' is configured
-	.Description
-		The MaxQueryString Request Filter describes the upper limit on the length of the query string that the configured IIS server will allow for websites or applications. It is recommended that values always be established to limit the amount of data will can be accepted in the query string.
-	#>
+    .Synopsis
+        Ensure 'MaxQueryString request filter' is configured
+    .Description
+        The MaxQueryString Request Filter describes the upper limit on the length of the query string that the configured IIS server will allow for websites or applications. It is recommended that values always be established to limit the amount of data will can be accepted in the query string.
+    #>
 
     param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1419,10 +1417,10 @@ function Test-IISMaxQueryStringRequestFilter {
 # 4.4
 function Test-IISNonASCIICharURLForbidden {
     <#
-	.Synopsis
-		Ensure non-ASCII characters in URLs are not allowed
-	.Description
-		This feature is used to allow or reject all requests to IIS that contain non-ASCII characters. When using this feature, Request Filtering will deny the request if high-bit characters are present in the URL. The UrlScan equivalent is AllowHighBitCharacters. It is recommended that requests containing non-ASCII characters be rejected, where possible.
+    .Synopsis
+        Ensure non-ASCII characters in URLs are not allowed
+    .Description
+        This feature is used to allow or reject all requests to IIS that contain non-ASCII characters. When using this feature, Request Filtering will deny the request if high-bit characters are present in the URL. The UrlScan equivalent is AllowHighBitCharacters. It is recommended that requests containing non-ASCII characters be rejected, where possible.
     #>
 
     param(
@@ -1446,10 +1444,10 @@ function Test-IISNonASCIICharURLForbidden {
                 $message = "non-ASCII characters in URLs are allowed"
                 $audit = [AuditStatus]::False
             }
-            else {
-                $message = "Request Filering is not installed"
-                $audit = [AuditStatus]::False
-            }
+        }
+        else {
+            $message = "Request Filering is not installed"
+            $audit = [AuditStatus]::False
         }
 
         New-Object -TypeName AuditInfo -Property @{
@@ -1464,10 +1462,10 @@ function Test-IISNonASCIICharURLForbidden {
 # 4.5
 function Test-IISRejectDoubleEncodedRequests {
     <#
-	.Synopsis
-		Ensure Double-Encoded requests will be rejected
-	.Description
-		This Request Filter feature prevents attacks that rely on double-encoded requests and applies if an attacker submits a double-encoded request to IIS. When the double-encoded requests filter is enabled, IIS will go through a two iteration process of normalizing the request. If the first normalization differs from the second, the request is rejected and the error code is logged as a 404.11. The double-encoded requests filter was the VerifyNormalization option in UrlScan. It is recommended that double-encoded requests be rejected.
+    .Synopsis
+        Ensure Double-Encoded requests will be rejected
+    .Description
+        This Request Filter feature prevents attacks that rely on double-encoded requests and applies if an attacker submits a double-encoded request to IIS. When the double-encoded requests filter is enabled, IIS will go through a two iteration process of normalizing the request. If the first normalization differs from the second, the request is rejected and the error code is logged as a 404.11. The double-encoded requests filter was the VerifyNormalization option in UrlScan. It is recommended that double-encoded requests be rejected.
     #>
     param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1508,11 +1506,11 @@ function Test-IISRejectDoubleEncodedRequests {
 # 4.6
 function Test-IISHTTPTraceMethodeDisabled {
     <#
-	.Synopsis
-		Ensure 'HTTP Trace Method' is disabled
-	.Description
-		The HTTP TRACE method returns the contents of client HTTP requests in the entity-body of the TRACE response. Attackers could leverage this behavior to access sensitive information, such as authentication data or cookies, contained in the HTTP headers of the request. One such way to mitigate this is by using the <verbs> element of the <requestFiltering> collection. The <verbs> element replaces the [AllowVerbs] and [DenyVerbs] features in UrlScan. It is recommended the HTTP TRACE method be denied.
-	#>
+    .Synopsis
+        Ensure 'HTTP Trace Method' is disabled
+    .Description
+        The HTTP TRACE method returns the contents of client HTTP requests in the entity-body of the TRACE response. Attackers could leverage this behavior to access sensitive information, such as authentication data or cookies, contained in the HTTP headers of the request. One such way to mitigate this is by using the <verbs> element of the <requestFiltering> collection. The <verbs> element replaces the [AllowVerbs] and [DenyVerbs] features in UrlScan. It is recommended the HTTP TRACE method be denied.
+    #>
 
     param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -1560,10 +1558,10 @@ function Test-IISHTTPTraceMethodeDisabled {
 # 4.7
 function Test-IISBlockUnlistedFileExtensions {
     <#
-	.Synopsis
-		Ensure Unlisted File Extensions are not allowed
-	.Description
-		The FileExtensions Request Filter allows administrators to define specific extensions their web server(s) will allow and disallow. The property allowUnlisted will cover all other file extensions not explicitly allowed or denied. Often times, extensions such as .config, .bat, .exe, to name a few, should never be served. The AllowExtensions and DenyExtensions options are the UrlScan equivalents. It is recommended that all extensions be unallowed at the most global level possible, with only those necessary being allowed.
+    .Synopsis
+        Ensure Unlisted File Extensions are not allowed
+    .Description
+        The FileExtensions Request Filter allows administrators to define specific extensions their web server(s) will allow and disallow. The property allowUnlisted will cover all other file extensions not explicitly allowed or denied. Often times, extensions such as .config, .bat, .exe, to name a few, should never be served. The AllowExtensions and DenyExtensions options are the UrlScan equivalents. It is recommended that all extensions be unallowed at the most global level possible, with only those necessary being allowed.
     #>
 
     param(
@@ -1607,28 +1605,48 @@ function Test-IISBlockUnlistedFileExtensions {
 # 4.8
 function Test-IISHandlerDenyWrite {
     <#
-	.Synopsis
-		Ensure Handler is not granted Write and Script/Execute
-	.Description
-		Handler mappings can be configured to give permissions to Read, Write, Script, or Execute depending on what the use is for - reading static content, uploading files, executing scripts, etc. It is recommended to grant a handler either Execute/``Script or Write permissions, but not both.
-	#>
+    .Synopsis
+        Ensure Handler is not granted Write and Script/Execute
+    .Description
+        Handler mappings can be configured to give permissions to Read, Write, Script, or Execute depending on what the use is for - reading static content, uploading files, executing scripts, etc. It is recommended to grant a handler either Execute/``Script or Write permissions, but not both.
+    #>
 
-    New-Object -TypeName AuditInfo -Property @{
-        Id     = "4.8"
-        Task   = "Ensure Handler is not granted Write and Script/Execute"
-        Message = "Test not implemented yet."
-        Audit  = [AuditStatus]::None
-    } | Write-Output
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Configuration] $Configuration
+	)
+
+	process {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
+
+		$path = "system.webServer/handlers"
+		$section = $Configuration.GetSection($path)
+		$accessPolicy = ($section | Get-IISConfigAttributeValue -AttributeName "accessPolicy").Split(",")
+
+		if ((($accessPolicy -contains "Script") -or ($accessPolicy -contains "Execute")) `
+			-and ($accessPolicy -contains "Write")) {
+			$message = "Handler is granted write and script/execute"
+			$audit = [AuditStatus]::False
+		}
+
+		New-Object -TypeName AuditInfo -Property @{
+			Id      = "4.8"
+			Task    = "Ensure Handler is not granted Write and Script/Execute"
+			Message = $message
+			Audit   = $audit
+		} | Write-Output
+	}
 }
 
 # 4.9
 function Test-IISIsapisNotAllowed {
     <#
-	.Synopsis
-		Ensure 'notListedIsapisAllowed' is set to false
-	.Description
-		The notListedIsapisAllowed attribute is a server-level setting that is located in the ApplicationHost.config file in the <isapiCgiRestriction> element of the <system.webServer> section under <security>. This element ensures that malicious users cannot copy unauthorized ISAPI binaries to the Web server and then run them. It is recommended that notListedIsapisAllowed be set to false.
-	#>
+    .Synopsis
+        Ensure 'notListedIsapisAllowed' is set to false
+    .Description
+        The notListedIsapisAllowed attribute is a server-level setting that is located in the ApplicationHost.config file in the <isapiCgiRestriction> element of the <system.webServer> section under <security>. This element ensures that malicious users cannot copy unauthorized ISAPI binaries to the Web server and then run them. It is recommended that notListedIsapisAllowed be set to false.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -1660,11 +1678,11 @@ function Test-IISIsapisNotAllowed {
 # 4.10
 function Test-IISCgisNotAllowed {
     <#
-	.Synopsis
-		Ensure 'notListedCgisAllowed' is set to false
-	.Description
-		The notListedCgisAllowed attribute is a server-level setting that is located in the ApplicationHost.config file in the <isapiCgiRestriction> element of the <system.webServer> section under <security>. This element ensures that malicious users cannot copy unauthorized CGI binaries to the Web server and then run them. It is recommended that notListedCgisAllowed be set to false.
-	#>
+    .Synopsis
+        Ensure 'notListedCgisAllowed' is set to false
+    .Description
+        The notListedCgisAllowed attribute is a server-level setting that is located in the ApplicationHost.config file in the <isapiCgiRestriction> element of the <system.webServer> section under <security>. This element ensures that malicious users cannot copy unauthorized CGI binaries to the Web server and then run them. It is recommended that notListedCgisAllowed be set to false.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -1696,10 +1714,10 @@ function Test-IISCgisNotAllowed {
 # 4.11
 function Test-IISDynamicIPRestrictionEnabled {
     <#
-	.Synopsis
-		Ensure 'Dynamic IP Address Restrictions' is enabled
-	.Description
-		IIS Dynamic IP Address Restrictions capability can be used to thwart DDos attacks. This is complimentary to the IP Addresses and Domain names Restrictions lists that can be manually maintained within IIS. In contrast, Dynamic IP address filtering allows administrators to configure the server to block access for IPs that exceed the specified request threshold. The default action Deny action for restrictions is to return a Forbidden response to the client.
+    .Synopsis
+        Ensure 'Dynamic IP Address Restrictions' is enabled
+    .Description
+        IIS Dynamic IP Address Restrictions capability can be used to thwart DDos attacks. This is complimentary to the IP Addresses and Domain names Restrictions lists that can be manually maintained within IIS. In contrast, Dynamic IP address filtering allows administrators to configure the server to block access for IPs that exceed the specified request threshold. The default action Deny action for restrictions is to return a Forbidden response to the client.
     #>
 
     param(
@@ -1760,10 +1778,10 @@ function Test-IISDynamicIPRestrictionEnabled {
 # 5.1
 function Test-IISLogFileLocation {
     <#
-	.Synopsis
-		Ensure Default IIS web log location is moved
-	.Description
-		IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
+    .Synopsis
+        Ensure Default IIS web log location is moved
+    .Description
+        IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
     #>
 
     param(
@@ -1793,28 +1811,27 @@ function Test-IISLogFileLocation {
 
 # 5.2
 function Test-IISAdvancedLoggingEnabled {
-<#
-.Synopsis
-	Ensure Advanced IIS logging is enabled
-.Description
-	5.2 - Ensure Advanced IIS logging is enabled.
-    
-    IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. 
-    Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
-.PARAMETER site
-    IIS site to check for enabled Advanced Logging
-#>
-[CmdletBinding()]
-Param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    $Site
-)
+    <#
+    .Synopsis
+        Ensure Advanced IIS logging is enabled
+    .Description
+        5.2 - Ensure Advanced IIS logging is enabled.
+        
+        IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. 
+        Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
+    .PARAMETER site
+        IIS site to check for enabled Advanced Logging
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Site
+    )
 
     # Advanced Logging is not installed per default. Check, if module is installed.
     # No try/catch because functions simply delivers a $null value if module is not present
 
-    Begin
-    {
+    begin {
         # Check if Advanced Logging module is installed
         $advLogModule = Get-WebGlobalModule -Name AdvancedLoggingModule
 
@@ -1825,19 +1842,16 @@ Param(
         $task = "Ensure Advanced IIS logging is enabled"
     }
 
-    Process
-    {
+    process {
         $task = "Ensure Advanced IIS logging is enabled"
         $message = "An error occured"
         $audit = [AuditStatus]::False
 
-        if ( $null -eq $advLogModule ) 
-        { 
+        if ( $null -eq $advLogModule ) { 
             $message = "Advanced Logging Module not installed"
             $audit = [AuditStatus]::False
         }
-        elseif ( $null -eq $serverState )
-        {
+        elseif ( $null -eq $serverState ) {
             $message = "Advanced Logging settings not found  for server."
             $audit = [AuditStatus]::False
                
@@ -1847,27 +1861,22 @@ Param(
                             -Level Error
         }
         # do further checking
-        else
-        {
-
+        else {
             $task = "Ensure Advanced IIS logging is enabled for site $($site.name)"
 
             $siteState = Get-WebConfigurationProperty -Filter "system.webServer/advancedLogging/server" -PSPath "IIS:\Sites\$($site.name)" `
                                                         -Name enabled | select `
                                                         -ExpandProperty Value
 
-            if ( $siteState -and (-not $site.advancedLogging.directory.StartsWith("%SystemDrive%")) )
-            {
+            if ( $siteState -and (-not $site.advancedLogging.directory.StartsWith("%SystemDrive%")) ) {
                 $message = "Advanced Logging enabled"
                 $audit = [AuditStatus]::True
             }
-            elseif ( $siteState -and ($site.advancedLogging.directory.StartsWith("%SystemDrive%")) )
-            {
+            elseif ( $siteState -and ($site.advancedLogging.directory.StartsWith("%SystemDrive%")) ) {
                 $message = "Advanced Logging enabled, but logging on system drive"
                 $audit = [AuditStatus]::Warning
             }
-            else
-            {
+            else {
                 $message = "Advanced Logging disabled"
                 $audit = [AuditStatus]::False  
             }           
@@ -1886,10 +1895,10 @@ Param(
 # 5.3
 function Test-IISETWLoggingEnabled {
     <#
-	.Synopsis
-		Ensure 'ETW Logging' is enabled
-	.Description
-		IIS introduces a new logging method. Administrators can now send logging information to Event Tracing for Windows (ETW)
+    .Synopsis
+        Ensure 'ETW Logging' is enabled
+    .Description
+        IIS introduces a new logging method. Administrators can now send logging information to Event Tracing for Windows (ETW)
     #>
 
     param(
@@ -1924,9 +1933,9 @@ function Test-IISETWLoggingEnabled {
 # 6.0
 function Test-IISFtpIsDisabled {
     <#
-	.Synopsis
-		Ensure FTP is disabled
-	.Description
+    .Synopsis
+        Ensure FTP is disabled
+    .Description
 
     #>
 
@@ -1941,7 +1950,7 @@ function Test-IISFtpIsDisabled {
 
         $ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
 
-        if ($ftpBindings.Count -gt 0) {
+        if ($ftpBindings.Count -gt 0 -or (Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
             $message = "FTP is not disabled"
             $audit = [AuditStatus]::False
         }
@@ -1958,37 +1967,39 @@ function Test-IISFtpIsDisabled {
 # 6.1
 function Test-IISFtpRequestsEncrypted {
     <#
-	.Synopsis
-		Ensure FTP requests are encrypted
-	.Description
-		The new FTP Publishing Service for IIS supports adding an SSL certificate to an FTP site. Using an SSL certificate with an FTP site is also known as FTP-S or FTP over Secure Socket Layers (SSL). FTP-S is an RFC standard (RFC 4217) where an SSL certificate is added to an FTP site and thereby making it possible to perform secure file transfers.
-	#>
+    .Synopsis
+        Ensure FTP requests are encrypted
+    .Description
+        The new FTP Publishing Service for IIS supports adding an SSL certificate to an FTP site. Using an SSL certificate with an FTP site is also known as FTP-S or FTP over Secure Socket Layers (SSL). FTP-S is an RFC standard (RFC 4217) where an SSL certificate is added to an FTP site and thereby making it possible to perform secure file transfers.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
 
-    try {
-        $sslConfigElement = Get-IISConfigSection `
-            -SectionPath "system.applicationHost/sites" `
-            | Get-IISConfigElement -ChildElementName "siteDefaults" `
-            | Get-IISConfigElement -ChildElementName "ftpServer" `
-            | Get-IISConfigElement -ChildElementName "security" `
-            | Get-IISConfigElement -ChildElementName "ssl"
+    if ((Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
+        try {
+            $sslConfigElement = Get-IISConfigSection `
+                -SectionPath "system.applicationHost/sites" `
+                | Get-IISConfigElement -ChildElementName "siteDefaults" `
+                | Get-IISConfigElement -ChildElementName "ftpServer" `
+                | Get-IISConfigElement -ChildElementName "security" `
+                | Get-IISConfigElement -ChildElementName "ssl"
 
-        $controlChannelPolicy = $sslConfigElement `
-            | Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
+            $controlChannelPolicy = $sslConfigElement `
+                | Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
 
-        $dataChannelPolicy = $sslConfigElement `
-            | Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
+            $dataChannelPolicy = $sslConfigElement `
+                | Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
 
-        if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
-            $message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
+            if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
+                $message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
+                $audit = [AuditStatus]::False
+            }
+        }
+        catch {
+            $message = "Cannot get FTP security setting"
             $audit = [AuditStatus]::False
         }
-    }
-    catch {
-        $message = "Cannot get FTP security setting"
-        $audit = [AuditStatus]::False
     }
 
     New-Object -TypeName AuditInfo -Property @{
@@ -2002,47 +2013,49 @@ function Test-IISFtpRequestsEncrypted {
 # 6.2
 function Test-IISFtpLogonAttemptRestriction {
     <#
-	.Synopsis
-		Ensure FTP Logon attempt restrictions is enabled
-	.Description
-		IIS introduced a built-in network security feature to automatically block brute force FTP attacks. This can be used to mitigate a malicious client from attempting a brute-force attack on a discovered account, such as the local administrator account.
-	#>
+    .Synopsis
+        Ensure FTP Logon attempt restrictions is enabled
+    .Description
+        IIS introduced a built-in network security feature to automatically block brute force FTP attacks. This can be used to mitigate a malicious client from attempting a brute-force attack on a discovered account, such as the local administrator account.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
 
-    try {
-        $denyByFailure = Get-IISConfigSection `
-            -SectionPath "system.ftpServer/security/authentication" `
-            | Get-IISConfigElement -ChildElementName "denyByFailure"
+    if ((Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
+        try {
+            $denyByFailure = Get-IISConfigSection `
+                -SectionPath "system.ftpServer/security/authentication" `
+                | Get-IISConfigElement -ChildElementName "denyByFailure"
 
-        $enabled = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "enabled"
-        $maxFailure = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "maxFailure"
-        $entryExpiration = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "entryExpiration"
-        $loggingOnlyMode = $denyByFailure `
-            | Get-IISConfigAttributeValue -AttributeName "loggingOnlyMode"
+            $enabled = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "enabled"
+            $maxFailure = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "maxFailure"
+            $entryExpiration = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "entryExpiration"
+            $loggingOnlyMode = $denyByFailure `
+                | Get-IISConfigAttributeValue -AttributeName "loggingOnlyMode"
 
-        if (($enabled) -and ($maxFailure -gt 0) -and ($entryExpiration -gt 0) -and (-not $loggingOnlyMode)) {
-            # All good
+            if (($enabled) -and ($maxFailure -gt 0) -and ($entryExpiration -gt 0) -and (-not $loggingOnlyMode)) {
+                # All good
+            }
+            elseif (-not $enabled ) {
+                $message = "Feature disabled"
+                $audit = [AuditStatus]::False
+            }
+            else {
+                $message = "Feature enabled, but check settings. Found: `n maxFailure: " `
+                    + $maxFailure + "`n entryExpiration: " `
+                    + $entryExpiration + "`n Only logging mode: " `
+                    + $loggingOnlyMode
+                $audit = [AuditStatus]::False
+            }
         }
-        elseif (-not $enabled ) {
-            $message = "Feature disabled"
+        catch {
             $audit = [AuditStatus]::False
+            $message = "Cannot get FTP Logon attempt settings"
         }
-        else {
-            $message = "Feature enabled, but check settings. Found: `n maxFailure: " `
-                + $maxFailure + "`n entryExpiration: " `
-                + $entryExpiration + "`n Only logging mode: " `
-                + $loggingOnlyMode
-            $audit = [AuditStatus]::False
-        }
-    }
-    catch {
-        $audit = [AuditStatus]::False
-        $message = "Cannot get FTP Logon attempt settings"
     }
 
     New-Object -TypeName AuditInfo -Property @{
@@ -2062,10 +2075,10 @@ function Test-IISFtpLogonAttemptRestriction {
 # 7.1
 function Test-IISHSTSHeaderSet {
     <#
-	.Synopsis
-		Ensure HSTS Header is set
-	.Description
-		HTTP Strict Transport Security (HSTS) allows a site to inform the user agent to communicate with the site only over HTTPS. This header takes two parameters: max-age, "specifies the number of seconds, after the reception of the STS header field, during which the user agent regards the host (from whom the message was received) as a Known HSTS Host [speaks only HTTPS]"; and includeSubDomains. includeSubDomains is an optional directive that defines how this policy is applied to subdomains. If includeSubDomains is included in the header, it provides the following definition: this HSTS Policy also applies to any hosts whose domain names are subdomains of the Known HSTS Host's domain name.
+    .Synopsis
+        Ensure HSTS Header is set
+    .Description
+        HTTP Strict Transport Security (HSTS) allows a site to inform the user agent to communicate with the site only over HTTPS. This header takes two parameters: max-age, "specifies the number of seconds, after the reception of the STS header field, during which the user agent regards the host (from whom the message was received) as a Known HSTS Host [speaks only HTTPS]"; and includeSubDomains. includeSubDomains is an optional directive that defines how this policy is applied to subdomains. If includeSubDomains is included in the header, it provides the following definition: this HSTS Policy also applies to any hosts whose domain names are subdomains of the Known HSTS Host's domain name.
     #>
 
     param(
@@ -2106,11 +2119,11 @@ function Test-IISHSTSHeaderSet {
 # 7.2
 function Test-IISSSL2Disabled {
     <#
-	.Synopsis
-		Ensure SSLv2 is disabled
-	.Description
-		This protocol is not considered cryptographically secure. Disabling it is recommended. This protocol is disabled by default if the registry key is not present. A reboot is required for these changes to be reflected.
-	#>
+    .Synopsis
+        Ensure SSLv2 is disabled
+    .Description
+        This protocol is not considered cryptographically secure. Disabling it is recommended. This protocol is disabled by default if the registry key is not present. A reboot is required for these changes to be reflected.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2143,11 +2156,11 @@ function Test-IISSSL2Disabled {
 # 7.3
 function Test-IISSSL3Disabled {
     <#
-	.Synopsis
-		Ensure SSLv3 is disabled
-	.Description
-		This protocol is not considered cryptographically secure. Disabling it is recommended.
-	#>
+    .Synopsis
+        Ensure SSLv3 is disabled
+    .Description
+        This protocol is not considered cryptographically secure. Disabling it is recommended.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2180,13 +2193,13 @@ function Test-IISSSL3Disabled {
 # 7.4
 function Test-IISTLSDisabled {
     <#
-	.Synopsis
-		Ensure TLS 1.0 is disabled
-	.Description
-		The PCI Data Security Standard 3.1 recommends disabling "early TLS" along with SSL:
+    .Synopsis
+        Ensure TLS 1.0 is disabled
+    .Description
+        The PCI Data Security Standard 3.1 recommends disabling "early TLS" along with SSL:
 
-		SSL and early TLS are not considered strong cryptography and cannot be used as a security control after June 30, 2016.
-	#>
+        SSL and early TLS are not considered strong cryptography and cannot be used as a security control after June 30, 2016.
+    #>
 
     $message = "TLS 1.0 not disabled"
     $audit = [AuditStatus]::False
@@ -2205,6 +2218,14 @@ function Test-IISTLSDisabled {
                 $audit = [AuditStatus]::True
             }
         }
+		elseif ($null -ne $Key.GetValue("DisabledByDefault", $null)) {
+            $value = Get-ItemProperty $path | Select-Object -ExpandProperty "DisabledByDefault"
+            # Ensure it is set to 1
+            if ($value -eq 1) {
+                $message = $MESSAGE_ALLGOOD
+                $audit = [AuditStatus]::True
+            }
+        }
     }
 
     New-Object -TypeName AuditInfo -Property @{
@@ -2218,11 +2239,11 @@ function Test-IISTLSDisabled {
 # 7.5
 function Test-IISTLS1_1Enabled {
     <#
-	.Synopsis
-		Ensure TLS 1.1 is enabled
-	.Description
-		Enabling TLS 1.1 is required for backward compatibility.
-	#>
+    .Synopsis
+        Ensure TLS 1.1 is enabled
+    .Description
+        Enabling TLS 1.1 is required for backward compatibility.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2255,11 +2276,11 @@ function Test-IISTLS1_1Enabled {
 # 7.6
 function Test-IISTLS1_2Enabled {
     <#
-	.Synopsis
-		Ensure TLS 1.2 is enabled
-	.Description
-		TLS 1.2 is the most recent and mature protocol for protecting the confidentiality and integrity of HTTP traffic. Enabling TLS 1.2 is recommended. This protocol is enabled by default if the registry key is not present. As with any registry changes, a reboot is required for changes to take effect.
-	#>
+    .Synopsis
+        Ensure TLS 1.2 is enabled
+    .Description
+        TLS 1.2 is the most recent and mature protocol for protecting the confidentiality and integrity of HTTP traffic. Enabling TLS 1.2 is recommended. This protocol is enabled by default if the registry key is not present. As with any registry changes, a reboot is required for changes to take effect.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2299,11 +2320,11 @@ function Test-IISTLS1_2Enabled {
 # 7.7
 function Test-IISNullCipherDisabled {
     <#
-	.Synopsis
-		Ensure NULL Cipher Suites is disabled
-	.Description
-		The NULL cipher does not provide data confidentiality or integrity. It is recommended that the NULL cipher be disabled.
-	#>
+    .Synopsis
+        Ensure NULL Cipher Suites is disabled
+    .Description
+        The NULL cipher does not provide data confidentiality or integrity. It is recommended that the NULL cipher be disabled.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2335,11 +2356,11 @@ function Test-IISNullCipherDisabled {
 # 7.8
 function Test-IISDESCipherDisabled {
     <#
-	.Synopsis
-		Ensure DES Cipher Suites is disabled
-	.Description
-		DES is a weak symmetric-key cipher. It is recommended that it be disabled.
-	#>
+    .Synopsis
+        Ensure DES Cipher Suites is disabled
+    .Description
+        DES is a weak symmetric-key cipher. It is recommended that it be disabled.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2371,11 +2392,11 @@ function Test-IISDESCipherDisabled {
 # 7.9
 function Test-IISRC4CipherDisabled {
     <#
-	.Synopsis
-		Ensure RC4 Cipher Suites is disabled
-	.Description
-		RC4 is a stream cipher that has known practical attacks. It is recommended that RC4 be disabled. The only RC4 cipher enabled by default on Server 2012 and 2012 R2 is RC4 128/128.
-	#>
+    .Synopsis
+        Ensure RC4 Cipher Suites is disabled
+    .Description
+        RC4 is a stream cipher that has known practical attacks. It is recommended that RC4 be disabled. The only RC4 cipher enabled by default on Server 2012 and 2012 R2 is RC4 128/128.
+    #>
 
     $rc4Ciphers = @("RC4 40/128", "RC4 56/128", "RC4 64/128", "RC4 128/128")
 
@@ -2417,11 +2438,11 @@ function Test-IISRC4CipherDisabled {
 # 7.10
 function Test-IISTripleDESEnabled {
     <#
-	.Synopsis
-		Ensure Triple DES Cipher Suite is Disabled
-	.Description
-		Triple DES Cipher Suites is now considered a weak cipher and is not recommended for use.
-	#>
+    .Synopsis
+        Ensure Triple DES Cipher Suite is Disabled
+    .Description
+        Triple DES Cipher Suites is now considered a weak cipher and is not recommended for use.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2430,7 +2451,7 @@ function Test-IISTripleDESEnabled {
         $enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168/168\" `
             -ErrorAction Stop `
             | Select-Object `
-            -ExpandProperty
+            -ExpandProperty Enabled
 
         if ($enabled -ne 0) {
             # If the key is $null, Triple DES Cipher is enabled
@@ -2456,11 +2477,11 @@ function Test-IISTripleDESEnabled {
 # 7.11
 function Test-IISAES128Enabled {
     <#
-	.Synopsis
-		Ensure AES 128/128 Cipher Suite is configured
-	.Description
-		Enabling AES 128/128 may be required for client compatibility. Enable or disable this cipher suite accordingly.
-	#>
+    .Synopsis
+        Ensure AES 128/128 Cipher Suite is configured
+    .Description
+        Enabling AES 128/128 may be required for client compatibility. Enable or disable this cipher suite accordingly.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2503,11 +2524,11 @@ function Test-IISAES128Enabled {
 # 7.12
 function Test-IISAES256Enabled {
     <#
-	.Synopsis
-		Ensure AES 256/256 Cipher Suite is enabled
-	.Description
-		AES 256/256 is the most recent and mature cipher suite for protecting the confidentiality and integrity of HTTP traffic. Enabling AES 256/256 is recommended. This is enabled by default on Server 2012 and 2012 R2.
-	#>
+    .Synopsis
+        Ensure AES 256/256 Cipher Suite is enabled
+    .Description
+        AES 256/256 is the most recent and mature cipher suite for protecting the confidentiality and integrity of HTTP traffic. Enabling AES 256/256 is recommended. This is enabled by default on Server 2012 and 2012 R2.
+    #>
 
     $message = $MESSAGE_ALLGOOD
     $audit = [AuditStatus]::True
@@ -2542,11 +2563,11 @@ function Test-IISAES256Enabled {
 # 7.13
 function Test-IISTLSCipherOrder {
     <#
-	.Synopsis
-		Ensure TLS Cipher Suite ordering is configured
-	.Description
-		Cipher suites are a named combination of authentication, encryption, message authentication code, and key exchange algorithms used for the security settings of a network connection using TLS protocol. Clients send a cipher list and a list of ciphers that it supports in order of preference to a server. The server then replies with the cipher suite that it selects from the client cipher suite list.
-	#>
+    .Synopsis
+        Ensure TLS Cipher Suite ordering is configured
+    .Description
+        Cipher suites are a named combination of authentication, encryption, message authentication code, and key exchange algorithms used for the security settings of a network connection using TLS protocol. Clients send a cipher list and a list of ciphers that it supports in order of preference to a server. The server then replies with the cipher suite that it selects from the client cipher suite list.
+    #>
 
     $cipherList = @(
         "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
@@ -2606,7 +2627,6 @@ function Get-IIS8SystemReport {
     Test-IISAspNetTracingDisabledMachineLevel
 
     # Section 4
-    Test-IISHandlerDenyWrite
     Test-IISIsapisNotAllowed
     Test-IISCgisNotAllowed
 
@@ -2704,6 +2724,7 @@ function Get-IIS8SiteReport {
             $VirtualPathAuditInfos += $Configuration | Test-IISRejectDoubleEncodedRequests
             $VirtualPathAuditInfos += $Configuration | Test-IISHTTPTraceMethodeDisabled
             $VirtualPathAuditInfos += $Configuration | Test-IISBlockUnlistedFileExtensions
+            $VirtualPathAuditInfos += $Configuration | Test-IISHandlerDenyWrite
 
             # Section 5
 
