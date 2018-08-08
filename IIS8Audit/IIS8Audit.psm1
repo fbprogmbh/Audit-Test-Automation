@@ -2,30 +2,30 @@ using namespace Microsoft.Web.Administration
 using namespace Microsoft.Windows.ServerManager.Commands
 
 <#
-Copyright (c) 2018, FB Pro GmbH, Germany
-All rights reserved.
+    Copyright (c) 2018, FB Pro GmbH, Germany
+    All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-        * Redistributions of source code must retain the above copyright
-            notice, this list of conditions and the following disclaimer.
-        * Redistributions in binary form must reproduce the above copyright
-            notice, this list of conditions and the following disclaimer in the
-            documentation and/or other materials provided with the distribution.
-        * Neither the name of the FB Pro GmbH nor the
-            names of its contributors may be used to endorse or promote products
-            derived from this software without specific prior written permission.
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+            * Redistributions of source code must retain the above copyright
+                notice, this list of conditions and the following disclaimer.
+            * Redistributions in binary form must reproduce the above copyright
+                notice, this list of conditions and the following disclaimer in the
+                documentation and/or other materials provided with the distribution.
+            * Neither the name of the FB Pro GmbH nor the
+                names of its contributors may be used to endorse or promote products
+                derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL FB Pro GmbH BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL FB Pro GmbH BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 
 #region Authors(s)
@@ -39,7 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion
 
 #region Import Settings
-Import-LocalizedData -FileName Settings.ps1 -BindingVariable ConfigFile 
+Import-LocalizedData -FileName Settings.ps1 -BindingVariable ConfigFile
 #endregion
 
 
@@ -326,12 +326,12 @@ function Test-IISAppPoolIdentity {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
-        if ($AppPool.ProcessModel.IdentityType -eq [ProcessModelIdentityType]::SpecificUSer) {
-            
+        if ($AppPool.ProcessModel.IdentityType -eq [ProcessModelIdentityType]::SpecificUser) {
+
             # Get the username of the specific application
             $username = $AppPool.ProcessModel.UserName
             $AppPoolUsers = Get-IISAppPool | Select-Object -ExpandProperty ProcessModel | Select-Object -ExpandProperty Username | Group-Object -NoElement
-            
+
             if ( ($AppPoolUsers | Where-Object Name -EQ $username | Select-Object -ExpandProperty Count) -gt 1) {
                 $message = "ApplicationPoolIdentity $username is used for more than one ApplicationPool"
                 $audit = [AuditStatus]::False
@@ -1816,8 +1816,8 @@ function Test-IISAdvancedLoggingEnabled {
         Ensure Advanced IIS logging is enabled
     .Description
         5.2 - Ensure Advanced IIS logging is enabled.
-        
-        IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable. 
+
+        IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response, and can be the most valuable.
         Malicious users are aware of this, and will often try to remove evidence of their activities. It is therefore recommended that the default location for IIS log files be changed to a restricted, non-system drive.
     .PARAMETER site
         IIS site to check for enabled Advanced Logging
@@ -1835,10 +1835,10 @@ function Test-IISAdvancedLoggingEnabled {
         # Check if Advanced Logging module is installed
         $advLogModule = Get-WebGlobalModule -Name AdvancedLoggingModule
 
-        # Check if Advanced Logging module is enabled for server 
+        # Check if Advanced Logging module is enabled for server
         # no try/catch because we will check it in process part
-        $serverState = Get-WebConfiguration -filter "system.webServer/advancedLogging/server" -ErrorAction SilentlyContinue | select -ExpandProperty enabled 
-    
+        $serverState = Get-WebConfiguration -filter "system.webServer/advancedLogging/server" -ErrorAction SilentlyContinue | select -ExpandProperty enabled
+
         $task = "Ensure Advanced IIS logging is enabled"
     }
 
@@ -1847,14 +1847,14 @@ function Test-IISAdvancedLoggingEnabled {
         $message = "An error occured"
         $audit = [AuditStatus]::False
 
-        if ( $null -eq $advLogModule ) { 
+        if ( $null -eq $advLogModule ) {
             $message = "Advanced Logging Module not installed"
             $audit = [AuditStatus]::False
         }
         elseif ( $null -eq $serverState ) {
             $message = "Advanced Logging settings not found  for server."
             $audit = [AuditStatus]::False
-               
+
             Write-LogFile   -Path $LogPath `
                             -name $LogName `
                             -message "Advanced Logging settings for server not found, check applicationhost.config file (XPath system.webServer/advancedLogging/server)  `n $_.Exception"  `
@@ -1878,8 +1878,8 @@ function Test-IISAdvancedLoggingEnabled {
             }
             else {
                 $message = "Advanced Logging disabled"
-                $audit = [AuditStatus]::False  
-            }           
+                $audit = [AuditStatus]::False
+            }
         }#end else
 
         New-Object -TypeName AuditInfo -Property @{
@@ -1888,7 +1888,7 @@ function Test-IISAdvancedLoggingEnabled {
             Message = $message
             Audit  = $audit
         } | Write-Output
-    
+
     }#end process
 }
 
@@ -2659,7 +2659,7 @@ function Get-IIS8SiteReport {
         [Site] $Site
     )
 
-    process { 
+    process {
         $AppPools = $Site.Applications.ApplicationPoolName | Sort-Object | Get-Unique | Get-IISAppPool
 
         $AuditInfos = @()

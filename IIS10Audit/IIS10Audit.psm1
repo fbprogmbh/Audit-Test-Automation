@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <#
 
 Author(s):          Benedikt Böhme
-                    Dennis Esly
+					Dennis Esly
 Date:               05/31/2018
 Last Change:        08/07/2018
 
@@ -321,21 +321,20 @@ function Test-IISAppPoolIdentity {
 		$message = $MESSAGE_ALLGOOD
 		$audit = [AuditStatus]::True
 
-        if ($AppPool.ProcessModel.IdentityType -eq [ProcessModelIdentityType]::SpecificUSer) {
-            
-            # Get the username of the specific application
-            $username = $AppPool.ProcessModel.UserName
-            $AppPoolUsers = Get-IISAppPool | Select-Object -ExpandProperty ProcessModel | Select-Object -ExpandProperty Username | Group-Object -NoElement
-            
-            if ( ($AppPoolUsers | Where-Object Name -EQ $username | Select-Object -ExpandProperty Count) -gt 1) {
-                $message = "ApplicationPoolIdentity $username is used for more than one ApplicationPool"
-                $audit = [AuditStatus]::False
-            }
-            else {
-                $message = "Unique ApplicationPoolIdentity $username is used."
-            }
-        }
+		if ($AppPool.ProcessModel.IdentityType -eq [ProcessModelIdentityType]::SpecificUser) {
 
+			# Get the username of the specific application
+			$username = $AppPool.ProcessModel.UserName
+			$AppPoolUsers = Get-IISAppPool | Select-Object -ExpandProperty ProcessModel | Select-Object -ExpandProperty Username | Group-Object -NoElement
+
+			if ( ($AppPoolUsers | Where-Object Name -EQ $username | Select-Object -ExpandProperty Count) -gt 1) {
+				$message = "ApplicationPoolIdentity $username is used for more than one ApplicationPool"
+				$audit = [AuditStatus]::False
+			}
+			else {
+				$message = "Unique ApplicationPoolIdentity $username is used."
+			}
+		}
 		elseif ($AppPool.ProcessModel.IdentityType -ne [ProcessModelIdentityType]::ApplicationPoolIdentity)	{
 			$message = "ApplicationPoolIdentity is not set"
 			$audit = [AuditStatus]::False
@@ -1935,13 +1934,13 @@ function Test-IISFtpRequestsEncrypted {
 				| Get-IISConfigElement -ChildElementName "ftpServer" `
 				| Get-IISConfigElement -ChildElementName "security" `
 				| Get-IISConfigElement -ChildElementName "ssl"
-	
+
 			$controlChannelPolicy = $sslConfigElement `
 				| Get-IISConfigAttributeValue -AttributeName "controlChannelPolicy"
-	
+
 			$dataChannelPolicy = $sslConfigElement `
 				| Get-IISConfigAttributeValue -AttributeName "dataChannelPolicy"
-	
+
 			if (($controlChannelPolicy -ne "SslRequire") -or ($dataChannelPolicy -ne "SslRequire")) {
 				$message = "Found following settings: `n controlChannelPolicy: $controlChannelPolicy `n dataChannelPolicy: $dataChannelPolicy"
 				$audit = [AuditStatus]::False
@@ -2185,13 +2184,13 @@ function Test-IISTLSDisabled {
 			}
 		}
 		elseif ($null -ne $Key.GetValue("DisabledByDefault", $null)) {
-            $value = Get-ItemProperty $path | Select-Object -ExpandProperty "DisabledByDefault"
-            # Ensure it is set to 1
-            if ($value -eq 1) {
-                $message = $MESSAGE_ALLGOOD
-                $audit = [AuditStatus]::True
-            }
-        }
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "DisabledByDefault"
+			# Ensure it is set to 1
+			if ($value -eq 1) {
+				$message = $MESSAGE_ALLGOOD
+				$audit = [AuditStatus]::True
+			}
+		}
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
