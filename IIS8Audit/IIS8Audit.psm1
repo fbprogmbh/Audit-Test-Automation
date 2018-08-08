@@ -322,25 +322,27 @@ function Test-IISAppPoolIdentity {
         [ApplicationPool] $AppPool
     )
 
+	begin {
+		$AppPoolUsers = (Get-IISAppPool).ProcessModel.Username | Group-Object -NoElement
+	}
+
     process {
         $message = $MESSAGE_ALLGOOD
         $audit = [AuditStatus]::True
 
         if ($AppPool.ProcessModel.IdentityType -eq [ProcessModelIdentityType]::SpecificUser) {
+			# Get the username of the specific application
+			$Username = $AppPool.ProcessModel.UserName
 
-            # Get the username of the specific application
-            $username = $AppPool.ProcessModel.UserName
-            $AppPoolUsers = Get-IISAppPool | Select-Object -ExpandProperty ProcessModel | Select-Object -ExpandProperty Username | Group-Object -NoElement
-
-            if ( ($AppPoolUsers | Where-Object Name -EQ $username | Select-Object -ExpandProperty Count) -gt 1) {
-                $message = "ApplicationPoolIdentity $username is used for more than one ApplicationPool"
-                $audit = [AuditStatus]::False
-            }
-            else {
-                $message = "Unique ApplicationPoolIdentity $username is used."
-            }
-        }
-
+			if (($AppPoolUsers | Where-Object Name -eq $Username).Count -gt 1) {
+				$message = "ApplicationPoolIdentity $Username is used for more than one ApplicationPool"
+				$audit = [AuditStatus]::False
+			}
+			else {
+				$message = "Unique ApplicationPoolIdentity $Username is used."
+				$audit = [AuditStatus]::True
+			}
+		}
         elseif ($AppPool.ProcessModel.IdentityType -ne [ProcessModelIdentityType]::ApplicationPoolIdentity)	{
             $message = "ApplicationPoolIdentity is not set"
             $audit = [AuditStatus]::False
