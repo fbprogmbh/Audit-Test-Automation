@@ -2465,18 +2465,18 @@ function Test-IISAES128Enabled {
 		# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
 		if ($null -eq $enabled) {
 			# If the key is $null, AES 128/128 Cipher is disabled
-			$message = "AES 128/128 Cipher is disbled"
+			$message = "AES 128/128 Cipher is disabled"
 			$audit = [AuditStatus]::False
 		}
 		elseif (($enabled -ne 4294967295)) {
 			# If the key is not set to 0xFFFFFFFF(4294967295), AES 128/128 Cipher is disabled
-			$message = "AES 128/128 Cipher is disbled"
+			$message = "AES 128/128 Cipher is disabled"
 			$audit = [AuditStatus]::False
 		}
 	}
 	catch {
 		# If the key/value is not present,Triple AES 128/128 Cipher is disabled
-		$message = "AES 128/128 Cipher is disbled"
+		$message = "AES 128/128 Cipher is disbaled"
 		$audit = [AuditStatus]::False
 	}
 
@@ -2844,7 +2844,7 @@ function Get-HtmlHostInformation {
 		@("Build Number", $HostInformation.OSBuildNumber),
 		@("IIS Version", $HostInformation.IISVersion),
 		@("Free physical memory (GB):", $HostInformation.FreeRAM),
-		@("Free disk space(GB):", $HostInformation.FreeDiskSpace)
+		@("Free disk space (GB):", $HostInformation.FreeDiskSpace)
 	) | Foreach-Object {
 		"<th scope=`"row`">$($_[0])</th><td>$($_[1])</td>"
 	}
@@ -2907,7 +2907,7 @@ function Get-IISHtmlReport {
 	$body = "<div class=`"header`">$header</div>"
 	$body += "<p>This report was generated at $((Get-Date)) on $($hostInfo.Hostname).</p>"
 	$body += $hostInfoHtml
-	$body += "<p>Click the links below for quick access to the site reports.</p>"
+	$body += "<p>Click the link(s) below for quick access to the site reports.</p>"
 	$body += "<ul>$siteLinks</ul>"
 	$body += "<h2 class=`"$SystemAuditStatus`">System Report</h2>"
 	$body += Get-IIS10HtmlAuditInfoTable -AuditInfos $SystemAuditInfos
