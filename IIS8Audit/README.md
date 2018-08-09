@@ -2,6 +2,9 @@
 _based on CIS Microsoft IIS 8 Benchmarks v1.5.0 12-30-2016_
 
 ## Requirements
+
+Please make sure PowerShell 5.1 is installed. To find out the current version use `$PSVersionTable.PSVersion`.
+
 This script uses Cmdlets from the IISAdministration module  which is *not* included in a IIS 8 installation. Please download the module first and put it into the Windows PowerShell folder.
 If you have a internet connection on your machine you can simply open an elevated PowerShell and type
 
