@@ -1954,6 +1954,10 @@ function Test-IISFtpRequestsEncrypted {
 			$audit = [AuditStatus]::False
 		}
 	}
+	else {
+		$message = "Irrelevant test Web-Ftp-Server is not installed"
+		$audit = [AuditStatus]::None
+	}
 
 	New-Object -TypeName AuditInfo -Property @{
 		Id      = "6.1"
@@ -2009,6 +2013,10 @@ function Test-IISFtpLogonAttemptRestriction {
 			$audit = [AuditStatus]::False
 			$message = "Cannot get FTP Logon attempt settings"
 		}
+	}
+	else {
+		$message = "Irrelevant test Web-Ftp-Server is not installed"
+		$audit = [AuditStatus]::None
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
@@ -2548,9 +2556,11 @@ function Test-IISTLSCipherOrder {
 		"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
 	)
 
-	$message = "TLS Cipher Suite ordering does not match reference"
-	$audit = [AuditStatus]::False
+	$message1 = "TLS Cipher Suite ordering does not match reference"
+	$audit1 = [AuditStatus]::False
 
+	$message2 = "TLS Cipher Suite contains more ciphers"
+	$audit2 = [AuditStatus]::False
 
 	$path = "HKLM:\System\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002\"
 
@@ -2560,29 +2570,36 @@ function Test-IISTLSCipherOrder {
 			$functions = (Get-ItemProperty $path).Functions
 
 			if ($cipherList.Count -ge $functions.Count) {
+				$message2 = $MESSAGE_ALLGOOD
+				$audit2 = [AuditStatus]::True
+
 				$equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
-						[Func[String, String, Boolean]] {
+					[Func[String, String, Boolean]] {
 						param($cipher, $function)
 						$cipher -eq $function
 					})
 
 				if (-not ($equalOrdering -contains $false)) {
-					$message = $MESSAGE_ALLGOOD
-					$audit = [AuditStatus]::True
+					$message1 = $MESSAGE_ALLGOOD
+					$audit1 = [AuditStatus]::True
 				}
-			}
-			else {
-				$message = "TLS Cipher Suite contains more ciphers"
-				$audit = [AuditStatus]::Warning
 			}
 		}
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
-		Id      = "7.13"
-		Task    = "Ensure TLS Cipher Suite ordering is configured"
-		Message = $message
-		Audit   = $audit
+		Id      = "7.13.1"
+		Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+		Message = $message1
+		Audit   = $audit1
+	} | Write-Output
+
+
+	New-Object -TypeName AuditInfo -Property @{
+		Id      = "7.13.2"
+		Task    = "Ensure TLS Cipher Suite does not contain more ciphers"
+		Message = $message2
+		Audit   = $audit2
 	} | Write-Output
 }
 
