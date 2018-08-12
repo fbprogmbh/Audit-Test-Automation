@@ -1955,7 +1955,7 @@ function Test-IISFtpRequestsEncrypted {
 		}
 	}
 	else {
-		$message = "Skipped this benchmark - right now Web-Ftp-Server is not installed"
+		$message = "Irrelevant test Web-Ftp-Server is not installed"
 		$audit = [AuditStatus]::None
 	}
 
