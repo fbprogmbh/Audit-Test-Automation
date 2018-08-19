@@ -1,0 +1,111 @@
+body {
+	font-family: Cambria, Georgia, serif;
+	margin: 0;
+	padding: 20px 20px;
+}
+
+.header {
+	background-color: #9e9e9e;
+	padding: 35px 20px;
+	color: #ffffff;
+}
+
+.header h1 {
+	margin: 0;
+}
+
+li a {
+	display: block;
+}
+
+li a:hover {
+	background-color: #f2f2f2;
+}
+
+table {
+	border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+th, td {
+	padding: 5px 10px;
+	text-align: left;
+    vertical-align: top;
+}
+
+/* audit-info table */
+table.audit-info {
+	border: 1px solid #a7a7a7;
+}
+
+table.audit-info th {
+	background-color: #cacaca;
+	color: white;
+	text-transform: uppercase;
+	border-bottom: 1px solid #a7a7a7;
+}
+
+table.audit-info tr:nth-child(even) {
+	background-color: #efefef;
+}
+
+/* First column in an audit-info table */
+table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
+	text-align: right;
+    width: 40px;
+}
+
+/* Last column in an audit-info table */
+table.audit-info th:last-child, table.audit-info td:last-child {
+	text-align: center;
+    width: 70px;
+}
+
+.passed, .green, .failed, .red, .green, .red, .orange {
+	color: #fff;
+}
+
+.passed, .green {
+	background-color: #33cc33;
+}
+
+.failed, .red {
+	background-color: #cc0000;
+}
+
+.warning, .orange {
+	background-color: #ff9933;
+}
+
+h1 span.passed, h1 span.failed, h1 span.warning,
+h2 span.passed, h2 span.failed, h2 span.warning,
+h3 span.passed, h3 span.failed, h3 span.warning {
+	padding: 5px 10px;
+	border-radius: 8px;
+}
+
+span.auditstatus {
+	display: block;
+	padding: 5px 10px;
+	border-radius: 8px;
+	font-weight: bold;
+	margin: auto;
+}
+
+a.totop {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	text-decoration: none;
+	margin: 0 15px;
+	color: #a7a7a7;
+	background-color: #eeeeee;
+	border-radius: 8px;
+	font-weight: bold;
+}
+
+a.totop:hover {
+	background-color: #dddddd;;
+	color: blue;
+}
