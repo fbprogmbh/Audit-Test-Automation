@@ -1828,7 +1828,7 @@ function Test-IISAdvancedLoggingEnabled {
 
         # Check if Advanced Logging module is enabled for server
         # no try/catch because we will check it in process part
-        $serverState = Get-WebConfiguration -filter "system.webServer/advancedLogging/server" -ErrorAction SilentlyContinue | select -ExpandProperty enabled
+        $serverState = Get-WebConfiguration -filter "system.webServer/advancedLogging/server" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty enabled
 
         $task = "Ensure Advanced IIS logging is enabled"
     }
@@ -1856,7 +1856,7 @@ function Test-IISAdvancedLoggingEnabled {
             $task = "Ensure Advanced IIS logging is enabled for site $($site.name)"
 
             $siteState = Get-WebConfigurationProperty -Filter "system.webServer/advancedLogging/server" -PSPath "IIS:\Sites\$($site.name)" `
-                                                        -Name enabled | select `
+                                                        -Name enabled | Select-Object `
                                                         -ExpandProperty Value
 
             if ( $siteState -and (-not $site.advancedLogging.directory.StartsWith("%SystemDrive%")) ) {
