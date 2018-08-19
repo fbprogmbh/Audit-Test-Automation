@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using module ATAPHtmlReport
 
-Get-ATAPHtmlReport -Path test.html -Title "IIS 10 Benchmark Report" -ModuleName "IIS10Audit" -BasedOn "CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017" -Sections @(
+Get-ATAPHtmlReport -Path report.html -Title "IIS 10 Benchmark Report" -ModuleName "IIS10Audit" -BasedOn "CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017" -Sections @(
     @{
         Title = "1"
         AuditInfos = @(
