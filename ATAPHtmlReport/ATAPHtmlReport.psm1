@@ -75,14 +75,14 @@ function Get-ATAPHtmlSectionStatus {
 		[hashtable] $Section
 	)
 
+	$subSectionStatuses = @()
+	if ($Section.Keys -contains "AuditInfos") {
+		$subSectionStatuses += $Section.AuditInfos.Audit
+	}
 	if ($Section.Keys -contains "SubSections") {
-		$subSectionStatuses = $Section.SubSections | Foreach-Object { Get-ATAPHtmlSectionStatus -Section $_ }
-		return Get-ATAPCombinedAuditStatus -Audits $subSectionStatuses
+		$subSectionStatuses += $Section.SubSections | Foreach-Object { Get-ATAPHtmlSectionStatus -Section $_ }
 	}
-	elseif ($Section.Keys -contains "AuditInfos") {
-		return Get-ATAPCombinedAuditStatus -Audits $Section.AuditInfos.Audit
-	}
-	return [AuditInfo]::None
+	return Get-ATAPCombinedAuditStatus -Audits $subSectionStatuses
 }
 
 function Convert-ATAPAuditStatusToHtmlClass {
@@ -181,14 +181,17 @@ function Get-ATAPHtmlSection {
 		$html += "<span class=`"$class`">$($Section.Title)</span>"
 		$html += "<a href=`"#`" class=`"totop`">^</a>"
 		$html += "</h2>"
-		if ($Section.Keys -contains "SubSections") {
-			$html += Get-ATAPHtmlSection -Sections $Section.SubSections -Prepend ($Prepend + $Section.Title)
+
+		if ($Section.Keys -contains "Description") {
+			$html += "<p>$($Section.Description)</p>"
 		}
-		elseif ($Section.Keys -contains "AuditInfos") {
+		if ($Section.Keys -contains "AuditInfos") {
 			$tableHead = [AuditInfo].GetProperties().Name | ForEach-Object { "<th>$_</th>" }
-			# $tableRow = ""
 			$tableRows = $Section.AuditInfos | Foreach-Object { Convert-ATAPAuditInfoToHtmlTableRow -AuditInfo $_ }
 			$html += "<table class=`"audit-info`"><tbody><tr>$tableHead</tr>$tableRows</tbody></table>"
+		}
+		if ($Section.Keys -contains "SubSections") {
+			$html += Get-ATAPHtmlSection -Sections $Section.SubSections -Prepend ($Prepend + $Section.Title)
 		}
 		$html += "</section>"
 	}
@@ -271,6 +274,7 @@ function Get-ATAPHtmlReport {
 	$body += "</tbody>"
 	$body += "</table>"
 	# Section navigation
+	$body += "<h1>Navigation</h1>"
 	$body += "<p>Click the link(s) below for quick access to a report section.</p>"
 	$body += Get-ATAPHtmlSectionLinks -Sections $Sections
 	# Sections
