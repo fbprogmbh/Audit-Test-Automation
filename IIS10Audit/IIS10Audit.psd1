@@ -53,7 +53,7 @@ ModuleVersion = '1.0'
 GUID = 'c413e507-5366-47aa-9694-5e42487500c6'
 
 # Author of this module
-Author = 'Benedikt Böhme'
+Author = 'Benedikt Böhme', 'Dennis Esly'
 
 # Company or vendor of this module
 CompanyName = 'FB Pro GmbH'

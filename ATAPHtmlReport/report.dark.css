@@ -1,0 +1,130 @@
+body {
+	font-family: Cambria, Georgia, serif;
+	margin: 0;
+	padding: 20px 20px;
+
+	color: #dddddd;
+	background-color: #14141d;
+}
+
+a {
+	color: #ffc17a;
+}
+
+a:visited {
+	color: #ff7aad;
+}
+
+.header {
+	background-color: #2a2a3d;
+
+	padding: 35px 20px;
+}
+
+.header h1 {
+	margin: 0;
+}
+
+li a {
+	display: block;
+}
+
+li a:hover {
+	background-color: #2a2a3d;
+}
+
+table {
+	border-collapse: collapse;
+	font-family: Arial, sans-serif;
+}
+
+th,
+td {
+	padding: 5px 10px;
+	text-align: left;
+	vertical-align: top;
+}
+
+/* audit-info table */
+table.audit-info {
+	width: 100%;
+	border: 1px solid #2d2d3f;
+}
+
+table.audit-info th {
+	background-color: #212130;
+	text-transform: uppercase;
+	border-bottom: 1px solid #2d2d3f;
+}
+
+table.audit-info tr:nth-child(even) {
+	background-color: #2a2a3d;
+}
+
+/* First column in an audit-info table */
+table.audit-info th:nth-child(1),
+table.audit-info td:nth-child(1) {
+	text-align: right;
+	width: 40px;
+}
+
+/* Last column in an audit-info table */
+table.audit-info th:last-child,
+table.audit-info td:last-child {
+	text-align: center;
+	width: 70px;
+}
+
+.passed,
+.green {
+	background-color: #33cc33;
+}
+
+.failed,
+.red {
+	background-color: #cc0000;
+}
+
+.warning,
+.orange {
+	background-color: #ff9933;
+}
+
+h1 span.passed,
+h1 span.failed,
+h1 span.warning,
+h2 span.passed,
+h2 span.failed,
+h2 span.warning,
+h3 span.passed,
+h3 span.failed,
+h3 span.warning {
+	padding: 5px 10px;
+	border-radius: 8px;
+}
+
+span.auditstatus {
+	display: block;
+	padding: 5px 10px;
+	border-radius: 8px;
+	font-weight: bold;
+	margin: auto;
+}
+
+a.totop {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	text-decoration: none;
+	margin: 0 15px;
+	background-color: #212130;
+	border-radius: 8px;
+	font-weight: bold;
+	color: #dddddd;
+}
+
+a.totop:hover {
+	background-color: #43435f;
+	color: #ff9924;
+}

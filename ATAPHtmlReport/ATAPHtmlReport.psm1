@@ -245,11 +245,20 @@ function Get-ATAPHtmlReport {
 
 		[hashtable] $HostInformation = (Get-ATAPHostInformation),
 
-		[hashtable[]] $Sections
+		[hashtable[]] $Sections,
+
+		[switch] $DarkMode
 	)
 
 	$scriptRoot = Split-Path -Parent $PSCommandPath
-	$cssPath = $scriptRoot | Join-path -ChildPath "/report.css"
+
+	$cssDocument = if (-not $DarkMode) {
+		"/report.css"
+	}
+	else {
+		"/report.dark.css"
+	}
+	$cssPath = $scriptRoot | Join-path -ChildPath $cssDocument
 	$css = Get-Content $cssPath
 
 	# HTML <head> markup

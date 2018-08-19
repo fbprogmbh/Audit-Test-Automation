@@ -2753,7 +2753,9 @@ function Get-IIS10HtmlReport {
 
 		[AuditInfo[]] $SystemAuditInfos = (Get-IIS10SystemReport),
 
-		[SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS10SiteReport)
+		[SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS10SiteReport),
+
+		[switch] $DarkMode
 	)
 
 	[hashtable[]]$reportSections = @()
@@ -2784,6 +2786,7 @@ function Get-IIS10HtmlReport {
 		-ModuleName "IIS10Audit" `
 		-BasedOn "CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017" `
 		-HostInformation (Get-IISHostInformation) `
-		-Sections $reportSections
+		-Sections $reportSections `
+		-DarkMode:$DarkMode
 }
 #endregion
