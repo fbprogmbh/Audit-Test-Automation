@@ -1,4 +1,4 @@
-<#
+﻿<#
 BSD 3-Clause License
 
 Copyright (c) 2018, FB Pro GmbH
@@ -206,7 +206,7 @@ function Get-ATAPHtmlSection {
 
 function Get-ATAPHostInformation {
 	$infos = Get-CimInstance Win32_OperatingSystem
-	$disk = Get-WmiObject Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
+	$disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
 
 	return [ordered]@{
 		"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
@@ -230,6 +230,7 @@ function Get-ATAPHtmlReport {
 	#>
 
 	[CmdletBinding()]
+	[OutputType([string])]
 	Param(
 		[Parameter(Mandatory = $true)]
 		[string] $Path,
