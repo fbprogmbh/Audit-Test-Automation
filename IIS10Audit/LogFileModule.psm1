@@ -42,7 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 function Set-LogFile
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     Param(
         [Parameter(Mandatory=$true)]
         [Alias('LogPath')]
@@ -57,15 +57,17 @@ function Set-LogFile
 
     # Create file if it does not already exists
     if (!(Test-Path -Path $FullPath)){
+        # WhatIf parameter
+        if ($PSCmdlet.ShouldProcess("$FullPath", "Overwrite")) {
+            # Create file and start logging
+            New-Item -Path $FullPath -ItemType File -Force | Out-Null
 
-        # Create file and start logging
-        New-Item -Path $FullPath -ItemType File -Force | Out-Null
-
-        Add-Content -Path $FullPath -Value "***************************************************************************************************"
-        Add-Content -Path $FullPath -Value " Logfile created at [$([DateTime]::Now)]"
-        Add-Content -Path $FullPath -Value "***************************************************************************************************"
-        Add-Content -Path $FullPath -Value ""
-        Add-Content -Path $FullPath -Value ""
+            Add-Content -Path $FullPath -Value "***************************************************************************************************"
+            Add-Content -Path $FullPath -Value " Logfile created at [$([DateTime]::Now)]"
+            Add-Content -Path $FullPath -Value "***************************************************************************************************"
+            Add-Content -Path $FullPath -Value ""
+            Add-Content -Path $FullPath -Value ""
+        }
     }
 }
 
