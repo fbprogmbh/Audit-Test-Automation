@@ -88,69 +88,6 @@ function Get-IISSiteVirtualPaths {
 	}
 }
 
-
-function Get-AuditInfosStatus {
-
-	param(
-		[Parameter(Mandatory = $true)]
-		[AuditInfo[]] $AuditInfos
-	)
-
-	if ($AuditInfos.Audit -contains [AuditStatus]::False) {
-		[AuditStatus]::False
-	}
-	elseif ($AuditInfos.Audit -contains [AuditStatus]::Warning) {
-		[AuditStatus]::Warning
-	}
-	elseif ($AuditInfos.Audit -contains [AuditStatus]::True) {
-		[AuditStatus]::True
-	}
-	else {
-		[AuditStatus]::None
-	}
-}
-
-function Get-VirtualPathAuditStatus {
-
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[VirtualPathAudit] $VirtualPathAudit
-	)
-
-	process {
-		Get-AuditInfosStatus -AuditInfos $VirtualPathAudit.AuditInfos
-	}
-}
-
-function Get-SiteAuditStatus {
-
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[SiteAudit] $SiteAudit
-	)
-
-	process {
-		$VirtualPathAuditStatus = $SiteAudit.VirtualPathAudits | Get-VirtualPathAuditStatus
-		$SiteAuditStatus = (Get-AuditInfosStatus -AuditInfos $SiteAudit.AuditInfos)
-
-		if (($VirtualPathAuditStatus -contains [AuditStatus]::False) -or `
-			($SiteAuditStatus -contains [AuditStatus]::False)) {
-			[AuditStatus]::False
-		}
-		elseif (($VirtualPathAuditStatus -contains [AuditStatus]::Warning) -or `
-			($SiteAuditStatus -contains [AuditStatus]::Warning)) {
-			[AuditStatus]::Warning
-		}
-		elseif (($VirtualPathAuditStatus -contains [AuditStatus]::True) -or `
-			($SiteAuditStatus -contains [AuditStatus]::True)) {
-			[AuditStatus]::True
-		}
-		else {
-			[AuditStatus]::None
-		}
-	}
-}
-
 function Get-IISModules {
 	(Get-IISConfigSection -SectionPath "system.webServer/modules").GetCollection() `
 		| Get-IISConfigAttributeValue -AttributeName "Name"
@@ -457,7 +394,6 @@ function Test-IISGlobalAuthorization {
 			Audit   = $audit
 		} | Write-Output
 	}
-
 }
 
 # 2.2
@@ -2775,7 +2711,7 @@ function Get-IIS10HtmlReport {
 		}
 
 		$reportSections += @{
-			Title       = "Full site report for : $($SiteAudit.SiteName)"
+			Title       = "Full site report for: $($SiteAudit.SiteName)"
 			AuditInfos  = $SiteAudit.AuditInfos
 			SubSections = $virtualPathReports
 		}
