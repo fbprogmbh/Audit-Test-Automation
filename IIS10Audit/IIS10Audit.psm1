@@ -1,4 +1,4 @@
-<#
+﻿<#
 BSD 3-Clause License
 
 Copyright (c) 2018, FB Pro GmbH
@@ -2278,23 +2278,24 @@ function Test-IISNullCipherDisabled {
 		The NULL cipher does not provide data confidentiality or integrity. It is recommended that the NULL cipher be disabled.
 	#>
 
-	$message = $MESSAGE_ALLGOOD
-	$audit = [AuditStatus]::True
+	$message = "NULL cipher is enabled"
+	$audit = [AuditStatus]::False
 
-	try {
-		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL\" `
-			-ErrorAction Stop `
-			| Select-Object `
-			-ExpandProperty Enabled
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL\"
 
-		if ($enabled -ne 0) {
-			# If the key is not set to 0, NULL cipher is enabled
-			$message = "NULL cipher is enabled"
-			$audit = [AuditStatus]::False
+	if (Test-Path $path) {
+		$Key = Get-Item $path
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
+			if ($value -eq 0) {
+				$message = $MESSAGE_ALLGOOD
+				$audit = [AuditStatus]::True
+			}
 		}
 	}
-	catch {
-		# If the key/value is not present, NULL cipher is disabled
+	else {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
@@ -2314,23 +2315,24 @@ function Test-IISDESCipherDisabled {
 		DES is a weak symmetric-key cipher. It is recommended that it be disabled.
 	#>
 
-	$message = $MESSAGE_ALLGOOD
-	$audit = [AuditStatus]::True
+	$message = "DES cipher is enabled"
+	$audit = [AuditStatus]::False
 
-	try {
-		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56\" `
-			-ErrorAction Stop `
-			| Select-Object `
-			-ExpandProperty Enabled
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56\"
 
-		if ($enabled -ne 0) {
-			# If the key is not set to 0, DES cipher is enabled
-			$message = "DES cipher is enabled"
-			$audit = [AuditStatus]::False
+	if (Test-Path $path) {
+		$Key = Get-Item $path
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
+			if ($value -eq 0) {
+				$message = $MESSAGE_ALLGOOD
+				$audit = [AuditStatus]::True
+			}
 		}
 	}
-	catch {
-		# If the key/value is not present, DES cipher is disabled
+	else {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
@@ -2354,26 +2356,24 @@ function Test-IISRC4CipherDisabled {
 
 	$index = 1
 	foreach ($rc4Cipher in $rc4Ciphers) {
+		$message = "$rc4Cipher cipher is enabled"
+		$audit = [AuditStatus]::False
 
-		$message = $MESSAGE_ALLGOOD
-		$audit = [AuditStatus]::True
+		$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\$rc4Cipher\"
 
-		try {
-			$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\$rc4Cipher\" `
-				-ErrorAction Stop `
-				| Select-Object 1
-			-ExpandProperty Enabled
-
-			# If the key is $null, RC4 cipher is disabled
-			# If the key is set to 0, RC4 cipher is disabled
-			if (($null -ne $enabled) -and $enabled -ne 0) {
-				# If the key is not set to 0, RC4 cipher is enabled
-				$message = "$rc4Cipher cipher is enabled"
-				$audit = [AuditStatus]::False
+		if (Test-Path $path) {
+			$Key = Get-Item $path
+			if ($null -ne $Key.GetValue("Enabled", $null)) {
+				$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
+				if ($value -eq 0) {
+					$message = $MESSAGE_ALLGOOD
+					$audit = [AuditStatus]::True
+				}
 			}
 		}
-		catch {
-			# If the key/value is not present, RC4 cipher is disabled
+		else {
+			$message = $MESSAGE_ALLGOOD
+			$audit = [AuditStatus]::True
 		}
 
 		New-Object -TypeName AuditInfo -Property @{
@@ -2482,26 +2482,27 @@ function Test-IISAES256Enabled {
 		AES 256/256 is the most recent and mature cipher suite for protecting the confidentiality and integrity of HTTP traffic. Enabling AES 256/256 is recommended. This is enabled by default on Server 2012 and 2012 R2.
 	#>
 
-	$message = $MESSAGE_ALLGOOD
-	$audit = [AuditStatus]::True
+	$message = "AES 256/256 Cipher is disabled"
+	$audit = [AuditStatus]::False
 
-	try {
-		# Get-ItemProperty returns a [UInt32]
-		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256\" `
-			-ErrorAction Stop `
-			| Select-Object `
-			-ExpandProperty Enabled
+	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256\"
 
-		# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-		# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-		if ($enabled -ne 4294967295) {
-			# If the key is not set to 0xFFFFFFFF, AES 256/256 Cipher is disabled
-			$message = "AES 256/256 Cipher is disabled"
-			$audit = [AuditStatus]::False
+	if (Test-Path $path) {
+		$Key = Get-Item $path
+		if ($null -ne $Key.GetValue("Enabled", $null)) {
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
+			# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
+			# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
+			if ($value -eq 4294967295) {
+				# If the key is set to 0xFFFFFFFF, AES 256/256 Cipher is enabled
+				$message = $MESSAGE_ALLGOOD
+				$audit = [AuditStatus]::True
+			}
 		}
 	}
-	catch {
-		# If the key/value is not present, AES 256/256 Cipher is enabled by default
+	else {
+		$message = $MESSAGE_ALLGOOD
+		$audit = [AuditStatus]::True
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
@@ -2718,7 +2719,7 @@ function Get-IIS10SiteReport {
 
 function Get-IISHostInformation {
 	$infos = Get-CimInstance Win32_OperatingSystem
-	$disk = Get-WmiObject Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
+	$disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
 
 	$IISinstallPath = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\InetStp").Installpath
 
