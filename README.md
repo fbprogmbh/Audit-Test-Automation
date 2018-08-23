@@ -8,8 +8,9 @@ The Audit Test Automation Package gives you the ability to get an overview about
 
 The package consists of the following Modules:
 
-* [IIS8Audit](IIS8Audit/README.md)
-* [IIS10Audit](IIS10Audit/README.md)
+* [ATAPHtmlReport](ATAHtmlReport)
+* [IIS8Audit](IIS8Audit)
+* [IIS10Audit](IIS10Audit)
 
 Read the the READMEs of each module to get specific information about a module.
 
@@ -38,7 +39,7 @@ You can always get more information on a command by using the familiar `Get-Help
 
 For example:
 ```Powershell
-Get-Help Get-IISHtmlReport
+Get-Help Get-IIS10HtmlReport
 ```
 Output:
 ```
@@ -55,7 +56,7 @@ SYNTAX
 
 
 DESCRIPTION
-    The `Get-IISHtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
+    The `Get-IIS10HtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
 
     It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the
     parameter `SystemAuditInfos` and `SiteAudits`.
@@ -64,8 +65,8 @@ DESCRIPTION
 RELATED LINKS
 
 REMARKS
-    To see the examples, type: "get-help Get-IISHtmlReport -examples".
-    For more information, type: "get-help Get-IISHtmlReport -detailed".
-    For technical information, type: "get-help Get-IISHtmlReport -full".
+    To see the examples, type: "get-help Get-IIS10HtmlReport -examples".
+    For more information, type: "get-help Get-IIS10HtmlReport -detailed".
+    For technical information, type: "get-help Get-IIS10HtmlReport -full".
 
 ```

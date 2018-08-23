@@ -1,18 +1,21 @@
-# IIS 10 Audit
+# CIS IIS 10 Audit
+
+_based on CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017_
 
 ## Overview
 
 The `IIS10Audit`-Module benchmarks the current systems settings with current hardening standards such as the CIS Microsoft IIS Benchmarks. This module is specifically designed for Windows Server 2016 with IIS 10.
 
-## Getting started
+## Requirements
 
-### Requirements
+Please make sure that following requirements are fulfilled:
 
-* Windows Server 2016 which comes with:
-    * IIS 10
-    * PowerShell 5.1
+* **Windows Server 2016** comes out of the box with:
+    * **IIS 10**
+    * **PowerShell 5.1**
+* **ATAPHtmlReport Module:** This module is used for the html report generation and is [included](../ATAPHtmlReport) in the Audit Test Automation Package. Follow the instructions at the link to install the module.
 
-### Quick Start
+## Loading the IIS Audit module
 
 1. Download the release zip and export the modules in a location you can easily access with PowerShell
 2. Navigate to the location with PowerShell and import the modules with `Import-Module`. For example:
@@ -20,9 +23,9 @@ The `IIS10Audit`-Module benchmarks the current systems settings with current har
 cd .\Desktop\
 Import-Module -Name .\Audit-Test-Automation\IIS10Audit -Verbose
 ```
-3. Generate a report with `Get-IISHtmlReport` For example:
+3. Generate a report with `Get-IIS10HtmlReport` For example:
 ```PowerShell
-Get-IISHtmlReport -Path "MyReport.html"
+Get-IIS10HtmlReport -Path "MyReport.html"
 ```
 
 ## Sample report
