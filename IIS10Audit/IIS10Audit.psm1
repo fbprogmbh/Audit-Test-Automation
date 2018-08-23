@@ -2674,13 +2674,13 @@ function Get-IIS10HtmlReport {
 	.Synopsis
 		Generates an audit report in an html file.
 	.Description
-		The `Get-IISHtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
+		The `Get-IIS10HtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
 
 		It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the parameter `SystemAuditInfos` and `SiteAudits`.
 	.Parameter Path
 		Specifies the relative path to the file in which the report will be stored.
 	.Example
-		C:\PS> Get-IISHtmlReport -Path "MyReport.html"
+		C:\PS> Get-IIS10HtmlReport -Path "MyReport.html"
 	#>
 
 	[CmdletBinding()]
