@@ -93,6 +93,11 @@ function Get-IISSiteVirtualPaths {
         }
     }
 }
+
+function Get-IISModules {
+	(Get-IISConfigSection -SectionPath "system.webServer/modules").GetCollection() `
+		| Get-IISConfigAttributeValue -AttributeName "Name"
+}
 #endregion
 
 #region 1 Basic Configuration
@@ -2744,9 +2749,9 @@ function Get-IIS8HtmlReport {
         [Parameter(Mandatory = $true)]
         [string] $Path,
 
-        [AuditInfo[]] $SystemAuditInfos = (Get-IIS10SystemReport),
+        [AuditInfo[]] $SystemAuditInfos = (Get-IIS8SystemReport),
 
-        [SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS10SiteReport),
+        [SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS8SiteReport),
 
         [switch] $DarkMode
     )
