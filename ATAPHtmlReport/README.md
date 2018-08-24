@@ -18,4 +18,5 @@ It is recommended that you install the module on your system.
 2. Copy this folder into the modules folder
 3. Check with `Get-Module ATAPHtmlReport -ListAvailable` if PowerShell detects the module.
 
-Remark: The cmdlet `import-module` is not supported right now.
+## Remark
+The cmdlet `import-module` is not the required installation. Please follow the outlined steps above.
