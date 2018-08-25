@@ -31,7 +31,7 @@ For example, a simple section could look like this:
 
 $reportSections += @{
     Title = "Section 1"
-    Description = "All tests from section 1 of the my audit benchmark is here"
+    Description = "All tests from section 1 of the my audit benchmark are here"
     AuditInfos = @(
         (New-Object -TypeName AuditInfo -Property @{
             Id      = "1.1"
