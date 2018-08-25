@@ -24,6 +24,8 @@ To generate a report, use `Get-ATAPHtmlReport`. However, you will need to provid
 
 The main content of the report is structured into *sections*. A section must have a *title*, but can also include a *description*, a table of *AuditInfos*, and *SubSections*. AuditInfos represent a single audit test with an *Id*, *Task*, *Message*, and *Audit* that states whether the the system completed the test with True, False, Warning, or None.
 
+**Important**: To use the AuditInfos class defined in the modul, you need to add `using module ATAPHtmlReporting` to the top of the file. This might not work if the module is not in a PSModulePath location.
+
 For example, a simple section could look like this:
 
 ```powershell
