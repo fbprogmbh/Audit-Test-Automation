@@ -30,17 +30,6 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 
-#region Author(s) etc.
-#
-#    Author(s):        Benedikt Böhme
-#    Date:             31/05/2018
-#    Last change:      16/07/2018
-#    Version:          1.0.0.0
-#
-#    Module manifest for module 'IIS8Audit'
-#endregion
-
-
 @{
 
 # Script module or binary module file associated with this manifest.
