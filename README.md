@@ -8,7 +8,7 @@ The Audit Test Automation Package gives you the ability to get an overview about
 
 The package consists of the following Modules:
 
-* [ATAPHtmlReport](ATAHtmlReport)
+* [ATAPHtmlReport](ATAPHtmlReport)
 * [IIS8Audit](IIS8Audit)
 * [IIS10Audit](IIS10Audit)
 
