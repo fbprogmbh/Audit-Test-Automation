@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module is required by the other modules to create reports.
+A module part of the *Audit Test Automation Package* that creates html reports with tables and sections for audit reporting.
 
 ## Requirements
 

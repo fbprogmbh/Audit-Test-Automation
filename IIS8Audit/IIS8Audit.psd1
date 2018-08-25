@@ -65,7 +65,7 @@ CompanyName = 'FB Pro GmbH'
 Copyright = '(c) 2018 FB Pro GmbH. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'A module that benchmarks the current systems settings with current hardening standards such as the CIS Microsoft IIS Benchmarks. This module is specifically designed for Windows Server 2012 with IIS 8.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -134,13 +134,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'iis8', 'WindowsServer2012', 'cis')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/fbprogmbh/Audit-Test-Automation'
 
         # A URL to an icon representing this module.
         # IconUri = ''
