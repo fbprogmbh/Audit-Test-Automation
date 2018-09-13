@@ -1,6 +1,10 @@
 # CIS IIS 8 Audit Script
 _based on CIS Microsoft IIS 8 Benchmarks v1.5.0 12-30-2016_
 
+## Overview
+
+The `IIS8Audit`-Module benchmarks the current systems settings with current hardening standards such as the CIS Microsoft IIS Benchmarks. This module is specifically designed for Windows Server 2012 with IIS 8.
+
 ## Requirements
 
 Please make sure that following requirements are fulfilled:

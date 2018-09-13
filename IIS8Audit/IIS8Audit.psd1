@@ -30,17 +30,6 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 
-#region Author(s) etc.
-#
-#    Author(s):        Benedikt Böhme
-#    Date:             31/05/2018
-#    Last change:      16/07/2018
-#    Version:          1.0.0.0
-#
-#    Module manifest for module 'IIS8Audit'
-#endregion
-
-
 @{
 
 # Script module or binary module file associated with this manifest.
@@ -65,7 +54,7 @@ CompanyName = 'FB Pro GmbH'
 Copyright = '(c) 2018 FB Pro GmbH. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'A module that benchmarks the current systems settings with current hardening standards such as the CIS Microsoft IIS Benchmarks. This module is specifically designed for Windows Server 2012 with IIS 8.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -134,13 +123,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'iis8', 'WindowsServer2012', 'cis')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/fbprogmbh/Audit-Test-Automation'
 
         # A URL to an icon representing this module.
         # IconUri = ''
