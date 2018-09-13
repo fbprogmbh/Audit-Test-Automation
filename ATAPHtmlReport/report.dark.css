@@ -65,6 +65,7 @@ table.audit-info tr:nth-child(even) {
 table.audit-info th:nth-child(1),
 table.audit-info td:nth-child(1) {
 	text-align: right;
+	white-space: nowrap;
 	width: 40px;
 }
 
