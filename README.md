@@ -11,6 +11,7 @@ The package consists of the following Modules:
 * [ATAPHtmlReport](ATAHtmlReport)
 * [IIS8Audit](IIS8Audit)
 * [IIS10Audit](IIS10Audit)
+* [WindowsServer2016Audit](WindowsServer2016Audit)
 
 Read the the READMEs of each module to get specific information about a module.
 
