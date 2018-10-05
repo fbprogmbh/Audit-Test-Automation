@@ -22,13 +22,9 @@ Please make sure that following requirements are fulfilled:
 cd .\Desktop\
 Import-Module -Name .\CIS_Benchmarks\CISSQL2016Benchmarks -Verbose
 ```
-3. Set your Server Instance with `Set-SQLServerInstance` For example:
-```Powershell
-Set-SQLServerInstance MyComputer\MyMSSQLServer
-```
-4. Generate a report with `Get-SQL2016Report` For example:
+3. Generate a report with `Get-SQL2016Report` For example:
 ```PowerShell
-Get-SQL2016Report -Path "MyReport.html"
+Get-SQL2016Report -Path "MyReport.html" -SQLInstance "MSSQLServer"
 ```
 
 ## Sample report
