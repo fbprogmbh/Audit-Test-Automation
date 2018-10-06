@@ -76,7 +76,7 @@ Description = 'A module that benchmarks the current systems settings with curren
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-    'IISAdministration'
+    'IISAdministration', 'ATAPHtmlReport'
 )
 
 # Assemblies that must be loaded prior to importing this module
