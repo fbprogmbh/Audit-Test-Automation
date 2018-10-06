@@ -12,6 +12,7 @@ Please make sure that following requirements are fulfilled:
 
 * **Windows Server 2016** comes out of the box with:
     * **PowerShell 5.1**
+* **SqlServer Module:** The audit module uses Cmdlets from the SqlServer module which is *not* included with a standard sql server installation.
 * **ATAPHtmlReport Module:** This module is used for the html report generation and is [included](../ATAPHtmlReport) in the Audit Test Automation Package. Follow the instructions at the link to install the module.
 
 ## Loading the CIS SQL 2016 Benchmarks module
