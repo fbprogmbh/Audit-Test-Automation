@@ -41,7 +41,6 @@ PowerShellVersion = '5.0'
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-    'SQLServer',
     'ATAPHtmlReport'
 )
 
