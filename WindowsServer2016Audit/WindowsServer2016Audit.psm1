@@ -217,6 +217,16 @@ function Get-SecPolSetting {
 	Write-Output $currentSetting
 }
 
+function Test-DomainMember {
+	return (Get-CimInstance -Class Win32_ComputerSystem).PartOfDomain
+}
+
+function Test-DomainController {
+	$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+
+	return $domainRole -eq 4 -or $domainRole -eq 5
+}
+
 function Get-PrimaryDomainSID {
 	<#
 	.SYNOPSIS
@@ -2114,7 +2124,7 @@ function Test-SV-88293r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88293r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain controllers must require LDAP access signing.")
 
-	if ($null -ne (Get-PrimaryDomainSID)) {
+	if (Test-DomainController) {
 		try {
 			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty LDAPServerIntegrity
 		}
@@ -2154,7 +2164,7 @@ function Test-SV-88295r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88295r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain controllers must be configured to allow reset of machine account passwords.")
 
-	if ($null -ne (Get-PrimaryDomainSID)) {
+	if (Test-DomainController) {
 		try {
 			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RefusePasswordChange
 		}
@@ -2196,7 +2206,7 @@ function Test-SV-88297r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88297r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled.")
 
-	if ($null -ne (Get-PrimaryDomainSID)) {
+	if (Test-DomainMember) {
 		try {
 			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RequireSignOrSeal
 		}
@@ -2238,7 +2248,7 @@ function Test-SV-88299r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88299r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled.")
 
-	if ($null -ne (Get-PrimaryDomainSID)) {
+	if (Test-DomainMember) {
 		try {
 			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty SealSecureChannel
 		}
@@ -2280,7 +2290,7 @@ function Test-SV-88301r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88301r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled.")
 
-	if ($null -ne (Get-PrimaryDomainSID)) {
+	if (Test-DomainMember) {
 		try {
 			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty SignSecureChannel
 		}
