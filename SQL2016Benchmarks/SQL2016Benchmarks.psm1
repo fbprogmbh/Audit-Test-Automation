@@ -114,7 +114,7 @@ function Test-SQLAdHocDistributedQueriesDisabled {
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Values do not match, found: `n value_configured: " + $sqlResult.value_configured + "`n value_in_use:" + $sqlResult.value_in_use)
+            $obj | Add-Member NoteProperty Status("Values do not match, found: `n value_configured: " + $sqlResult.value_configured + ",`n value_in_use:" + $sqlResult.value_in_use)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -1866,17 +1866,18 @@ function Test-SQLMaximumNumberOfErrorLogFiles {
 
     try {
         $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        $numberOfLogFiles = $sqlResult.NumberOfLogFiles
     }
     catch {
 
     }
 
-    if ($sqlResult.NumberOfLogFiles -ge 12) {
+    if ($numberOfLogFiles -ge 12) {
         $obj | Add-Member NoteProperty Status("All good")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
     }
     else {
-        $obj | Add-Member NoteProperty Status("Maximum number of error log files too high")
+        $obj | Add-Member NoteProperty Status("Maximum number of error log files is set to $numberOfLogFiles")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
     }
 
@@ -2033,7 +2034,7 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
     catch {
 
     }
-
+    
     $auditSpecifications = @()
     foreach ($sqlResult in $sqlResults) {
         switch ($sqlResult.audit_action_name) {
@@ -2049,24 +2050,29 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
             Default {}
         }
     }
-    foreach ($auditSpecification in $auditSpecifications) {
-        $bool = $true
-        if (($auditspecification | Where-Object "Audit Enabled" -ne "Y") -and `
-            ($auditspecification | Where-Object "Audit Specificaton Enabled" -ne "Y") -and `
+    $foundSpecifications = @()
+    foreach ($auditSpecification in $auditSpecifications) {        
+        if ((($auditspecification | Select-Object -ExpandProperty "Audit Enabled") -ne "Y") -or `
+            (($auditspecification | Select-Object -ExpandProperty "Audit Specification Enabled") -ne "Y") -or `
             ($auditspecification.audited_result -ne "SUCCESS AND FAILURE")) {
-            $bool = $false
+            $foundSPecifications += $auditSpecification.audit_action_name
         }
     }
-
-    if ($bool) {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-    }
-    else {
-        $obj | Add-Member NoteProperty Status("")
+    if($null -eq $sqlResults) {
+        $obj | Add-Member NoteProperty Status("TrackLogins file not found")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+    } else {
+        if ($foundSpecifications.count -eq 0) {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            [string]$s = $null
+            $s = $foundSpecifications -join ", "
+            $obj | Add-Member NoteProperty Status("Found following specifications: $s")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
     }
-
     Write-Output $obj
 }
 #endregion
@@ -2434,11 +2440,12 @@ function Get-SQL2016Report {
 		Generates an audit report in an html file.
 	.Description
 		The `Get-SQL2016Report` cmdlet collects by default data from the current machine to generate an audit report.
-		It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the parameter `SystemAuditInfos` and `SiteAudits`.
 	.Parameter Path
         Specifies the relative path to the file in which the report will be stored.
     .Parameter SqlInstance
-        Specifies the name of an instance of SQL Server, as a string array, that becomes the target of the operation.
+        Specifies the name of an instance of SQL Server, as a string, that becomes the target of the operation.
+    .Parameter MachineName
+        Specifies the machine from which data will be collected
 	.Example
 		C:\PS> Get-SQL2016Report -Path "MyReport.html" -SqlInstance "MySQLServer"
 	#>
