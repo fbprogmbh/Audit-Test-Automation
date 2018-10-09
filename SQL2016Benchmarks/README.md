@@ -31,3 +31,7 @@ Get-SQL2016Report -Path "MyReport.html" -SQLInstance "MSSQLServer"
 ## Sample report
 
 You can find a sample report in the [Sample](Sample) folder.
+
+## Remarks
+
+Using MSSQLSERVER as default instance is currently not possible. Please use only named instances.
