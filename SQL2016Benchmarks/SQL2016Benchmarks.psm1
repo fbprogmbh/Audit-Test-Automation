@@ -2158,48 +2158,62 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
 
         [string] $InstanceName = "$machineName\$sqlInstance"
     )
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty ID("7.1")
-    $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+    
+    try {
+        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
+        $databases = {$databases}.Invoke()
 
-    $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
-    $databases = {$databases}.Invoke()
-
-    $index = 1
-
-    foreach ($database in $databases) {
-        $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("7.1.$index")
-        $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
-
-        $query = "USE [$database]
-        GO
-        SELECT db_name() AS $database, name AS Key_Name
-        FROM sys.symmetric_keys
-        WHERE algorithm_desc NOT IN ('AES_128','AES_192','AES_256')
-        AND db_id() > 4;
-        GO"
-
-        try {
-            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($databases.Count -eq 0) {
+            $obj = New-Object PSObject
+            $obj | Add-Member NoteProperty ID("7.1")
+            $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+            $obj | Add-Member NoteProperty Status("No databases found")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            Write-Output $obj
         }
-        catch {
+        
+        foreach ($database in $databases) {
+            $obj = New-Object PSObject
+            $obj | Add-Member NoteProperty ID("7.1.$index")
+            $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher for database $database")
+            
+            $index = 1
 
+            $query = "USE [$database]
+            GO
+            SELECT db_name() AS $database, name AS Key_Name
+            FROM sys.symmetric_keys
+            WHERE algorithm_desc NOT IN ('AES_128','AES_192','AES_256')
+            AND db_id() > 4;
+            GO"
+    
+            try {
+                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+            }
+            catch {
+    
+            }
+    
+            if ( $null -eq $sqlResult ) {
+                $obj | Add-Member NoteProperty Status("All good")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            }
+            else {
+                $obj | Add-Member NoteProperty Status("Got $sqlResult")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+            }
+    
+            Write-Output $obj
+    
+            $index++
         }
-
-        if ( $null -eq $sqlResult ) {
-            $obj | Add-Member NoteProperty Status("All good")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-        }
-        else {
-            $obj | Add-Member NoteProperty Status("Got $sqlResult")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-        }
-
-        Write-Output $obj
-
-        $index++
     }
+    catch {
+        
+    }
+
+
+
 }
 
 function Test-SQLAsymmetricKeySize {
@@ -2224,48 +2238,64 @@ function Test-SQLAsymmetricKeySize {
 
         [string] $InstanceName = "$machineName\$sqlInstance"
     )
+
+    try {
+        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
+        $databases = {$databases}.Invoke()
+
+        if ($databases.Count -eq 0) {
+            $obj = New-Object PSObject
+            $obj | Add-Member NoteProperty ID("7.2")
+            $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
+            $obj | Add-Member NoteProperty Status("No databases found")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            Write-Output $obj
+        }
+    
+        $index = 1
+    
+        foreach ($database in $databases) {
+            $obj = New-Object PSObject
+            $obj | Add-Member NoteProperty ID("7.2.$index")
+            $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
+    
+            $query = "USE [$database]
+            GO
+            SELECT db_name() AS $database, name AS Key_Name
+            FROM sys.symmetric_keys
+            WHERE key_length < 2048
+            AND db_id() > 4;
+            GO"
+    
+            try {
+                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+            }
+            catch {
+    
+            }
+    
+            if ( $null -eq $sqlResult ) {
+                $obj | Add-Member NoteProperty Status("All good")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            }
+            else {
+                $obj | Add-Member NoteProperty Status("Got $sqlResult")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+            }
+    
+            Write-Output $obj
+    
+            $index++
+        }
+        
+    }
+    catch {
+        
+    }
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("7.2")
     $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
 
-    $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
-    $databases = {$databases}.Invoke()
-
-    $index = 1
-
-    foreach ($database in $databases) {
-        $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("7.2.$index")
-        $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
-
-        $query = "USE [$database]
-        GO
-        SELECT db_name() AS $database, name AS Key_Name
-        FROM sys.symmetric_keys
-        WHERE key_length < 2048
-        AND db_id() > 4;
-        GO"
-
-        try {
-            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-        }
-        catch {
-
-        }
-
-        if ( $null -eq $sqlResult ) {
-            $obj | Add-Member NoteProperty Status("All good")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-        }
-        else {
-            $obj | Add-Member NoteProperty Status("Got $sqlResult")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-        }
-
-        Write-Output $obj
-
-        $index++
-    }
 }
 
 #endregion
@@ -2343,54 +2373,54 @@ function Get-SQL2016AuditInfos {
     )
 
     # Section 2
-    Test-SQLAdHocDistributedQueriesDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLClrEnabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLCrossDBOwnershipDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLDatabaseMailXPsDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLOleAutomationProceduresDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLRemoteAccessDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLRemoteAdminConnectionsDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLScanForStartupProcsDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLTrustworthyDatabaseOff -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLServerProtocolsDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLUseNonStandardPorts -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLHideInstanceEnabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLSaLoginAccountDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLSaLoginAccountRenamed -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLXpCommandShellDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLAutoCloseOff -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLNoSaAccounnt -machineName $machineName -sqlInstance $sqlInstance
+    Test-SQLAdHocDistributedQueriesDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLClrEnabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLCrossDBOwnershipDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLDatabaseMailXPsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLOleAutomationProceduresDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLRemoteAccessDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLRemoteAdminConnectionsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLScanForStartupProcsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLTrustworthyDatabaseOff -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLServerProtocolsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLUseNonStandardPorts -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLHideInstanceEnabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLSaLoginAccountDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLSaLoginAccountRenamed -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLXpCommandShellDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLAutoCloseOff -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLNoSaAccounnt -MachineName $machineName -SqlInstance $sqlInstance
 
     # Section 3
-    Test-SQLServerAuthentication -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLGuestPermissionOnDatabases -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLDropOrphanedUsers -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLAuthenticationDisabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLServerServiceAccountIsNotAnAdministrator -machineName $machineName
-    Test-SQLAgentServiceAccountIsNotAnAdministrator -machineName $machineName
-    Test-SQLFullTextServiceAccountIsNotAnAdministrator -machineName $machineName
-    Test-SQLPermissionsForRolePublic -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLWindowsBuiltinNoSqlLogin -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLWindowsLocalGroupsNoSqlLogin -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLPublicRoleMsdbDatabase -machineName $machineName -sqlInstance $sqlInstance
+    Test-SQLServerAuthentication -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLGuestPermissionOnDatabases -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLDropOrphanedUsers -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLAuthenticationDisabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLServerServiceAccountIsNotAnAdministrator -MachineName $machineName
+    Test-SQLAgentServiceAccountIsNotAnAdministrator -MachineName $machineName
+    Test-SQLFullTextServiceAccountIsNotAnAdministrator -MachineName $machineName
+    Test-SQLPermissionsForRolePublic -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLWindowsBuiltinNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLWindowsLocalGroupsNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLPublicRoleMsdbDatabase -MachineName $machineName -SqlInstance $sqlInstance
 
     # Section 4
-    Test-SQLMustChangeOptionIsOn -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLCheckExpirationOptionOn -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLCheckPolicyOptionOn -machineName $machineName -sqlInstance $sqlInstance
+    Test-SQLMustChangeOptionIsOn -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLCheckExpirationOptionOn -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLCheckPolicyOptionOn -MachineName $machineName -SqlInstance $sqlInstance
 
     # Section 5
-    Test-SQLMaximumNumberOfErrorLogFiles -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLDefaultTraceEnabled -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLLoginAuditingIsSetToFailedLogins -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins -machineName $machineName -sqlInstance $sqlInstance
+    Test-SQLMaximumNumberOfErrorLogFiles -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLDefaultTraceEnabled -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLLoginAuditingIsSetToFailedLogins -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins -MachineName $machineName -SqlInstance $sqlInstance
 
     # Section 6
-    Test-CLRAssemblyPermissionSet -machineName $machineName -sqlInstance $sqlInstance
+    Test-CLRAssemblyPermissionSet -MachineName $machineName -SqlInstance $sqlInstance
 
     # Section 7
-    Test-SQLSymmetricKeyEncryptionAlgorithm -machineName $machineName -sqlInstance $sqlInstance
-    Test-SQLAsymmetricKeySize -machineName $machineName -sqlInstance $sqlInstance
+    Test-SQLSymmetricKeyEncryptionAlgorithm -MachineName $machineName -SqlInstance $sqlInstance
+    Test-SQLAsymmetricKeySize -MachineName $machineName -SqlInstance $sqlInstance
 
     # Section 8
     Test-SQLServerBrowserService
@@ -2422,7 +2452,7 @@ function Get-SQL2016Report {
 
         [string] $MachineName = $env:COMPUTERNAME,
 
-        [AuditInfo[]] $AuditInfos = (Get-SQL2016AuditInfos -sqlInstance $sqlInstance -MachineName $machineName | Convert-ToAuditInfo),
+        [AuditInfo[]] $AuditInfos = (Get-SQL2016AuditInfos -SqlInstance $sqlInstance -MachineName $machineName | Convert-ToAuditInfo),
 
         [switch] $DarkMode
     )
