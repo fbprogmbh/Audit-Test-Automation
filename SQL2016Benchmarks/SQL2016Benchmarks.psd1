@@ -13,7 +13,7 @@ GUID = '06a800a0-f2df-4e44-867b-d04154c42bc1'
 Author = 'Dennis Esly', 'Peter Maier'
 
 # Company or vendor of this module
-CompanyName = 'FB-Pro GmbH'
+CompanyName = 'FB Pro GmbH'
 
 # Copyright statement for this module
 Copyright = '(c) 2018 FB-Pro GmbH. All rights reserved.'

@@ -94,11 +94,11 @@ function Test-SQLAdHocDistributedQueriesDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -141,11 +141,11 @@ function Test-SQLClrEnabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -188,11 +188,11 @@ function Test-SQLCrossDBOwnershipDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -235,11 +235,11 @@ function Test-SQLDatabaseMailXPsDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -284,11 +284,11 @@ function Test-SQLOleAutomationProceduresDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -331,11 +331,11 @@ function Test-SQLRemoteAccessDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -381,11 +381,11 @@ function Test-SQLRemoteAdminConnectionsDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -428,11 +428,11 @@ function Test-SQLScanForStartupProcsDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -475,11 +475,11 @@ function Test-SQLTrustworthyDatabaseOff {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -522,11 +522,11 @@ function Test-SQLServerProtocolsDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -588,11 +588,11 @@ function Test-SQLUseNonStandardPorts {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -642,11 +642,11 @@ function Test-SQLHideInstanceEnabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -695,11 +695,11 @@ function Test-SQLSaLoginAccountDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -742,11 +742,11 @@ function Test-SQLSaLoginAccountRenamed {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -789,11 +789,11 @@ function Test-SQLXpCommandShellDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -838,11 +838,11 @@ function Test-SQLAutoCloseOff {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -885,11 +885,11 @@ function Test-SQLNoSaAccounnt {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -938,11 +938,11 @@ function Test-SQLServerAuthentication {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -990,11 +990,11 @@ function Test-SQLGuestPermissionOnDatabases {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     try {
@@ -1066,11 +1066,11 @@ function Test-SQLDropOrphanedUsers {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     try {
@@ -1133,11 +1133,11 @@ function Test-SQLAuthenticationDisabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     try {
         $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
@@ -1205,7 +1205,7 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
 #>
     [CmdletBinding()]
     param(
-        [string] $machineName = $env:COMPUTERNAME
+        [string] $MachineName = $env:COMPUTERNAME
     )
     $obj = New-Object psobject
     $obj | Add-Member NoteProperty ID("3.5")
@@ -1285,7 +1285,7 @@ function Test-SQLAgentServiceAccountIsNotAnAdministrator {
 #>
     [CmdletBinding()]
     param(
-        [string] $machineName = $env:COMPUTERNAME
+        [string] $MachineName = $env:COMPUTERNAME
     )
     $obj = New-Object psobject
     $obj | Add-Member NoteProperty ID("3.6")
@@ -1365,7 +1365,7 @@ function Test-SQLFullTextServiceAccountIsNotAnAdministrator {
 #>
     [CmdletBinding()]
     param(
-        [string] $machineName = $env:COMPUTERNAME
+        [string] $MachineName = $env:COMPUTERNAME
     )
     $obj = New-Object psobject
     $obj | Add-Member NoteProperty ID("3.7")
@@ -1448,11 +1448,11 @@ function Test-SQLPermissionsForRolePublic {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("3.8")
@@ -1510,11 +1510,11 @@ function Test-SQLWindowsBuiltinNoSqlLogin {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("3.9")
@@ -1561,11 +1561,11 @@ function Test-SQLWindowsLocalGroupsNoSqlLogin {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("3.10")
@@ -1615,11 +1615,11 @@ function Test-SQLPublicRoleMsdbDatabase {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("3.11")
@@ -1677,11 +1677,11 @@ function Test-SQLMustChangeOptionIsOn {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("4.1")
@@ -1738,11 +1738,11 @@ function Test-SQLCheckExpirationOptionOn {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("4.2")
@@ -1796,11 +1796,11 @@ function Test-SQLCheckPolicyOptionOn {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("4.3")
@@ -1851,11 +1851,11 @@ function Test-SQLMaximumNumberOfErrorLogFiles {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
 
     $obj = New-Object PSObject
@@ -1899,11 +1899,11 @@ function Test-SQLDefaultTraceEnabled {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("5.2")
@@ -1950,11 +1950,11 @@ function Test-SQLLoginAuditingIsSetToFailedLogins {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("5.3")
@@ -1997,11 +1997,11 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("5.4")
@@ -2091,11 +2091,11 @@ function Test-CLRAssemblyPermissionSet {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("6.2")
@@ -2152,11 +2152,11 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("7.1")
@@ -2218,11 +2218,11 @@ function Test-SQLAsymmetricKeySize {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
-        [string] $instanceName = "$machineName\$sqlInstance"
+        [string] $InstanceName = "$machineName\$sqlInstance"
     )
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty ID("7.2")
@@ -2337,9 +2337,9 @@ function Convert-ToAuditInfo {
 #region Reportgeneration
 function Get-SQL2016AuditInfos {
     param(
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME
+        [string] $MachineName = $env:COMPUTERNAME
     )
 
     # Section 2
@@ -2406,9 +2406,11 @@ function Get-SQL2016Report {
 		The `Get-SQL2016Report` cmdlet collects by default data from the current machine to generate an audit report.
 		It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the parameter `SystemAuditInfos` and `SiteAudits`.
 	.Parameter Path
-		Specifies the relative path to the file in which the report will be stored.
+        Specifies the relative path to the file in which the report will be stored.
+    .Parameter SqlInstance
+        Specifies the name of an instance of SQL Server, as a string array, that becomes the target of the operation.
 	.Example
-		C:\PS> Get-SQL2016Report -Path "MyReport.html"
+		C:\PS> Get-SQL2016Report -Path "MyReport.html" -SqlInstance "MySQLServer"
 	#>
 
     [CmdletBinding()]
@@ -2416,9 +2418,9 @@ function Get-SQL2016Report {
         [Parameter(Mandatory = $true)]
         [string] $Path,
         [Parameter(Mandatory = $true)]
-        [string] $sqlInstance,
+        [string] $SqlInstance,
 
-        [string] $machineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME,
 
         [AuditInfo[]] $AuditInfos = (Get-SQL2016AuditInfos -sqlInstance $sqlInstance -MachineName $machineName | Convert-ToAuditInfo),
 
