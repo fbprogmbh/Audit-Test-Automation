@@ -14,13 +14,18 @@ Please make sure that following requirements are fulfilled:
 * **IISAdministration Module:** The audit module uses Cmdlets from the IISAdministration module which is *not* included in a IIS 8 installation. Please download the module first and put it into the Windows PowerShell folder.
 
 If you have a internet connection on your machine you can simply open an elevated PowerShell and type (to install the module)
+
 ```Powershell
-Install-Module IISAdministration
+Install-Module -Name IISAdministration,ATAPHtmlReport
 ```
 
-## Loading the IIS Audit module
+## Installation
 
-When loading the module, make sure that the manifest is loaded as well. Do not include the file extension of the module.
+The easiest way to get the module is by installing it with `Install-Module -Name IIS8Audit`. This also installs all the dependencies of this module.
+
+### Loading the IIS Audit module
+
+You only need to import the module when you haven't installed it. When loading the module, make sure that the manifest is loaded as well. Do not include the file extension of the module.
 
 ```Powershell
 Import-Module -Name .\IIS8Audit -Verbose

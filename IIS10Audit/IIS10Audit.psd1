@@ -76,13 +76,12 @@ PowerShellVersion = '5.0'
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-    'IISAdministration', 'ATAPHtmlReport'
+    'IISAdministration',
+    'ATAPHtmlReport'
 )
 
 # Assemblies that must be loaded prior to importing this module
-RequiredAssemblies = @(
-    'Microsoft.Web.Administration.dll'
-)
+# RequiredAssemblies = @()
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
