@@ -99,15 +99,15 @@ function Write-LogFile {
 
 	switch ($Level) {
 		'Error' {
-			Write-Error $Message
+			# Write-Error $Message
 			$LevelText = '[ERROR]:'
 		}
 		'Warning' {
-			Write-Warning $Message
+			# Write-Warning $Message
 			$LevelText = '[WARNING]:'
 		}
 		'Info' {
-			Write-Verbose $Message
+			# Write-Verbose $Message
 			$LevelText = '[INFO]:'
 		}
 	}
@@ -318,21 +318,24 @@ function Test-SV-88139r1_rule {
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\" | Select-Object -ErrorAction Stop -ExpandProperty EnumerateAdministrators
+
+		if ($regValue -eq 0) {
+			$obj | Add-Member NoteProperty Status("Compliant")
+			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
+		}
+		else {
+			$obj | Add-Member NoteProperty Status("Differing registry value: $regValue")
+			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+
+			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000280: registry value EnumerateAdministrators for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\ not correct" -Level Error
+		}
 	}
-	catch {
+	catch [System.Management.Automation.ItemNotFoundException] {
+		$obj | Add-Member NoteProperty Status("Registry value no found")
+		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+		
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\" -Level Error
 	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000280: registry value EnumerateAdministrators for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\ not correct" -Level Error
- 	}
 
  	Write-Output $obj
 }
@@ -2204,7 +2207,7 @@ function Test-SV-88295r1_rule {
 function Test-SV-88297r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88297r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled.")
+	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled.")
 
 	if (Test-DomainMember) {
 		try {
@@ -2246,7 +2249,7 @@ function Test-SV-88297r1_rule {
 function Test-SV-88299r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88299r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled.")
+	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled.")
 
 	if (Test-DomainMember) {
 		try {
@@ -2288,7 +2291,7 @@ function Test-SV-88299r1_rule {
 function Test-SV-88301r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88301r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled.")
+	$obj | Add-Member NoteProperty Task("Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled.")
 
 	if (Test-DomainMember) {
 		try {
