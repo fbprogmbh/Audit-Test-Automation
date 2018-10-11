@@ -409,26 +409,13 @@ function Test-SV-88149r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88149r1_rule")
 	$obj | Add-Member NoteProperty Task("WDigest Authentication must be disabled.")
 
-	
-
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest\" | Select-Object -ErrorAction Stop -ExpandProperty UseLogonCredential
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000030: registry value UseLogonCredential for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000030" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest\" `
+		-Name "UseLogonCredential" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Internet Protocol version 6 (IPv6) source routing must be configured to the highest protection
@@ -444,24 +431,13 @@ function Test-SV-88151r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88151r1_rule")
 	$obj | Add-Member NoteProperty Task("Internet Protocol version 6 (IPv6) source routing must be configured to the highest protection level to prevent IP source routing.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty DisableIPSourceRouting
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 2) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000040: registry value DisableIPSourceRouting for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000040" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\" `
+		-Name "DisableIPSourceRouting" `
+		-ExpectedValue 2 `
+	| Write-Output
 }
 
 # Source routing must be configured to the highest protection level to prevent Internet Protocol
@@ -477,24 +453,13 @@ function Test-SV-88153r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88153r1_rule")
 	$obj | Add-Member NoteProperty Task("Source routing must be configured to the highest protection level to prevent Internet Protocol (IP) source routing.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty DisableIPSourceRouting
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 2) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000050: registry value DisableIPSourceRouting for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000050" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" `
+		-Name "DisableIPSourceRouting" `
+		-ExpectedValue 2 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to prevent Internet Control Message Protocol (ICMP)
@@ -511,24 +476,13 @@ function Test-SV-88155r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88155r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent Internet Control Message Protocol (ICMP) redirects from overriding Open Shortest Path First (OSPF)-generated routes.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty EnableICMPRedirect
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000060: registry value EnableICMPRedirect for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000060" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" `
+		-Name "EnableICMPRedirect" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to ignore NetBIOS name release requests except from
@@ -547,24 +501,13 @@ function Test-SV-88157r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88157r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to ignore NetBIOS name release requests except from WINS servers.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netbt\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty NoNameReleaseOnDemand
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netbt\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000070: registry value NoNameReleaseOnDemand for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netbt\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000070" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netbt\Parameters\" `
+		-Name "NoNameReleaseOnDemand" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Insecure logons to an SMB server must be disabled.
@@ -580,24 +523,13 @@ function Test-SV-88159r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88159r1_rule")
 	$obj | Add-Member NoteProperty Task("Insecure logons to an SMB server must be disabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\" | Select-Object -ErrorAction Stop -ExpandProperty AllowInsecureGuestAuth
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000080: registry value AllowInsecureGuestAuth for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000080" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\" `
+		-Name "AllowInsecureGuestAuth" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Command line data must be included in process creation events.
@@ -619,24 +551,13 @@ function Test-SV-88163r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88163r1_rule")
 	$obj | Add-Member NoteProperty Task("Command line data must be included in process creation events.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit\" | Select-Object -ErrorAction Stop -ExpandProperty ProcessCreationIncludeCmdLine_Enabled
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000100: registry value ProcessCreationIncludeCmdLine_Enabled for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000100" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit\" `
+		-Name "ProcessCreationIncludeCmdLine_Enabled" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Early Launch Antimalware, Boot-Start Driver Initialization Policy must prevent boot drivers
@@ -655,24 +576,13 @@ function Test-SV-88173r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88173r1_rule")
 	$obj | Add-Member NoteProperty Task("Early Launch Antimalware, Boot-Start Driver Initialization Policy must prevent boot drivers identified as bad.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\EarlyLaunch\" | Select-Object -ErrorAction Stop -ExpandProperty DriverLoadPolicy
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\EarlyLaunch\" -Level Error
-	}
-
-	if ($regValue -eq 8) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000140: registry value DriverLoadPolicy for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\EarlyLaunch\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000140" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Policies\EarlyLaunch\" `
+		-Name "DriverLoadPolicy" `
+		-ExpectedValue 8 `
+	| Write-Output
 }
 
 # Group Policy objects must be reprocessed even if they have not changed.
@@ -692,24 +602,13 @@ function Test-SV-88177r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88177r1_rule")
 	$obj | Add-Member NoteProperty Task("Group Policy objects must be reprocessed even if they have not changed.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\" | Select-Object -ErrorAction Stop -ExpandProperty NoGPOListChanges
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000150: registry value NoGPOListChanges for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000150" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\" `
+		-Name "NoGPOListChanges" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Downloading print driver packages over HTTP must be prevented.
@@ -728,24 +627,13 @@ function Test-SV-88179r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88179r1_rule")
 	$obj | Add-Member NoteProperty Task("Downloading print driver packages over HTTP must be prevented.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" | Select-Object -ErrorAction Stop -ExpandProperty DisableWebPnPDownload
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000160: registry value DisableWebPnPDownload for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000160" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" `
+		-Name "DisableWebPnPDownload" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Printing over HTTP must be prevented.
@@ -764,24 +652,13 @@ function Test-SV-88181r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88181r1_rule")
 	$obj | Add-Member NoteProperty Task("Printing over HTTP must be prevented.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" | Select-Object -ErrorAction Stop -ExpandProperty DisableHTTPPrinting
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000170: registry value DisableHTTPPrinting for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000170" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" `
+		-Name "DisableHTTPPrinting" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The network Select-Objection user interface (UI) must not be displayed on the logon screen.
@@ -797,24 +674,13 @@ function Test-SV-88185r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88185r1_rule")
 	$obj | Add-Member NoteProperty Task("The network selection user interface (UI) must not be displayed on the logon screen.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\" | Select-Object -ErrorAction Stop -ExpandProperty DontDisplayNetworkSelectionUI
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000180: registry value DontDisplayNetworkSelectionUI for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000180" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\" `
+		-Name "DontDisplayNetworkSelectionUI" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Local users on domain-joined computers must not be enumerated.
@@ -830,24 +696,13 @@ function Test-SV-88187r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88187r1_rule")
 	$obj | Add-Member NoteProperty Task("Local users on domain-joined computers must not be enumerated.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnumerateLocalUsers
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-MS-000030: registry value EnumerateLocalUsers for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-MS-000030" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\" `
+		-Name "EnumerateLocalUsers" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to block untrusted fonts from loading.
@@ -864,24 +719,13 @@ function Test-SV-88189r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88189r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to block untrusted fonts from loading.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions\" | Select-Object -ErrorAction Stop -ExpandProperty MitigationOptions_FontBocking
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions\" -Level Error
-	}
-
-	if ($regValue -eq "1000000000000") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000200: registry value MitigationOptions_FontBocking for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000200" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions\" `
+		-Name "MitigationOptions_FontBocking" `
+		-ExpectedValue "1000000000000" `
+	| Write-Output
 }
 
 # Users must be prompted to authenticate when the system wakes from sleep (on battery).
@@ -899,24 +743,13 @@ function Test-SV-88197r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88197r1_rule")
 	$obj | Add-Member NoteProperty Task("Users must be prompted to authenticate when the system wakes from sleep (on battery).")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" | Select-Object -ErrorAction Stop -ExpandProperty DCSettingIndex
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000210: registry value DCSettingIndex for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000210" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" `
+		-Name "DCSettingIndex" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Users must be prompted to authenticate when the system wakes from sleep (plugged in).
@@ -934,24 +767,13 @@ function Test-SV-88201r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88201r1_rule")
 	$obj | Add-Member NoteProperty Task("Users must be prompted to authenticate when the system wakes from sleep (plugged in).")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" | Select-Object -ErrorAction Stop -ExpandProperty ACSettingIndex
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000220: registry value ACSettingIndex for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000220" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" `
+		-Name "ACSettingIndex" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Unauthenticated Remote Procedure Call (RPC) clients must be restricted from connecting to
@@ -969,24 +791,13 @@ function Test-SV-88203r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88203r1_rule")
 	$obj | Add-Member NoteProperty Task("Unauthenticated Remote Procedure Call (RPC) clients must be restricted from connecting to the RPC server.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Rpc\" | Select-Object -ErrorAction Stop -ExpandProperty RestrictRemoteClients
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Rpc\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-MS-000040: registry value RestrictRemoteClients for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Rpc\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-MS-000040" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc\" `
+		-Name "RestrictRemoteClients" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The Application Compatibility Program Inventory must be prevented from collecting data and
@@ -1006,24 +817,13 @@ function Test-SV-88207r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88207r1_rule")
 	$obj | Add-Member NoteProperty Task("The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\" | Select-Object -ErrorAction Stop -ExpandProperty DisableInventory
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000240: registry value DisableInventory for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000240" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat\" `
+		-Name "DisableInventory" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # AutoPlay must be turned off for non-volume devices.
@@ -1041,24 +841,13 @@ function Test-SV-88209r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88209r1_rule")
 	$obj | Add-Member NoteProperty Task("AutoPlay must be turned off for non-volume devices.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\" | Select-Object -ErrorAction Stop -ExpandProperty NoAutoplayfornonVolume
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000250: registry value NoAutoplayfornonVolume for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000250" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\" `
+		-Name "NoAutoplayfornonVolume" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The default AutoRun behavior must be configured to prevent AutoRun commands.
@@ -1074,24 +863,13 @@ function Test-SV-88211r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88211r1_rule")
 	$obj | Add-Member NoteProperty Task("The default AutoRun behavior must be configured to prevent AutoRun commands.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" | Select-Object -ErrorAction Stop -ExpandProperty NoAutorun
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000260: registry value NoAutorun for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000260" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" `
+		-Name "NoAutorun" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # AutoPlay must be disabled for all drives.
@@ -1110,24 +888,13 @@ function Test-SV-88213r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88213r1_rule")
 	$obj | Add-Member NoteProperty Task("AutoPlay must be disabled for all drives.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\" | Select-Object -ErrorAction Stop -ExpandProperty NoDriveTypeAutoRun
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\" -Level Error
-	}
-
-	if ($regValue -eq 255) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000270: registry value NoDriveTypeAutoRun for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000270" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\" `
+		-Name "NoDriveTypeAutoRun" `
+		-ExpectedValue 255 `
+	| Write-Output
 }
 
 # Windows Telemetry must be configured to Security or Basic.
@@ -1147,24 +914,13 @@ function Test-SV-88215r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88215r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Telemetry must be configured to Security or Basic.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection\" | Select-Object -ErrorAction Stop -ExpandProperty AllowTelemetry
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000290: registry value AllowTelemetry for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000290" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection\" `
+		-Name "AllowTelemetry" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Application event log size must be configured to 32768 KB or greater.
@@ -1181,24 +937,13 @@ function Test-SV-88217r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88217r1_rule")
 	$obj | Add-Member NoteProperty Task("The Application event log size must be configured to 32768 KB or greater.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\" | Select-Object -ErrorAction Stop -ExpandProperty MaxSize
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\" -Level Error
-	}
-
-	if ($regValue -eq 32768) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000300: registry value MaxSize for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000300" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\" `
+		-Name "MaxSize" `
+		-ExpectedValue 32768 `
+	| Write-Output
 }
 
 # The Security event log size must be configured to 196608 KB or greater.
@@ -1215,24 +960,13 @@ function Test-SV-88219r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88219r1_rule")
 	$obj | Add-Member NoteProperty Task("The Security event log size must be configured to 196608 KB or greater.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security\" | Select-Object -ErrorAction Stop -ExpandProperty MaxSize
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security\" -Level Error
-	}
-
-	if ($regValue -eq 196608) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000310: registry value MaxSize for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000310" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security\" `
+		-Name "MaxSize" `
+		-ExpectedValue 196608 `
+	| Write-Output
 }
 
 # The System event log size must be configured to 32768 KB or greater.
@@ -1249,24 +983,13 @@ function Test-SV-88221r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88221r1_rule")
 	$obj | Add-Member NoteProperty Task("The System event log size must be configured to 32768 KB or greater.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\System\" | Select-Object -ErrorAction Stop -ExpandProperty MaxSize
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\System\" -Level Error
-	}
-
-	if ($regValue -eq 32768) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000320: registry value MaxSize for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000320" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System\" `
+		-Name "MaxSize" `
+		-ExpectedValue 32768 `
+	| Write-Output
 }
 
 # Windows SmartScreen must be enabled.
@@ -1283,24 +1006,13 @@ function Test-SV-88223r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88223r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows SmartScreen must be enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnableSmartScreen
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000330: registry value EnableSmartScreen for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000330" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\" `
+		-Name "EnableSmartScreen" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Explorer Data Execution Prevention must be enabled.
@@ -1317,24 +1029,13 @@ function Test-SV-88225r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88225r1_rule")
 	$obj | Add-Member NoteProperty Task("Explorer Data Execution Prevention must be enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\" | Select-Object -ErrorAction Stop -ExpandProperty NoDataExecutionPrevention
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000340: registry value NoDataExecutionPrevention for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000340" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\" `
+		-Name "NoDataExecutionPrevention" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Turning off File Explorer heap termination on corruption must be disabled.
@@ -1350,24 +1051,13 @@ function Test-SV-88227r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88227r1_rule")
 	$obj | Add-Member NoteProperty Task("Turning off File Explorer heap termination on corruption must be disabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\" | Select-Object -ErrorAction Stop -ExpandProperty NoHeapTerminationOnCorruption
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000350: registry value NoHeapTerminationOnCorruption for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000350" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\" `
+		-Name "NoHeapTerminationOnCorruption" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # File Explorer shell protocol must run in protected mode.
@@ -1384,24 +1074,13 @@ function Test-SV-88229r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88229r1_rule")
 	$obj | Add-Member NoteProperty Task("File Explorer shell protocol must run in protected mode.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" | Select-Object -ErrorAction Stop -ExpandProperty PreXPSP2ShellProtocolBehavior
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000360: registry value PreXPSP2ShellProtocolBehavior for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000360" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" `
+		-Name "PreXPSP2ShellProtocolBehavior" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Passwords must not be saved in the Remote Desktop Client.
@@ -1419,24 +1098,13 @@ function Test-SV-88231r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88231r1_rule")
 	$obj | Add-Member NoteProperty Task("Passwords must not be saved in the Remote Desktop Client.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" | Select-Object -ErrorAction Stop -ExpandProperty DisablePasswordSaving
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000370: registry value DisablePasswordSaving for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000370" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
+		-Name "DisablePasswordSaving" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Local drives must be prevented from sharing with Remote Desktop Session Hosts.
@@ -1452,24 +1120,13 @@ function Test-SV-88233r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88233r1_rule")
 	$obj | Add-Member NoteProperty Task("Local drives must be prevented from sharing with Remote Desktop Session Hosts.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" | Select-Object -ErrorAction Stop -ExpandProperty fDisableCdm
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000380: registry value fDisableCdm for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000380" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
+		-Name "fDisableCdm" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Remote Desktop Services must always prompt a client for passwords upon connection.
@@ -1487,24 +1144,13 @@ function Test-SV-88235r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88235r1_rule")
 	$obj | Add-Member NoteProperty Task("Remote Desktop Services must always prompt a client for passwords upon connection.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" | Select-Object -ErrorAction Stop -ExpandProperty fPromptForPassword
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000390: registry value fPromptForPassword for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000390" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
+		-Name "fPromptForPassword" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The Remote Desktop Session Host must require secure Remote Procedure Call (RPC) communications.
@@ -1524,24 +1170,13 @@ function Test-SV-88237r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88237r1_rule")
 	$obj | Add-Member NoteProperty Task("The Remote Desktop Session Host must require secure Remote Procedure Call (RPC) communications.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" | Select-Object -ErrorAction Stop -ExpandProperty fEncryptRPCTraffic
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000400: registry value fEncryptRPCTraffic for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000400" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
+		-Name "fEncryptRPCTraffic" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Remote Desktop Services must be configured with the client connection encryption set to High
@@ -1559,24 +1194,13 @@ function Test-SV-88239r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88239r1_rule")
 	$obj | Add-Member NoteProperty Task("Remote Desktop Services must be configured with the client connection encryption set to High Level.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" | Select-Object -ErrorAction Stop -ExpandProperty MinEncryptionLevel
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" -Level Error
-	}
-
-	if ($regValue -eq 3) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000410: registry value MinEncryptionLevel for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000410" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
+		-Name "MinEncryptionLevel" `
+		-ExpectedValue 3 `
+	| Write-Output
 }
 
 # Attachments must be prevented from being downloaded from RSS feeds.
@@ -1592,24 +1216,13 @@ function Test-SV-88241r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88241r1_rule")
 	$obj | Add-Member NoteProperty Task("Attachments must be prevented from being downloaded from RSS feeds.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" | Select-Object -ErrorAction Stop -ExpandProperty DisableEnclosureDownload
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000420: registry value DisableEnclosureDownload for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000420" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" `
+		-Name "DisableEnclosureDownload" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Basic authentication for RSS feeds over HTTP must not be used.
@@ -1625,24 +1238,13 @@ function Test-SV-88243r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88243r1_rule")
 	$obj | Add-Member NoteProperty Task("Basic authentication for RSS feeds over HTTP must not be used.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" | Select-Object -ErrorAction Stop -ExpandProperty AllowBasicAuthInClear
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000430: registry value AllowBasicAuthInClear for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000430" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" `
+		-Name "AllowBasicAuthInClear" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Indexing of encrypted files must be turned off.
@@ -1658,24 +1260,13 @@ function Test-SV-88245r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88245r1_rule")
 	$obj | Add-Member NoteProperty Task("Indexing of encrypted files must be turned off.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search\" | Select-Object -ErrorAction Stop -ExpandProperty AllowIndexingEncryptedStoresOrItems
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000440: registry value AllowIndexingEncryptedStoresOrItems for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000440" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search\" `
+		-Name "AllowIndexingEncryptedStoresOrItems" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Users must be prevented from changing installation options.
@@ -1691,24 +1282,13 @@ function Test-SV-88247r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88247r1_rule")
 	$obj | Add-Member NoteProperty Task("Users must be prevented from changing installation options.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\" | Select-Object -ErrorAction Stop -ExpandProperty EnableUserControl
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000450: registry value EnableUserControl for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000450" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\" `
+		-Name "EnableUserControl" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Windows Installer Always install with elevated privileges option must be disabled.
@@ -1725,24 +1305,13 @@ function Test-SV-88249r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88249r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Installer Always install with elevated privileges option must be disabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\" | Select-Object -ErrorAction Stop -ExpandProperty AlwaysInstallElevated
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000460: registry value AlwaysInstallElevated for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000460" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\" `
+		-Name "AlwaysInstallElevated" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Users must be notified if a web-based program attempts to install software.
@@ -1759,24 +1328,13 @@ function Test-SV-88251r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88251r1_rule")
 	$obj | Add-Member NoteProperty Task("Users must be notified if a web-based program attempts to install software.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\" | Select-Object -ErrorAction Stop -ExpandProperty SafeForScripting
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000470: registry value SafeForScripting for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000470" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\" `
+		-Name "SafeForScripting" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Automatically signing in the last interactive user after a system-initiated restart must
@@ -1795,24 +1353,13 @@ function Test-SV-88253r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88253r1_rule")
 	$obj | Add-Member NoteProperty Task("Automatically signing in the last interactive user after a system-initiated restart must be disabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty DisableAutomaticRestartSignOn
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000480: registry value DisableAutomaticRestartSignOn for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000480" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "DisableAutomaticRestartSignOn" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # PowerShell script block logging must be enabled.
@@ -1834,24 +1381,13 @@ function Test-SV-88255r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88255r1_rule")
 	$obj | Add-Member NoteProperty Task("PowerShell script block logging must be enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\ Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging\" | Select-Object -ErrorAction Stop -ExpandProperty EnableScriptBlockLogging
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\ Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000490: registry value EnableScriptBlockLogging for HKEY_LOCAL_MACHINE\SOFTWARE\ Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000490" `
+		-Path "HKLM:\SOFTWARE\ Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging\" `
+		-Name "EnableScriptBlockLogging" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The Windows Remote Management (WinRM) client must not use Basic authentication.
@@ -1867,24 +1403,13 @@ function Test-SV-88257r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88257r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) client must not use Basic authentication.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" | Select-Object -ErrorAction Stop -ExpandProperty AllowBasic
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000500: registry value AllowBasic for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000500" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" `
+		-Name "AllowBasic" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Windows Remote Management (WinRM) client must not allow unencrypted traffic.
@@ -1901,24 +1426,13 @@ function Test-SV-88259r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88259r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) client must not allow unencrypted traffic.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" | Select-Object -ErrorAction Stop -ExpandProperty AllowUnencryptedTraffic
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000510: registry value AllowUnencryptedTraffic for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000510" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" `
+		-Name "AllowUnencryptedTraffic" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Windows Remote Management (WinRM) client must not use Digest authentication.
@@ -1934,24 +1448,13 @@ function Test-SV-88261r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88261r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) client must not use Digest authentication.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" | Select-Object -ErrorAction Stop -ExpandProperty AllowDigest
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000520: registry value AllowDigest for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000520" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" `
+		-Name "AllowDigest" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Windows Remote Management (WinRM) service must not use Basic authentication.
@@ -1967,24 +1470,13 @@ function Test-SV-88263r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88263r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) service must not use Basic authentication.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" | Select-Object -ErrorAction Stop -ExpandProperty AllowBasic
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000530: registry value AllowBasic for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000530" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" `
+		-Name "AllowBasic" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Windows Remote Management (WinRM) service must not allow unencrypted traffic.
@@ -2001,24 +1493,13 @@ function Test-SV-88265r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88265r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) service must not allow unencrypted traffic.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" | Select-Object -ErrorAction Stop -ExpandProperty AllowUnencryptedTraffic
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000540: registry value AllowUnencryptedTraffic for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000540" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" `
+		-Name "AllowUnencryptedTraffic" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The Windows Remote Management (WinRM) service must not store RunAs credentials.
@@ -2035,24 +1516,13 @@ function Test-SV-88267r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88267r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) service must not store RunAs credentials.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" | Select-Object -ErrorAction Stop -ExpandProperty DisableRunAs
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000550: registry value DisableRunAs for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000550" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" `
+		-Name "DisableRunAs" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Local accounts with blank passwords must be restricted to prevent access from the network.
@@ -2071,24 +1541,13 @@ function Test-SV-88285r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88285r1_rule")
 	$obj | Add-Member NoteProperty Task("Local accounts with blank passwords must be restricted to prevent access from the network.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty LimitBlankPasswordUse
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000020: registry value LimitBlankPasswordUse for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000020" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "LimitBlankPasswordUse" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Audit policy using subcategories must be enabled.
@@ -2108,24 +1567,13 @@ function Test-SV-88291r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88291r1_rule")
 	$obj | Add-Member NoteProperty Task("Audit policy using subcategories must be enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty SCENoApplyLegacyAuditPolicy
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000050: registry value SCENoApplyLegacyAuditPolicy for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000050" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "SCENoApplyLegacyAuditPolicy" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Domain controllers must require LDAP access signing.
@@ -2148,23 +1596,15 @@ function Test-SV-88293r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88293r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain controllers must require LDAP access signing.")
 
-	if (Test-DomainController) {
-		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty LDAPServerIntegrity
-		}
-		catch {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\" -Level Error
-		}
+	#TODO: Test output
 
-		if ($regValue -eq 2) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-DC-000320: registry value LDAPServerIntegrity for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\ not correct" -Level Error
-		}
+	if (Test-DomainController) {
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-DC-000320" `
+			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\" `
+			-Name "LDAPServerIntegrity" `
+			-ExpectedValue 2
 	}
 	else {
 		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
@@ -2189,22 +1629,12 @@ function Test-SV-88295r1_rule {
 	$obj | Add-Member NoteProperty Task("Domain controllers must be configured to allow reset of machine account passwords.")
 
 	if (Test-DomainController) {
-		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RefusePasswordChange
-		}
-		catch {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-		}
-
-		if ($regValue -eq 0) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-DC-000330: registry value RefusePasswordChange for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-		}
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-DC-000330" `
+			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+			-Name "RefusePasswordChange" `
+			-ExpectedValue 0
 	}
 	else {
 		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
@@ -2231,22 +1661,12 @@ function Test-SV-88297r1_rule {
 	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled.")
 
 	if (Test-DomainMember) {
-		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RequireSignOrSeal
-		}
-		catch {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-		}
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000080: registry value RequireSignOrSeal for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-		}
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-SO-000080" `
+			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+			-Name "RequireSignOrSeal" `
+			-ExpectedValue 1
 	}
 	else {
 		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
@@ -2273,22 +1693,12 @@ function Test-SV-88299r1_rule {
 	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled.")
 
 	if (Test-DomainMember) {
-		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty SealSecureChannel
-		}
-		catch {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-		}
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000090: registry value SealSecureChannel for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-		}
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-SO-000090" `
+			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+			-Name "SealSecureChannel" `
+			-ExpectedValue 1
 	}
 	else {
 		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
@@ -2315,22 +1725,12 @@ function Test-SV-88301r1_rule {
 	$obj | Add-Member NoteProperty Task("Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled.")
 
 	if (Test-DomainMember) {
-		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty SignSecureChannel
-		}
-		catch {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-		}
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000100: registry value SignSecureChannel for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-		}
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-SO-000100" `
+			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+			-Name "SignSecureChannel" `
+			-ExpectedValue 1
 	}
 	else {
 		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
@@ -2356,24 +1756,13 @@ function Test-SV-88303r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88303r1_rule")
 	$obj | Add-Member NoteProperty Task("The computer account password must not be prevented from being reset.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty DisablePasswordChange
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000110: registry value DisablePasswordChange for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000110" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+		-Name "DisablePasswordChange" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The maximum age for machine account passwords must be configured to 30 days or less.
@@ -2389,6 +1778,8 @@ function Test-SV-88305r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88305r1_rule")
 	$obj | Add-Member NoteProperty Task("The maximum age for machine account passwords must be configured to 30 days or less.")
+
+	#TODO: Change
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty MaximumPasswordAge
@@ -2426,24 +1817,13 @@ function Test-SV-88307r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88307r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to require a strong session key.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RequireStrongKey
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000130: registry value RequireStrongKey for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000130" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+		-Name "RequireStrongKey" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The machine inactivity limit must be set to 15 minutes, locking the system with the screen
@@ -2461,6 +1841,8 @@ function Test-SV-88309r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88309r1_rule")
 	$obj | Add-Member NoteProperty Task("The machine inactivity limit must be set to 15 minutes, locking the system with the screen saver.")
+
+	#TODO: Change
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty InactivityTimeoutSecs
@@ -2639,24 +2021,13 @@ function Test-SV-88317r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88317r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Microsoft network client: Digitally sign communications (always) must be configured to Enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RequireSecuritySignature
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000190: registry value RequireSecuritySignature for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000190" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" `
+		-Name "RequireSecuritySignature" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The setting Microsoft network client: Digitally sign communications (if server agrees) must
@@ -2675,24 +2046,13 @@ function Test-SV-88319r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88319r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Microsoft network client: Digitally sign communications (if server agrees) must be configured to Enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty EnableSecuritySignature
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000200: registry value EnableSecuritySignature for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000200" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" `
+		-Name "EnableSecuritySignature" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Unencrypted passwords must not be sent to third-party Server Message Block (SMB) servers.
@@ -2711,24 +2071,13 @@ function Test-SV-88321r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88321r1_rule")
 	$obj | Add-Member NoteProperty Task("Unencrypted passwords must not be sent to third-party Server Message Block (SMB) servers.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty EnablePlainTextPassword
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000210: registry value EnablePlainTextPassword for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000210" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" `
+		-Name "EnablePlainTextPassword" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # The amount of idle time required before suspending a session must be configured to 15 minutes
@@ -2747,6 +2096,8 @@ function Test-SV-88323r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88323r1_rule")
 	$obj | Add-Member NoteProperty Task("The amount of idle time required before suspending a session must be configured to 15 minutes or less.")
+
+	#TODO: Change
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty autodisconnect
@@ -2784,24 +2135,13 @@ function Test-SV-88325r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88325r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Microsoft network server: Digitally sign communications (always) must be configured to Enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RequireSecuritySignature
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000230: registry value RequireSecuritySignature for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000230" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
+		-Name "RequireSecuritySignature" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The setting Microsoft network server: Digitally sign communications (if client agrees) must
@@ -2820,24 +2160,13 @@ function Test-SV-88327r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88327r1_rule")
 	$obj | Add-Member NoteProperty Task("The setting Microsoft network server: Digitally sign communications (if client agrees) must be configured to Enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty EnableSecuritySignature
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000240: registry value EnableSecuritySignature for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000240" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
+		-Name "EnableSecuritySignature" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Anonymous enumeration of Security Account Manager (SAM) accounts must not be allowed.
@@ -2854,24 +2183,13 @@ function Test-SV-88331r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88331r1_rule")
 	$obj | Add-Member NoteProperty Task("Anonymous enumeration of Security Account Manager (SAM) accounts must not be allowed.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty RestrictAnonymousSAM
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000260: registry value RestrictAnonymousSAM for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000260" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "RestrictAnonymousSAM" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Anonymous enumeration of shares must not be allowed.
@@ -2887,24 +2205,13 @@ function Test-SV-88333r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88333r1_rule")
 	$obj | Add-Member NoteProperty Task("Anonymous enumeration of shares must not be allowed.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty RestrictAnonymous
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000270: registry value RestrictAnonymous for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000270" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "RestrictAnonymous" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to prevent the storage of passwords and credentials.
@@ -2923,24 +2230,13 @@ function Test-SV-88335r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88335r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent the storage of passwords and credentials.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty DisableDomainCreds
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000280: registry value DisableDomainCreds for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000280" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "DisableDomainCreds" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to prevent anonymous users from having the same permissions
@@ -2958,24 +2254,13 @@ function Test-SV-88337r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88337r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent anonymous users from having the same permissions as the Everyone group.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty EveryoneIncludesAnonymous
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000290: registry value EveryoneIncludesAnonymous for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000290" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "EveryoneIncludesAnonymous" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Anonymous access to Named Pipes and Shares must be restricted.
@@ -2993,24 +2278,13 @@ function Test-SV-88339r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88339r1_rule")
 	$obj | Add-Member NoteProperty Task("Anonymous access to Named Pipes and Shares must be restricted.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty RestrictNullSessAccess
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000300: registry value RestrictNullSessAccess for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000300" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
+		-Name "RestrictNullSessAccess" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Remote calls to the Security Account Manager (SAM) must be restricted to Administrators.
@@ -3026,24 +2300,13 @@ function Test-SV-88341r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88341r1_rule")
 	$obj | Add-Member NoteProperty Task("Remote calls to the Security Account Manager (SAM) must be restricted to Administrators.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty RestrictRemoteSAM
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq "O:BAG:BAD:(A;;RC;;;BA)") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000310: registry value RestrictRemoteSAM for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-MS-000310" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "RestrictRemoteSAM" `
+		-ExpectedValue "O:BAG:BAD:(A;;RC;;;BA)" `
+	| Write-Output
 }
 
 # Services using Local System that use Negotiate when reverting to NTLM authentication must
@@ -3061,24 +2324,13 @@ function Test-SV-88343r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88343r1_rule")
 	$obj | Add-Member NoteProperty Task("Services using Local System that use Negotiate when reverting to NTLM authentication must use the computer identity instead of authenticating anonymously.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\" | Select-Object -ErrorAction Stop -ExpandProperty UseMachineId
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000320: registry value UseMachineId for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000320" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\" `
+		-Name "UseMachineId" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # NTLM must be prevented from falling back to a Null session.
@@ -3094,24 +2346,13 @@ function Test-SV-88345r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88345r1_rule")
 	$obj | Add-Member NoteProperty Task("NTLM must be prevented from falling back to a Null session.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\MSV1_0\" | Select-Object -ErrorAction Stop -ExpandProperty allownullsessionfallback
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\MSV1_0\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000330: registry value allownullsessionfallback for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\MSV1_0\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000330" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\MSV1_0\" `
+		-Name "allownullsessionfallback" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # PKU2U authentication using online identities must be prevented.
@@ -3128,24 +2369,13 @@ function Test-SV-88347r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88347r1_rule")
 	$obj | Add-Member NoteProperty Task("PKU2U authentication using online identities must be prevented.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\pku2u\" | Select-Object -ErrorAction Stop -ExpandProperty AllowOnlineID
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\pku2u\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000340: registry value AllowOnlineID for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LSA\pku2u\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000340" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\pku2u\" `
+		-Name "AllowOnlineID" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption
@@ -3162,24 +2392,13 @@ function Test-SV-88349r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88349r1_rule")
 	$obj | Add-Member NoteProperty Task("Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty SupportedEncryptionTypes
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\" -Level Error
-	}
-
-	if ($regValue -eq 2147483640) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000350: registry value SupportedEncryptionTypes for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000350" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\" `
+		-Name "SupportedEncryptionTypes" `
+		-ExpectedValue 2147483640 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to prevent the storage of the LAN Manager hash of
@@ -3197,24 +2416,13 @@ function Test-SV-88351r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88351r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent the storage of the LAN Manager hash of passwords.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty NoLMHash
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000360: registry value NoLMHash for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000360" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "NoLMHash" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The LAN Manager authentication level must be set to send NTLMv2 response only and to refuse
@@ -3234,24 +2442,13 @@ function Test-SV-88355r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88355r1_rule")
 	$obj | Add-Member NoteProperty Task("The LAN Manager authentication level must be set to send NTLMv2 response only and to refuse LM and NTLM.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" | Select-Object -ErrorAction Stop -ExpandProperty LmCompatibilityLevel
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\" -Level Error
-	}
-
-	if ($regValue -eq 5) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000380: registry value LmCompatibilityLevel for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000380" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+		-Name "LmCompatibilityLevel" `
+		-ExpectedValue 5 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to at least negotiate signing for LDAP client signing.
@@ -3269,24 +2466,13 @@ function Test-SV-88357r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88357r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to at least negotiate signing for LDAP client signing.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP\" | Select-Object -ErrorAction Stop -ExpandProperty LDAPClientIntegrity
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000390: registry value LDAPClientIntegrity for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000390" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LDAP\" `
+		-Name "LDAPClientIntegrity" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Session security for NTLM SSP-based clients must be configured to require NTLMv2 session
@@ -3304,24 +2490,13 @@ function Test-SV-88359r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88359r1_rule")
 	$obj | Add-Member NoteProperty Task("Session security for NTLM SSP-based clients must be configured to require NTLMv2 session security and 128-bit encryption.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" | Select-Object -ErrorAction Stop -ExpandProperty NTLMMinClientSec
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" -Level Error
-	}
-
-	if ($regValue -eq 53739520) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000400: registry value NTLMMinClientSec for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000400" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" `
+		-Name "NTLMMinClientSec" `
+		-ExpectedValue 53739520 `
+	| Write-Output
 }
 
 # Session security for NTLM SSP-based servers must be configured to require NTLMv2 session
@@ -3339,24 +2514,13 @@ function Test-SV-88361r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88361r1_rule")
 	$obj | Add-Member NoteProperty Task("Session security for NTLM SSP-based servers must be configured to require NTLMv2 session security and 128-bit encryption.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" | Select-Object -ErrorAction Stop -ExpandProperty NTLMMinServerSec
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" -Level Error
-	}
-
-	if ($regValue -eq 53739520) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000410: registry value NTLMMinServerSec for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000410" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" `
+		-Name "NTLMMinServerSec" `
+		-ExpectedValue 53739520 `
+	| Write-Output
 }
 
 # Users must be required to enter a password to access private keys stored on the computer.
@@ -3378,24 +2542,13 @@ function Test-SV-88363r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88363r1_rule")
 	$obj | Add-Member NoteProperty Task("Users must be required to enter a password to access private keys stored on the computer.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\" | Select-Object -ErrorAction Stop -ExpandProperty ForceKeyProtection
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\" -Level Error
-	}
-
-	if ($regValue -eq 2) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000420: registry value ForceKeyProtection for HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000420" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\" `
+		-Name "ForceKeyProtection" `
+		-ExpectedValue 2 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to use FIPS-compliant algorithms for encryption, hashing,
@@ -3414,24 +2567,13 @@ function Test-SV-88365r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88365r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to use FIPS-compliant algorithms for encryption, hashing, and signing.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\" | Select-Object -ErrorAction Stop -ExpandProperty Enabled
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000430: registry value Enabled for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000430" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\" `
+		-Name "Enabled" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to require case insensitivity for non-Windows subsystems.
@@ -3450,24 +2592,13 @@ function Test-SV-88367r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88367r1_rule")
 	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to require case insensitivity for non-Windows subsystems.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel\" | Select-Object -ErrorAction Stop -ExpandProperty ObCaseInsensitive
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000440: registry value ObCaseInsensitive for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000440" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel\" `
+		-Name "ObCaseInsensitive" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # The default permissions of global system objects must be strengthened.
@@ -3486,24 +2617,13 @@ function Test-SV-88369r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88369r1_rule")
 	$obj | Add-Member NoteProperty Task("The default permissions of global system objects must be strengthened.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\" | Select-Object -ErrorAction Stop -ExpandProperty ProtectionMode
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000450: registry value ProtectionMode for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000450" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\" `
+		-Name "ProtectionMode" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # User Account Control approval mode for the built-in Administrator must be enabled.
@@ -3521,24 +2641,13 @@ function Test-SV-88371r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88371r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control approval mode for the built-in Administrator must be enabled.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty FilterAdministratorToken
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000460: registry value FilterAdministratorToken for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000460" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "FilterAdministratorToken" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # UIAccess applications must not be allowed to prompt for elevation without using the secure
@@ -3556,24 +2665,13 @@ function Test-SV-88373r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88373r1_rule")
 	$obj | Add-Member NoteProperty Task("UIAccess applications must not be allowed to prompt for elevation without using the secure desktop.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnableUIADesktopToggle
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000470: registry value EnableUIADesktopToggle for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000470" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "EnableUIADesktopToggle" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # User Account Control must, at a minimum, prompt administrators for consent on the secure
@@ -3592,24 +2690,13 @@ function Test-SV-88375r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88375r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control must, at a minimum, prompt administrators for consent on the secure desktop.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty ConsentPromptBehaviorAdmin
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 2) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000480: registry value ConsentPromptBehaviorAdmin for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000480" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "ConsentPromptBehaviorAdmin" `
+		-ExpectedValue 2 `
+	| Write-Output
 }
 
 # User Account Control must automatically deny standard user requests for elevation.
@@ -3627,24 +2714,13 @@ function Test-SV-88377r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88377r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control must automatically deny standard user requests for elevation.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty ConsentPromptBehaviorUser
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000490: registry value ConsentPromptBehaviorUser for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000490" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "ConsentPromptBehaviorUser" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # User Account Control must be configured to detect application installations and prompt for
@@ -3662,24 +2738,13 @@ function Test-SV-88379r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88379r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control must be configured to detect application installations and prompt for elevation.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnableInstallerDetection
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000500: registry value EnableInstallerDetection for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000500" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "EnableInstallerDetection" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # User Account Control must only elevate UIAccess applications that are installed in secure
@@ -3698,24 +2763,13 @@ function Test-SV-88381r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88381r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control must only elevate UIAccess applications that are installed in secure locations.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnableSecureUIAPaths
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000510: registry value EnableSecureUIAPaths for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000510" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "EnableSecureUIAPaths" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # User Account Control must run all administrators in Admin Approval Mode, enabling UAC.
@@ -3732,24 +2786,13 @@ function Test-SV-88383r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88383r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control must run all administrators in Admin Approval Mode, enabling UAC.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnableLUA
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000520: registry value EnableLUA for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000520" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "EnableLUA" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # User Account Control must virtualize file and registry write failures to per-user locations.
@@ -3768,24 +2811,13 @@ function Test-SV-88385r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88385r1_rule")
 	$obj | Add-Member NoteProperty Task("User Account Control must virtualize file and registry write failures to per-user locations.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty EnableVirtualization
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -eq 1) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000530: registry value EnableVirtualization for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000530" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "EnableVirtualization" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # A screen saver must be enabled on the system.
@@ -3803,24 +2835,13 @@ function Test-SV-88387r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88387r1_rule")
 	$obj | Add-Member NoteProperty Task("A screen saver must be enabled on the system.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" | Select-Object -ErrorAction Stop -ExpandProperty ScreenSaveActive
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" -Level Error
-	}
-
-	if ($regValue -eq "1") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UC-000010: registry value ScreenSaveActive for HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "ScreenSaveActive" `
+		-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" `
+		-Name "ScreenSaveActive" `
+		-ExpectedValue "1" `
+	| Write-Output
 }
 
 # The screen saver must be password protected.
@@ -3838,24 +2859,13 @@ function Test-SV-88389r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88389r1_rule")
 	$obj | Add-Member NoteProperty Task("The screen saver must be password protected.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" | Select-Object -ErrorAction Stop -ExpandProperty ScreenSaverIsSecure
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" -Level Error
-	}
-
-	if ($regValue -eq "1") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UC-000020: registry value ScreenSaverIsSecure for HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-UC-000020" `
+		-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" `
+		-Name "ScreenSaverIsSecure" `
+		-ExpectedValue "1" `
+	| Write-Output
 }
 
 # Zone information must be preserved when saving attachments.
@@ -3872,24 +2882,13 @@ function Test-SV-88391r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88391r1_rule")
 	$obj | Add-Member NoteProperty Task("Zone information must be preserved when saving attachments.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments\" | Select-Object -ErrorAction Stop -ExpandProperty SaveZoneInformation
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments\" -Level Error
-	}
-
-	if ($regValue -eq 2) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UC-000030: registry value SaveZoneInformation for HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-UC-000030" `
+		-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments\" `
+		-Name "SaveZoneInformation" `
+		-ExpectedValue 2 `
+	| Write-Output
 }
 
 # The Smart Card removal option must be configured to Force Logoff or Lock Workstation.
@@ -3906,24 +2905,13 @@ function Test-SV-88473r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88473r1_rule")
 	$obj | Add-Member NoteProperty Task("The Smart Card removal option must be configured to Force Logoff or Lock Workstation.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" | Select-Object -ErrorAction Stop -ExpandProperty scremoveoption
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" -Level Error
-	}
-
-	if ($regValue -eq "1") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000180: registry value scremoveoption for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000180" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" `
+		-Name "scremoveoption" `
+		-ExpectedValue "1" `
+	| Write-Output
 }
 
 #endregion
