@@ -295,15 +295,23 @@ function Test-RegistrySetting {
 		[string] $Path,
 		[Parameter(Mandatory = $true)]
 		[string] $Name,
-		[Parameter(Mandatory = $true)]
-		$ExpectedValue
+
+		[Parameter(Mandatory = $true, ParameterSetName="WithExpectedValue")]
+		$ExpectedValue,
+
+		[Parameter(Mandatory = $true, ParameterSetName="WithPredicate")]
+		[Scriptblock] $Predicate
 	)
+
+	if ($PSCmdlet.ParameterSetName -eq "WithExpectedValue") {
+		$Predicate = { param($value) $value -eq $ExpectedValue }
+	}
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path `
 			| Select-Object -ErrorAction Stop -ExpandProperty $Name
 
-		if ($regValue -eq $ExpectedValue) {
+		if (& $Predicate $regValue) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
@@ -1596,7 +1604,7 @@ function Test-SV-88293r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88293r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain controllers must require LDAP access signing.")
 
-	#TODO: Test output
+	#TODO: Test function on domain connected server
 
 	if (Test-DomainController) {
 		Test-RegistrySetting `
@@ -1781,24 +1789,13 @@ function Test-SV-88305r1_rule {
 
 	#TODO: Change
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty MaximumPasswordAge
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" -Level Error
-	}
-
-	if ($regValue -le 30 -and $regValue -ne 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000120: registry value MaximumPasswordAge for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000120" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
+		-Name "MaximumPasswordAge" `
+		-Predicate { param($regValue) $regValue -le 30 -and $regValue -ne 0 }`
+	| Write-Output
 }
 
 # Windows Server 2016 must be configured to require a strong session key.
@@ -1844,24 +1841,13 @@ function Test-SV-88309r1_rule {
 
 	#TODO: Change
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty InactivityTimeoutSecs
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
-	if ($regValue -le 900) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000140: registry value InactivityTimeoutSecs for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000140" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "InactivityTimeoutSecs" `
+		-Predicate { param($regValue) $regValue -le 900 } `
+	| Write-Output
 }
 
 # The required legal notice must be configured to display before console logon.
@@ -2099,24 +2085,13 @@ function Test-SV-88323r1_rule {
 
 	#TODO: Change
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" | Select-Object -ErrorAction Stop -ExpandProperty autodisconnect
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" -Level Error
-	}
-
-	if ($regValue -le 15) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000220: registry value autodisconnect for HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000220" `
+		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
+		-Name "autodisconnect" `
+		-Predicate { param($regValue) $regValue -le 15 } `
+	| Write-Output
 }
 
 # The setting Microsoft network server: Digitally sign communications (always) must be configured
