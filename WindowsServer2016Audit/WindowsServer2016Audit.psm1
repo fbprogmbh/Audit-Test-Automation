@@ -284,6 +284,51 @@ function Convert-ToAuditInfo {
 		})
 	}
 }
+
+function Test-RegistrySetting {
+	param(
+		[Parameter(Mandatory = $true)]
+		[PSObject] $obj,
+		[Parameter(Mandatory = $true)]
+		[string] $StigId,
+		[Parameter(Mandatory = $true)]
+		[string] $Path,
+		[Parameter(Mandatory = $true)]
+		[string] $Name,
+		[Parameter(Mandatory = $true)]
+		$ExpectedValue
+	)
+
+	try {
+		$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path `
+			| Select-Object -ErrorAction Stop -ExpandProperty $Name
+
+		if ($regValue -eq $ExpectedValue) {
+			$obj | Add-Member NoteProperty Status("Compliant")
+			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
+		}
+		elseif ($null -eq $regValue) {
+			$obj | Add-Member NoteProperty Status("Registry value not found.")
+			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+		}
+		else {
+			$obj | Add-Member NoteProperty Status("Registry value: $regValue. Expected value: $ExpectedValue.")
+			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+
+			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error`
+				-Message "${$StigId}: Registry value $Name in registry key $Path is not correct."
+		}
+	}
+	catch {
+		$obj | Add-Member NoteProperty Status("Registry key not found.")
+		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+		
+		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error`
+			-Message "${$StigId}: Could not get value $Name in registry key $path."
+	}
+
+	return $obj
+}
 #endregion
 
 #region Audit tests
@@ -316,28 +361,13 @@ function Test-SV-88139r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88139r1_rule")
 	$obj | Add-Member NoteProperty Task("Administrator accounts must not be enumerated during elevation.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\" | Select-Object -ErrorAction Stop -ExpandProperty EnumerateAdministrators
-
-		if ($regValue -eq 0) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Differing registry value: $regValue")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000280: registry value EnumerateAdministrators for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\ not correct" -Level Error
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Registry value no found")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\" -Level Error
-	}
-
- 	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000280" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\" `
+		-Name "EnumerateAdministrators" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # Local administrator accounts must have their privileged token filtered to prevent elevated
@@ -356,24 +386,13 @@ function Test-SV-88147r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88147r1_rule")
 	$obj | Add-Member NoteProperty Task("Local administrator accounts must have their privileged token filtered to prevent elevated privileges from being used over the network on domain systems.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" | Select-Object -ErrorAction Stop -ExpandProperty LocalAccountTokenFilterPolicy
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Level Error
-	}
-
-	if ($regValue -eq 0) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-MS-000020: registry value LocalAccountTokenFilterPolicy for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-MS-000020" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
+		-Name "LocalAccountTokenFilterPolicy" `
+		-ExpectedValue 0 `
+	| Write-Output
 }
 
 # WDigest Authentication must be disabled.
@@ -389,6 +408,8 @@ function Test-SV-88149r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88149r1_rule")
 	$obj | Add-Member NoteProperty Task("WDigest Authentication must be disabled.")
+
+	
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest\" | Select-Object -ErrorAction Stop -ExpandProperty UseLogonCredential
