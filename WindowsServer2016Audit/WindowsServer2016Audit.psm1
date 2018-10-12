@@ -295,15 +295,14 @@ function Test-RegistrySetting {
 		[string] $Path,
 		[Parameter(Mandatory = $true)]
 		[string] $Name,
-
-		[Parameter(Mandatory = $true, ParameterSetName="WithExpectedValue")]
+		[Parameter(Mandatory = $true)]
 		$ExpectedValue,
 
-		[Parameter(Mandatory = $true, ParameterSetName="WithPredicate")]
+		[Parameter(ParameterSetName = "WithPredicate")]
 		[Scriptblock] $Predicate
 	)
 
-	if ($PSCmdlet.ParameterSetName -eq "WithExpectedValue") {
+	if ($PSCmdlet.ParameterSetName -ne "WithPredicate") {
 		$Predicate = { param($value) $value -eq $ExpectedValue }
 	}
 
@@ -320,14 +319,14 @@ function Test-RegistrySetting {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Registry value: $regValue. Expected value: $ExpectedValue.")
+			$obj | Add-Member NoteProperty Status("Registry value: $regValue. Differs from expected value: $ExpectedValue.")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error`
 				-Message "${$StigId}: Registry value $Name in registry key $Path is not correct."
 		}
 	}
-	catch {
+	catch [System.Management.Automation.ItemNotFoundException] {
 		$obj | Add-Member NoteProperty Status("Registry key not found.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		
@@ -1794,6 +1793,7 @@ function Test-SV-88305r1_rule {
 		-StigId "WN16-SO-000120" `
 		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
 		-Name "MaximumPasswordAge" `
+		-ExpectedValue "Less than 30 days, but not 0." `
 		-Predicate { param($regValue) $regValue -le 30 -and $regValue -ne 0 }`
 	| Write-Output
 }
@@ -1846,6 +1846,7 @@ function Test-SV-88309r1_rule {
 		-StigId "WN16-SO-000140" `
 		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
 		-Name "InactivityTimeoutSecs" `
+		-ExpectedValue "Less than 900 seconds." `
 		-Predicate { param($regValue) $regValue -le 900 } `
 	| Write-Output
 }
@@ -1869,37 +1870,23 @@ function Test-SV-88311r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88311r1_rule")
 	$obj | Add-Member NoteProperty Task("The required legal notice must be configured to display before console logon.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty LegalNoticeText
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
 	if ($PSBoundParameters.ContainsKey("msg")) {
-		if ($regValue -eq $msg) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000150: registry value LegalNoticeText for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-		}
+		$ExpectedValue = "$msg"
+		$Predicate = { param($regValue) $regValue -eq $msg }
 	}
 	else {
-		if ($null -ne $regValue -and $regValue -ne "") {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000150: registry value LegalNoticeText for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ is not set or empty" -Level Error
-		}
+		$ExpectedValue = "Non-empty string."
+		$Predicate = { param($regValue) $null -ne $regValue -and $regValue -ne "" }
 	}
 
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000150" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "LegalNoticeText" `
+		-ExpectedValue $ExpectedValue `
+		-Predicate $Predicate `
+	| Write-Output
 }
 
 # The Windows dialog box title for the legal banner must be configured with the appropriate
@@ -1921,37 +1908,23 @@ function Test-SV-88313r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88313r1_rule")
 	$obj | Add-Member NoteProperty Task("The Windows dialog box title for the legal banner must be configured with the appropriate text.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" | Select-Object -ErrorAction Stop -ExpandProperty LegalNoticeCaption
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" -Level Error
-	}
-
 	if ($PSBoundParameters.ContainsKey("msg")) {
-		if ($regValue -eq $msg) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000160: registry value LegalNoticeCaption for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ not correct" -Level Error
-		}
+		$ExpectedValue = "$msg"
+		$Predicate = { param($regValue) $regValue -eq $msg }
 	}
 	else {
-		if ($null -ne $regValue -and $regValue -ne "") {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000160: registry value LegalNoticeCaption for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ is not set or empty" -Level Error
-		}
+		$ExpectedValue = "Non-empty string."
+		$Predicate = { param($regValue) $null -ne $regValue -and $regValue -ne "" }
 	}
 
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-SO-000160" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
+		-Name "LegalNoticeCaption" `
+		-ExpectedValue $ExpectedValue `
+		-Predicate $Predicate `
+	| Write-Output
 }
 
 # Caching of logon credentials must be limited.
@@ -1971,24 +1944,14 @@ function Test-SV-88315r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88315r1_rule")
 	$obj | Add-Member NoteProperty Task("Caching of logon credentials must be limited.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" | Select-Object -ErrorAction Stop -ExpandProperty CachedLogonsCount
-	}
-	catch {
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get registry key HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" -Level Error
-	}
-
-	if ($regValue -le "4") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-MS-000050: registry value CachedLogonsCount for HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\ not correct" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-MS-000050" `
+		-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" `
+		-Name "CachedLogonsCount" `
+		-ExpectedValue "Less than 4" `
+		-Predicate { param($regValue) $regValue -le "4" }
+	| Write-Output
 }
 
 # The setting Microsoft network client: Digitally sign communications (always) must be configured
@@ -2090,6 +2053,7 @@ function Test-SV-88323r1_rule {
 		-StigId "WN16-SO-000220" `
 		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
 		-Name "autodisconnect" `
+		-ExpectedValue "Less than 15 minutes." `
 		-Predicate { param($regValue) $regValue -le 15 } `
 	| Write-Output
 }
@@ -2968,7 +2932,7 @@ function Test-SV-87889r1_rule {
 				$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 			}
 			else {
-				$obj | Add-Member NoteProperty Status("Not compliant")
+				$obj | Add-Member NoteProperty Status("TPM is not present or ready for use.")
 				$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			}
 		}
@@ -3034,23 +2998,19 @@ function Test-SV-87899r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-87899r1_rule")
 	$obj | Add-Member NoteProperty Task("Local volumes must use a format that supports NTFS attributes.")
 
-	$volumes = Get-Volume | Where-Object DriveType -eq Fixed
-	$allNtfs = $true
+	$volumes = Get-Volume `
+		| Where-Object DriveType -eq Fixed `
+		| Where-Object FileSystem -ne "NTFS"
 
-	foreach ($volume in $volumes) {
-		if ( $volume.FileSystem -ne "NTFS" ) {
-			$allNtfs = $false
-			Write-Error -Message "Found not NTFS filesystem: $volume"
-		}
-	}
-
-	if ( $allNtfs ) {
+	if ($volumes.Count -eq 0) {
 		$obj | Add-Member NoteProperty Status("Compliant")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found volume without NTFS formatting.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+
+		$volumes | Foreach-Object { Write-Error -Message "Found not NTFS filesystem: $_" }
 	}
 
 	Write-Output $obj
@@ -3590,7 +3550,7 @@ function Test-SV-87909r1_rule {
 	}
 
 	if ( $sharedPrinter ) {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found shared printer(s)")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000200: Found shared printer(s) $sharedPrinter, please check printer security settings" -Level Error
 	}
@@ -3640,7 +3600,7 @@ function Test-SV-87911r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found outdated or unused accounts.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -3673,7 +3633,7 @@ function Test-SV-87913r2_rule {
 	}
 
 	if ( $passwordNotRequired ) {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found account without password.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		foreach ($entry in $passwordNotRequired) {
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000220: Found enabled account not requiring a password: $entry" -Level Error
@@ -3712,7 +3672,7 @@ function Test-SV-87915r2_rule {
 	}
 
 	if ( $passwordNeverExpires ) {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found account with never expiring passwords.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		foreach ($entry in $passwordNeverExpires) {
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000220: Found enabled account not requiring a password: $entry" -Level Error
@@ -3789,7 +3749,7 @@ function Test-SV-87923r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found certificates.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000270: Found the following certificates: `n $items"
 	}
@@ -3871,7 +3831,7 @@ function Test-SV-87931r1_rule {
 	}
 
 	if ( $firewallDisabled ) {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Found disabled firewall profile.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 	else {
@@ -3901,7 +3861,7 @@ function Test-SV-87939r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Fax server role is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -3926,7 +3886,7 @@ function Test-SV-87941r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("FTP service is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -3952,7 +3912,7 @@ function Test-SV-87943r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Peer name resolution protocol is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -3978,7 +3938,7 @@ function Test-SV-87945r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Simple TCP/IP Services is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -4004,7 +3964,7 @@ function Test-SV-87947r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The Telnet Client is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -4030,7 +3990,7 @@ function Test-SV-87949r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The TFTP Client is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -4056,7 +4016,7 @@ function Test-SV-87951r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The server Message Block (SMB) v1 protocol is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -4082,7 +4042,7 @@ function Test-SV-87953r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Windows PowerShell 2.0 is installed.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -4111,7 +4071,7 @@ function Test-SV-87961r2_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Windows 2016 account lockout duration is not configured to 15 minutes or greater, found $lockoutDuration.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Windows 2016 account lockout duration is not configured to 15 minutes or greater, found $lockoutDuration." -Level Error
 	}
@@ -4142,7 +4102,7 @@ function Test-SV-87963r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The number of allowed bad logon attempts is not configured to three or less, found $badLogons.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The number of allowed bad logon attempts is not configured to three or less, found $badLogons." -Level Error
 	}
@@ -4174,7 +4134,7 @@ function Test-SV-87965r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The period of time before the bad logon counter is reset is not configured to 15 minutes or greater, found $passwordAge.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The period of time before the bad logon counter is reset is not configured to 15 minutes or greater, found $passwordAge." -Level Error
 	}
@@ -4205,7 +4165,7 @@ function Test-SV-87967r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The password history is not configured to 24 passwords remembered, found $passwordHistory.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The password history is not configured to 24 passwords remembered, found $passwordHistory." -Level Error
 	}
@@ -4234,7 +4194,7 @@ function Test-SV-87969r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Maximum password age not configured to 60 days or less, found $passwordAge.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Maximum password age not configured to 60 days or less, found $passwordAge." -Level Error
 	}
@@ -4263,7 +4223,7 @@ function Test-SV-87971r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The minimum password age is not configured to at least one day, found $passwordAge.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The minimum password age is not configured to at least one day, found $passwordAge." -Level Error
 	}
@@ -4292,7 +4252,7 @@ function Test-SV-87973r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The minimum password length is not configured to 14 character, found $passwordLength.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The minimum password length is not configured to 14 character, found $passwordLength." -Level Error
 	}
@@ -4323,7 +4283,7 @@ function Test-SV-87975r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("The built-in Windows password complexity policy is not enabled.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The built-in Windows password complexity policy is not enabled." -Level Error
 	}
@@ -4352,7 +4312,7 @@ function Test-SV-87977r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Reversible password encryption is not disabled.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Reversible password encryption is not disabled." -Level Error
 	}
@@ -4688,30 +4648,13 @@ function Test-SV-88161r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88161r1_rule")
 	$obj | Add-Member NoteProperty Task("Hardened UNC paths must be defined to require mutual authentication and integrity for \\*\NETLOGON shares.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\" -ErrorAction Stop | Select-Object -ErrorAction Stop -ExpandProperty \\*\NETLOGON
-
-		if ($regValue -eq "RequireMutualAuthentication=1, RequireIntegrity=1") {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000090: Registry Key | Hardened Paths \\*\NETLOGON not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000090: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000090" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\" `
+		-Name "\\*\NETLOGON" `
+		-ExpectedValue "RequireMutualAuthentication=1, RequireIntegrity=1" `
+	| Write-Output
 }
 
 # Hardend Path \\*\SYSVOL
@@ -4720,30 +4663,13 @@ function Test-SV-88161r1_rule_2 {
 	$obj | Add-Member NoteProperty Name("SV-88161r1_rule_2")
 	$obj | Add-Member NoteProperty Task("Hardened UNC paths must be defined to require mutual authentication and integrity for \\*\SYSVOL shares.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\" -ErrorAction Stop | Select-Object -ErrorAction Stop -ExpandProperty \\*\SYSVOL
-
-		if ($regValue -eq "RequireMutualAuthentication=1, RequireIntegrity=1") {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000090: Registry Key | Hardened Paths \\*\NETLOGON not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000090: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000090" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\" `
+		-Name "\\*\SYSVOL" `
+		-ExpectedValue "RequireMutualAuthentication=1, RequireIntegrity=1" `
+	| Write-Output
 }
 
 # Virtualization-based security must be enabled with the platform security level configured
@@ -4762,30 +4688,13 @@ function Test-SV-88165r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule")
 	$obj | Add-Member NoteProperty Task("Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (EnableVirtualizationBasedSecurity).")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" -ErrorAction Stop | Select-Object -ErrorAction Stop -ExpandProperty EnableVirtualizationBasedSecurity
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: Registry Key EnableVirtualizationBasedSecurity not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000110" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
+		-Name "EnableVirtualizationBasedSecurity" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 function Test-SV-88165r1_rule_2 {
@@ -4793,30 +4702,13 @@ function Test-SV-88165r1_rule_2 {
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_2")
 	$obj | Add-Member NoteProperty Task("Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (RequirePlatformSecurityFeatures).")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" -ErrorAction Stop | Select-Object -ErrorAction Stop -ExpandProperty RequirePlatformSecurityFeatures
-
-		if ($regValue -eq 3) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: Registry Key RequirePlatformSecurityFeatures not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000110" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
+		-Name "RequirePlatformSecurityFeatures" `
+		-ExpectedValue 3 `
+	| Write-Output
 }
 
 function Test-SV-88165r1_rule_3 {
@@ -4824,24 +4716,18 @@ function Test-SV-88165r1_rule_3 {
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_3")
 	$obj | Add-Member NoteProperty Task("Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (VirtualizationBasedSecurityStatus Running).")
 
-	try {
-		$vBSS = Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard | Select-Object -ErrorAction Stop -ExpandProperty VirtualizationBasedSecurityStatus
+	$vBSS = Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard `
+		| Select-Object -ExpandProperty VirtualizationBasedSecurityStatus
 
-		# 2 indicates running
-		if ($vBSS -eq 2) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: Device Guard not running" -Level Error
-		}
+	# 2 indicates running
+	if ($vBSS -eq 2) {
+		$obj | Add-Member NoteProperty Status("Compliant")
+		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
+	else {
+		$obj | Add-Member NoteProperty Status("Device Guard not running")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: $($error[0])" -Level Error
+		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: Device Guard not running" -Level Error
 	}
 
 	Write-Output $obj
@@ -4862,30 +4748,13 @@ function Test-SV-88167r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88167r1_rule")
 	$obj | Add-Member NoteProperty Task("Credential Guard must be running on domain-joined systems.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" -ErrorAction Stop | Select-Object -ErrorAction Stop -ExpandProperty LsaCfgFlags
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000120: Registry Key LsaCfgFlags not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000120: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000120" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
+		-Name "LsaCfgFlags" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 # Credential Guard running
@@ -4902,7 +4771,7 @@ function Test-SV-88167r1_rule_2 {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Security services aren't running.")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		}
 	}
@@ -4931,35 +4800,13 @@ function Test-SV-88169r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88169r1_rule")
 	$obj | Add-Member NoteProperty Task("Virtualization-based protection of code integrity must be enabled on domain-joined systems.")
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard" -ErrorAction Stop | Select-Object -ErrorAction Stop -ExpandProperty HypervisorEnforcedCodeIntegrity -ErrorAction Stop
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000130: Registry Hive DeviceGuard not found" -Level Error
-	}
-	catch [System.Management.Automation.PSArgumentException] {
-		$obj | Add-Member NoteProperty Status("Not compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000130: Registry Key HypervisorEnforcedCodeIntegrity not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000130: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
+	Test-RegistrySetting `
+		-obj $obj `
+		-StigId "WN16-CC-000130" `
+		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard" `
+		-Name "HypervisorEnforcedCodeIntegrity" `
+		-ExpectedValue 1 `
+	| Write-Output
 }
 
 function Test-SV-88169r1_rule_2 {
@@ -5055,7 +4902,7 @@ function Test-SV-88289r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Built-in guest account not renamed.")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		}
 	}
@@ -5088,7 +4935,7 @@ function Test-SV-88329r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Anonymous SID/Name translation not disabled.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000250: Anonymous SID/Name translation not disabled." -Level Error
 	}
@@ -5118,7 +4965,7 @@ function Test-SV-88353r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$obj | Add-Member NoteProperty Status("Force users to log off when their allowed logon hours expire not enabled.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000370: Force users to log off when their allowed logon hours expire not enabled." -Level Error
 	}
@@ -5134,7 +4981,7 @@ function Test-SV-88353r1_rule {
 # CCI: CCI-002235
 #
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
-# capabilities.Accounts with the Access Credential Manager as a trusted caller user right
+# capabilities. Accounts with the Access Credential Manager as a trusted caller user right
 # may be able to retrieve the credentials of other accounts from Credential Manager.
 function Test-SV-88393r1_rule {
 	$obj = New-Object PSObject
@@ -5149,7 +4996,7 @@ function Test-SV-88393r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found account(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
@@ -5198,7 +5045,7 @@ function Test-SV-88397r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-MS-000340: Found unexpected $entry" -Level Error
@@ -5242,7 +5089,7 @@ function Test-SV-88399r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
@@ -5289,7 +5136,7 @@ function Test-SV-88403r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000050: Found unexpected $entry" -Level Error
@@ -5338,7 +5185,7 @@ function Test-SV-88407r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000070: Found unexpected $entry" -Level Error
@@ -5386,7 +5233,7 @@ function Test-SV-88409r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000080: Found unexpected $entry" -Level Error
@@ -5428,7 +5275,7 @@ function Test-SV-88411r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
@@ -5480,7 +5327,7 @@ function Test-SV-88413r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000100: Found unexpected $entry" -Level Error
@@ -5523,7 +5370,7 @@ function Test-SV-88415r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
@@ -5570,7 +5417,7 @@ function Test-SV-88417r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000120: Found unexpected $entry" -Level Error
@@ -5619,7 +5466,7 @@ function Test-SV-88419r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000130: Found unexpected $entry" -Level Error
@@ -6047,7 +5894,7 @@ function Test-SV-88443r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
@@ -6095,7 +5942,7 @@ function Test-SV-88445r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000200: Found unexpected $entry" -Level Error
@@ -6147,7 +5994,7 @@ function Test-SV-88447r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000210: Found unexpected $entry" -Level Error
@@ -6201,7 +6048,7 @@ function Test-SV-88449r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000220: Found unexpected $entry" -Level Error
@@ -6249,7 +6096,7 @@ function Test-SV-88451r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000230: Found unexpected $entry" -Level Error
@@ -6298,7 +6145,7 @@ function Test-SV-88453r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000240: Found unexpected $entry" -Level Error
@@ -6340,7 +6187,7 @@ function Test-SV-88455r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
@@ -6389,7 +6236,7 @@ function Test-SV-88457r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000260: Found unexpected $entry" -Level Error
@@ -6438,7 +6285,7 @@ function Test-SV-88459r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000270: Found unexpected $entry" -Level Error
@@ -6487,7 +6334,7 @@ function Test-SV-88461r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000280: Found unexpected $entry" -Level Error
@@ -6534,7 +6381,7 @@ function Test-SV-88463r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000290: Found unexpected $entry" -Level Error
@@ -6583,7 +6430,7 @@ function Test-SV-88465r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000300: Found unexpected $entry" -Level Error
@@ -6631,7 +6478,7 @@ function Test-SV-88467r1_rule {
 		}
 
 		if ($found) {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found member(s).")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 			foreach ($entry in $found) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-UR-000310: Found unexpected $entry" -Level Error
@@ -6675,7 +6522,7 @@ function Test-SV-88475r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Not compliant")
+			$obj | Add-Member NoteProperty Status("Found account.")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		}
 	}
