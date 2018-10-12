@@ -1870,6 +1870,9 @@ function Test-SV-88311r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88311r1_rule")
 	$obj | Add-Member NoteProperty Task("The required legal notice must be configured to display before console logon.")
 
+	$ExpectedValue = ""
+	$Predicate = $null
+
 	if ($PSBoundParameters.ContainsKey("msg")) {
 		$ExpectedValue = "$msg"
 		$Predicate = { param($regValue) $regValue -eq $msg }
@@ -1950,7 +1953,7 @@ function Test-SV-88315r1_rule {
 		-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" `
 		-Name "CachedLogonsCount" `
 		-ExpectedValue "Less than 4" `
-		-Predicate { param($regValue) $regValue -le "4" }
+		-Predicate { param($regValue) $regValue -le "4" } `
 	| Write-Output
 }
 
