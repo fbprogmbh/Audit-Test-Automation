@@ -25,7 +25,7 @@ Import-Module -Name .\CIS_Benchmarks\CISSQL2016Benchmarks -Verbose
 ```
 3. Generate a report with `Get-SQL2016Report` For example:
 ```PowerShell
-Get-SQL2016Report -Path "MyReport.html" -SQLInstance "MSSQLServer"
+Get-SQL2016Report -Path "MyReport.html" -SQLInstance "MyNamedInstance"
 ```
 
 ## Sample report
