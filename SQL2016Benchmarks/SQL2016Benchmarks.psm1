@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <#
 
-    Author(s):        Dennis Esly
+    Author(s):        Dennis Esly, Peter Maier
     Date:             01/22/2018
     Last change:      01/23/2018
 
@@ -91,9 +91,9 @@ function Test-SQLAdHocDistributedQueriesDisabled {
 
    This feature can be used to remotely access and exploit vulnerabilities on remote SQL Server instances and to run unsafe Visual Basic for Application functions.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "SqlInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -108,7 +108,20 @@ function Test-SQLAdHocDistributedQueriesDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'Ad Hoc Distributed Queries';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        switch ($PsCmdlet.ParameterSetName) {
+            "SqlInstance" {
+                if($sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                } 
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+            }
+            "Default" {
+                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+            }
+            
+        }
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1216,9 +1229,9 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
     $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
     $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
     $sqlServer = $singleWmi.Services | Where-Object {$_.Type -eq "SqlServer"}
-    $sqlServerNames = @()
+    $serviceAccountNames = @()
     foreach ($sqlS in $sqlServer) {
-        $sqlServerNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
+        $serviceAccountNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
     }
 
     $ADSIComputer = [ADSI]("WinNT://$machineName,computer")
@@ -1252,10 +1265,10 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
             $admins += $member
         }
     }
-    foreach ($sqlServerName in $sqlServerNames) {
+    foreach ($serviceAccountName in $serviceAccountNames) {
         foreach ($admin in $admins) {
-            if ($admin -eq $sqlServerName) {
-                $sqlAdmins += $sqlServerName
+            if ($admin -eq $serviceAccountName) {
+                $sqlAdmins += $serviceAccountName
             }
         }
     }
@@ -2372,65 +2385,93 @@ function Convert-ToAuditInfo {
 
 #region Reportgeneration
 function Get-SQL2016AuditInfos {
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME
     )
 
-    # Section 2
-    Test-SQLAdHocDistributedQueriesDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLClrEnabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLCrossDBOwnershipDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLDatabaseMailXPsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLOleAutomationProceduresDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLRemoteAccessDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLRemoteAdminConnectionsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLScanForStartupProcsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLTrustworthyDatabaseOff -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLServerProtocolsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLUseNonStandardPorts -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLHideInstanceEnabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLSaLoginAccountDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLSaLoginAccountRenamed -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLXpCommandShellDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLAutoCloseOff -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLNoSaAccounnt -MachineName $machineName -SqlInstance $sqlInstance
+    switch ($PsCmdlet.ParameterSetName) {
+        "ByInstance" {
+            $sqlInstances = $sqlInstance
+        }
+        "Default" {
+            $smo = 'Microsoft.SqlServer.Management.Smo.'
+            $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
+            $singleWmi = $wmi | Where-Object { $_.Name -eq $machineName }
+            $sqlServer = $singleWmi.Services | Where-Object { $_.Type -eq "SqlServer" }  
+            $sqlInstances = $sqlServer `
+                | Foreach-Object { $_.Name.Substring($_.Name.IndexOf('$') + 1) } `
+                | Where-Object { $_ -ne "MSSQLSERVER" }
+        }
+    }
 
-    # Section 3
-    Test-SQLServerAuthentication -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLGuestPermissionOnDatabases -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLDropOrphanedUsers -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLAuthenticationDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLServerServiceAccountIsNotAnAdministrator -MachineName $machineName
-    Test-SQLAgentServiceAccountIsNotAnAdministrator -MachineName $machineName
-    Test-SQLFullTextServiceAccountIsNotAnAdministrator -MachineName $machineName
-    Test-SQLPermissionsForRolePublic -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLWindowsBuiltinNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLWindowsLocalGroupsNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLPublicRoleMsdbDatabase -MachineName $machineName -SqlInstance $sqlInstance
+    $InstanceAudits = @()
+    foreach ($sqlInstance in $sqlInstances) {
+        $auditInfos = @()
 
-    # Section 4
-    Test-SQLMustChangeOptionIsOn -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLCheckExpirationOptionOn -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLCheckPolicyOptionOn -MachineName $machineName -SqlInstance $sqlInstance
+        # Section 2
+        $auditInfos += Test-SQLAdHocDistributedQueriesDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLClrEnabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLCrossDBOwnershipDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLDatabaseMailXPsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLOleAutomationProceduresDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLRemoteAccessDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLRemoteAdminConnectionsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLScanForStartupProcsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLTrustworthyDatabaseOff -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLServerProtocolsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLUseNonStandardPorts -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLHideInstanceEnabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLSaLoginAccountDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLSaLoginAccountRenamed -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLXpCommandShellDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLAutoCloseOff -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLNoSaAccounnt -MachineName $machineName -SqlInstance $sqlInstance
+    
+        # Section 3
+        $auditInfos += Test-SQLServerAuthentication -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLGuestPermissionOnDatabases -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLDropOrphanedUsers -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLAuthenticationDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLServerServiceAccountIsNotAnAdministrator -MachineName $machineName
+        $auditInfos += Test-SQLAgentServiceAccountIsNotAnAdministrator -MachineName $machineName
+        $auditInfos += Test-SQLFullTextServiceAccountIsNotAnAdministrator -MachineName $machineName
+        $auditInfos += Test-SQLPermissionsForRolePublic -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLWindowsBuiltinNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLWindowsLocalGroupsNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLPublicRoleMsdbDatabase -MachineName $machineName -SqlInstance $sqlInstance
+    
+        # Section 4
+        $auditInfos += Test-SQLMustChangeOptionIsOn -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLCheckExpirationOptionOn -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLCheckPolicyOptionOn -MachineName $machineName -SqlInstance $sqlInstance
+    
+        # Section 5
+        $auditInfos += Test-SQLMaximumNumberOfErrorLogFiles -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLDefaultTraceEnabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLLoginAuditingIsSetToFailedLogins -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins -MachineName $machineName -SqlInstance $sqlInstance
+    
+        # Section 6
+        $auditInfos += Test-CLRAssemblyPermissionSet -MachineName $machineName -SqlInstance $sqlInstance
+    
+        # Section 7
+        $auditInfos += Test-SQLSymmetricKeyEncryptionAlgorithm -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLAsymmetricKeySize -MachineName $machineName -SqlInstance $sqlInstance
+    
+        # Section 8
+        $auditInfos += Test-SQLServerBrowserService
+        
+        $InstanceAudits += @{
+            InstanceName = $sqlInstance
+            AuditInfos = $auditInfos | Convert-ToAuditInfo
+        }
+    }
 
-    # Section 5
-    Test-SQLMaximumNumberOfErrorLogFiles -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLDefaultTraceEnabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLLoginAuditingIsSetToFailedLogins -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins -MachineName $machineName -SqlInstance $sqlInstance
-
-    # Section 6
-    Test-CLRAssemblyPermissionSet -MachineName $machineName -SqlInstance $sqlInstance
-
-    # Section 7
-    Test-SQLSymmetricKeyEncryptionAlgorithm -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLAsymmetricKeySize -MachineName $machineName -SqlInstance $sqlInstance
-
-    # Section 8
-    Test-SQLServerBrowserService
-
+    return $InstanceAudits
 }
 
 
@@ -2450,61 +2491,87 @@ function Get-SQL2016Report {
 		C:\PS> Get-SQL2016Report -Path "MyReport.html" -SqlInstance "MySQLServer"
 	#>
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     Param(
         [Parameter(Mandatory = $true)]
         [string] $Path,
-        [Parameter(Mandatory = $true)]
+
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
-        [string] $MachineName = $env:COMPUTERNAME,
+        [string] $MachineName = $env:COMPUTERNAME, 
 
-        [AuditInfo[]] $AuditInfos = (Get-SQL2016AuditInfos -SqlInstance $sqlInstance -MachineName $machineName | Convert-ToAuditInfo),
+        [Parameter(Mandatory = $true, ParameterSetName = "ByAuditInfo")]
+        [Hashtable[]] $InstanceAudits,
 
         [switch] $DarkMode
     )
 
+    switch ($PsCmdlet.ParameterSetName) {
+        "ByInstance" {
+            $InstanceAudits = (Get-SQL2016AuditInfos -SqlInstance $sqlInstance -MachineName $machineName)
+        }
+        "ByAuditInfo"{
+
+        }
+        "Default" {
+            $InstanceAudits = (Get-SQL2016AuditInfos)
+        }
+    }
+
     [hashtable[]]$reportSections = @()
 
-    $reportSections += @{
-        Title       = "2 Surface Area Reduction"
-        Description = "SQL Server offers various configuration options, some of them can be controlled by the sp_configure stored procedure. This section contains the listing of the corresponding recommendations."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "2.*"}
-    }
+    foreach ($InstanceAudit in $InstanceAudits) {
+        
+        [hashtable[]]$subSections = @()
 
-    $reportSections += @{
-        Title       = "3 Authentication and Authorization"
-        Description = "This section contains recommendations related to SQL Server's authentication and authorization mechanisms."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "3.*"}
-    }
-    $reportSections += @{
-        Title       = "4 Password Policies"
-        Description = "This section contains recommendations related to SQL Server's password policies."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "4.*"}
-    }
-    $reportSections += @{
-        Title       = "5 Auditing and Logging"
-        Description = "This section contains recommendations related to SQL Server's audit and logging mechanisms."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "5.*"}
-    }
+        $subSections += @{
+            Title       = "2 Surface Area Reduction"
+            Description = "SQL Server offers various configuration options, some of them can be controlled by the sp_configure stored procedure. This section contains the listing of the corresponding recommendations."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "2.*"}
+        }
+    
+        $subSections += @{
+            Title       = "3 Authentication and Authorization"
+            Description = "This section contains recommendations related to SQL Server's authentication and authorization mechanisms."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "3.*"}
+        }
+        $subSections += @{
+            Title       = "4 Password Policies"
+            Description = "This section contains recommendations related to SQL Server's password policies."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "4.*"}
+        }
+        $subSections += @{
+            Title       = "5 Auditing and Logging"
+            Description = "This section contains recommendations related to SQL Server's audit and logging mechanisms."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "5.*"}
+        }
+    
+        $subSections += @{
+            Title       = "6 Application Development"
+            Description = "This section contains recommendations related to developing applications that interface with SQL Server."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "6.*"}
+        }
+    
+        $subSections += @{
+            Title       = "7 Encryption"
+            Description = "These recommendations pertain to encryption-related aspects of SQL Server."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "7.*"}
+        }
+    
+        $subSections += @{
+            Title       = "8 Appendix: Additional Considerations"
+            Description = "This appendix discusses possible configuration options for which no recommendation is being given."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "8.*"}
+        }
 
-    $reportSections += @{
-        Title       = "6 Application Development"
-        Description = "This section contains recommendations related to developing applications that interface with SQL Server."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "6.*"}
+        $reportSections += @{
+            Title = $InstanceAudit.InstanceName
+            Description = "This section contains the audits for the sqlInstance $($InstanceAudit.InstanceName)"
+            SubSections = $subSections
+        }
     }
-
-    $reportSections += @{
-        Title       = "7 Encryption"
-        Description = "These recommendations pertain to encryption-related aspects of SQL Server."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "7.*"}
-    }
-
-    $reportSections += @{
-        Title       = "8 Appendix: Additional Considerations"
-        Description = "This appendix discusses possible configuration options for which no recommendation is being given."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "8.*"}
-    }
+      
 
     Get-ATAPHtmlReport `
         -Path $Path `
