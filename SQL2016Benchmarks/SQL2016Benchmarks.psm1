@@ -995,7 +995,7 @@ function Test-SQLNoSaAccounnt {
         else {
             $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
         }
-        
+
         if ( $null -eq $sqlResult.name) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1031,9 +1031,9 @@ function Test-SQLServerAuthentication {
 
     Windows provides a more robust authentication mechanism than SQL Server authentication.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1048,7 +1048,13 @@ function Test-SQLServerAuthentication {
     $query = "SELECT SERVERPROPERTY('IsIntegratedSecurityOnly') as [login_mode];"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        } 
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $sqlResult.login_mode -eq 1 ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1083,9 +1089,9 @@ function Test-SQLGuestPermissionOnDatabases {
     A login assumes the identity of the guest user when a login has access to SQL Server but does not have access to a database through its own account and the database has a guest
     user account. Revoking the CONNECT permission for the guest user will ensure that a login is not able to access database information without explicit access to do so.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1094,7 +1100,13 @@ function Test-SQLGuestPermissionOnDatabases {
     )
 
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        } 
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+
         $databases = {$databases}.Invoke()
         if ($databases.Remove("master")) {
         }
@@ -1117,7 +1129,13 @@ function Test-SQLGuestPermissionOnDatabases {
                         AND DB_NAME() NOT IN ('master','tempdb','msdb');"
 
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                } 
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1159,9 +1177,9 @@ function Test-SQLDropOrphanedUsers {
 
     Orphan users should be removed to avoid potential misuse of those broken users in any way.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1170,7 +1188,13 @@ function Test-SQLDropOrphanedUsers {
     )
 
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        } 
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+        
         $index = 1
 
         foreach ($database in $databases) {
@@ -1183,7 +1207,13 @@ function Test-SQLDropOrphanedUsers {
                         EXEC sp_change_users_login @Action='Report';"
 
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                } 
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1205,8 +1235,8 @@ function Test-SQLDropOrphanedUsers {
     }
     catch {
         $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("3.2")
-        $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
+        $obj | Add-Member NoteProperty ID("3.3")
+        $obj | Add-Member NoteProperty Task("Ensure 'Orphaned Users' are dropped for database $database")
         $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         Write-Output $obj
@@ -1226,9 +1256,9 @@ function Test-SQLAuthenticationDisabled {
 
     The absence of an enforced password policy may increase the likelihood of a weak credential being established in a contained database.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1236,7 +1266,13 @@ function Test-SQLAuthenticationDisabled {
         [string] $InstanceName = "$machineName\$sqlInstance"
     )
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        } 
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+        
 
         $index = 1
 
@@ -1255,7 +1291,13 @@ function Test-SQLAuthenticationDisabled {
                             GO"
 
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                } 
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1270,7 +1312,6 @@ function Test-SQLAuthenticationDisabled {
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
 
-
             Write-Output $obj
 
             $index++
@@ -1278,9 +1319,9 @@ function Test-SQLAuthenticationDisabled {
     }
     catch {
         $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("3.2")
+        $obj | Add-Member NoteProperty ID("3.4")
         $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
-        $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
+        $obj | Add-Member NoteProperty Status("Ensure SQL Authentication is not used for database $database")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         Write-Output $obj
     }
@@ -1541,9 +1582,9 @@ function Test-SQLPermissionsForRolePublic {
     Every SQL Server login belongs to the public role and cannot be removed from this role. Therefore, any permissions granted to this role will be available to all logins unless they
     have been explicitly denied to specific logins or user-defined server roles.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1570,7 +1611,13 @@ function Test-SQLPermissionsForRolePublic {
                 class_desc = 'ENDPOINT' and major_id = 5);"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        } 
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
             if ( $null -eq $sqlResult ) {
                 $obj | Add-Member NoteProperty Status("All good")
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1603,9 +1650,9 @@ function Test-SQLWindowsBuiltinNoSqlLogin {
     The BUILTIN groups (Administrators, Everyone, Authenticated Users, Guests, etc.) generally contain very broad memberships which would not meet the best practice of ensuring only
     necessary users have been granted access to a SQL Server instance. These groups should not be used for any level of access into a SQL Server Database Engine instance.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1623,7 +1670,13 @@ function Test-SQLWindowsBuiltinNoSqlLogin {
                 WHERE pr.name like 'BUILTIN%';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        } 
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1654,9 +1707,9 @@ function Test-SQLWindowsLocalGroupsNoSqlLogin {
     Allowing local Windows groups as SQL Logins provides a loophole whereby anyone with OS level administrator rights (and no SQL Server rights) could add users to the local
     Windows groups and thereby give themselves or others access to the SQL Server instance.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1677,7 +1730,13 @@ function Test-SQLWindowsLocalGroupsNoSqlLogin {
                 AND pr.[name] like CAST(SERVERPROPERTY('MachineName') AS nvarchar) + '%';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        } 
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1708,9 +1767,9 @@ function Test-SQLPublicRoleMsdbDatabase {
     Allowing local Windows groups as SQL Logins provides a loophole whereby anyone with OS level administrator rights (and no SQL Server rights) could add users to the local
     Windows groups and thereby give themselves or others access to the SQL Server instance.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1733,7 +1792,12 @@ function Test-SQLPublicRoleMsdbDatabase {
                 GO"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        } 
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
@@ -2487,7 +2551,7 @@ function Get-SQL2016AuditInfos {
             $sqlServer = $singleWmi.Services | Where-Object { $_.Type -eq "SqlServer" }  
             $sqlInstances = $sqlServer `
                 | Foreach-Object { $_.Name.Substring($_.Name.IndexOf('$') + 1) } `
-                | Where-Object { $_ -ne "MSSQLSERVER" }
+            #    | Where-Object { $_ -ne "MSSQLSERVER" }
         }
     }
 
