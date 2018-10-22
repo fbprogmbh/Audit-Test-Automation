@@ -2372,9 +2372,9 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
         The following algorithms (as referred to by SQL Server) are considered weak or deprecated and should no longer be used in SQL Server: DES, DESX, RC2, RC4, RC4_128.
         Many organizations may accept the Triple DES algorithms (TDEA) which use keying options 1 (3 key aka 3TDEA) or keying option 2 (2 key aka 2TDEA). In SQL Server, these are referred to as TRIPLE_DES_3KEY and TRIPLE_DES respectively. Additionally, the SQL Server algorithm named DESX is actually the same implementation as the TRIPLE_DES_3KEY option. However, using the DESX identifier as the algorithm type has been deprecated and its usage is now discouraged.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -2383,7 +2383,12 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
     )
     
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $InstanceName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        } 
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        }        
         $databases = {$databases}.Invoke()
 
         if ($databases.Count -eq 0) {
@@ -2411,10 +2416,16 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
             GO"
     
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                } 
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
             }
-            catch {
-    
+            catch [System.Data.SqlClient.SqlException] {
+                $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
     
             if ( $null -eq $sqlResult ) {
@@ -2432,11 +2443,13 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
         }
     }
     catch {
-        
+        $obj = New-Object PSObject
+        $obj | Add-Member NoteProperty ID("7.1")
+        $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+        $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+        Write-Output $obj
     }
-
-
-
 }
 
 function Test-SQLAsymmetricKeySize {
@@ -2452,9 +2465,9 @@ function Test-SQLAsymmetricKeySize {
 
         The RSA_2048 encryption algorithm for asymmetric keys in SQL Server is the highest bitlevel provided and therefore the most secure available choice (other choices are RSA_512 and RSA_1024).
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -2463,7 +2476,13 @@ function Test-SQLAsymmetricKeySize {
     )
 
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
+        if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $InstanceName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        } 
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        }
+
         $databases = {$databases}.Invoke()
 
         if ($databases.Count -eq 0) {
@@ -2491,10 +2510,16 @@ function Test-SQLAsymmetricKeySize {
             GO"
     
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                } 
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
             }
-            catch {
-    
+            catch [System.Data.SqlClient.SqlException] {
+                $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
     
             if ( $null -eq $sqlResult ) {
@@ -2513,12 +2538,13 @@ function Test-SQLAsymmetricKeySize {
         
     }
     catch {
-        
+        $obj = New-Object PSObject
+        $obj | Add-Member NoteProperty ID("7.21")
+        $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
+        $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+        Write-Output $obj
     }
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty ID("7.2")
-    $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
-
 }
 
 #endregion
@@ -2544,26 +2570,32 @@ function Test-SQLServerBrowserService {
     $obj | Add-Member NoteProperty ID("8.1")
     $obj | Add-Member NoteProperty Task("Ensure 'SQL Server Browser Service' is configured correctly")
 
-    $sqlBrowserService = Get-Service -name 'sqlbrowser'
-
-    if ($sqlBrowserService.Status -eq 'stopped') {
-        if ($sqlBrowserService.StartType -eq 'Disabled') {
-            $obj | Add-Member NoteProperty Status("All good")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    try {
+        $sqlBrowserService = Get-Service -name 'sqlbrowser'
+    
+        if ($sqlBrowserService.Status -eq 'stopped') {
+            if ($sqlBrowserService.StartType -eq 'Disabled') {
+                $obj | Add-Member NoteProperty Status("All good")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            }
+            else {
+                $obj | Add-Member NoteProperty Status("StartType: Enabled")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            }
         }
         else {
-            $obj | Add-Member NoteProperty Status("StartType: Enabled")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
-        }
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+            if ($sqlBrowserService.StartType -eq 'Disabled') {
+                $obj | Add-Member NoteProperty Status("SQL Server Browser is running")
+            }
+            else {
+                $obj | Add-Member NoteProperty Status("SQL Server Browser is running and StartType: Enabled")
+            }
+        }        
     }
-    else {
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-        if ($sqlBrowserService.StartType -eq 'Disabled') {
-            $obj | Add-Member NoteProperty Status("SQL Server Browser is running")
-        }
-        else {
-            $obj | Add-Member NoteProperty Status("SQL Server Browser is running and StartType: Enabled")
-        }
+    catch [Microsoft.PowerShell.Commands.ServiceCommandException] {
+        $obj | Add-Member NoteProperty Status("Connot find any service with service name 'sqlbrowser'")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
     Write-Output $obj
 }
