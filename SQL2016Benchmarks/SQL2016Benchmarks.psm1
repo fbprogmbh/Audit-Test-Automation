@@ -1273,9 +1273,19 @@ function Test-SQLAuthenticationDisabled {
             $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
         }
 
+        if ($databases.Count -eq 0) {
+            $obj = New-Object PSObject
+            $obj | Add-Member NoteProperty ID("7.1")
+            $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+            $obj | Add-Member NoteProperty Status("No databases found")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            Write-Output $obj
+        }
+
         $index = 1
 
         foreach ($database in $databases) {
+
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("3.4.$index")
             $obj | Add-Member NoteProperty Task("Ensure SQL Authentication is not used for database $database")
@@ -2412,7 +2422,7 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
 
             $query = "USE [$database]
             GO
-            SELECT db_name() AS $database, name AS Key_Name
+            SELECT db_name() AS db_name, name AS Key_Name
             FROM sys.symmetric_keys
             WHERE algorithm_desc NOT IN ('AES_128','AES_192','AES_256')
             AND db_id() > 4;
@@ -2425,7 +2435,7 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
                 else {
                     $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
                 }
-                
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -2487,8 +2497,6 @@ function Test-SQLAsymmetricKeySize {
             $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
         }
 
-        $databases = {$databases}.Invoke()
-
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.2")
@@ -2507,7 +2515,7 @@ function Test-SQLAsymmetricKeySize {
 
             $query = "USE [$database]
             GO
-            SELECT db_name() AS $database, name AS Key_Name
+            SELECT db_name() AS db_name, name AS Key_Name
             FROM sys.symmetric_keys
             WHERE key_length < 2048
             AND db_id() > 4;
@@ -2520,20 +2528,20 @@ function Test-SQLAsymmetricKeySize {
                 else {
                     $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
                 }
+                if ( $null -eq $sqlResult ) {
+                    $obj | Add-Member NoteProperty Status("All good")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+                }
+                else {
+                    $obj | Add-Member NoteProperty Status("Got $sqlResult")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+                }
             }
             catch [System.Data.SqlClient.SqlException] {
                 $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
 
-            if ( $null -eq $sqlResult ) {
-                $obj | Add-Member NoteProperty Status("All good")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-            }
-            else {
-                $obj | Add-Member NoteProperty Status("Got $sqlResult")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-            }
 
             Write-Output $obj
 
