@@ -1273,7 +1273,6 @@ function Test-SQLAuthenticationDisabled {
             $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
         }
 
-
         $index = 1
 
         foreach ($database in $databases) {
@@ -2392,8 +2391,8 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
         else {
             $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
         }
-        $databases = {$databases}.Invoke()
 
+        
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.1")
@@ -2426,20 +2425,21 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
                 else {
                     $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
                 }
+                
+                if ( $null -eq $sqlResult ) {
+                    $obj | Add-Member NoteProperty Status("All good")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+                }
+                else {
+                    $obj | Add-Member NoteProperty Status("Got $sqlResult")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+                }
             }
             catch [System.Data.SqlClient.SqlException] {
                 $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
 
-            if ( $null -eq $sqlResult ) {
-                $obj | Add-Member NoteProperty Status("All good")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-            }
-            else {
-                $obj | Add-Member NoteProperty Status("Got $sqlResult")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-            }
 
             Write-Output $obj
 
@@ -2543,7 +2543,7 @@ function Test-SQLAsymmetricKeySize {
     }
     catch {
         $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("7.21")
+        $obj | Add-Member NoteProperty ID("7.2")
         $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
         $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
