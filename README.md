@@ -12,10 +12,13 @@ The package consists of the following Modules:
 * [IIS8Audit](IIS8Audit)
 * [IIS10Audit](IIS10Audit)
 * [WindowsServer2016Audit](WindowsServer2016Audit)
+* [SQL2016Benchmarks](SQL2016Benchmarks)
 
 Read the the READMEs of each module to get specific information about a module.
 
 ## Getting started
+
+Check out the module folders and check if the desired module can be installed with `Install-Module`. Otherwise:
 
 ### General Requirements
 
