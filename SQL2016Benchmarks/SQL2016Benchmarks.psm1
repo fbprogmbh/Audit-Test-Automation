@@ -386,7 +386,7 @@ function Test-SQLRemoteAccessDisabled {
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Values do not match, found: `n value_configured: " + $sqlResult.value_configured + "`n value_in_use:" + $sqlResult.value_in_use)
+            $obj | Add-Member NoteProperty Status("Values do not match, found: `n value_configured: " + $sqlResult.value_configured + "`n value_in_use: " + $sqlResult.value_in_use)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -607,15 +607,15 @@ function Test-SQLServerProtocolsDisabled {
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         elseif ($foundProtocols.Count -eq 1) {
-            $obj | Add-Member NoteProperty Status("Only one Protocol is enabled:" + $s)
+            $obj | Add-Member NoteProperty Status("Only one Protocol is enabled: " + $s)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         elseif ($foundProtocols.Count -eq 2) {
-            $obj | Add-Member NoteProperty Status("Following protocols are enabled:" + $s)
+            $obj | Add-Member NoteProperty Status("Following protocols are enabled: " + $s)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Following protocols are enabled:" + $s)
+            $obj | Add-Member NoteProperty Status("Following protocols are enabled: " + $s)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -2402,19 +2402,18 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
             $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
         }
 
-        
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.1")
             $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
             $obj | Add-Member NoteProperty Status("No databases found")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
-            Write-Output $obj
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            return $obj
         }
         $index = 1
 
         foreach ($database in $databases) {
-            
+
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.1.$index")
             $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher for database $database")
@@ -2502,8 +2501,8 @@ function Test-SQLAsymmetricKeySize {
             $obj | Add-Member NoteProperty ID("7.2")
             $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
             $obj | Add-Member NoteProperty Status("No databases found")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
-            Write-Output $obj
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            return $obj
         }
 
         $index = 1
