@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <#
 
-    Author(s):        Dennis Esly
+    Author(s):        Dennis Esly, Peter Maier
     Date:             01/22/2018
     Last change:      01/23/2018
 
@@ -91,9 +91,9 @@ function Test-SQLAdHocDistributedQueriesDisabled {
 
    This feature can be used to remotely access and exploit vulnerabilities on remote SQL Server instances and to run unsafe Visual Basic for Application functions.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -108,7 +108,14 @@ function Test-SQLAdHocDistributedQueriesDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'Ad Hoc Distributed Queries';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -138,9 +145,9 @@ function Test-SQLClrEnabled {
 
    Enabling use of CLR assemblies widens the attack surface of SQL Server and puts it at risk from both inadvertent and malicious assemblies.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -155,7 +162,12 @@ function Test-SQLClrEnabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'clr enabled';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -185,9 +197,9 @@ function Test-SQLCrossDBOwnershipDisabled {
 
     across all databases at the instance (or server) level.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -202,7 +214,13 @@ function Test-SQLCrossDBOwnershipDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'cross db ownership chaining';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -232,9 +250,9 @@ function Test-SQLDatabaseMailXPsDisabled {
 
    Disabling the Database Mail XPs option reduces the SQL Server surface, eliminates a DOS attack vector and channel to exfiltrate data from the database server to a remote host.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -249,7 +267,13 @@ function Test-SQLDatabaseMailXPsDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'Database Mail XPs';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -263,7 +287,6 @@ function Test-SQLDatabaseMailXPsDisabled {
         $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
-
 
     Write-Output $obj
 }
@@ -281,9 +304,9 @@ function Test-SQLOleAutomationProceduresDisabled {
 
    Disabling the Database Mail XPs option reduces the SQL Server surface, eliminates a DOS attack vector and channel to exfiltrate data from the database server to a remote host.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -298,7 +321,13 @@ function Test-SQLOleAutomationProceduresDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'Ole Automation Procedures';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -328,9 +357,9 @@ function Test-SQLRemoteAccessDisabled {
 
    Functionality can be abused to launch a Denial-of-Service (DoS) attack on remote servers by off-loading query processing to a target.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -345,13 +374,19 @@ function Test-SQLRemoteAccessDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'remote access';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Values do not match, found: `n value_configured: " + $sqlResult.value_configured + "`n value_in_use:" + $sqlResult.value_in_use)
+            $obj | Add-Member NoteProperty Status("Values do not match, found: `n value_configured: " + $sqlResult.value_configured + "`n value_in_use: " + $sqlResult.value_in_use)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -378,9 +413,9 @@ function Test-SQLRemoteAdminConnectionsDisabled {
     administrator may not actually be logged on to the same node that is currently hosting the SQL Server instance and thus is considered "remote". Therefore, this setting should usually
     be enabled (1) for SQL Server failover clusters; otherwise it should be disabled (0) which is the default.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -395,7 +430,13 @@ function Test-SQLRemoteAdminConnectionsDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'remote admin connections' AND SERVERPROPERTY('IsClustered') = 0;"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -425,9 +466,9 @@ function Test-SQLScanForStartupProcsDisabled {
 
     Enforcing this control reduces the threat of an entity leveraging these facilities for malicious purposes.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -442,7 +483,13 @@ function Test-SQLScanForStartupProcsDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'scan for startup procs';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -472,9 +519,9 @@ function Test-SQLTrustworthyDatabaseOff {
 
     Provides protection from malicious CLR assemblies or extended procedures.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -489,7 +536,13 @@ function Test-SQLTrustworthyDatabaseOff {
     $query = "SELECT name FROM sys.databases WHERE is_trustworthy_on = 1 AND name != 'msdb';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -521,8 +574,7 @@ function Test-SQLServerProtocolsDisabled {
 #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
-        [string] $SqlInstance,
+        [string] $SqlInstance = "MSSQLSERVER",
 
         [string] $MachineName = $env:COMPUTERNAME,
 
@@ -539,29 +591,31 @@ function Test-SQLServerProtocolsDisabled {
 
     try {
         $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
-        $eP = @()
+        $foundProtocols = @()
         foreach ($protocol in $protocols) {
             $uri = "ManagedComputer[@Name='$machineName']/ServerInstance[@Name='$sqlInstance']/ServerProtocol[@Name='$protocol']"
             $p = $singleWmi.GetsmoObject($uri)
             if ($p.isEnabled) {
-                $eP += $p.displayName
+                $foundProtocols += $p.displayName
             }
         }
+        [string]$s = $null
+        $s = $foundProtocols -join ", "
 
-        if ($eP.Count -eq 0) {
+        if ($foundProtocols.Count -eq 0) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
-        elseif ($ep.Count -eq 1) {
-            $obj | Add-Member NoteProperty Status("Only one Protocol is enabled:" + $eP)
+        elseif ($foundProtocols.Count -eq 1) {
+            $obj | Add-Member NoteProperty Status("Only one Protocol is enabled: " + $s)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
-        elseif ($eP.Count -eq 2) {
-            $obj | Add-Member NoteProperty Status("Following protocols are enabled:" + $eP)
+        elseif ($foundProtocols.Count -eq 2) {
+            $obj | Add-Member NoteProperty Status("Following protocols are enabled: " + $s)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Following protocols are enabled:" + $eP)
+            $obj | Add-Member NoteProperty Status("Following protocols are enabled: " + $s)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -585,9 +639,9 @@ function Test-SQLUseNonStandardPorts {
 
     Provides protection from malicious CLR assemblies or extended procedures.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "By Instance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -609,7 +663,13 @@ function Test-SQLUseNonStandardPorts {
                 SELECT @value AS TCP_Port WHERE @value = '1433';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -639,9 +699,9 @@ function Test-SQLHideInstanceEnabled {
 
     Designating production SQL Server instances as hidden leads to a more secure installation because they cannot be enumerated. However, clustered instances may break if this option is selected.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -659,11 +719,17 @@ function Test-SQLHideInstanceEnabled {
                 @key = N'SOFTWARE\Microsoft\Microsoft SQL Server\MSSQLServer\SuperSocketNetLib',
                 @value_name = N'HideInstance',
                 @value = @getValue OUTPUT;
-                SELECT @getValue;"
+                SELECT @getValue AS Hide_Instance;"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-        if ( $sqlResult -eq 1 ) {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
+        if ( $sqlResult.Hide_Instance -eq 1 ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
@@ -692,9 +758,9 @@ function Test-SQLSaLoginAccountDisabled {
 
     Enforcing this control reduces the probability of an attacker executing brute force attacks against a well-known principal.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -709,7 +775,13 @@ function Test-SQLSaLoginAccountDisabled {
     $query = "SELECT name, is_disabled FROM sys.server_principals WHERE sid = 0x01 AND is_disabled = 0;"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -739,9 +811,9 @@ function Test-SQLSaLoginAccountRenamed {
 
     It is more difficult to launch password-guessing and brute-force attacks against the sa login if the name is not known.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -756,7 +828,13 @@ function Test-SQLSaLoginAccountRenamed {
     $query = "SELECT name FROM sys.server_principals WHERE sid = 0x01"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ($sqlResult.name -ne "sa") {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -786,9 +864,9 @@ function Test-SQLXpCommandShellDisabled {
 
     The xp_cmdshell procedure is commonly used by attackers to read or write data to/from the underlying Operating System of a database server.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -803,7 +881,13 @@ function Test-SQLXpCommandShellDisabled {
     $query = "SELECT name, CAST(value as int) as value_configured, CAST(value_in_use as int) as value_in_use FROM sys.configurations WHERE name = 'xp_cmdshell';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( ($sqlResult.value_configured -eq 0) -and ($sqlResult.value_in_use -eq 0) ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -835,9 +919,9 @@ function Test-SQLAutoCloseOff {
     Because authentication of users for contained databases occurs within the database not at the server\instance level, the database must be opened every time to authenticate a user.
     The frequent opening/closing of the database consumes additional server resources and may contribute to a denial of service.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -852,7 +936,13 @@ function Test-SQLAutoCloseOff {
     $query = "SELECT name, containment, containment_desc, is_auto_close_on FROM sys.databases WHERE containment <> 0 and is_auto_close_on = 1;"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult.name) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -882,9 +972,9 @@ function Test-SQLNoSaAccounnt {
 
     Enforcing this control reduces the probability of an attacker executing brute force attacks against a well-known principal name.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -899,7 +989,13 @@ function Test-SQLNoSaAccounnt {
     $query = "SELECT principal_id, name FROM sys.server_principals WHERE name = 'sa';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult.name) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -935,9 +1031,9 @@ function Test-SQLServerAuthentication {
 
     Windows provides a more robust authentication mechanism than SQL Server authentication.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -952,7 +1048,13 @@ function Test-SQLServerAuthentication {
     $query = "SELECT SERVERPROPERTY('IsIntegratedSecurityOnly') as [login_mode];"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $sqlResult.login_mode -eq 1 ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -987,9 +1089,9 @@ function Test-SQLGuestPermissionOnDatabases {
     A login assumes the identity of the guest user when a login has access to SQL Server but does not have access to a database through its own account and the database has a guest
     user account. Revoking the CONNECT permission for the guest user will ensure that a login is not able to access database information without explicit access to do so.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -998,7 +1100,13 @@ function Test-SQLGuestPermissionOnDatabases {
     )
 
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+
         $databases = {$databases}.Invoke()
         if ($databases.Remove("master")) {
         }
@@ -1021,7 +1129,13 @@ function Test-SQLGuestPermissionOnDatabases {
                         AND DB_NAME() NOT IN ('master','tempdb','msdb');"
 
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                }
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1063,9 +1177,9 @@ function Test-SQLDropOrphanedUsers {
 
     Orphan users should be removed to avoid potential misuse of those broken users in any way.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1074,7 +1188,13 @@ function Test-SQLDropOrphanedUsers {
     )
 
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+
         $index = 1
 
         foreach ($database in $databases) {
@@ -1087,7 +1207,13 @@ function Test-SQLDropOrphanedUsers {
                         EXEC sp_change_users_login @Action='Report';"
 
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                }
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1109,8 +1235,8 @@ function Test-SQLDropOrphanedUsers {
     }
     catch {
         $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("3.2")
-        $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
+        $obj | Add-Member NoteProperty ID("3.3")
+        $obj | Add-Member NoteProperty Task("Ensure 'Orphaned Users' are dropped for database $database")
         $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         Write-Output $obj
@@ -1130,9 +1256,9 @@ function Test-SQLAuthenticationDisabled {
 
     The absence of an enforced password policy may increase the likelihood of a weak credential being established in a contained database.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1140,11 +1266,26 @@ function Test-SQLAuthenticationDisabled {
         [string] $InstanceName = "$machineName\$sqlInstance"
     )
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Select-Object -ExpandProperty name
+        }
+
+        if ($databases.Count -eq 0) {
+            $obj = New-Object PSObject
+            $obj | Add-Member NoteProperty ID("7.1")
+            $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+            $obj | Add-Member NoteProperty Status("No databases found")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            Write-Output $obj
+        }
 
         $index = 1
 
         foreach ($database in $databases) {
+
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("3.4.$index")
             $obj | Add-Member NoteProperty Task("Ensure SQL Authentication is not used for database $database")
@@ -1159,7 +1300,13 @@ function Test-SQLAuthenticationDisabled {
                             GO"
 
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                }
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
                 if ( $null -eq $sqlResult ) {
                     $obj | Add-Member NoteProperty Status("All good")
                     $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1174,7 +1321,6 @@ function Test-SQLAuthenticationDisabled {
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
 
-
             Write-Output $obj
 
             $index++
@@ -1182,9 +1328,9 @@ function Test-SQLAuthenticationDisabled {
     }
     catch {
         $obj = New-Object PSObject
-        $obj | Add-Member NoteProperty ID("3.2")
+        $obj | Add-Member NoteProperty ID("3.4")
         $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
-        $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
+        $obj | Add-Member NoteProperty Status("Ensure SQL Authentication is not used for database $database")
         $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         Write-Output $obj
     }
@@ -1216,9 +1362,9 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
     $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
     $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
     $sqlServer = $singleWmi.Services | Where-Object {$_.Type -eq "SqlServer"}
-    $sqlServerNames = @()
+    $serviceAccountNames = @()
     foreach ($sqlS in $sqlServer) {
-        $sqlServerNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
+        $serviceAccountNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
     }
 
     $ADSIComputer = [ADSI]("WinNT://$machineName,computer")
@@ -1252,10 +1398,10 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
             $admins += $member
         }
     }
-    foreach ($sqlServerName in $sqlServerNames) {
+    foreach ($serviceAccountName in $serviceAccountNames) {
         foreach ($admin in $admins) {
-            if ($admin -eq $sqlServerName) {
-                $sqlAdmins += $sqlServerName
+            if ($admin -eq $serviceAccountName) {
+                $sqlAdmins += $serviceAccountName
             }
         }
     }
@@ -1291,14 +1437,14 @@ function Test-SQLAgentServiceAccountIsNotAnAdministrator {
     $obj | Add-Member NoteProperty ID("3.6")
     $obj | Add-Member NoteProperty Task("Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator")
 
-        $smo = 'Microsoft.SqlServer.Management.Smo.'
-        $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
-        $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
-        $sqlAgent = $singleWmi.Services | Where-Object {$_.Type -eq "SqlAgent"}
-        $sqlAgentNames = @()
-        foreach ($sqlS in $sqlAgent) {
-            $sqlAgentNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
-        }
+    $smo = 'Microsoft.SqlServer.Management.Smo.'
+    $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
+    $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
+    $sqlAgent = $singleWmi.Services | Where-Object {$_.Type -eq "SqlAgent"}
+    $sqlAgentNames = @()
+    foreach ($sqlS in $sqlAgent) {
+        $sqlAgentNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
+    }
 
     $ADSIComputer = [ADSI]("WinNT://$machineName,computer")
 
@@ -1371,14 +1517,14 @@ function Test-SQLFullTextServiceAccountIsNotAnAdministrator {
     $obj | Add-Member NoteProperty ID("3.7")
     $obj | Add-Member NoteProperty Task("Ensure the SQL Server’s Full-Text Service Account is Not an Administrator")
 
-        $smo = 'Microsoft.SqlServer.Management.Smo.'
-        $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
-        $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
-        $sqlServices = $singleWmi.Services | Where-Object {$_.Type -eq "9"}
-        $sqlServiceNames = @()
-        foreach ($sqlS in $sqlServices) {
-            $sqlServiceNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
-        }
+    $smo = 'Microsoft.SqlServer.Management.Smo.'
+    $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
+    $singleWmi = $wmi | Where-Object {$_.Name -eq $machineName}
+    $sqlServices = $singleWmi.Services | Where-Object {$_.Type -eq "9"}
+    $sqlServiceNames = @()
+    foreach ($sqlS in $sqlServices) {
+        $sqlServiceNames += $sqlS.ServiceAccount.Substring($sqlS.serviceAccount.IndexOf("\") + 1 )
+    }
 
     $ADSIComputer = [ADSI]("WinNT://$machineName,computer")
 
@@ -1445,9 +1591,9 @@ function Test-SQLPermissionsForRolePublic {
     Every SQL Server login belongs to the public role and cannot be removed from this role. Therefore, any permissions granted to this role will be available to all logins unless they
     have been explicitly denied to specific logins or user-defined server roles.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1474,21 +1620,27 @@ function Test-SQLPermissionsForRolePublic {
                 class_desc = 'ENDPOINT' and major_id = 5);"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-            if ( $null -eq $sqlResult ) {
-                $obj | Add-Member NoteProperty Status("All good")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-            }
-            else {
-                $obj | Add-Member NoteProperty Status("Found Permission:" + $sqlResult.permission_name)
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-            }        
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
         }
-        catch [System.Data.SqlClient.SqlException] {
-            $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
         }
-        Write-Output $obj
+
+        if ( $null -eq $sqlResult ) {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("Found Permission:" + $sqlResult.permission_name)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
+    }
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+    }
+    Write-Output $obj
 }
 
 function Test-SQLWindowsBuiltinNoSqlLogin {
@@ -1507,9 +1659,9 @@ function Test-SQLWindowsBuiltinNoSqlLogin {
     The BUILTIN groups (Administrators, Everyone, Authenticated Users, Guests, etc.) generally contain very broad memberships which would not meet the best practice of ensuring only
     necessary users have been granted access to a SQL Server instance. These groups should not be used for any level of access into a SQL Server Database Engine instance.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1527,7 +1679,13 @@ function Test-SQLWindowsBuiltinNoSqlLogin {
                 WHERE pr.name like 'BUILTIN%';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1535,7 +1693,7 @@ function Test-SQLWindowsBuiltinNoSqlLogin {
         else {
             $obj | Add-Member NoteProperty Status("Found Account(s):" + $sqlResult.name)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-        }    
+        }
     }
     catch [System.Data.SqlClient.SqlException] {
         $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
@@ -1558,9 +1716,9 @@ function Test-SQLWindowsLocalGroupsNoSqlLogin {
     Allowing local Windows groups as SQL Logins provides a loophole whereby anyone with OS level administrator rights (and no SQL Server rights) could add users to the local
     Windows groups and thereby give themselves or others access to the SQL Server instance.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1581,7 +1739,13 @@ function Test-SQLWindowsLocalGroupsNoSqlLogin {
                 AND pr.[name] like CAST(SERVERPROPERTY('MachineName') AS nvarchar) + '%';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
@@ -1612,9 +1776,9 @@ function Test-SQLPublicRoleMsdbDatabase {
     Allowing local Windows groups as SQL Logins provides a loophole whereby anyone with OS level administrator rights (and no SQL Server rights) could add users to the local
     Windows groups and thereby give themselves or others access to the SQL Server instance.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1637,7 +1801,12 @@ function Test-SQLPublicRoleMsdbDatabase {
                 GO"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
         if ( $null -eq $sqlResult ) {
             $obj | Add-Member NoteProperty Status("All good")
@@ -1674,9 +1843,9 @@ function Test-SQLMustChangeOptionIsOn {
 
     Enforcing a password change after a reset or new login creation will prevent the account administrators or anyone accessing the initial password from misuse of the SQL login created without being noticed.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1691,30 +1860,42 @@ function Test-SQLMustChangeOptionIsOn {
                 FROM sys.sql_logins"
 
     try {
-        $sqlLogins = @()
-        $sqlLogins = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlLogins = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlLogins = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
-    }
-    $mustChangeLogins = @()
-    foreach ($sqlLogin in $sqlLogins) {
-        $loginName = $sqlLogin.name
-        $query2 = "SELECT LOGINPROPERTY('$loginName', 'PasswordLastSetTime') AS 'PasswordLastSetTime'"
-        $loginProperty = Invoke-Sqlcmd -Query $query2 -ServerInstance $instanceName -ErrorAction Stop
+        $mustChangeLogins = @()
+        foreach ($sqlLogin in $sqlLogins) {
+            $loginName = $sqlLogin.name
+            $query2 = "SELECT LOGINPROPERTY('$loginName', 'PasswordLastSetTime') AS 'PasswordLastSetTime'"
 
-        if ((Get-Date $sqlLogin.create_date) -gt (Get-Date $loginProperty.PasswordLastSetTime)) {
-            $mustChangeLogins += $sqlLogin
+            if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $SqlInstance -ne "MSSQLSERVER") {
+                $loginProperty = Invoke-Sqlcmd -Query $query2 -ServerInstance $instanceName -ErrorAction Stop
+            }
+            else {
+                $loginProperty = Invoke-Sqlcmd -Query $query2 -ServerInstance $MachineName -ErrorAction Stop
+            }
+
+            if ((Get-Date $sqlLogin.create_date) -gt (Get-Date $loginProperty.PasswordLastSetTime)) {
+                $mustChangeLogins += $sqlLogin
+            }
+        }
+        if ($mustChangeLogins.Count -gt 0) {
+            $obj | Add-Member NoteProperty Status("Following Logins Must Change their password: " + $mustChangeLogins.name)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
     }
-    if ($mustChangeLogins.Count -gt 0) {
-        $obj | Add-Member NoteProperty Status("Following Logins Must Change their password: " + $mustChangeLogins.name)
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-
-    }
-    else {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
 
     Write-Output $obj
@@ -1735,9 +1916,9 @@ function Test-SQLCheckExpirationOptionOn {
     changed on a frequent basis to help prevent compromise via a brute force attack. CONTROL SERVER is an equivalent permission to sysadmin and logins with that permission should
     also be required to have expiring passwords.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1761,21 +1942,28 @@ function Test-SQLCheckExpirationOptionOn {
                 AND l.is_expiration_checked <> 1;"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+        [string]$s = $null
+        $s = $sqlResult -join ", "
 
+        if ( $null -eq $sqlResult ) {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("Found missmatching account(s): " + $s.name)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
     }
-
-    if ( $null -eq $sqlResult ) {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
-    else {
-        $obj | Add-Member NoteProperty Status("Found missmatching account(s):" + $sqlResult.name)
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    }
-
     Write-Output $obj
 }
 
@@ -1793,9 +1981,9 @@ function Test-SQLCheckPolicyOptionOn {
     Ensure SQL authenticated login passwords comply with the secure password policy applied by the Windows Server Benchmark so that they cannot be easily compromised via brute
     force attack.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1811,21 +1999,26 @@ function Test-SQLCheckPolicyOptionOn {
                 WHERE is_policy_checked = 0;"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
+        if ( $null -eq $sqlResult ) {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("Found missmatching account(s):" + $sqlResult.name)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
     }
-
-    if ( $null -eq $sqlResult ) {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
-    else {
-        $obj | Add-Member NoteProperty Status("Found missmatching account(s):" + $sqlResult.name)
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    }
-
     Write-Output $obj
 }
 #endregion
@@ -1848,9 +2041,9 @@ function Test-SQLMaximumNumberOfErrorLogFiles {
 
         The SQL Server error log contains important information about major server events and login attempt information as well.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1862,25 +2055,36 @@ function Test-SQLMaximumNumberOfErrorLogFiles {
     $obj | Add-Member NoteProperty ID("5.1")
     $obj | Add-Member NoteProperty Task("Ensure 'Maximum number of error log files' is set to greater than or equal to '12'")
 
-    $query = "DECLARE @NumErrorLogs int; EXEC master.sys.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'NumErrorLogs', NumErrorLogs OUTPUT; SELECT ISNULL(@NumErrorLogs, -1) AS [NumberOfLogFiles];"
+    $query = "DECLARE @NumErrorLogs int;
+    EXEC master.sys.xp_instance_regread
+    N'HKEY_LOCAL_MACHINE',
+    N'Software\Microsoft\MSSQLServer\MSSQLServer',
+    N'NumErrorLogs', @NumErrorLogs OUTPUT;
+     SELECT ISNULL(@NumErrorLogs, -1) AS [NumberOfLogFiles];"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
         $numberOfLogFiles = $sqlResult.NumberOfLogFiles
-    }
-    catch {
 
+        if ($numberOfLogFiles -ge 12) {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("Maximum number of error log files is set to $numberOfLogFiles")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
     }
-
-    if ($numberOfLogFiles -ge 12) {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
-    else {
-        $obj | Add-Member NoteProperty Status("Maximum number of error log files is set to $numberOfLogFiles")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    }
-
     Write-Output $obj
 }
 
@@ -1897,9 +2101,9 @@ function Test-SQLDefaultTraceEnabled {
 
         Default trace provides valuable audit information regarding security-related activities on the server.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1915,21 +2119,26 @@ function Test-SQLDefaultTraceEnabled {
     WHERE name = 'default trace enabled';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
+        if (($sqlResult.value_configured -eq 1) -and ($sqlResult.value_in_use -eq 1)) {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("Maximum number of error log files too high")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
     }
-
-    if (($sqlResult.value_configured -eq 1) -and ($sqlResult.value_in_use -eq 1)) {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
-    else {
-        $obj | Add-Member NoteProperty Status("Maximum number of error log files too high")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    }
-
     Write-Output $obj
 }
 
@@ -1948,9 +2157,9 @@ function Test-SQLLoginAuditingIsSetToFailedLogins {
 
         Capturing failed logins provides key information that can be used to detect\confirm password guessing attacks. Capturing successful login attempts can be used to confirm server access during forensic investigations, but using this audit level setting to also capture successful logins creates excessive noise in the SQL Server Errorlog which can hamper a DBA trying to troubleshoot problems. Elsewhere in this benchmark, we recommend using the newer lightweight SQL Server Audit feature to capture both successful and failed logins.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1964,21 +2173,26 @@ function Test-SQLLoginAuditingIsSetToFailedLogins {
     $query = "EXEC xp_loginconfig 'audit level';"
 
     try {
-        $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
+        if ($sqlResult.config_value -eq "failure") {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("config_value is set to: " + $sqlResult.config_value)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
     }
-
-    if ($sqlResult.config_value -eq "failure") {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
-    else {
-        $obj | Add-Member NoteProperty Status("config_value is set to: " + $sqlResult.config_value)
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    }
-
     Write-Output $obj
 }
 
@@ -1995,9 +2209,9 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
 
         By utilizing Audit instead of the traditional setting under the Security tab to capture successful logins, we reduce the noise in the ERRORLOG. This keeps it smaller and easier to read for DBAs who are attempting to troubleshoot issues with the SQL Server. Also, the Audit object can write to the security event log, though this requires operating system configuration. This gives an additional option for where to store login events, especially in conjunction with an SIEM.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -2029,50 +2243,58 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
     GO"
 
     try {
-        $sqlResults = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
-
-    }
-    
-    $auditSpecifications = @()
-    foreach ($sqlResult in $sqlResults) {
-        switch ($sqlResult.audit_action_name) {
-            "AUDIT_CHANGE_GROUP" {
-                $auditSpecifications += ($sqlResult)
-            }
-            "FAILED_LOGIN_GROUP" {
-                $auditSpecifications += ($sqlResult)
-            }
-            "SUCCESSFUL_LOGIN_GROUP" {
-                $auditSpecifications += ($sqlResult)
-            }
-            Default {}
-        }
-    }
-    $foundSpecifications = @()
-    foreach ($auditSpecification in $auditSpecifications) {        
-        if ((($auditspecification | Select-Object -ExpandProperty "Audit Enabled") -ne "Y") -or `
-            (($auditspecification | Select-Object -ExpandProperty "Audit Specification Enabled") -ne "Y") -or `
-            ($auditspecification.audited_result -ne "SUCCESS AND FAILURE")) {
-            $foundSPecifications += $auditSpecification.audit_action_name
-        }
-    }
-    if($null -eq $sqlResults) {
-        $obj | Add-Member NoteProperty Status("TrackLogins file not found")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    } else {
-        if ($foundSpecifications.count -eq 0) {
-            $obj | Add-Member NoteProperty Status("All good")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
         }
         else {
-            [string]$s = $null
-            $s = $foundSpecifications -join ", "
-            $obj | Add-Member NoteProperty Status("Found following specifications: $s")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
+
+        $auditSpecifications = @()
+        foreach ($sqlResult in $sqlResults) {
+            switch ($sqlResult.audit_action_name) {
+                "AUDIT_CHANGE_GROUP" {
+                    $auditSpecifications += ($sqlResult)
+                }
+                "FAILED_LOGIN_GROUP" {
+                    $auditSpecifications += ($sqlResult)
+                }
+                "SUCCESSFUL_LOGIN_GROUP" {
+                    $auditSpecifications += ($sqlResult)
+                }
+                Default {}
+            }
+        }
+        $foundSpecifications = @()
+        foreach ($auditSpecification in $auditSpecifications) {
+            if ((($auditspecification | Select-Object -ExpandProperty "Audit Enabled") -ne "Y") -or `
+                (($auditspecification | Select-Object -ExpandProperty "Audit Specification Enabled") -ne "Y") -or `
+                ($auditspecification.audited_result -ne "SUCCESS AND FAILURE")) {
+                $foundSPecifications += $auditSpecification.audit_action_name
+            }
+        }
+        if ($null -eq $sqlResults) {
+            $obj | Add-Member NoteProperty Status("TrackLogins file not found")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+        }
+        else {
+            if ($foundSpecifications.count -eq 0) {
+                $obj | Add-Member NoteProperty Status("All good")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            }
+            else {
+                [string]$s = $null
+                $s = $foundSpecifications -join ", "
+                $obj | Add-Member NoteProperty Status("Found following specifications: $s")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+            }
         }
     }
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+    }
+
     Write-Output $obj
 }
 #endregion
@@ -2094,9 +2316,9 @@ function Test-CLRAssemblyPermissionSet {
 
     Assemblies with EXTERNAL_ACCESS or UNSAFE permission sets can be used to access sensitive areas of the operating system, steal and/or transmit data and alter the state and other protection measures of the underlying Windows Operating System. Assemblies which are Microsoft-created (is_user_defined = 0) are excluded from this check as they are required for overall system functionality.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -2113,24 +2335,31 @@ function Test-CLRAssemblyPermissionSet {
                 where is_user_defined = 1;"
 
     try {
-        $assemblies = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
-    }
-    catch {
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $assemblies = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+        }
+        else {
+            $assemblies = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+        }
 
-    }
-    $unSafeAssemblies = @()
-    foreach ($assembly in $assemblies) {
-        if ($assembly.permission_set_desc -ne "SAFE_ACCESS") {
-            $unSafeAssemblies += $assembly
+        $unSafeAssemblies = @()
+        foreach ($assembly in $assemblies) {
+            if ($assembly.permission_set_desc -ne "SAFE_ACCESS") {
+                $unSafeAssemblies += $assembly
+            }
+        }
+        if ($unSafeAssemblies.Count -gt 0 ) {
+            $obj | Add-Member NoteProperty Status("Found unsafe assmblies: " + $unSafeAssemblies)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+        }
+        else {
+            $obj | Add-Member NoteProperty Status("All good")
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
     }
-    if ($unSafeAssemblies.Count -gt 0 ) {
-        $obj | Add-Member NoteProperty Status("Found unsafe assmblies: " + $unSafeAssemblies)
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-    }
-    else {
-        $obj | Add-Member NoteProperty Status("All good")
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+    catch [System.Data.SqlClient.SqlException] {
+        $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
 
     Write-Output $obj
@@ -2155,71 +2384,85 @@ function Test-SQLSymmetricKeyEncryptionAlgorithm {
         The following algorithms (as referred to by SQL Server) are considered weak or deprecated and should no longer be used in SQL Server: DES, DESX, RC2, RC4, RC4_128.
         Many organizations may accept the Triple DES algorithms (TDEA) which use keying options 1 (3 key aka 3TDEA) or keying option 2 (2 key aka 2TDEA). In SQL Server, these are referred to as TRIPLE_DES_3KEY and TRIPLE_DES respectively. Additionally, the SQL Server algorithm named DESX is actually the same implementation as the TRIPLE_DES_3KEY option. However, using the DESX identifier as the algorithm type has been deprecated and its usage is now discouraged.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
 
         [string] $InstanceName = "$machineName\$sqlInstance"
     )
-    
+
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
-        $databases = {$databases}.Invoke()
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $InstanceName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        }
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        }
 
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.1")
             $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
             $obj | Add-Member NoteProperty Status("No databases found")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
-            Write-Output $obj
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            return $obj
         }
-        
+        $index = 1
+
         foreach ($database in $databases) {
+
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.1.$index")
             $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher for database $database")
-            
-            $index = 1
+
 
             $query = "USE [$database]
             GO
-            SELECT db_name() AS $database, name AS Key_Name
+            SELECT db_name() AS db_name, name AS Key_Name
             FROM sys.symmetric_keys
             WHERE algorithm_desc NOT IN ('AES_128','AES_192','AES_256')
             AND db_id() > 4;
             GO"
-    
+
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                }
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+
+                if ( $null -eq $sqlResult ) {
+                    $obj | Add-Member NoteProperty Status("All good")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+                }
+                else {
+                    $obj | Add-Member NoteProperty Status("Got $sqlResult")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+                }
             }
-            catch {
-    
+            catch [System.Data.SqlClient.SqlException] {
+                $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
-    
-            if ( $null -eq $sqlResult ) {
-                $obj | Add-Member NoteProperty Status("All good")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-            }
-            else {
-                $obj | Add-Member NoteProperty Status("Got $sqlResult")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-            }
-    
+
+
             Write-Output $obj
-    
+
             $index++
         }
     }
     catch {
-        
+        $obj = New-Object PSObject
+        $obj | Add-Member NoteProperty ID("7.1")
+        $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+        $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+        Write-Output $obj
     }
-
-
-
 }
 
 function Test-SQLAsymmetricKeySize {
@@ -2235,9 +2478,9 @@ function Test-SQLAsymmetricKeySize {
 
         The RSA_2048 encryption algorithm for asymmetric keys in SQL Server is the highest bitlevel provided and therefore the most secure available choice (other choices are RSA_512 and RSA_1024).
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -2246,62 +2489,73 @@ function Test-SQLAsymmetricKeySize {
     )
 
     try {
-        $databases = Get-SqlDatabase -ServerInstance $instanceName -ErrorAction Stop | Where-Object {$_.Owner -ne "sa"} | Select-Object -ExpandProperty name
-        $databases = {$databases}.Invoke()
+        if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+            $databases = Get-SqlDatabase -ServerInstance $InstanceName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        }
+        else {
+            $databases = Get-SqlDatabase -ServerInstance $MachineName -ErrorAction Stop | Where-Object {$_.IsSystemObject -ne "true"} | Select-Object -ExpandProperty name
+        }
 
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.2")
             $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
             $obj | Add-Member NoteProperty Status("No databases found")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
-            Write-Output $obj
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            return $obj
         }
-    
+
         $index = 1
-    
+
         foreach ($database in $databases) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty ID("7.2.$index")
             $obj | Add-Member NoteProperty Task("Ensure CONNECT permissions on the 'guest' user is revoked for database $database")
-    
+
             $query = "USE [$database]
             GO
-            SELECT db_name() AS $database, name AS Key_Name
+            SELECT db_name() AS db_name, name AS Key_Name
             FROM sys.symmetric_keys
             WHERE key_length < 2048
             AND db_id() > 4;
             GO"
-    
+
             try {
-                $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+                }
+                else {
+                    $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+                }
+                if ( $null -eq $sqlResult ) {
+                    $obj | Add-Member NoteProperty Status("All good")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+                }
+                else {
+                    $obj | Add-Member NoteProperty Status("Got $sqlResult")
+                    $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+                }
             }
-            catch {
-    
+            catch [System.Data.SqlClient.SqlException] {
+                $obj | Add-Member NoteProperty Status("Server Instance not found or accessible")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             }
-    
-            if ( $null -eq $sqlResult ) {
-                $obj | Add-Member NoteProperty Status("All good")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
-            }
-            else {
-                $obj | Add-Member NoteProperty Status("Got $sqlResult")
-                $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-            }
-    
+
+
             Write-Output $obj
-    
+
             $index++
         }
-        
+
     }
     catch {
-        
+        $obj = New-Object PSObject
+        $obj | Add-Member NoteProperty ID("7.2")
+        $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
+        $obj | Add-Member NoteProperty Status("Failed to connect to server $instanceName")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+        Write-Output $obj
     }
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty ID("7.2")
-    $obj | Add-Member NoteProperty Task("Ensure Asymmetric Key Size is set to 'greater than or equal to 2048' in non-system databases")
-
 }
 
 #endregion
@@ -2327,26 +2581,32 @@ function Test-SQLServerBrowserService {
     $obj | Add-Member NoteProperty ID("8.1")
     $obj | Add-Member NoteProperty Task("Ensure 'SQL Server Browser Service' is configured correctly")
 
-    $sqlBrowserService = Get-Service -name 'sqlbrowser'
+    try {
+        $sqlBrowserService = Get-Service -name 'sqlbrowser'
 
-    if ($sqlBrowserService.Status -eq 'stopped') {
-        if ($sqlBrowserService.StartType -eq 'Disabled') {
-            $obj | Add-Member NoteProperty Status("All good")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+        if ($sqlBrowserService.Status -eq 'stopped') {
+            if ($sqlBrowserService.StartType -eq 'Disabled') {
+                $obj | Add-Member NoteProperty Status("All good")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
+            }
+            else {
+                $obj | Add-Member NoteProperty Status("StartType: Enabled")
+                $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            }
         }
         else {
-            $obj | Add-Member NoteProperty Status("StartType: Enabled")
-            $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
+            $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
+            if ($sqlBrowserService.StartType -eq 'Disabled') {
+                $obj | Add-Member NoteProperty Status("SQL Server Browser is running")
+            }
+            else {
+                $obj | Add-Member NoteProperty Status("SQL Server Browser is running and StartType: Enabled")
+            }
         }
     }
-    else {
-        $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
-        if ($sqlBrowserService.StartType -eq 'Disabled') {
-            $obj | Add-Member NoteProperty Status("SQL Server Browser is running")
-        }
-        else {
-            $obj | Add-Member NoteProperty Status("SQL Server Browser is running and StartType: Enabled")
-        }
+    catch [Microsoft.PowerShell.Commands.ServiceCommandException] {
+        $obj | Add-Member NoteProperty Status("Connot find any service with service name 'sqlbrowser'")
+        $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
     }
     Write-Output $obj
 }
@@ -2372,65 +2632,93 @@ function Convert-ToAuditInfo {
 
 #region Reportgeneration
 function Get-SQL2016AuditInfos {
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME
     )
 
-    # Section 2
-    Test-SQLAdHocDistributedQueriesDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLClrEnabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLCrossDBOwnershipDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLDatabaseMailXPsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLOleAutomationProceduresDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLRemoteAccessDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLRemoteAdminConnectionsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLScanForStartupProcsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLTrustworthyDatabaseOff -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLServerProtocolsDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLUseNonStandardPorts -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLHideInstanceEnabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLSaLoginAccountDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLSaLoginAccountRenamed -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLXpCommandShellDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLAutoCloseOff -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLNoSaAccounnt -MachineName $machineName -SqlInstance $sqlInstance
+    switch ($PsCmdlet.ParameterSetName) {
+        "ByInstance" {
+            $sqlInstances = $sqlInstance
+        }
+        "Default" {
+            $smo = 'Microsoft.SqlServer.Management.Smo.'
+            $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
+            $singleWmi = $wmi | Where-Object { $_.Name -eq $machineName }
+            $sqlServer = $singleWmi.Services | Where-Object { $_.Type -eq "SqlServer" }
+            $sqlInstances = $sqlServer `
+                | Foreach-Object { $_.Name.Substring($_.Name.IndexOf('$') + 1) } `
+                #    | Where-Object { $_ -ne "MSSQLSERVER" }
+        }
+    }
 
-    # Section 3
-    Test-SQLServerAuthentication -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLGuestPermissionOnDatabases -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLDropOrphanedUsers -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLAuthenticationDisabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLServerServiceAccountIsNotAnAdministrator -MachineName $machineName
-    Test-SQLAgentServiceAccountIsNotAnAdministrator -MachineName $machineName
-    Test-SQLFullTextServiceAccountIsNotAnAdministrator -MachineName $machineName
-    Test-SQLPermissionsForRolePublic -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLWindowsBuiltinNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLWindowsLocalGroupsNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLPublicRoleMsdbDatabase -MachineName $machineName -SqlInstance $sqlInstance
+    $InstanceAudits = @()
+    foreach ($sqlInstance in $sqlInstances) {
+        $auditInfos = @()
 
-    # Section 4
-    Test-SQLMustChangeOptionIsOn -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLCheckExpirationOptionOn -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLCheckPolicyOptionOn -MachineName $machineName -SqlInstance $sqlInstance
+        # Section 2
+        $auditInfos += Test-SQLAdHocDistributedQueriesDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLClrEnabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLCrossDBOwnershipDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLDatabaseMailXPsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLOleAutomationProceduresDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLRemoteAccessDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLRemoteAdminConnectionsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLScanForStartupProcsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLTrustworthyDatabaseOff -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLServerProtocolsDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLUseNonStandardPorts -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLHideInstanceEnabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLSaLoginAccountDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLSaLoginAccountRenamed -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLXpCommandShellDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLAutoCloseOff -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLNoSaAccounnt -MachineName $machineName -SqlInstance $sqlInstance
 
-    # Section 5
-    Test-SQLMaximumNumberOfErrorLogFiles -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLDefaultTraceEnabled -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLLoginAuditingIsSetToFailedLogins -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins -MachineName $machineName -SqlInstance $sqlInstance
+        # Section 3
+        $auditInfos += Test-SQLServerAuthentication -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLGuestPermissionOnDatabases -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLDropOrphanedUsers -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLAuthenticationDisabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLServerServiceAccountIsNotAnAdministrator -MachineName $machineName
+        $auditInfos += Test-SQLAgentServiceAccountIsNotAnAdministrator -MachineName $machineName
+        $auditInfos += Test-SQLFullTextServiceAccountIsNotAnAdministrator -MachineName $machineName
+        $auditInfos += Test-SQLPermissionsForRolePublic -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLWindowsBuiltinNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLWindowsLocalGroupsNoSqlLogin -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLPublicRoleMsdbDatabase -MachineName $machineName -SqlInstance $sqlInstance
 
-    # Section 6
-    Test-CLRAssemblyPermissionSet -MachineName $machineName -SqlInstance $sqlInstance
+        # Section 4
+        $auditInfos += Test-SQLMustChangeOptionIsOn -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLCheckExpirationOptionOn -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLCheckPolicyOptionOn -MachineName $machineName -SqlInstance $sqlInstance
 
-    # Section 7
-    Test-SQLSymmetricKeyEncryptionAlgorithm -MachineName $machineName -SqlInstance $sqlInstance
-    Test-SQLAsymmetricKeySize -MachineName $machineName -SqlInstance $sqlInstance
+        # Section 5
+        $auditInfos += Test-SQLMaximumNumberOfErrorLogFiles -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLDefaultTraceEnabled -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLLoginAuditingIsSetToFailedLogins -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins -MachineName $machineName -SqlInstance $sqlInstance
 
-    # Section 8
-    Test-SQLServerBrowserService
+        # Section 6
+        $auditInfos += Test-CLRAssemblyPermissionSet -MachineName $machineName -SqlInstance $sqlInstance
 
+        # Section 7
+        $auditInfos += Test-SQLSymmetricKeyEncryptionAlgorithm -MachineName $machineName -SqlInstance $sqlInstance
+        $auditInfos += Test-SQLAsymmetricKeySize -MachineName $machineName -SqlInstance $sqlInstance
+
+        # Section 8
+        $auditInfos += Test-SQLServerBrowserService
+
+        $InstanceAudits += @{
+            InstanceName = $sqlInstance
+            AuditInfos   = $auditInfos | Convert-ToAuditInfo
+        }
+    }
+
+    return $InstanceAudits
 }
 
 
@@ -2450,61 +2738,87 @@ function Get-SQL2016Report {
 		C:\PS> Get-SQL2016Report -Path "MyReport.html" -SqlInstance "MySQLServer"
 	#>
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     Param(
         [Parameter(Mandatory = $true)]
         [string] $Path,
-        [Parameter(Mandatory = $true)]
+
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
 
-        [AuditInfo[]] $AuditInfos = (Get-SQL2016AuditInfos -SqlInstance $sqlInstance -MachineName $machineName | Convert-ToAuditInfo),
+        [Parameter(Mandatory = $true, ParameterSetName = "ByAuditInfo")]
+        [Hashtable[]] $InstanceAudits,
 
         [switch] $DarkMode
     )
 
+    switch ($PsCmdlet.ParameterSetName) {
+        "ByInstance" {
+            $InstanceAudits = (Get-SQL2016AuditInfos -SqlInstance $sqlInstance -MachineName $machineName)
+        }
+        "ByAuditInfo" {
+
+        }
+        "Default" {
+            $InstanceAudits = (Get-SQL2016AuditInfos)
+        }
+    }
+
     [hashtable[]]$reportSections = @()
 
-    $reportSections += @{
-        Title       = "2 Surface Area Reduction"
-        Description = "SQL Server offers various configuration options, some of them can be controlled by the sp_configure stored procedure. This section contains the listing of the corresponding recommendations."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "2.*"}
+    foreach ($InstanceAudit in $InstanceAudits) {
+
+        [hashtable[]]$subSections = @()
+
+        $subSections += @{
+            Title       = "2 Surface Area Reduction"
+            Description = "SQL Server offers various configuration options, some of them can be controlled by the sp_configure stored procedure. This section contains the listing of the corresponding recommendations."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "2.*"}
+        }
+
+        $subSections += @{
+            Title       = "3 Authentication and Authorization"
+            Description = "This section contains recommendations related to SQL Server's authentication and authorization mechanisms."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "3.*"}
+        }
+        $subSections += @{
+            Title       = "4 Password Policies"
+            Description = "This section contains recommendations related to SQL Server's password policies."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "4.*"}
+        }
+        $subSections += @{
+            Title       = "5 Auditing and Logging"
+            Description = "This section contains recommendations related to SQL Server's audit and logging mechanisms."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "5.*"}
+        }
+
+        $subSections += @{
+            Title       = "6 Application Development"
+            Description = "This section contains recommendations related to developing applications that interface with SQL Server."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "6.*"}
+        }
+
+        $subSections += @{
+            Title       = "7 Encryption"
+            Description = "These recommendations pertain to encryption-related aspects of SQL Server."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "7.*"}
+        }
+
+        $subSections += @{
+            Title       = "8 Appendix: Additional Considerations"
+            Description = "This appendix discusses possible configuration options for which no recommendation is being given."
+            AuditInfos  = $InstanceAudit.AuditInfos | Where-Object {$_.Id -like "8.*"}
+        }
+
+        $reportSections += @{
+            Title       = $InstanceAudit.InstanceName
+            Description = "This section contains the audits for the sqlInstance $($InstanceAudit.InstanceName)"
+            SubSections = $subSections
+        }
     }
 
-    $reportSections += @{
-        Title       = "3 Authentication and Authorization"
-        Description = "This section contains recommendations related to SQL Server's authentication and authorization mechanisms."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "3.*"}
-    }
-    $reportSections += @{
-        Title       = "4 Password Policies"
-        Description = "This section contains recommendations related to SQL Server's password policies."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "4.*"}
-    }
-    $reportSections += @{
-        Title       = "5 Auditing and Logging"
-        Description = "This section contains recommendations related to SQL Server's audit and logging mechanisms."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "5.*"}
-    }
-
-    $reportSections += @{
-        Title       = "6 Application Development"
-        Description = "This section contains recommendations related to developing applications that interface with SQL Server."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "6.*"}
-    }
-
-    $reportSections += @{
-        Title       = "7 Encryption"
-        Description = "These recommendations pertain to encryption-related aspects of SQL Server."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "7.*"}
-    }
-
-    $reportSections += @{
-        Title       = "8 Appendix: Additional Considerations"
-        Description = "This appendix discusses possible configuration options for which no recommendation is being given."
-        AuditInfos  = $AuditInfos | Where-Object {$_.Id -like "8.*"}
-    }
 
     Get-ATAPHtmlReport `
         -Path $Path `
