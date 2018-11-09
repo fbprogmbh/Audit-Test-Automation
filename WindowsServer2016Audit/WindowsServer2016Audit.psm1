@@ -3014,10 +3014,8 @@ function Test-SV-87899r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Found volume without NTFS formatting.")
+		$obj | Add-Member NoteProperty Status("Found volume without NTFS formatting. " + ($volumes.UniqueId -join ', '))
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-
-		$volumes | Foreach-Object { Write-Error -Message "Found not NTFS filesystem: $_" }
 	}
 
 	Write-Output $obj
