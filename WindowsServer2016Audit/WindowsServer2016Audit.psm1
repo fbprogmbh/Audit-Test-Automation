@@ -2887,12 +2887,12 @@ function Test-SV-87875r2_rule {
 
 	$admins = foreach ($accountName in Get-LocalAdminNames) {
 		# Get password last set of built-in administrator
-		$pswLastSet = Net User $accountName | Find /i "Password Last Set"
+		$pswLastSet = (Get-LocalUser Administrator).PasswordLastSet
 
 		# Convert to datetime
 		@{
 			AccountName = $accountName
-			PasswordLastSetDate = Get-Date ($pswLastSet.Replace("Password last set", "").Trim())
+			PasswordLastSetDate = $pswLastSet
 		}
 	}
 
