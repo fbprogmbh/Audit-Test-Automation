@@ -2885,22 +2885,11 @@ function Test-SV-87875r2_rule {
 	$obj | Add-Member NoteProperty Name("SV-87875r2_rule")
 	$obj | Add-Member NoteProperty Task("Passwords for the built-in Administrator account must be changed at least every $days days.")
 
-	$admins = foreach ($accountName in Get-LocalAdminNames) {
-		# Get password last set of built-in administrator
-		$pswLastSet = (Get-LocalUser Administrator).PasswordLastSet
+	$builtInAdmin = Get-localUser | Where-Object -Property sid -like "S-1-5-*-500"
 
-		# Convert to datetime
-		@{
-			AccountName = $accountName
-			PasswordLastSetDate = $pswLastSet
-		}
-	}
-
-	$badAccounts = $admins | Where-Object { $_.PasswordLastSetDate -le (Get-Date).AddDays(-$days) }
-
-	if ($badAccounts.Count -gt 0) {
-		$messages = $badAccounts | ForEach-Object { "Password for $($_.AccountName) last set on $($_.PasswordLastSetDate)" }
-		$obj | Add-Member NoteProperty Status($messages -join ", ")
+	if ($builtInAdmin.PasswordLastSet -le (Get-Date).AddDays(-$days)) {
+		$message = "Password for $($BuiltInAdmin.Name) last set on $($BuiltInAdmin.PasswordLastSet)"
+		$obj | Add-Member NoteProperty Status($message)
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 	else {
@@ -4856,10 +4845,10 @@ function Test-SV-88287r1_rule {
 
 	try {
 		# local admin account SID ends with 500
-		$builtinAdmin = Get-CimInstance -Class Win32_UserAccount -Filter "SID like 'S-1-5-%-500'" -ErrorAction Stop
+		$builtInAdmin = Get-localUser | Where-Object -Property sid -like "S-1-5-*-500"
 		$otherAdmins = Get-LocalAdminNames | Where-Object { $_ -eq "Administrator" }
 
-		if (($null -ne $builtinAdmin.Name) -and ($builtinAdmin.Name -ne "Administrator")) {
+		if (($null -ne $builtInAdmin.Name) -and ($builtInAdmin.Name -ne "Administrator")) {
 			if ($otherAdmins.Count -eq 0) {
 				$obj | Add-Member NoteProperty Status("Compliant")
 				$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
@@ -4899,8 +4888,8 @@ function Test-SV-88289r1_rule {
 	$obj | Add-Member NoteProperty Task("The built-in guest account must be renamed.")
 
 	try {
-		# local guest account SId ends with 501
-		$account = Get-CimInstance -Class Win32_UserAccount -Filter "SID like 'S-1-5-%-501'" -ErrorAction Stop
+		# local guest account SID ends with 501
+		$account = Get-localUser | Where-Object -Property SID -like "S-1-5-*-501"
 
 		if ( ($account.name -ne "Guest") -and ($null -ne $account.name) ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
@@ -6519,15 +6508,15 @@ function Test-SV-88475r1_rule {
 	$obj | Add-Member NoteProperty Task("The built-in guest account must be disabled.")
 
 	try {
-		# local guest account SID ends with 500
-		$account = Get-CimInstance -Class Win32_UserAccount -Filter "SID like 'S-1-5-%-501'" -ErrorAction Stop
+		# local guest account SID ends with 501
+		$account = Get-localUser | Where-Object -Property sid -like "S-1-5-*-501"
 
 		if ( $account.Disabled ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Found account.")
+			$obj | Add-Member NoteProperty Status("Built-in guest account is not disabled.")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 		}
 	}
