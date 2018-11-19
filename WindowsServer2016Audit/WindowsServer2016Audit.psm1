@@ -4985,7 +4985,7 @@ function Test-SV-88393r1_rule {
 	try {
 		$members = Get-SecPolSetting -PrivilegeRights -PrivilegeRightsSetting SeTrustedCredManAccessPrivilege -ErrorAction Stop
 
-		if ( $null -eq $members ) {
+		if ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
@@ -5078,7 +5078,7 @@ function Test-SV-88399r1_rule {
 	try {
 		$members = Get-SecPolSetting -PrivilegeRights -PrivilegeRightsSetting SeTcbPrivilege -ErrorAction Stop
 
-		if ( $null -eq $members ) {
+		if ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
@@ -5264,7 +5264,7 @@ function Test-SV-88411r1_rule {
 	try {
 		$members = Get-SecPolSetting -PrivilegeRights -PrivilegeRightsSetting SeCreateTokenPrivilege -ErrorAction Stop
 
-		if ( $null -eq $members ) {
+		if ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
@@ -5359,7 +5359,7 @@ function Test-SV-88415r1_rule {
 	try {
 		$members = Get-SecPolSetting -PrivilegeRights -PrivilegeRightsSetting SeCreatePermanentPrivilege -ErrorAction Stop
 
-		if ( $null -eq $members ) {
+		if ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
@@ -5883,7 +5883,7 @@ function Test-SV-88443r1_rule {
 	try {
 		$members = Get-SecPolSetting -PrivilegeRights -PrivilegeRightsSetting SeEnableDelegationPrivilege -ErrorAction Stop
 
-		if ( $null -eq $members ) {
+		if ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
@@ -6176,7 +6176,7 @@ function Test-SV-88455r1_rule {
 	try {
 		$members = Get-SecPolSetting -PrivilegeRights -PrivilegeRightsSetting SeLockMemoryPrivilege -ErrorAction Stop
 
-		if ( $null -eq $members ) {
+		if ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
