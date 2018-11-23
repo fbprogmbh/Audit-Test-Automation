@@ -326,14 +326,14 @@ function Test-RegistrySetting {
 	catch [System.Management.Automation.PSArgumentException] {
 		$obj | Add-Member NoteProperty Status("Registry value not found.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		
+
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 			-Message "${$StigId}: Could not get value $Name in registry key $path."
 	}
 	catch [System.Management.Automation.ItemNotFoundException] {
 		$obj | Add-Member NoteProperty Status("Registry key not found.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		
+
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 			-Message "${$StigId}: Could not get key $Name in registry key $path."
 	}
@@ -1618,7 +1618,7 @@ function Test-SV-88293r1_rule {
 			-ExpectedValue 2
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
+		$obj | Add-Member NoteProperty Status("Not a domain controller. Test irrelevant.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
 	}
 
@@ -1648,7 +1648,7 @@ function Test-SV-88295r1_rule {
 			-ExpectedValue 0
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
+		$obj | Add-Member NoteProperty Status("Not a domain controller. Test irrelevant.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
 	}
 
@@ -1680,7 +1680,7 @@ function Test-SV-88297r1_rule {
 			-ExpectedValue 1
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
+		$obj | Add-Member NoteProperty Status("Not a domain member. Test irrelevant.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
 	}
 
@@ -1712,7 +1712,7 @@ function Test-SV-88299r1_rule {
 			-ExpectedValue 1
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
+		$obj | Add-Member NoteProperty Status("Not a domain member. Test irrelevant.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
 	}
 
@@ -1744,7 +1744,7 @@ function Test-SV-88301r1_rule {
 			-ExpectedValue 1
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not domain integrated. Test irrelevant.")
+		$obj | Add-Member NoteProperty Status("Not a domain member. Test irrelevant.")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
 	}
 
@@ -2441,7 +2441,7 @@ function Test-SV-88359r1_rule {
 		-StigId "WN16-SO-000400" `
 		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" `
 		-Name "NTLMMinClientSec" `
-		-ExpectedValue 53739520 `
+		-ExpectedValue 537395200 `
 	| Write-Output
 }
 
@@ -2465,7 +2465,7 @@ function Test-SV-88361r1_rule {
 		-StigId "WN16-SO-000410" `
 		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" `
 		-Name "NTLMMinServerSec" `
-		-ExpectedValue 53739520 `
+		-ExpectedValue 537395200 `
 	| Write-Output
 }
 
@@ -4990,7 +4990,7 @@ function Test-SV-88393r1_rule {
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Found account(s).")
+			$obj | Add-Member NoteProperty Status("Found account(s): $members")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 
 			$members = $members.Split(",")
