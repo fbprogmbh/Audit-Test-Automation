@@ -1851,7 +1851,7 @@ function Test-SV-88309r1_rule {
 		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
 		-Name "InactivityTimeoutSecs" `
 		-ExpectedValue "Less than 900 seconds." `
-		-Predicate { param($regValue) $regValue -le 900 } `
+		-Predicate { param($regValue) ($regValue -le 900 -and $regValue -ne 0)} `
 	| Write-Output
 }
 
@@ -3354,37 +3354,38 @@ function Test-SV-87907r1_rule {
 
 	$key = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('Security', 'Default', 'ReadPermissions')
 	$acls = $key.GetAccessControl() | Select-Object -ExpandProperty Access
-	$compliant = $true
+	$foundIdentities = @()
 
 	foreach ($acl in $acls) {
 		switch ($acl.IdentityReference) {
 			"NT Authority\System" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.RegistryRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "WN16-00-000190: Found $($acl.IdentityReference):$($acl.RegistryRights) -expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"BUILTIN\Administrators" {
 				if ( ($acl.RegistryRights -ne "ReadPermissions, ChangePermissions")  ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadPermissions, ChangePermissions" -Level Error
 				}
 			}
 
 			Default {
-				$compliant = $false
+				$foundIdentities += $acl.IdentityReference
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Found unexpected permission $($acl.IdentityReference) with access $($acl.RegistryRights)" -Level Error
 			}
 		}
 	}
 
-	if ( $compliant ) {
+	if ( $foundIdentities.count -eq 0 ) {
 		$obj | Add-Member NoteProperty Status("Compliant")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$s = $foundIdentities -join ", "
+		$obj | Add-Member NoteProperty Status("Found Following IdentityReferences: $s")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -3397,58 +3398,65 @@ function Test-SV-87907r1_rule_2 {
 	$obj | Add-Member NoteProperty Task("Default permissions for the HKEY_LOCAL_MACHINE\Software registry hive must be maintained.")
 
 	$acls = Get-Acl ("HKLM:\Software") | Select-Object -ExpandProperty Access
-	$compliant = $true
+	$foundIdentities = @()
 
 	foreach ($acl in $acls) {
 		switch ($acl.IdentityReference) {
 			"NT Authority\System" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.RegistryRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "WN16-00-000190: Found $($acl.IdentityReference):$($acl.RegistryRights) -expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"BUILTIN\Administrators" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.RegistryRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"BUILTIN\Users" {
 				if ( ($acl.RegistryRights -ne "ReadKey") -xor ($acl.RegistryRights -eq -2147483648) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
 				}
 			}
 
 			"CREATOR OWNER" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.RegistryRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES" {
 				if ( ($acl.RegistryRights -ne "ReadKey") -xor ($acl.RegistryRights -eq -2147483648) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
 				}
 			}
+			#Unknown Account (Windows Problem)
+			"S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681" {
+				$foundIdentities += $acl.IdentityReference
+				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
+				
+			}
 
 			Default {
-				$compliant = $false
+				$foundIdentities += $acl.IdentityReference
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Found unexpected permission $($acl.IdentityReference) with access $($acl.RegistryRights)" -Level Error
 			}
 		}
 	}
 
-	if ( $compliant ) {
+	if ( $foundIdentities.count -eq 0 ) {
 		$obj | Add-Member NoteProperty Status("Compliant")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$s = $foundIdentities -join ", "
+		$obj | Add-Member NoteProperty Status("Found Following IdentityReferences: $s")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -3461,58 +3469,65 @@ function Test-SV-87907r1_rule_3 {
 	$obj | Add-Member NoteProperty Task("Default permissions for the HKEY_LOCAL_MACHINE\System registry hive must be maintained.")
 
 	$acls = Get-Acl ("HKLM:\System") | Select-Object -ExpandProperty Access
-	$compliant = $true
+	$foundIdentities = @()
 
 	foreach ($acl in $acls) {
 		switch ($acl.IdentityReference) {
 			"NT Authority\System" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.RegistryRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "WN16-00-000190: Found $($acl.IdentityReference):$($acl.RegistryRights) -expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"BUILTIN\Administrators" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.RegistryRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"BUILTIN\Users" {
 				if ( ($acl.RegistryRights -ne "ReadKey") -xor ($acl.RegistryRights -eq -2147483648) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
 				}
 			}
 
 			"CREATOR OWNER" {
 				if ( ($acl.RegistryRights -ne "FullControl") -xor ($acl.FileSystemRights -eq 268435456) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):FullControl" -Level Error
 				}
 			}
 
 			"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES" {
 				if ( ($acl.RegistryRights -ne "ReadKey") -xor ($acl.RegistryRights -eq -2147483648) ) {
-					$compliant = $false
+					$foundIdentities += $acl.IdentityReference
 					Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
 				}
 			}
+			#Unknown Account (Windows Problem)
+			"S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681" {
+				$foundIdentities += $acl.IdentityReference
+				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
+				
+			}
 
 			Default {
-				$compliant = $false
+				$foundIdentities += $acl.IdentityReference
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Found unexpected permission $($acl.IdentityReference) with access $($acl.RegistryRights)" -Level Error
 			}
 		}
 	}
 
-	if ( $compliant ) {
+	if ( $foundIdentities.count -eq 0 ) {
 		$obj | Add-Member NoteProperty Status("Compliant")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 	else {
-		$obj | Add-Member NoteProperty Status("Not compliant")
+		$s = $foundIdentities -join ", "
+		$obj | Add-Member NoteProperty Status("Found Following IdentityReferences: $s")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
@@ -5687,7 +5702,7 @@ function Test-SV-88431r1_rule {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get SIDs from domain accounts" -Level Error
 			}
 		}
-		elseif ( $null -eq $members ) {
+		elseif ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
