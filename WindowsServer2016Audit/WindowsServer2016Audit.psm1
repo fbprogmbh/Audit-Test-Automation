@@ -1851,7 +1851,7 @@ function Test-SV-88309r1_rule {
 		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
 		-Name "InactivityTimeoutSecs" `
 		-ExpectedValue "Less than 900 seconds." `
-		-Predicate { param($regValue) $regValue -le 900 } `
+		-Predicate { param($regValue) ($regValue -le 900 -and $regValue -ne 0)} `
 	| Write-Output
 }
 
@@ -5687,7 +5687,7 @@ function Test-SV-88431r1_rule {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Could not get SIDs from domain accounts" -Level Error
 			}
 		}
-		elseif ( $null -eq $members ) {
+		elseif ( "" -eq $members ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
