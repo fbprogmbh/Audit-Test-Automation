@@ -39,6 +39,7 @@ Last Change: 2018-08-20
 #>
 
 using module ATAPHtmlReport
+using namespace Microsoft.PowerShell.Commands
 
 # Import setting from file
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
@@ -217,14 +218,31 @@ function Get-SecPolSetting {
 	Write-Output $currentSetting
 }
 
-function Test-DomainMember {
+# Get domain role
+# 0 {"Standalone Workstation"}
+# 1 {"Member Workstation"}
+# 2 {"Standalone Server"}
+# 3 {"Member Server"}
+# 4 {"Backup Domain Controller"}
+# 5 {"Primary Domain Controller"}
+function Get-DomainRole {
+	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+}
+
+function Test-StandaloneOrMemberServer {
+	$domainRole = Get-DomainRole
+
+	return ($domainRole -eq [DomainRole]::MemberServer) -or ($domainRole -eq [DomainRole]::StandaloneServer) -or ($domainRole -eq [DomainRole]::StandaloneWorkstation)
+}
+
+function Test-DomainJoined {
 	return (Get-CimInstance -Class Win32_ComputerSystem).PartOfDomain
 }
 
 function Test-DomainController {
-	$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+	$domainRole = Get-DomainRole
 
-	return $domainRole -eq 4 -or $domainRole -eq 5
+	return ($domainRole -eq [DomainRole]::BackupDomainController) -or ($domainRole -eq [DomainRole]::PrimaryDomainController)
 }
 
 function Get-PrimaryDomainSID {
@@ -243,17 +261,9 @@ function Get-PrimaryDomainSID {
 
 	[string]$domainSID = $null
 
-	# Get domain role
-	# 0 {"Standalone Workstation"}
-	# 1 {"Member Workstation"}
-	# 2 {"Standalone Server"}
-	# 3 {"Member Server"}
-	# 4 {"Backup Domain Controller"}
-	# 5 {"Primary Domain Controller"}
-	[int]$domainRole = Get-CimInstance Win32_ComputerSystem | Select-Object -Expand DomainRole
-	[bool]$isDomainMember = ($domainRole -ne 0) -and ($domainRole -ne 2)
+	[int]$domainRole = Get-DomainRole
 
-	if ($isDomainMember) {
+	if (($domainRole -ne [DomainRole]::StandaloneWorkstation) -and ($domainRole -ne [DomainRole]::StandaloneServer)) {
 
 		[string] $domain = Get-CimInstance Win32_ComputerSystem | Select-Object -Expand Domain
 		[string] $krbtgtSID = (New-Object Security.Principal.NTAccount $domain\krbtgt).Translate([Security.Principal.SecurityIdentifier]).Value
@@ -1728,7 +1738,7 @@ function Test-SV-88297r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88297r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled.")
 
-	if (Test-DomainMember) {
+	if (Test-DomainJoined) {
 		Test-RegistrySetting `
 			-obj $obj `
 			-StigId "WN16-SO-000080" `
@@ -1761,7 +1771,7 @@ function Test-SV-88299r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88299r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled.")
 
-	if (Test-DomainMember) {
+	if (Test-DomainJoined) {
 		Test-RegistrySetting `
 			-obj $obj `
 			-StigId "WN16-SO-000090" `
@@ -1794,7 +1804,7 @@ function Test-SV-88301r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88301r1_rule")
 	$obj | Add-Member NoteProperty Task("Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled.")
 
-	if (Test-DomainMember) {
+	if (Test-DomainJoined) {
 		Test-RegistrySetting `
 			-obj $obj `
 			-StigId "WN16-SO-000100" `
@@ -1900,13 +1910,11 @@ function Test-SV-88307r1_rule {
 # The screen saver should be set at a maximum of 15 minutes and be password protected. This
 # protects critical and sensitive data from exposure to unauthorized personnel with physical
 # access to the computer.
-$DisaTest += "Test-SV-88309r1_rule"
-function Test-SV-88309r1_rule {
+$DisaTest += "Test-SV-88309r2_rule"
+function Test-SV-88309r2_rule {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88309r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88309r2_rule")
 	$obj | Add-Member NoteProperty Task("The machine inactivity limit must be set to 15 minutes, locking the system with the screen saver.")
-
-	#TODO: Change
 
 	Test-RegistrySetting `
 		-obj $obj `
@@ -1927,15 +1935,15 @@ function Test-SV-88309r1_rule {
 # Failure to display the logon banner prior to a logon attempt will negate legal proceedings
 # resulting from unauthorized access to system resources.Satisfies: SRG-OS-000023-GPOS-00006,
 # SRG-OS-000024-GPOS-00007, SRG-OS-000228-GPOS-00088
-$DisaTest += "Test-SV-88311r1_rule"
-function Test-SV-88311r1_rule {
+$DisaTest += "Test-SV-88311r2_rule"
+function Test-SV-88311r2_rule {
 	[CmdletBinding()]
 	Param(
 		[string] $msg
 	)
 
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88311r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88311r2_rule")
 	$obj | Add-Member NoteProperty Task("The required legal notice must be configured to display before console logon.")
 
 	$ExpectedValue = ""
@@ -2318,19 +2326,26 @@ function Test-SV-88339r1_rule {
 #
 # The Windows Security Account Manager (SAM) stores users passwords. Restricting Remote Procedure
 # Call (RPC) connections to the SAM to Administrators helps protect those credentials.
-$DisaTest += "Test-SV-88341r1_rule"
-function Test-SV-88341r1_rule {
+$DisaTest += "Test-SV-88341r2_rule"
+function Test-SV-88341r2_rule {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88341r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88341r2_rule")
 	$obj | Add-Member NoteProperty Task("Remote calls to the Security Account Manager (SAM) must be restricted to Administrators.")
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-MS-000310" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "RestrictRemoteSAM" `
-		-ExpectedValue "O:BAG:BAD:(A;;RC;;;BA)" `
-	| Write-Output
+	if (Test-StandaloneOrMemberServer) {
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-MS-000310" `
+			-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
+			-Name "RestrictRemoteSAM" `
+			-ExpectedValue "O:BAG:BAD:(A;;RC;;;BA)" `
+		| Write-Output
+	}
+	else {
+		$obj | Add-Member NoteProperty Status("Only applies to member servers and standalone systems.")
+		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
+		Write-Output $obj
+	}
 }
 
 # Services using Local System that use Negotiate when reverting to NTLM authentication must
@@ -3695,14 +3710,14 @@ function Test-SV-87909r1_rule {
 # Outdated or unused accounts provide penetration points that may go undetected. Inactive accounts
 # must be deleted if no longer necessary or, if still required, disabled until needed.Satisfies:
 # SRG-OS-000104-GPOS-00051, SRG-OS-000118-GPOS-00060
-$DisaTest += "Test-SV-87911r1_rule"
-function Test-SV-87911r1_rule {
+$DisaTest += "Test-SV-87911r2_rule"
+function Test-SV-87911r2_rule {
 	[CmdletBinding()]
 	Param(
 		[System.Int32]$days = 35
 	)
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87911r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-87911r2_rule")
 	$obj | Add-Member NoteProperty Task("Outdated or unused accounts must be removed from the system or disabled.")
 
 	$accounts = ([ADSI]('WinNT://{0}' -f $env:COMPUTERNAME)).Children | Where-Object { $_.SchemaClassName -eq 'user' }
@@ -4143,10 +4158,10 @@ function Test-SV-87949r1_rule {
 # SMBv1 is a legacy protocol that uses the MD5 algorithm as part of SMB. MD5 is known to be
 # vulnerable to a number of attacks such as collision and preimage attacks and is not FIPS
 # compliant.
-$DisaTest += "Test-SV-87951r1_rule"
-function Test-SV-87951r1_rule {
+$DisaTest += "Test-SV-87951r2_rule"
+function Test-SV-87951r2_rule {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87951r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-87951r2_rule")
 	$obj | Add-Member NoteProperty Task("The Server Message Block (SMB) v1 protocol must be uninstalled.")
 
 	if ((Get-WindowsFeature | Where-Object Name -eq FS-SMB1 | Select-Object -ExpandProperty InstallState) -ne "Installed") {
@@ -4891,7 +4906,7 @@ function Test-SV-88165r1_rule_3 {
 	Write-Output $obj
 }
 
-# Credential Guard must be running on domain-joined systems.
+# Credential Guard must be running on domain-joined member server.
 # - - - - - - - - - - - - -
 # StigID: WN16-CC-000120
 # Group ID (Vulid): V-73515
@@ -4901,19 +4916,27 @@ function Test-SV-88165r1_rule_3 {
 # credential theft attacks if compromised. This authentication information, which was stored
 # in the Local Security Authority (LSA) in previous versions of Windows, is isolated from
 # the rest of operating system and can only be accessed by privileged system software.
-$DisaTest += "Test-SV-88167r1_rule"
-function Test-SV-88167r1_rule {
+$DisaTest += "Test-SV-88167r2_rule"
+function Test-SV-88167r2_rule {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88167r1_rule")
-	$obj | Add-Member NoteProperty Task("Credential Guard must be running on domain-joined systems.")
+	$obj | Add-Member NoteProperty Name("SV-88167r2_rule")
+	$obj | Add-Member NoteProperty Task("Credential Guard must be running on domain-joined member servers.")
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000120" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
-		-Name "LsaCfgFlags" `
-		-ExpectedValue 1 `
-	| Write-Output
+	if (((Get-DomainRole) -eq [DomainRole]::MemberServer) -and (Test-DomainJoined)) {
+		Test-RegistrySetting `
+			-obj $obj `
+			-StigId "WN16-CC-000120" `
+			-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
+			-Name "LsaCfgFlags" `
+			-ExpectedValue 1 `
+		| Write-Output
+	}
+	else {
+		$obj | Add-Member NoteProperty Status("Only applies to domain-joined member servers.")
+		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
+		Write-Output $obj
+	}
+
 }
 
 # Credential Guard running
@@ -5192,10 +5215,10 @@ function Test-SV-88393r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Access this computer from the network user right may access
 # resources on the system, and this right must be limited to those requiring it.
-$DisaTest += "Test-SV-88397r1_rule"
-function Test-SV-88397r1_rule {
+$DisaTest += "Test-SV-88397r2_rule"
+function Test-SV-88397r2_rule {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88397r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88397r2_rule")
 	$obj | Add-Member NoteProperty Task("The Access this computer from the network user right must only be assigned to the Administrators and Authenticated Users groups on member servers.")
 
 	# SID for authenticated users *S-1-5-11
@@ -5679,14 +5702,14 @@ function Test-SV-88419r1_rule {
 # compromise of an entire domain.Local accounts on domain-joined systems must also be assigned
 # this right to decrease the risk of lateral movement resulting from credential theft attacks.The
 # Guests group must be assigned this right to prevent unauthenticated access.
-$DisaTest += "Test-SV-88423r1_rule"
-function Test-SV-88423r1_rule {
+$DisaTest += "Test-SV-88423r2_rule"
+function Test-SV-88423r2_rule {
 	[CmdletBinding()]
 	Param(
 		[switch]$IsDomainIntegrated
 	)
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88423r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88423r2_rule")
 	$obj | Add-Member NoteProperty Task("The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems.")
 
 	# guest group is denied access on all systems
@@ -5905,15 +5928,15 @@ function Test-SV-88431r1_rule {
 # Admins and Domain Admins groups on lower-trust systems helps mitigate the risk of privilege
 # escalation from credential theft attacks, which could lead to the compromise of an entire
 # domain.The Guests group must be assigned this right to prevent unauthenticated access.
-$DisaTest += "Test-SV-88435r1_rule"
-function Test-SV-88435r1_rule {
+$DisaTest += "Test-SV-88435r2_rule"
+function Test-SV-88435r2_rule {
 	[CmdletBinding()]
 	Param(
 		[switch]$IsDomainIntegrated
 	)
 
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88435r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88435r2_rule")
 	$obj | Add-Member NoteProperty Task("The Deny log on locally user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems.")
 
 	# guest group is denied access on all systems
@@ -5987,15 +6010,15 @@ function Test-SV-88435r1_rule {
 # must also be assigned this right to decrease the risk of lateral movement resulting from
 # credential theft attacks.The Guests group must be assigned this right to prevent unauthenticated
 # access.
-$DisaTest += "Test-SV-88439r1_rule"
-function Test-SV-88439r1_rule {
+$DisaTest += "Test-SV-88439r2_rule"
+function Test-SV-88439r2_rule {
 	[CmdletBinding()]
 	Param(
 		[switch]$IsDomainIntegrated
 	)
 
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88439r1_rule")
+	$obj | Add-Member NoteProperty Name("SV-88439r2_rule")
 	$obj | Add-Member NoteProperty Task("The Deny log on through Remote Desktop Services user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and from unauthenticated access on all systems.")
 
 	# guest group is denied access on all systems
