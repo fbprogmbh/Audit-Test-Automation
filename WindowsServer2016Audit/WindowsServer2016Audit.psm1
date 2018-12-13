@@ -6980,23 +6980,28 @@ function Get-WindowsServer2016HtmlReport {
 		[switch] $PerformanceOptimized
 	)
 
-	[hashtable[]]$sections = @(
-		@{
-			Title = "DISA Settings"
-			AuditInfos = Get-DisaAuditResult -PerfomanceOptimized:$PerformanceOptimized | Convert-ToAuditInfo | Sort-Object -Property Id
-		},
-		@{
-			Title = "CIS advanced audit policy settings"
-			AuditInfos = Get-CisAuditPolicyResult | Convert-ToAuditInfo
-		}
-	)
-
-	Get-ATAPHtmlReport `
-		-Path $Path `
-		-Title "Windows Server 2016 Audit Report" `
-		-ModuleName "WindowsServer2016Audit" `
-		-BasedOn "Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27", "CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017" `
-		-Sections $sections `
-		-DarkMode:$DarkMode
+	if (Test-Path $Path) {
+		[hashtable[]]$sections = @(
+			@{
+				Title = "DISA Settings"
+				AuditInfos = Get-DisaAuditResult -PerfomanceOptimized:$PerformanceOptimized | Convert-ToAuditInfo | Sort-Object -Property Id
+			},
+			@{
+				Title = "CIS advanced audit policy settings"
+				AuditInfos = Get-CisAuditPolicyResult | Convert-ToAuditInfo
+			}
+		)
+	
+		Get-ATAPHtmlReport `
+			-Path $Path `
+			-Title "Windows Server 2016 Audit Report" `
+			-ModuleName "WindowsServer2016Audit" `
+			-BasedOn "Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27", "CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017" `
+			-Sections $sections `
+			-DarkMode:$DarkMode
+	}
+	else {
+		Write-Error "The path doesn't not exist!"
+	}
 }
 #endregion
