@@ -358,6 +358,8 @@ function Test-RegistrySetting {
 
 #region Registry test
 
+$DisaTest = @()
+
 # Administrator accounts must not be enumerated during elevation.
 # - - - - - - - - - - - - -
 # StigID: WN16-CC-000280
@@ -367,6 +369,7 @@ function Test-RegistrySetting {
 # Enumeration of administrator accounts when elevating can provide part of the logon information
 # to an unauthorized user. This setting configures the system to always require users to type
 # in a username and password to elevate a running application.
+$DisaTest += "Test-SV-88139r1_rule"
 function Test-SV-88139r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88139r1_rule")
@@ -392,6 +395,7 @@ function Test-SV-88139r1_rule {
 # between domain systems.With User Account Control enabled, filtering the privileged token
 # for local administrator accounts will prevent the elevated privileges of these accounts
 # from being used over the network.
+$DisaTest += "Test-SV-88147r1_rule"
 function Test-SV-88147r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88147r1_rule")
@@ -415,6 +419,7 @@ function Test-SV-88147r1_rule {
 # When the WDigest Authentication protocol is enabled, plain-text passwords are stored in the
 # Local Security Authority Subsystem Service (LSASS), exposing them to theft. WDigest is disabled
 # by default in Windows 10. This setting ensures this is enforced.
+$DisaTest += "Test-SV-88149r1_rule"
 function Test-SV-88149r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88149r1_rule")
@@ -437,6 +442,7 @@ function Test-SV-88149r1_rule {
 # CCI: CCI-000366
 #
 # Configuring the system to disable IPv6 source routing protects against spoofing.
+$DisaTest += "Test-SV-88151r1_rule"
 function Test-SV-88151r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88151r1_rule")
@@ -459,6 +465,7 @@ function Test-SV-88151r1_rule {
 # CCI: CCI-000366
 #
 # Configuring the system to disable IP source routing protects against spoofing.
+$DisaTest += "Test-SV-88153r1_rule"
 function Test-SV-88153r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88153r1_rule")
@@ -482,6 +489,7 @@ function Test-SV-88153r1_rule {
 #
 # Allowing ICMP redirect of routes can lead to traffic not being routed properly. When disabled,
 # this forces ICMP to be routed via the shortest path first.
+$DisaTest += "Test-SV-88155r1_rule"
 function Test-SV-88155r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88155r1_rule")
@@ -507,6 +515,7 @@ function Test-SV-88155r1_rule {
 # a denial of service (DoS) attack. The DoS consists of sending a NetBIOS name release request
 # to the server for each entry in the servers cache, causing a response delay in the normal
 # operation of the servers WINS resolution capability.
+$DisaTest += "Test-SV-88157r1_rule"
 function Test-SV-88157r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88157r1_rule")
@@ -529,6 +538,7 @@ function Test-SV-88157r1_rule {
 #
 # Insecure guest logons allow unauthenticated access to shared folders. Shared resources on
 # a system must require authentication to establish proper access.
+$DisaTest += "Test-SV-88159r1_rule"
 function Test-SV-88159r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88159r1_rule")
@@ -557,6 +567,7 @@ function Test-SV-88159r1_rule {
 # Include command line data for process creation events will record the command line information
 # with the process creation events in the log. This can provide additional detail when malware
 # has run on a system.
+$DisaTest += "Test-SV-88163r1_rule"
 function Test-SV-88163r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88163r1_rule")
@@ -582,6 +593,7 @@ function Test-SV-88163r1_rule {
 # initialization. The Early Launch Antimalware driver can limit allowed drivers based on classifications
 # determined by the malware protection application. At a minimum, drivers determined to be
 # bad must not be allowed.
+$DisaTest += "Test-SV-88173r1_rule"
 function Test-SV-88173r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88173r1_rule")
@@ -608,6 +620,7 @@ function Test-SV-88173r1_rule {
 # not changed option ensures the policies will be reprocessed even if none have been changed.
 # This way, any unauthorized changes are forced to match the domain-based group policy settings
 # again.
+$DisaTest += "Test-SV-88177r1_rule"
 function Test-SV-88177r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88177r1_rule")
@@ -633,6 +646,7 @@ function Test-SV-88177r1_rule {
 # sensitive information from being sent outside the enterprise and will prevent uncontrolled
 # updates to the system. This setting prevents the computer from downloading print driver
 # packages over HTTP.
+$DisaTest += "Test-SV-88179r1_rule"
 function Test-SV-88179r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88179r1_rule")
@@ -658,6 +672,7 @@ function Test-SV-88179r1_rule {
 # sensitive information from being sent outside the enterprise and will prevent uncontrolled
 # updates to the system.This setting prevents the client computer from printing over HTTP,
 # which allows the computer to print to printers on the intranet as well as the Internet.
+$DisaTest += "Test-SV-88181r1_rule"
 function Test-SV-88181r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88181r1_rule")
@@ -680,6 +695,7 @@ function Test-SV-88181r1_rule {
 #
 # Enabling interaction with the network Select-Objection UI allows users to change connections to
 # available networks without signing in to Windows.
+$DisaTest += "Test-SV-88185r1_rule"
 function Test-SV-88185r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88185r1_rule")
@@ -702,6 +718,7 @@ function Test-SV-88185r1_rule {
 #
 # The username is one part of logon credentials that could be used to gain access to a system.
 # Preventing the enumeration of users limits this information to authorized personnel.
+$DisaTest += "Test-SV-88187r1_rule"
 function Test-SV-88187r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88187r1_rule")
@@ -725,6 +742,7 @@ function Test-SV-88187r1_rule {
 # Attackers may use fonts that include malicious code to compromise a system. This setting
 # will prevent untrusted fonts, processed by the Graphics Device Interface (GDI), from loading
 # if installed outside of the %windir%/Fonts directory.
+$DisaTest += "Test-SV-88189r1_rule"
 function Test-SV-88189r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88189r1_rule")
@@ -749,6 +767,7 @@ function Test-SV-88189r1_rule {
 # to unauthorized users. Authentication must always be required when accessing a system. This
 # setting ensures users are prompted for a password when the system wakes from sleep (on battery).
 #
+$DisaTest += "Test-SV-88197r1_rule"
 function Test-SV-88197r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88197r1_rule")
@@ -773,6 +792,7 @@ function Test-SV-88197r1_rule {
 # to unauthorized users. Authentication must always be required when accessing a system. This
 # setting ensures users are prompted for a password when the system wakes from sleep (plugged
 # in).
+$DisaTest += "Test-SV-88201r1_rule"
 function Test-SV-88201r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88201r1_rule")
@@ -797,6 +817,7 @@ function Test-SV-88201r1_rule {
 # Unauthenticated RPC clients may allow anonymous access to sensitive information. Configuring
 # RPC to restrict unauthenticated RPC clients from connecting to the RPC server will prevent
 # anonymous connections.
+$DisaTest += "Test-SV-88203r1_rule"
 function Test-SV-88203r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88203r1_rule")
@@ -823,6 +844,7 @@ function Test-SV-88203r1_rule {
 # sensitive information from being sent outside the enterprise and will prevent uncontrolled
 # updates to the system.This setting will prevent the Program Inventory from collecting data
 # about a system and sending the information to Microsoft.
+$DisaTest += "Test-SV-88207r1_rule"
 function Test-SV-88207r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88207r1_rule")
@@ -847,6 +869,7 @@ function Test-SV-88207r1_rule {
 # from a drive as soon as media is inserted into the drive. As a result, the setup file of
 # programs or music on audio media may start. This setting will disable AutoPlay for non-volume
 # devices, such as Media Transfer Protocol (MTP) devices.
+$DisaTest += "Test-SV-88209r1_rule"
 function Test-SV-88209r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88209r1_rule")
@@ -869,6 +892,7 @@ function Test-SV-88209r1_rule {
 #
 # Allowing AutoRun commands to execute may introduce malicious code to a system. Configuring
 # this setting prevents AutoRun commands from executing.
+$DisaTest += "Test-SV-88211r1_rule"
 function Test-SV-88211r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88211r1_rule")
@@ -894,6 +918,7 @@ function Test-SV-88211r1_rule {
 # or music on audio media may start. By default, AutoPlay is disabled on removable drives,
 # such as the floppy disk drive (but not the CD-ROM drive) and on network drives. Enabling
 # this policy disables AutoPlay on all drives.
+$DisaTest += "Test-SV-88213r1_rule"
 function Test-SV-88213r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88213r1_rule")
@@ -920,6 +945,7 @@ function Test-SV-88213r1_rule {
 # the lowest amount of data, effectively none outside of the Malicious Software Removal Tool
 # (MSRT), Defender, and telemetry client settings. Basic sends basic diagnostic and usage
 # data and may be required to support some Microsoft services.
+$DisaTest += "Test-SV-88215r1_rule"
 function Test-SV-88215r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88215r1_rule")
@@ -943,6 +969,7 @@ function Test-SV-88215r1_rule {
 # Inadequate log size will cause the log to fill up quickly. This may prevent audit events
 # from being recorded properly and require frequent attention by administrative personnel.
 #
+$DisaTest += "Test-SV-88217r1_rule"
 function Test-SV-88217r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88217r1_rule")
@@ -966,6 +993,7 @@ function Test-SV-88217r1_rule {
 # Inadequate log size will cause the log to fill up quickly. This may prevent audit events
 # from being recorded properly and require frequent attention by administrative personnel.
 #
+$DisaTest += "Test-SV-88219r1_rule"
 function Test-SV-88219r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88219r1_rule")
@@ -989,6 +1017,7 @@ function Test-SV-88219r1_rule {
 # Inadequate log size will cause the log to fill up quickly. This may prevent audit events
 # from being recorded properly and require frequent attention by administrative personnel.
 #
+$DisaTest += "Test-SV-88221r1_rule"
 function Test-SV-88221r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88221r1_rule")
@@ -1012,6 +1041,7 @@ function Test-SV-88221r1_rule {
 # Windows SmartScreen helps protect systems from programs downloaded from the internet that
 # may be malicious. Enabling SmartScreen will warn users of potentially malicious programs.
 #
+$DisaTest += "Test-SV-88223r1_rule"
 function Test-SV-88223r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88223r1_rule")
@@ -1035,6 +1065,7 @@ function Test-SV-88223r1_rule {
 # Data Execution Prevention provides additional protection by performing checks on memory to
 # help prevent malicious code from running. This setting will prevent Data Execution Prevention
 # from being turned off for File Explorer.
+$DisaTest += "Test-SV-88225r1_rule"
 function Test-SV-88225r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88225r1_rule")
@@ -1057,6 +1088,7 @@ function Test-SV-88225r1_rule {
 #
 # Legacy plug-in applications may continue to function when a File Explorer session has become
 # corrupt. Disabling this feature will prevent this.
+$DisaTest += "Test-SV-88227r1_rule"
 function Test-SV-88227r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88227r1_rule")
@@ -1080,6 +1112,7 @@ function Test-SV-88227r1_rule {
 # The shell protocol will limit the set of folders that applications can open when run in protected
 # mode. Restricting files an application can open to a limited set of folders increases the
 # security of Windows.
+$DisaTest += "Test-SV-88229r1_rule"
 function Test-SV-88229r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88229r1_rule")
@@ -1104,6 +1137,7 @@ function Test-SV-88229r1_rule {
 # a remote desktop session to another system. The system must be configured to prevent users
 # from saving passwords in the Remote Desktop Client.Satisfies: SRG-OS-000373-GPOS-00157,
 # SRG-OS-000373-GPOS-00156
+$DisaTest += "Test-SV-88231r1_rule"
 function Test-SV-88231r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88231r1_rule")
@@ -1126,6 +1160,7 @@ function Test-SV-88231r1_rule {
 #
 # Preventing users from sharing the local drives on their client computers with Remote Session
 # Hosts that they access helps reduce possible exposure of sensitive data.
+$DisaTest += "Test-SV-88233r1_rule"
 function Test-SV-88233r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88233r1_rule")
@@ -1150,6 +1185,7 @@ function Test-SV-88233r1_rule {
 # remote desktop connection. Disabling this setting would allow anyone to use the stored credentials
 # in a connection item to connect to the terminal server.Satisfies: SRG-OS-000373-GPOS-00157,
 # SRG-OS-000373-GPOS-00156
+$DisaTest += "Test-SV-88235r1_rule"
 function Test-SV-88235r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88235r1_rule")
@@ -1176,6 +1212,7 @@ function Test-SV-88235r1_rule {
 # between a client and server and modifies them before allowing the packets to be exchanged.
 # Usually the attacker will modify the information in the packets in an attempt to cause either
 # the client or server to reveal sensitive information.
+$DisaTest += "Test-SV-88237r1_rule"
 function Test-SV-88237r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88237r1_rule")
@@ -1200,6 +1237,7 @@ function Test-SV-88237r1_rule {
 # Remote connections must be encrypted to prevent interception of data or sensitive information.
 # Select-Objecting High Level will ensure encryption of Remote Desktop Services sessions in both
 # directions.
+$DisaTest += "Test-SV-88239r1_rule"
 function Test-SV-88239r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88239r1_rule")
@@ -1222,6 +1260,7 @@ function Test-SV-88239r1_rule {
 #
 # Attachments from RSS feeds may not be secure. This setting will prevent attachments from
 # being downloaded from RSS feeds.
+$DisaTest += "Test-SV-88241r1_rule"
 function Test-SV-88241r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88241r1_rule")
@@ -1244,6 +1283,7 @@ function Test-SV-88241r1_rule {
 #
 # Basic authentication uses plain-text passwords that could be used to compromise a system.
 # Disabling Basic authentication will reduce this potential.
+$DisaTest += "Test-SV-88243r1_rule"
 function Test-SV-88243r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88243r1_rule")
@@ -1266,6 +1306,7 @@ function Test-SV-88243r1_rule {
 #
 # Indexing of encrypted files may expose sensitive data. This setting prevents encrypted files
 # from being indexed.
+$DisaTest += "Test-SV-88245r1_rule"
 function Test-SV-88245r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88245r1_rule")
@@ -1288,6 +1329,7 @@ function Test-SV-88245r1_rule {
 #
 # Installation options for applications are typically controlled by administrators. This setting
 # prevents users from changing installation options that may bypass security features.
+$DisaTest += "Test-SV-88247r1_rule"
 function Test-SV-88247r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88247r1_rule")
@@ -1311,6 +1353,7 @@ function Test-SV-88247r1_rule {
 # Standard user accounts must not be granted elevated privileges. Enabling Windows Installer
 # to elevate privileges when installing applications can allow malicious persons and applications
 # to gain full control of a system.
+$DisaTest += "Test-SV-88249r1_rule"
 function Test-SV-88249r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88249r1_rule")
@@ -1334,6 +1377,7 @@ function Test-SV-88249r1_rule {
 # Web-based programs may attempt to install malicious software on a system. Ensuring users
 # are notified if a web-based program attempts to install software allows them to refuse the
 # installation.
+$DisaTest += "Test-SV-88251r1_rule"
 function Test-SV-88251r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88251r1_rule")
@@ -1359,6 +1403,7 @@ function Test-SV-88251r1_rule {
 # Some protections are in place to help ensure this is done in a secure fashion; however,
 # disabling this will prevent the caching of credentials for this purpose and also ensure
 # the user is aware of the restart.
+$DisaTest += "Test-SV-88253r1_rule"
 function Test-SV-88253r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88253r1_rule")
@@ -1387,6 +1432,7 @@ function Test-SV-88253r1_rule {
 # PowerShell script block logging will record detailed information from the processing of
 # PowerShell commands and scripts. This can provide additional detail when malware has run
 # on a system.
+$DisaTest += "Test-SV-88255r1_rule"
 function Test-SV-88255r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88255r1_rule")
@@ -1409,6 +1455,7 @@ function Test-SV-88255r1_rule {
 #
 # Basic authentication uses plain-text passwords that could be used to compromise a system.
 # Disabling Basic authentication will reduce this potential.
+$DisaTest += "Test-SV-88257r1_rule"
 function Test-SV-88257r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88257r1_rule")
@@ -1432,6 +1479,7 @@ function Test-SV-88257r1_rule {
 # Unencrypted remote access to a system can allow sensitive information to be compromised.
 # Windows remote management connections must be encrypted to prevent this.Satisfies: SRG-OS-000393-GPOS-00173,
 # SRG-OS-000394-GPOS-00174
+$DisaTest += "Test-SV-88259r1_rule"
 function Test-SV-88259r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88259r1_rule")
@@ -1454,6 +1502,7 @@ function Test-SV-88259r1_rule {
 #
 # Digest authentication is not as strong as other options and may be subject to man-in-the-middle
 # attacks. Disallowing Digest authentication will reduce this potential.
+$DisaTest += "Test-SV-88261r1_rule"
 function Test-SV-88261r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88261r1_rule")
@@ -1476,6 +1525,7 @@ function Test-SV-88261r1_rule {
 #
 # Basic authentication uses plain-text passwords that could be used to compromise a system.
 # Disabling Basic authentication will reduce this potential.
+$DisaTest += "Test-SV-88263r1_rule"
 function Test-SV-88263r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88263r1_rule")
@@ -1499,6 +1549,7 @@ function Test-SV-88263r1_rule {
 # Unencrypted remote access to a system can allow sensitive information to be compromised.
 # Windows remote management connections must be encrypted to prevent this.Satisfies: SRG-OS-000393-GPOS-00173,
 # SRG-OS-000394-GPOS-00174
+$DisaTest += "Test-SV-88265r1_rule"
 function Test-SV-88265r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88265r1_rule")
@@ -1522,6 +1573,7 @@ function Test-SV-88265r1_rule {
 # Storage of administrative credentials could allow unauthorized access. Disallowing the storage
 # of RunAs credentials for Windows Remote Management will prevent them from being used with
 # plug-ins.Satisfies: SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00156
+$DisaTest += "Test-SV-88267r1_rule"
 function Test-SV-88267r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88267r1_rule")
@@ -1547,6 +1599,7 @@ function Test-SV-88267r1_rule {
 # would be required. Password policies should prevent accounts with blank passwords from existing
 # on a system. However, if a local account with a blank password does exist, enabling this
 # setting will prevent network access, limiting the account to local console logon only.
+$DisaTest += "Test-SV-88285r1_rule"
 function Test-SV-88285r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88285r1_rule")
@@ -1573,6 +1626,7 @@ function Test-SV-88285r1_rule {
 # or network is compromised. Collecting this data is essential for analyzing the security
 # of information assets and detecting signs of suspicious and unexpected behavior. This setting
 # allows administrators to enable more precise auditing capabilities.
+$DisaTest += "Test-SV-88291r1_rule"
 function Test-SV-88291r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88291r1_rule")
@@ -1602,6 +1656,7 @@ function Test-SV-88291r1_rule {
 # authentication header mode (AH), which performs mutual authentication and packet integrity
 # for Internet Protocol (IP) traffic, can make all types of man-in-the-middle attacks extremely
 # difficult.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
+$DisaTest += "Test-SV-88293r1_rule"
 function Test-SV-88293r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88293r1_rule")
@@ -1634,6 +1689,7 @@ function Test-SV-88293r1_rule {
 # Enabling this setting on all domain controllers in a domain prevents domain members from
 # changing their computer account passwords. If these passwords are weak or compromised, the
 # inability to change them may leave these computers vulnerable.
+$DisaTest += "Test-SV-88295r1_rule"
 function Test-SV-88295r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88295r1_rule")
@@ -1666,6 +1722,7 @@ function Test-SV-88295r1_rule {
 # passwords) is encrypted, but not all information is encrypted. If this policy is enabled,
 # outgoing secure channel traffic will be encrypted and signed.Satisfies: SRG-OS-000423-GPOS-00187,
 # SRG-OS-000424-GPOS-00188
+$DisaTest += "Test-SV-88297r1_rule"
 function Test-SV-88297r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88297r1_rule")
@@ -1698,6 +1755,7 @@ function Test-SV-88297r1_rule {
 # passwords) is encrypted, but not all information is encrypted. If this policy is enabled,
 # outgoing secure channel traffic will be encrypted.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
 #
+$DisaTest += "Test-SV-88299r1_rule"
 function Test-SV-88299r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88299r1_rule")
@@ -1730,6 +1788,7 @@ function Test-SV-88299r1_rule {
 # passwords) is encrypted, but the channel is not integrity checked. If this policy is enabled,
 # outgoing secure channel traffic will be signed.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
 #
+$DisaTest += "Test-SV-88301r1_rule"
 function Test-SV-88301r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88301r1_rule")
@@ -1762,6 +1821,7 @@ function Test-SV-88301r1_rule {
 # password changes can make the system more vulnerable to malicious access. Frequent password
 # changes can be a significant safeguard for the system. A new password for the computer account
 # will be generated every 30 days.
+$DisaTest += "Test-SV-88303r1_rule"
 function Test-SV-88303r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88303r1_rule")
@@ -1785,6 +1845,7 @@ function Test-SV-88303r1_rule {
 # Computer account passwords are changed automatically on a regular basis. This setting controls
 # the maximum password age that a machine account may have. This must be set to no more than
 # 30 days, ensuring the machine changes its password monthly.
+$DisaTest += "Test-SV-88305r1_rule"
 function Test-SV-88305r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88305r1_rule")
@@ -1813,6 +1874,7 @@ function Test-SV-88305r1_rule {
 # strong session keys are not used to establish the connection. Requiring strong session keys
 # enforces 128-bit encryption between systems.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
 #
+$DisaTest += "Test-SV-88307r1_rule"
 function Test-SV-88307r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88307r1_rule")
@@ -1838,6 +1900,7 @@ function Test-SV-88307r1_rule {
 # The screen saver should be set at a maximum of 15 minutes and be password protected. This
 # protects critical and sensitive data from exposure to unauthorized personnel with physical
 # access to the computer.
+$DisaTest += "Test-SV-88309r1_rule"
 function Test-SV-88309r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88309r1_rule")
@@ -1864,6 +1927,7 @@ function Test-SV-88309r1_rule {
 # Failure to display the logon banner prior to a logon attempt will negate legal proceedings
 # resulting from unauthorized access to system resources.Satisfies: SRG-OS-000023-GPOS-00006,
 # SRG-OS-000024-GPOS-00007, SRG-OS-000228-GPOS-00088
+$DisaTest += "Test-SV-88311r1_rule"
 function Test-SV-88311r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -1906,6 +1970,7 @@ function Test-SV-88311r1_rule {
 # Failure to display the logon banner prior to a logon attempt will negate legal proceedings
 # resulting from unauthorized access to system resources.Satisfies: SRG-OS-000023-GPOS-00006,
 # SRG-OS-000228-GPOS-00088
+$DisaTest += "Test-SV-88313r1_rule"
 function Test-SV-88313r1_rule {
 	Param(
 		[string] $msg
@@ -1946,6 +2011,7 @@ function Test-SV-88313r1_rule {
 # Even though the credential cache is well protected, if a system is attacked, an unauthorized
 # individual may isolate the password to a domain user account using a password-cracking program
 # and gain access to the domain.
+$DisaTest += "Test-SV-88315r1_rule"
 function Test-SV-88315r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88315r1_rule")
@@ -1972,6 +2038,7 @@ function Test-SV-88315r1_rule {
 # signed SMB packets aid in preventing man-in-the-middle attacks. If this policy is enabled,
 # the SMB client will only communicate with an SMB server that performs SMB packet signing.Satisfies:
 # SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
+$DisaTest += "Test-SV-88317r1_rule"
 function Test-SV-88317r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88317r1_rule")
@@ -1997,6 +2064,7 @@ function Test-SV-88317r1_rule {
 # this policy is enabled, the SMB client will request packet signing when communicating with
 # an SMB server that is enabled or required to perform SMB packet signing.Satisfies: SRG-OS-000423-GPOS-00187,
 # SRG-OS-000424-GPOS-00188
+$DisaTest += "Test-SV-88319r1_rule"
 function Test-SV-88319r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88319r1_rule")
@@ -2022,6 +2090,7 @@ function Test-SV-88319r1_rule {
 # Sending plain-text passwords across the network when authenticating to an SMB server reduces
 # the overall security of the environment. Check with the vendor of the SMB server to determine
 # if there is a way to support encrypted password authentication.
+$DisaTest += "Test-SV-88321r1_rule"
 function Test-SV-88321r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88321r1_rule")
@@ -2048,6 +2117,7 @@ function Test-SV-88321r1_rule {
 # is automatically reestablished. This protects critical and sensitive network data from exposure
 # to unauthorized personnel with physical access to the computer.Satisfies: SRG-OS-000163-GPOS-00072,
 # SRG-OS-000279-GPOS-00109
+$DisaTest += "Test-SV-88323r1_rule"
 function Test-SV-88323r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88323r1_rule")
@@ -2076,6 +2146,7 @@ function Test-SV-88323r1_rule {
 # signed SMB packets aid in preventing man-in-the-middle attacks. If this policy is enabled,
 # the SMB server will only communicate with an SMB client that performs SMB packet signing.Satisfies:
 # SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
+$DisaTest += "Test-SV-88325r1_rule"
 function Test-SV-88325r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88325r1_rule")
@@ -2101,6 +2172,7 @@ function Test-SV-88325r1_rule {
 # signed SMB packets aid in preventing man-in-the-middle attacks. If this policy is enabled,
 # the SMB server will negotiate SMB packet signing as requested by the client.Satisfies: SRG-OS-000423-GPOS-00187,
 # SRG-OS-000424-GPOS-00188
+$DisaTest += "Test-SV-88327r1_rule"
 function Test-SV-88327r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88327r1_rule")
@@ -2124,6 +2196,7 @@ function Test-SV-88327r1_rule {
 # Anonymous enumeration of SAM accounts allows anonymous logon users (null session connections)
 # to list all accounts names, thus providing a list of potential points to attack the system.
 #
+$DisaTest += "Test-SV-88331r1_rule"
 function Test-SV-88331r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88331r1_rule")
@@ -2146,6 +2219,7 @@ function Test-SV-88331r1_rule {
 #
 # Allowing anonymous logon users (null session connections) to list all account names and enumerate
 # all shared resources can provide a map of potential points to attack the system.
+$DisaTest += "Test-SV-88333r1_rule"
 function Test-SV-88333r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88333r1_rule")
@@ -2171,6 +2245,7 @@ function Test-SV-88333r1_rule {
 # on the local system. Such credentials must not be stored on the local machine, as that may
 # lead to account compromise.Satisfies: SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00156
 #
+$DisaTest += "Test-SV-88335r1_rule"
 function Test-SV-88335r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88335r1_rule")
@@ -2195,6 +2270,7 @@ function Test-SV-88335r1_rule {
 # Access by anonymous users must be restricted. If this setting is enabled, anonymous users
 # have the same rights and permissions as the built-in Everyone group. Anonymous users must
 # not have these permissions or rights.
+$DisaTest += "Test-SV-88337r1_rule"
 function Test-SV-88337r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88337r1_rule")
@@ -2219,6 +2295,7 @@ function Test-SV-88337r1_rule {
 # system access. This setting restricts access to those defined in Network access: Named Pipes
 # that can be accessed anonymously and Network access: Shares that can be accessed anonymously,
 # both of which must be blank under other requirements.
+$DisaTest += "Test-SV-88339r1_rule"
 function Test-SV-88339r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88339r1_rule")
@@ -2241,6 +2318,7 @@ function Test-SV-88339r1_rule {
 #
 # The Windows Security Account Manager (SAM) stores users passwords. Restricting Remote Procedure
 # Call (RPC) connections to the SAM to Administrators helps protect those credentials.
+$DisaTest += "Test-SV-88341r1_rule"
 function Test-SV-88341r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88341r1_rule")
@@ -2265,6 +2343,7 @@ function Test-SV-88341r1_rule {
 # Services using Local System that use Negotiate when reverting to NTLM authentication may
 # gain unauthorized access if allowed to authenticate anonymously versus using the computer
 # identity.
+$DisaTest += "Test-SV-88343r1_rule"
 function Test-SV-88343r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88343r1_rule")
@@ -2287,6 +2366,7 @@ function Test-SV-88343r1_rule {
 #
 # NTLM sessions that are allowed to fall back to Null (unauthenticated) sessions may gain unauthorized
 # access.
+$DisaTest += "Test-SV-88345r1_rule"
 function Test-SV-88345r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88345r1_rule")
@@ -2310,6 +2390,7 @@ function Test-SV-88345r1_rule {
 # PKU2U is a peer-to-peer authentication protocol. This setting prevents online identities
 # from authenticating to domain-joined systems. Authentication will be centrally managed with
 # Windows user accounts.
+$DisaTest += "Test-SV-88347r1_rule"
 function Test-SV-88347r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88347r1_rule")
@@ -2333,6 +2414,7 @@ function Test-SV-88347r1_rule {
 #
 # Certain encryption types are no longer considered secure. The DES and RC4 encryption suites
 # must not be used for Kerberos encryption.
+$DisaTest += "Test-SV-88349r1_rule"
 function Test-SV-88349r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88349r1_rule")
@@ -2357,6 +2439,7 @@ function Test-SV-88349r1_rule {
 # The LAN Manager hash uses a weak encryption algorithm and there are several tools available
 # that use this hash to retrieve account passwords. This setting controls whether a LAN Manager
 # hash of the password is stored in the SAM the next time the password is changed.
+$DisaTest += "Test-SV-88351r1_rule"
 function Test-SV-88351r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88351r1_rule")
@@ -2383,6 +2466,7 @@ function Test-SV-88351r1_rule {
 # versions for compatibility with clients and servers that are running earlier versions of
 # Windows or applications that still use it. It is also used to authenticate logons to standalone
 # computers that are running later versions.
+$DisaTest += "Test-SV-88355r1_rule"
 function Test-SV-88355r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88355r1_rule")
@@ -2407,6 +2491,7 @@ function Test-SV-88355r1_rule {
 # This setting controls the signing requirements for LDAP clients. This must be set to Negotiate
 # signing or Require signing, depending on the environment and type of LDAP server in use.
 #
+$DisaTest += "Test-SV-88357r1_rule"
 function Test-SV-88357r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88357r1_rule")
@@ -2431,6 +2516,7 @@ function Test-SV-88357r1_rule {
 # Microsoft has implemented a variety of security support providers for use with Remote Procedure
 # Call (RPC) sessions. All of the options must be enabled to ensure the maximum security level.
 #
+$DisaTest += "Test-SV-88359r1_rule"
 function Test-SV-88359r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88359r1_rule")
@@ -2455,6 +2541,7 @@ function Test-SV-88359r1_rule {
 # Microsoft has implemented a variety of security support providers for use with Remote Procedure
 # Call (RPC) sessions. All of the options must be enabled to ensure the maximum security level.
 #
+$DisaTest += "Test-SV-88361r1_rule"
 function Test-SV-88361r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88361r1_rule")
@@ -2483,6 +2570,7 @@ function Test-SV-88361r1_rule {
 # the attacker can use the private key to digitally sign documents and pretend to be the authorized
 # user.Both the holders of a digital certificate and the issuing authority must protect the
 # computers, storage devices, or whatever they use to keep the private keys.
+$DisaTest += "Test-SV-88363r1_rule"
 function Test-SV-88363r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88363r1_rule")
@@ -2508,6 +2596,7 @@ function Test-SV-88363r1_rule {
 # and signing. FIPS-compliant algorithms meet specific standards established by the U.S. Government
 # and must be the algorithms used for all OS encryption functions.Satisfies: SRG-OS-000033-GPOS-00014,
 # SRG-OS-000478-GPOS-00223
+$DisaTest += "Test-SV-88365r1_rule"
 function Test-SV-88365r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88365r1_rule")
@@ -2533,6 +2622,7 @@ function Test-SV-88365r1_rule {
 # arguments or commands. Case sensitivity could lead to the access of files or commands that
 # must be restricted. To prevent this from happening, case insensitivity restrictions must
 # be required.
+$DisaTest += "Test-SV-88367r1_rule"
 function Test-SV-88367r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88367r1_rule")
@@ -2558,6 +2648,7 @@ function Test-SV-88367r1_rule {
 # Control List (DACL) that specifies who can access the objects with what permissions. When
 # this policy is enabled, the default DACL is stronger, allowing non-administrative users
 # to read shared objects but not to modify shared objects they did not create.
+$DisaTest += "Test-SV-88369r1_rule"
 function Test-SV-88369r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88369r1_rule")
@@ -2582,6 +2673,7 @@ function Test-SV-88369r1_rule {
 # including administrative accounts, unless authorized. This setting configures the built-in
 # Administrator account so that it runs in Admin Approval Mode.Satisfies: SRG-OS-000373-GPOS-00157,
 # SRG-OS-000373-GPOS-00156
+$DisaTest += "Test-SV-88371r1_rule"
 function Test-SV-88371r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88371r1_rule")
@@ -2606,6 +2698,7 @@ function Test-SV-88371r1_rule {
 # User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
 # including administrative accounts, unless authorized. This setting prevents User Interface
 # Accessibility programs from disabling the secure desktop for elevation prompts.
+$DisaTest += "Test-SV-88373r1_rule"
 function Test-SV-88373r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88373r1_rule")
@@ -2631,6 +2724,7 @@ function Test-SV-88373r1_rule {
 # including administrative accounts, unless authorized. This setting configures the elevation
 # requirements for logged-on administrators to complete a task that requires raised privileges.
 #
+$DisaTest += "Test-SV-88375r1_rule"
 function Test-SV-88375r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88375r1_rule")
@@ -2655,6 +2749,7 @@ function Test-SV-88375r1_rule {
 # including administrative accounts, unless authorized. This setting controls the behavior
 # of elevation when requested by a standard user account.Satisfies: SRG-OS-000373-GPOS-00157,
 # SRG-OS-000373-GPOS-00156
+$DisaTest += "Test-SV-88377r1_rule"
 function Test-SV-88377r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88377r1_rule")
@@ -2679,6 +2774,7 @@ function Test-SV-88377r1_rule {
 # User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
 # including administrative accounts, unless authorized. This setting requires Windows to respond
 # to application installation requests by prompting for credentials.
+$DisaTest += "Test-SV-88379r1_rule"
 function Test-SV-88379r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88379r1_rule")
@@ -2704,6 +2800,7 @@ function Test-SV-88379r1_rule {
 # including administrative accounts, unless authorized. This setting configures Windows to
 # only allow applications installed in a secure location on the file system, such as the Program
 # Files or the Windows\System32 folders, to run with elevated privileges.
+$DisaTest += "Test-SV-88381r1_rule"
 function Test-SV-88381r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88381r1_rule")
@@ -2727,6 +2824,7 @@ function Test-SV-88381r1_rule {
 # User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
 # including administrative accounts, unless authorized. This setting enables UAC.Satisfies:
 # SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00156
+$DisaTest += "Test-SV-88383r1_rule"
 function Test-SV-88383r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88383r1_rule")
@@ -2752,6 +2850,7 @@ function Test-SV-88383r1_rule {
 # including administrative accounts, unless authorized. This setting configures non-UAC-compliant
 # applications to run in virtualized file and registry entries in per-user locations, allowing
 # them to run.
+$DisaTest += "Test-SV-88385r1_rule"
 function Test-SV-88385r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88385r1_rule")
@@ -2776,6 +2875,7 @@ function Test-SV-88385r1_rule {
 # Enabling a password-protected screen saver to engage after a specified period of time helps
 # protects critical and sensitive data from exposure to unauthorized personnel with physical
 # access to the computer.
+$DisaTest += "Test-SV-88387r1_rule"
 function Test-SV-88387r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88387r1_rule")
@@ -2800,6 +2900,7 @@ function Test-SV-88387r1_rule {
 # Enabling a password-protected screen saver to engage after a specified period of time helps
 # protects critical and sensitive data from exposure to unauthorized personnel with physical
 # access to the computer.
+$DisaTest += "Test-SV-88389r1_rule"
 function Test-SV-88389r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88389r1_rule")
@@ -2823,6 +2924,7 @@ function Test-SV-88389r1_rule {
 # Attachments from outside sources may contain malicious code. Preserving zone of origin (Internet,
 # intranet, local, restricted) information on file attachments allows Windows to determine
 # risk.
+$DisaTest += "Test-SV-88391r1_rule"
 function Test-SV-88391r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88391r1_rule")
@@ -2846,6 +2948,7 @@ function Test-SV-88391r1_rule {
 # Unattended systems are susceptible to unauthorized use and must be locked. Configuring a
 # system to lock when a smart card is removed will ensure the system is inaccessible when
 # unattended.
+$DisaTest += "Test-SV-88473r1_rule"
 function Test-SV-88473r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88473r1_rule")
@@ -2876,6 +2979,7 @@ function Test-SV-88473r1_rule {
 # that use an automated tool, such Microsofts Local Administrator Password Solution (LAPS),
 # on domain-joined systems can configure this to occur more frequently. LAPS will change the
 # password every 30 days by default.
+$DisaTest += "Test-SV-87875r2_rule"
 function Test-SV-87875r2_rule {
 	Param(
 		[System.Int32] $days = 60
@@ -2912,6 +3016,7 @@ function Test-SV-87875r2_rule {
 # order for Credential Guard to be configured and enabled properly. Without a TPM enabled
 # and ready for use, Credential Guard keys are stored in a less secure method using software.
 #
+$DisaTest += "Test-SV-87889r1_rule"
 function Test-SV-87889r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87889r1_rule")
@@ -2956,6 +3061,7 @@ function Test-SV-87889r1_rule {
 # Systems at unsupported servicing levels will not receive security updates for new vulnerabilities,
 # which leave them subject to exploitation. Systems must be maintained at a servicing level
 # supported by the vendor with new security updates.
+$DisaTest += "Test-SV-87891r1_rule"
 function Test-SV-87891r1_rule {
 	Param(
 		[System.Int32]$version = 14393
@@ -2989,6 +3095,7 @@ function Test-SV-87891r1_rule {
 # The ability to set access permissions and auditing is critical to maintaining the security
 # and proper access controls of a system. To support this, volumes must be formatted using
 # a file system that supports NTFS attributes.
+$DisaTest += "Test-SV-87899r1_rule"
 function Test-SV-87899r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87899r1_rule")
@@ -3022,6 +3129,7 @@ function Test-SV-87899r1_rule {
 # permissions are adequate when the Security Option Network access: Let everyone permissions
 # apply to anonymous users is set to Disabled (WN16-SO-000290).Satisfies: SRG-OS-000312-GPOS-00122,
 # SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124
+$DisaTest += "Test-SV-87901r1_rule"
 function Test-SV-87901r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87901r1_rule")
@@ -3092,6 +3200,7 @@ function Test-SV-87901r1_rule {
 # SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124
 
 # Test for folder C:\Program Files
+$DisaTest += "Test-SV-87903r1_rule"
 function Test-SV-87903r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87903r1_rule")
@@ -3171,6 +3280,7 @@ function Test-SV-87903r1_rule {
 }
 
 # Test for folder C:\Program Files(x86)
+$DisaTest += "Test-SV-87903r1_rule_2"
 function Test-SV-87903r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87903r1_rule")
@@ -3260,6 +3370,7 @@ function Test-SV-87903r1_rule_2 {
 # permissions are adequate when the Security Option Network access: Let everyone permissions
 # apply to anonymous users is set to Disabled (WN16-SO-000290).Satisfies: SRG-OS-000312-GPOS-00122,
 # SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124
+$DisaTest += "Test-SV-87905r1_rule"
 function Test-SV-87905r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87905r1_rule")
@@ -3347,6 +3458,7 @@ function Test-SV-87905r1_rule {
 # The registry is integral to the function, security, and stability of the Windows system.
 # Changing the systems registry permissions allows the possibility of unauthorized and anonymous
 # modification to the operating system.
+$DisaTest += "Test-SV-87907r1_rule"
 function Test-SV-87907r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87907r1_rule")
@@ -3392,6 +3504,7 @@ function Test-SV-87907r1_rule {
 	Write-Output $obj
 }
 
+$DisaTest += "Test-SV-87907r1_rule_2"
 function Test-SV-87907r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87907r1_rule_2")
@@ -3463,6 +3576,7 @@ function Test-SV-87907r1_rule_2 {
 	Write-Output $obj
 }
 
+$DisaTest += "Test-SV-87907r1_rule_3"
 function Test-SV-87907r1_rule_3 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87907r1_rule_3")
@@ -3544,6 +3658,7 @@ function Test-SV-87907r1_rule_3 {
 # Windows shares are a means by which files, folders, printers, and other resources can be
 # published for network users to access. Improper configuration can permit access to devices
 # and data beyond a users need.
+$DisaTest += "Test-SV-87909r1_rule"
 function Test-SV-87909r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87909r1_rule")
@@ -3580,6 +3695,7 @@ function Test-SV-87909r1_rule {
 # Outdated or unused accounts provide penetration points that may go undetected. Inactive accounts
 # must be deleted if no longer necessary or, if still required, disabled until needed.Satisfies:
 # SRG-OS-000104-GPOS-00051, SRG-OS-000118-GPOS-00060
+$DisaTest += "Test-SV-87911r1_rule"
 function Test-SV-87911r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -3625,6 +3741,7 @@ function Test-SV-87911r1_rule {
 # The lack of password protection enables anyone to gain access to the information system,
 # which opens a backdoor opportunity for intruders to compromise the system as well as other
 # resources. Accounts on a system must require passwords.
+$DisaTest += "Test-SV-87913r2_rule"
 function Test-SV-87913r2_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87913r2_rule")
@@ -3664,6 +3781,7 @@ function Test-SV-87913r2_rule {
 #
 # Passwords that do not expire or are reused increase the exposure of a password with greater
 # probability of being discovered or cracked.
+$DisaTest += "Test-SV-87915r2_rule"
 function Test-SV-87915r2_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87915r2_rule")
@@ -3705,6 +3823,7 @@ function Test-SV-87915r2_rule {
 # Shares on a system provide network access. To prevent exposing sensitive information, where
 # shares are necessary, permissions must be reconfigured to give the minimum access to accounts
 # that require it.
+$DisaTest += "Test-SV-87919r1_rule"
 function Test-SV-87919r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -3746,6 +3865,7 @@ function Test-SV-87919r1_rule {
 #
 # Use of software certificates and their accompanying installation files for end users to access
 # resources is less secure than the use of hardware-based certificates.
+$DisaTest += "Test-SV-87923r1_rule"
 function Test-SV-87923r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87923r1_rule")
@@ -3782,6 +3902,7 @@ function Test-SV-87923r1_rule {
 # have the flexibility to either encrypt all information on storage devices (i.e., full disk
 # encryption) or encrypt specific data structures (e.g., files, records, or fields).Satisfies:
 # SRG-OS-000185-GPOS-00079, SRG-OS-000404-GPOS-00183, SRG-OS-000405-GPOS-00184
+$DisaTest += "Test-SV-87925r1_rule"
 function Test-SV-87925r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87925r1_rule")
@@ -3824,6 +3945,7 @@ function Test-SV-87925r1_rule {
 #
 # A firewall provides a line of defense against attack, allowing or blocking inbound and outbound
 # connections based on a set of rules.
+$DisaTest += "Test-SV-87931r1_rule"
 function Test-SV-87931r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87931r1_rule")
@@ -3860,6 +3982,7 @@ function Test-SV-87931r1_rule {
 # Unnecessary services increase the attack surface of a system. Some of these services may
 # not support required levels of authentication or encryption or may provide unauthorized
 # access to the system.
+$DisaTest += "Test-SV-87939r1_rule"
 function Test-SV-87939r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87939r1_rule")
@@ -3885,6 +4008,7 @@ function Test-SV-87939r1_rule {
 #
 # Unnecessary services increase the attack surface of a system. Some of these services may
 # not support required levels of authentication or encryption.
+$DisaTest += "Test-SV-87941r1_rule"
 function Test-SV-87941r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87941r1_rule")
@@ -3911,6 +4035,7 @@ function Test-SV-87941r1_rule {
 # Unnecessary services increase the attack surface of a system. Some of these services may
 # not support required levels of authentication or encryption or may provide unauthorized
 # access to the system.
+$DisaTest += "Test-SV-87943r1_rule"
 function Test-SV-87943r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87943r1_rule")
@@ -3937,6 +4062,7 @@ function Test-SV-87943r1_rule {
 # Unnecessary services increase the attack surface of a system. Some of these services may
 # not support required levels of authentication or encryption or may provide unauthorized
 # access to the system.
+$DisaTest += "Test-SV-87945r1_rule"
 function Test-SV-87945r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87945r1_rule")
@@ -3963,6 +4089,7 @@ function Test-SV-87945r1_rule {
 # Unnecessary services increase the attack surface of a system. Some of these services may
 # not support required levels of authentication or encryption or may provide unauthorized
 # access to the system.
+$DisaTest += "Test-SV-87947r1_rule"
 function Test-SV-87947r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87947r1_rule")
@@ -3989,6 +4116,7 @@ function Test-SV-87947r1_rule {
 # Unnecessary services increase the attack surface of a system. Some of these services may
 # not support required levels of authentication or encryption or may provide unauthorized
 # access to the system.
+$DisaTest += "Test-SV-87949r1_rule"
 function Test-SV-87949r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87949r1_rule")
@@ -4015,6 +4143,7 @@ function Test-SV-87949r1_rule {
 # SMBv1 is a legacy protocol that uses the MD5 algorithm as part of SMB. MD5 is known to be
 # vulnerable to a number of attacks such as collision and preimage attacks and is not FIPS
 # compliant.
+$DisaTest += "Test-SV-87951r1_rule"
 function Test-SV-87951r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87951r1_rule")
@@ -4041,6 +4170,7 @@ function Test-SV-87951r1_rule {
 # Windows PowerShell 5.0 added advanced logging features that can provide additional detail
 # when malware has been run on a system. Disabling the Windows PowerShell 2.0 mitigates against
 # a downgrade attack that evades the Windows PowerShell 5.0 script block logging feature.
+$DisaTest += "Test-SV-87953r1_rule"
 function Test-SV-87953r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87953r1_rule")
@@ -4068,6 +4198,7 @@ function Test-SV-87953r1_rule {
 # The account lockout feature, when enabled, prevents brute-force password attacks on the system.
 # This parameter specifies the period of time that an account will remain locked after the
 # specified number of failed logon attempts.
+$DisaTest += "Test-SV-87961r2_rule"
 function Test-SV-87961r2_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87961r2_rule")
@@ -4099,6 +4230,7 @@ function Test-SV-87961r2_rule {
 # the local system. The number of bad logon attempts must be reasonably small to minimize
 # the possibility of a successful password attack while allowing for honest errors made during
 # normal user logon.
+$DisaTest += "Test-SV-87963r1_rule"
 function Test-SV-87963r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87963r1_rule")
@@ -4131,6 +4263,7 @@ function Test-SV-87963r1_rule {
 # the counter is reset to 0. The smaller this value is, the less effective the account lockout
 # feature will be in protecting the local system.Satisfies: SRG-OS-000021-GPOS-00005, SRG-OS-000329-GPOS-00128
 #
+$DisaTest += "Test-SV-87965r1_rule"
 function Test-SV-87965r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87965r1_rule")
@@ -4162,6 +4295,7 @@ function Test-SV-87965r1_rule {
 # basis. This enables users to effectively negate the purpose of mandating periodic password
 # changes. The default value is 24 for Windows domain systems. DoD has decided this is the
 # appropriate value for all Windows systems.
+$DisaTest += "Test-SV-87967r1_rule"
 function Test-SV-87967r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87967r1_rule")
@@ -4191,6 +4325,7 @@ function Test-SV-87967r1_rule {
 # The longer a password is in use, the greater the opportunity for someone to gain unauthorized
 # knowledge of the passwords. Scheduled changing of passwords hinders the ability of unauthorized
 # system users to crack passwords and gain access to a system.
+$DisaTest += "Test-SV-87969r1_rule"
 function Test-SV-87969r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87969r1_rule")
@@ -4220,6 +4355,7 @@ function Test-SV-87969r1_rule {
 # Permitting passwords to be changed in immediate succession within the same day allows users
 # to cycle passwords through their history database. This enables users to effectively negate
 # the purpose of mandating periodic password changes.
+$DisaTest += "Test-SV-87971r1_rule"
 function Test-SV-87971r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87971r1_rule")
@@ -4249,6 +4385,7 @@ function Test-SV-87971r1_rule {
 # Information systems not protected with strong password schemes (including passwords of minimum
 # length) provide the opportunity for anyone to crack the password, thus gaining access to
 # the system and compromising the device, information, or the local network.
+$DisaTest += "Test-SV-87973r1_rule"
 function Test-SV-87973r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87973r1_rule")
@@ -4280,6 +4417,7 @@ function Test-SV-87973r1_rule {
 # of characters (numbers, upper- and lower-case letters, and special characters) and prevents
 # the inclusion of user names or parts of user names.Satisfies: SRG-OS-000069-GPOS-00037,
 # SRG-OS-000070-GPOS-00038, SRG-OS-000071-GPOS-00039, SRG-OS-000266-GPOS-00101
+$DisaTest += "Test-SV-87975r1_rule"
 function Test-SV-87975r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87975r1_rule")
@@ -4309,6 +4447,7 @@ function Test-SV-87975r1_rule {
 # Storing passwords using reversible encryption is essentially the same as storing clear-text
 # versions of the passwords, which are easily compromised. For this reason, this policy must
 # never be enabled.
+$DisaTest += "Test-SV-87977r1_rule"
 function Test-SV-87977r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87977r1_rule")
@@ -4342,6 +4481,7 @@ function Test-SV-87977r1_rule {
 # or network is compromised. The Application event log may be susceptible to tampering if
 # proper permissions are not applied.Satisfies: SRG-OS-000057-GPOS-00027, SRG-OS-000058-GPOS-00028,
 # SRG-OS-000059-GPOS-00029
+$DisaTest += "Test-SV-88057r1_rule"
 function Test-SV-88057r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88057r1_rule")
@@ -4404,6 +4544,7 @@ function Test-SV-88057r1_rule {
 # or network is compromised. The Security event log may disclose sensitive information or
 # be susceptible to tampering if proper permissions are not applied.Satisfies: SRG-OS-000057-GPOS-00027,
 # SRG-OS-000058-GPOS-00028, SRG-OS-000059-GPOS-00029
+$DisaTest += "Test-SV-88059r1_rule"
 function Test-SV-88059r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88059r1_rule")
@@ -4466,6 +4607,7 @@ function Test-SV-88059r1_rule {
 # or network is compromised. The System event log may be susceptible to tampering if proper
 # permissions are not applied.Satisfies: SRG-OS-000057-GPOS-00027, SRG-OS-000058-GPOS-00028,
 # SRG-OS-000059-GPOS-00029
+$DisaTest += "Test-SV-88061r1_rule"
 function Test-SV-88061r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88061r1_rule")
@@ -4529,6 +4671,7 @@ function Test-SV-88061r1_rule {
 # tools and the corresponding rights the user enjoys in order to make access decisions regarding
 # the modification or deletion of audit tools.Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000258-GPOS-00099
 #
+$DisaTest += "Test-SV-88063r1_rule"
 function Test-SV-88063r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88063r1_rule")
@@ -4611,6 +4754,7 @@ function Test-SV-88063r1_rule {
 # Slide shows that are displayed on the lock screen could display sensitive information to
 # unauthorized personnel. Turning off this feature will limit access to the information to
 # a logged-on user.
+$DisaTest += "Test-SV-88145r1_rule"
 function Test-SV-88145r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88145r1_rule")
@@ -4652,6 +4796,7 @@ function Test-SV-88145r1_rule {
 # Additional security requirements are applied to Universal Naming Convention (UNC) paths specified
 # in hardened UNC paths before allowing access to them. This aids in preventing tampering
 # with or spoofing of connections to these paths.
+$DisaTest += "Test-SV-88161r1_rule"
 function Test-SV-88161r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88161r1_rule")
@@ -4667,6 +4812,7 @@ function Test-SV-88161r1_rule {
 }
 
 # Hardend Path \\*\SYSVOL
+$DisaTest += "Test-SV-88161r1_rule_2"
 function Test-SV-88161r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88161r1_rule_2")
@@ -4692,6 +4838,7 @@ function Test-SV-88161r1_rule_2 {
 # Credential Guard and virtualization-based protection of code integrity. Secure Boot is the
 # minimum security level, with DMA protection providing additional memory protection. DMA
 # Protection requires a CPU that supports input/output memory management unit (IOMMU).
+$DisaTest += "Test-SV-88165r1_rule"
 function Test-SV-88165r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule")
@@ -4706,6 +4853,7 @@ function Test-SV-88165r1_rule {
 	| Write-Output
 }
 
+$DisaTest += "Test-SV-88165r1_rule_2"
 function Test-SV-88165r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_2")
@@ -4720,6 +4868,7 @@ function Test-SV-88165r1_rule_2 {
 	| Write-Output
 }
 
+$DisaTest += "Test-SV-88165r1_rule_3"
 function Test-SV-88165r1_rule_3 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_3")
@@ -4752,6 +4901,7 @@ function Test-SV-88165r1_rule_3 {
 # credential theft attacks if compromised. This authentication information, which was stored
 # in the Local Security Authority (LSA) in previous versions of Windows, is isolated from
 # the rest of operating system and can only be accessed by privileged system software.
+$DisaTest += "Test-SV-88167r1_rule"
 function Test-SV-88167r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88167r1_rule")
@@ -4767,6 +4917,7 @@ function Test-SV-88167r1_rule {
 }
 
 # Credential Guard running
+$DisaTest += "Test-SV-88167r1_rule_2"
 function Test-SV-88167r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88167r1_rule_2")
@@ -4804,6 +4955,7 @@ function Test-SV-88167r1_rule_2 {
 # as well as protecting Code Integrity validation paths. This isolates the processes from
 # the rest of the operating system and can only be accessed by privileged system software.
 #
+$DisaTest += "Test-SV-88169r1_rule"
 function Test-SV-88169r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88169r1_rule")
@@ -4818,6 +4970,7 @@ function Test-SV-88169r1_rule {
 	| Write-Output
 }
 
+$DisaTest += "Test-SV-88169r1_rule_2"
 function Test-SV-88169r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88169r1_rule_2")
@@ -4853,6 +5006,7 @@ function Test-SV-88169r1_rule_2 {
 #
 # The built-in administrator account is a well-known account subject to attack. Renaming this
 # account to an unidentified name improves the protection of this account and the system.
+$DisaTest += "Test-SV-88287r1_rule"
 function Test-SV-88287r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88287r1_rule")
@@ -4897,6 +5051,7 @@ function Test-SV-88287r1_rule {
 # installed, does not require a password. This can allow access to system resources by unauthorized
 # users. Renaming this account to an unidentified name improves the protection of this account
 # and the system.
+$DisaTest += "Test-SV-88289r1_rule"
 function Test-SV-88289r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88289r1_rule")
@@ -4932,6 +5087,7 @@ function Test-SV-88289r1_rule {
 #
 # Allowing anonymous SID/Name translation can provide sensitive information for accessing a
 # system. Only authorized users must be able to perform such translations.
+$DisaTest += "Test-SV-88329r1_rule"
 function Test-SV-88329r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88329r1_rule")
@@ -4962,6 +5118,7 @@ function Test-SV-88329r1_rule {
 # Limiting logon hours can help protect data by allowing access only during specified times.
 # This setting controls whether users are forced to log off when their allowed logon hours
 # expire. If logon hours are set for users, this must be enforced.
+$DisaTest += "Test-SV-88353r1_rule"
 function Test-SV-88353r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88353r1_rule")
@@ -4992,6 +5149,7 @@ function Test-SV-88353r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities. Accounts with the Access Credential Manager as a trusted caller user right
 # may be able to retrieve the credentials of other accounts from Credential Manager.
+$DisaTest += "Test-SV-88393r1_rule"
 function Test-SV-88393r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88393r1_rule")
@@ -5034,6 +5192,7 @@ function Test-SV-88393r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Access this computer from the network user right may access
 # resources on the system, and this right must be limited to those requiring it.
+$DisaTest += "Test-SV-88397r1_rule"
 function Test-SV-88397r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88397r1_rule")
@@ -5085,6 +5244,7 @@ function Test-SV-88397r1_rule {
 # capabilities.Accounts with the Act as part of the operating system user right can assume
 # the identity of any user and gain access to resources that the user is authorized to access.
 # Any accounts with this right can take complete control of a system.
+$DisaTest += "Test-SV-88399r1_rule"
 function Test-SV-88399r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88399r1_rule")
@@ -5126,6 +5286,7 @@ function Test-SV-88399r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Allow log on locally user right can log on interactively
 # to a system.
+$DisaTest += "Test-SV-88403r1_rule"
 function Test-SV-88403r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88403r1_rule")
@@ -5175,6 +5336,7 @@ function Test-SV-88403r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Back up files and directories user right can circumvent file
 # and directory permissions and could allow access to sensitive data.
+$DisaTest += "Test-SV-88407r1_rule"
 function Test-SV-88407r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88407r1_rule")
@@ -5223,6 +5385,7 @@ function Test-SV-88407r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Create a pagefile user right can change the size of a pagefile,
 # which could affect system performance.
+$DisaTest += "Test-SV-88409r1_rule"
 function Test-SV-88409r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88409r1_rule")
@@ -5271,6 +5434,7 @@ function Test-SV-88409r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.The Create a token object user right allows a process to create an access token.
 # This could be used to provide elevated rights and compromise a system.
+$DisaTest += "Test-SV-88411r1_rule"
 function Test-SV-88411r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88411r1_rule")
@@ -5313,6 +5477,7 @@ function Test-SV-88411r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Create global objects user right can create objects that
 # are available to all sessions, which could affect processes in other users sessions.
+$DisaTest += "Test-SV-88413r1_rule"
 function Test-SV-88413r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88413r1_rule")
@@ -5366,6 +5531,7 @@ function Test-SV-88413r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Create permanent shared objects user right could expose sensitive
 # data by creating shared objects.
+$DisaTest += "Test-SV-88415r1_rule"
 function Test-SV-88415r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88415r1_rule")
@@ -5407,6 +5573,7 @@ function Test-SV-88415r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Create symbolic links user right can create pointers to other
 # objects, which could expose the system to attack.
+$DisaTest += "Test-SV-88417r1_rule"
 function Test-SV-88417r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88417r1_rule")
@@ -5456,6 +5623,7 @@ function Test-SV-88417r1_rule {
 # capabilities.Accounts with the Debug programs user right can attach a debugger to any process
 # or to the kernel, providing complete access to sensitive and critical operating system components.
 # This right is given to Administrators in the default configuration.
+$DisaTest += "Test-SV-88419r1_rule"
 function Test-SV-88419r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88419r1_rule")
@@ -5511,6 +5679,7 @@ function Test-SV-88419r1_rule {
 # compromise of an entire domain.Local accounts on domain-joined systems must also be assigned
 # this right to decrease the risk of lateral movement resulting from credential theft attacks.The
 # Guests group must be assigned this right to prevent unauthenticated access.
+$DisaTest += "Test-SV-88423r1_rule"
 function Test-SV-88423r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -5584,6 +5753,7 @@ function Test-SV-88423r1_rule {
 # systems helps mitigate the risk of privilege escalation from credential theft attacks, which
 # could lead to the compromise of an entire domain.The Guests group must be assigned to prevent
 # unauthenticated access.
+$DisaTest += "Test-SV-88427r1_rule"
 function Test-SV-88427r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -5656,6 +5826,7 @@ function Test-SV-88427r1_rule {
 # Domain Admins groups on lower-trust systems helps mitigate the risk of privilege escalation
 # from credential theft attacks, which could lead to the compromise of an entire domain.Incorrect
 # configurations could prevent services from starting and result in a DoS.
+$DisaTest += "Test-SV-88431r1_rule"
 function Test-SV-88431r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -5734,6 +5905,7 @@ function Test-SV-88431r1_rule {
 # Admins and Domain Admins groups on lower-trust systems helps mitigate the risk of privilege
 # escalation from credential theft attacks, which could lead to the compromise of an entire
 # domain.The Guests group must be assigned this right to prevent unauthenticated access.
+$DisaTest += "Test-SV-88435r1_rule"
 function Test-SV-88435r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -5815,6 +5987,7 @@ function Test-SV-88435r1_rule {
 # must also be assigned this right to decrease the risk of lateral movement resulting from
 # credential theft attacks.The Guests group must be assigned this right to prevent unauthenticated
 # access.
+$DisaTest += "Test-SV-88439r1_rule"
 function Test-SV-88439r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -5890,6 +6063,7 @@ function Test-SV-88439r1_rule {
 # capabilities.The Enable computer and user accounts to be trusted for delegation user right
 # allows the Trusted for Delegation setting to be changed. This could allow unauthorized users
 # to impersonate other users.
+$DisaTest += "Test-SV-88443r1_rule"
 function Test-SV-88443r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88443r1_rule")
@@ -5932,6 +6106,7 @@ function Test-SV-88443r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Force shutdown from a remote system user right can remotely
 # shut down a system, which could result in a denial of service.
+$DisaTest += "Test-SV-88445r1_rule"
 function Test-SV-88445r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88445r1_rule")
@@ -5982,6 +6157,7 @@ function Test-SV-88445r1_rule {
 # capabilities.The Generate security audits user right specifies users and processes that
 # can generate Security Log audit records, which must only be the system service accounts
 # defined.
+$DisaTest += "Test-SV-88447r1_rule"
 function Test-SV-88447r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88447r1_rule")
@@ -6034,6 +6210,7 @@ function Test-SV-88447r1_rule {
 # capabilities.The Impersonate a client after authentication user right allows a program to
 # impersonate another user or account to run on their behalf. An attacker could use this to
 # elevate privileges.
+$DisaTest += "Test-SV-88449r1_rule"
 function Test-SV-88449r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88449r1_rule")
@@ -6087,6 +6264,7 @@ function Test-SV-88449r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Increase scheduling priority user right can change a scheduling
 # priority, causing performance issues or a denial of service.
+$DisaTest += "Test-SV-88451r1_rule"
 function Test-SV-88451r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88451r1_rule")
@@ -6136,6 +6314,7 @@ function Test-SV-88451r1_rule {
 # capabilities.The Load and unload device drivers user right allows a user to load device
 # drivers dynamically on a system. This could be used by an attacker to install malicious
 # code.
+$DisaTest += "Test-SV-88453r1_rule"
 function Test-SV-88453r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88453r1_rule")
@@ -6183,6 +6362,7 @@ function Test-SV-88453r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.The Lock pages in memory user right allows physical memory to be assigned to
 # processes, which could cause performance issues or a denial of service.
+$DisaTest += "Test-SV-88455r1_rule"
 function Test-SV-88455r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88455r1_rule")
@@ -6227,6 +6407,7 @@ function Test-SV-88455r1_rule {
 # security log and change auditing configurations. This could be used to clear evidence of
 # tampering.Satisfies: SRG-OS-000057-GPOS-00027, SRG-OS-000058-GPOS-00028, SRG-OS-000059-GPOS-00029,
 # SRG-OS-000063-GPOS-00032, SRG-OS-000337-GPOS-00129
+$DisaTest += "Test-SV-88457r1_rule"
 function Test-SV-88457r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88457r1_rule")
@@ -6276,6 +6457,7 @@ function Test-SV-88457r1_rule {
 # capabilities.Accounts with the Modify firmware environment values user right can change
 # hardware configuration environment variables. This could result in hardware failures or
 # a denial of service.
+$DisaTest += "Test-SV-88459r1_rule"
 function Test-SV-88459r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88459r1_rule")
@@ -6325,6 +6507,7 @@ function Test-SV-88459r1_rule {
 # capabilities.Accounts with the Perform volume maintenance tasks user right can manage volume
 # and disk configurations. This could be used to delete volumes, resulting in data loss or
 # a denial of service.
+$DisaTest += "Test-SV-88461r1_rule"
 function Test-SV-88461r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88461r1_rule")
@@ -6372,6 +6555,7 @@ function Test-SV-88461r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Profile single process user right can monitor non-system
 # processes performance. An attacker could use this to identify processes to attack.
+$DisaTest += "Test-SV-88463r1_rule"
 function Test-SV-88463r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88463r1_rule")
@@ -6421,6 +6605,7 @@ function Test-SV-88463r1_rule {
 # capabilities.Accounts with the Restore files and directories user right can circumvent file
 # and directory permissions and could allow access to sensitive data. It could also be used
 # to overwrite more current data.
+$DisaTest += "Test-SV-88465r1_rule"
 function Test-SV-88465r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88465r1_rule")
@@ -6469,6 +6654,7 @@ function Test-SV-88465r1_rule {
 # Inappropriate granting of user rights can provide system, administrative, and other high-level
 # capabilities.Accounts with the Take ownership of files or other objects user right can take
 # ownership of objects and make changes.
+$DisaTest += "Test-SV-88467r1_rule"
 function Test-SV-88467r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88467r1_rule")
@@ -6517,6 +6703,7 @@ function Test-SV-88467r1_rule {
 # This is a known account that exists on all Windows systems and cannot be deleted. This account
 # is initialized during the installation of the operating system with no password assigned.
 #
+$DisaTest += "Test-SV-88475r1_rule"
 function Test-SV-88475r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88475r1_rule")
@@ -6750,193 +6937,26 @@ function Test-AuditPolicySetting {
 
 function Get-DisaAuditResult {
 	Param(
-		[switch] $PerformanceOptimized
+		[switch] $PerformanceOptimized,
+		[string[]] $Exclude
 	)
 
-	Test-SV-88139r1_rule
-	Test-SV-88147r1_rule
-	Test-SV-88149r1_rule
-	Test-SV-88151r1_rule
-	Test-SV-88153r1_rule
-	Test-SV-88155r1_rule
-	Test-SV-88157r1_rule
-	Test-SV-88159r1_rule
-	Test-SV-88163r1_rule
-	Test-SV-88173r1_rule
-	Test-SV-88177r1_rule
-	Test-SV-88179r1_rule
-	Test-SV-88181r1_rule
-	Test-SV-88185r1_rule
-	Test-SV-88187r1_rule
-	Test-SV-88189r1_rule
-	Test-SV-88197r1_rule
-	Test-SV-88201r1_rule
-	Test-SV-88203r1_rule
-	Test-SV-88207r1_rule
-	Test-SV-88209r1_rule
-	Test-SV-88211r1_rule
-	Test-SV-88213r1_rule
-	Test-SV-88215r1_rule
-	Test-SV-88217r1_rule
-	Test-SV-88219r1_rule
-	Test-SV-88221r1_rule
-	Test-SV-88223r1_rule
-	Test-SV-88225r1_rule
-	Test-SV-88227r1_rule
-	Test-SV-88229r1_rule
-	Test-SV-88231r1_rule
-	Test-SV-88233r1_rule
-	Test-SV-88235r1_rule
-	Test-SV-88237r1_rule
-	Test-SV-88239r1_rule
-	Test-SV-88241r1_rule
-	Test-SV-88243r1_rule
-	Test-SV-88245r1_rule
-	Test-SV-88247r1_rule
-	Test-SV-88249r1_rule
-	Test-SV-88251r1_rule
-	Test-SV-88253r1_rule
-	Test-SV-88255r1_rule
-	Test-SV-88257r1_rule
-	Test-SV-88259r1_rule
-	Test-SV-88261r1_rule
-	Test-SV-88263r1_rule
-	Test-SV-88265r1_rule
-	Test-SV-88267r1_rule
-	Test-SV-88285r1_rule
-	Test-SV-88291r1_rule
-	Test-SV-88293r1_rule
-	Test-SV-88295r1_rule
-	Test-SV-88297r1_rule
-	Test-SV-88299r1_rule
-	Test-SV-88301r1_rule
-	Test-SV-88303r1_rule
-	Test-SV-88305r1_rule
-	Test-SV-88307r1_rule
-	Test-SV-88309r1_rule
-	Test-SV-88311r1_rule
-	Test-SV-88313r1_rule
-	Test-SV-88315r1_rule
-	Test-SV-88317r1_rule
-	Test-SV-88319r1_rule
-	Test-SV-88321r1_rule
-	Test-SV-88323r1_rule
-	Test-SV-88325r1_rule
-	Test-SV-88327r1_rule
-	Test-SV-88331r1_rule
-	Test-SV-88333r1_rule
-	Test-SV-88335r1_rule
-	Test-SV-88337r1_rule
-	Test-SV-88339r1_rule
-	Test-SV-88341r1_rule
-	Test-SV-88343r1_rule
-	Test-SV-88345r1_rule
-	Test-SV-88347r1_rule
-	Test-SV-88349r1_rule
-	Test-SV-88351r1_rule
-	Test-SV-88355r1_rule
-	Test-SV-88357r1_rule
-	Test-SV-88359r1_rule
-	Test-SV-88361r1_rule
-	Test-SV-88363r1_rule
-	Test-SV-88365r1_rule
-	Test-SV-88367r1_rule
-	Test-SV-88369r1_rule
-	Test-SV-88371r1_rule
-	Test-SV-88373r1_rule
-	Test-SV-88375r1_rule
-	Test-SV-88377r1_rule
-	Test-SV-88379r1_rule
-	Test-SV-88381r1_rule
-	Test-SV-88383r1_rule
-	Test-SV-88385r1_rule
-	Test-SV-88387r1_rule
-	Test-SV-88389r1_rule
-	Test-SV-88391r1_rule
-	Test-SV-88473r1_rule
-	Test-SV-87875r2_rule
-	Test-SV-87889r1_rule
-	Test-SV-87891r1_rule
-	Test-SV-87899r1_rule
-	Test-SV-87901r1_rule
-	Test-SV-87903r1_rule
-	Test-SV-87903r1_rule_2
-	Test-SV-87905r1_rule
-	Test-SV-87907r1_rule
-	Test-SV-87907r1_rule_2
-	Test-SV-87907r1_rule_3
-	Test-SV-87909r1_rule
-	Test-SV-87911r1_rule
-	Test-SV-87913r2_rule
-	Test-SV-87915r2_rule
-	Test-SV-87919r1_rule
-	if (-not $PerformanceOptimized) {
-		Test-SV-87923r1_rule
+	foreach ($test in $DisaTest) {
+		if ($test -notin "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule") {
+			& $test
+		}
 	}
-	Test-SV-87925r1_rule
-	Test-SV-87931r1_rule
-	Test-SV-87939r1_rule
-	Test-SV-87941r1_rule
-	Test-SV-87943r1_rule
-	Test-SV-87945r1_rule
-	Test-SV-87947r1_rule
-	Test-SV-87949r1_rule
-	Test-SV-87951r1_rule
-	Test-SV-87953r1_rule
-	Test-SV-87961r2_rule
-	Test-SV-87963r1_rule
-	Test-SV-87965r1_rule
-	Test-SV-87967r1_rule
-	Test-SV-87969r1_rule
-	Test-SV-87971r1_rule
-	Test-SV-87973r1_rule
-	Test-SV-88057r1_rule
-	Test-SV-88059r1_rule
-	Test-SV-88061r1_rule
-	Test-SV-88145r1_rule
-	Test-SV-88161r1_rule
-	Test-SV-88161r1_rule_2
-	Test-SV-88165r1_rule
-	Test-SV-88165r1_rule_2
-	Test-SV-88165r1_rule_3
-	Test-SV-88167r1_rule
-	Test-SV-88167r1_rule_2
-	Test-SV-88169r1_rule
-	Test-SV-88169r1_rule_2
-	Test-SV-88287r1_rule
-	Test-SV-88289r1_rule
-	Test-SV-88329r1_rule
-	Test-SV-88353r1_rule
-	Test-SV-88393r1_rule
-	Test-SV-88397r1_rule
-	Test-SV-88399r1_rule
-	Test-SV-88403r1_rule
-	Test-SV-88407r1_rule
-	Test-SV-88409r1_rule
-	Test-SV-88411r1_rule
-	Test-SV-88413r1_rule
-	Test-SV-88415r1_rule
-	Test-SV-88417r1_rule
-	Test-SV-88419r1_rule
-	Test-SV-88423r1_rule -IsDomainIntegrated
-	Test-SV-88427r1_rule -IsDomainIntegrated
-	Test-SV-88431r1_rule -IsDomainIntegrated
-	Test-SV-88435r1_rule -IsDomainIntegrated
-	Test-SV-88439r1_rule -IsDomainIntegrated
-	Test-SV-88443r1_rule
-	Test-SV-88445r1_rule
-	Test-SV-88447r1_rule
-	Test-SV-88449r1_rule
-	Test-SV-88451r1_rule
-	Test-SV-88453r1_rule
-	Test-SV-88455r1_rule
-	Test-SV-88457r1_rule
-	Test-SV-88459r1_rule
-	Test-SV-88461r1_rule
-	Test-SV-88463r1_rule
-	Test-SV-88465r1_rule
-	Test-SV-88467r1_rule
-	Test-SV-88475r1_rule
+
+	# if (-not $PerformanceOptimized) {
+	# 	"Test-SV-87923r1_rule"
+	# }
+
+	# "Test-SV-88423r1_rule" -IsDomainIntegrated
+	# "Test-SV-88427r1_rule" -IsDomainIntegrated
+	# "Test-SV-88431r1_rule" -IsDomainIntegrated
+	# "Test-SV-88435r1_rule" -IsDomainIntegrated
+	# "Test-SV-88439r1_rule" -IsDomainIntegrated
+
 }
 
 function Get-CisAuditPolicyResult {
