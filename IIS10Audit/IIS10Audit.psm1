@@ -2181,13 +2181,22 @@ function Test-IISTLS1_2Enabled {
 		# Ensure the following key exists
 		$Key = Get-Item "$path\Server"
 		if ($null -ne $Key.GetValue("Enabled", $null)) {
-			# Get-ItemProperty returns a [UInt32]
 			$value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "Enabled"
-			# Ensure it is set to 0xFFFFFFFF(4294967295)
-			# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-			# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-			if ($value -ne 4294967295) {
+			if ($value -ne 1) {
 				$message = "TLS 1.2 is disabled"
+				$audit = [AuditStatus]::False
+			}
+		}
+		else {
+			$message = "TLS 1.2 is disabled"
+			$audit = [AuditStatus]::False
+		}
+
+		if ($null -ne $Key.GetValue("DisabledByDefault", $null)) {
+			# Get-ItemProperty returns a [UInt32]
+			$value = Get-ItemProperty "$path\Server" | Select-Object -ExpandProperty "DisabledByDefault"
+			if ($value -ne 0) {
+				$message = "TLS 1.2 is disabled by default"
 				$audit = [AuditStatus]::False
 			}
 		}
@@ -2324,46 +2333,7 @@ function Test-IISRC4CipherDisabled {
 }
 
 # 7.10
-function Test-IISTripleDESEnabled {
-	<#
-	.Synopsis
-		Ensure Triple DES Cipher Suite is Disabled
-	.Description
-		Triple DES Cipher Suites is now considered a weak cipher and is not recommended for use.
-	#>
-
-	$message = $MESSAGE_ALLGOOD
-	$audit = [AuditStatus]::True
-
-	try {
-		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168/168\" `
-			-ErrorAction Stop `
-			| Select-Object `
-			-ExpandProperty Enabled
-
-		if ($enabled -ne 0) {
-			# If the key is $null, Triple DES Cipher is enabled
-			$message = "Triple DES Cipher is enabled"
-			$audit = [AuditStatus]::False
-		}
-	}
-	catch {
-		# TODO: check if this is still true
-		# If the key/value is not present,Triple DES Cipher is enabled
-		$message = "Triple DES Cipher is enabled"
-		$audit = [AuditStatus]::False
-	}
-
-	New-Object -TypeName AuditInfo -Property @{
-		Id      = "7.10"
-		Task    = "Ensure Triple DES Cipher Suite is Disabled"
-		Message = $message
-		Audit   = $audit
-	} | Write-Output
-}
-
-# 7.11
-function Test-IISAES128Enabled {
+function Test-IISAES128Disabled {
 	<#
 	.Synopsis
 		Ensure AES 128/128 Cipher Suite is configured
@@ -2378,38 +2348,25 @@ function Test-IISAES128Enabled {
 		# Get-ItemProperty returns a [UInt32]
 		$enabled = Get-ItemProperty "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128\" `
 			-ErrorAction Stop `
-			| Select-Object `
+		| Select-Object `
 			-ExpandProperty Enabled
 
-		# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-		# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-		if ($null -eq $enabled) {
-			# If the key is $null, AES 128/128 Cipher is disabled
-			$message = "AES 128/128 Cipher is disabled"
-			$audit = [AuditStatus]::False
-		}
-		elseif (($enabled -ne 4294967295)) {
-			# If the key is not set to 0xFFFFFFFF(4294967295), AES 128/128 Cipher is disabled
-			$message = "AES 128/128 Cipher is disabled"
+		if ($enabled -ne 0) {
+			$message = "AES 128/128 Cipher registry key is enabled"
 			$audit = [AuditStatus]::False
 		}
 	}
-	catch {
-		# If the key/value is not present,Triple AES 128/128 Cipher is disabled
-		$message = "AES 128/128 Cipher is disbaled"
-		$audit = [AuditStatus]::False
-	}
-
+	# If the key/value is not present,Triple AES 128/128 Cipher is disabled
 
 	New-Object -TypeName AuditInfo -Property @{
-		Id      = "7.11"
-		Task    = "Ensure AES 128/128 Cipher Suite is configured"
+		Id      = "7.10"
+		Task    = "Ensure AES 128/128 Cipher Suite is disabled"
 		Message = $message
 		Audit   = $audit
 	} | Write-Output
 }
 
-# 7.12
+# 7.11
 function Test-IISAES256Enabled {
 	<#
 	.Synopsis
@@ -2427,10 +2384,7 @@ function Test-IISAES256Enabled {
 		$Key = Get-Item $path
 		if ($null -ne $Key.GetValue("Enabled", $null)) {
 			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-			# [Int32] -1 is the same as [UInt32] 4294967295 is the same as 0xFFFFFFFF
-			# PowerShell always uses signed ints for numbers; the smallest type that still fits the number
-			if ($value -eq 4294967295) {
-				# If the key is set to 0xFFFFFFFF, AES 256/256 Cipher is enabled
+			if ($value -eq 1) {
 				$message = $MESSAGE_ALLGOOD
 				$audit = [AuditStatus]::True
 			}
@@ -2442,14 +2396,14 @@ function Test-IISAES256Enabled {
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
-		Id      = "7.12"
+		Id      = "7.11"
 		Task    = "Ensure AES 256/256 Cipher Suite is enabled"
 		Message = $message
 		Audit   = $audit
 	} | Write-Output
 }
 
-# 7.13
+# 7.12
 function Test-IISTLSCipherOrder {
 	<#
 	.Synopsis
@@ -2501,7 +2455,7 @@ function Test-IISTLSCipherOrder {
 	}
 
 	New-Object -TypeName AuditInfo -Property @{
-		Id      = "7.13.1"
+		Id      = "7.12.1"
 		Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
 		Message = $message1
 		Audit   = $audit1
@@ -2509,7 +2463,7 @@ function Test-IISTLSCipherOrder {
 
 
 	New-Object -TypeName AuditInfo -Property @{
-		Id      = "7.13.2"
+		Id      = "7.12.2"
 		Task    = "Ensure TLS Cipher Suite does not contain more ciphers"
 		Message = $message2
 		Audit   = $audit2
@@ -2552,8 +2506,7 @@ function Get-IIS10SystemReport {
 	Test-IISNullCipherDisabled
 	Test-IISDESCipherDisabled
 	Test-IISRC4CipherDisabled
-	Test-IISTripleDESEnabled
-	Test-IISAES128Enabled
+	Test-IISAES128Disabled
 	Test-IISAES256Enabled
 	Test-IISTLSCipherOrder
 }
@@ -2721,7 +2674,7 @@ function Get-IIS10HtmlReport {
 		-Path $Path `
 		-Title "IIS 10 Benchmarks" `
 		-ModuleName "IIS10Audit" `
-		-BasedOn "CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017" `
+		-BasedOn "CIS Microsoft IIS 10 Benchmark v1.1.0 - 12-11-2018" `
 		-HostInformation (Get-IISHostInformation) `
 		-Sections $reportSections `
 		-DarkMode:$DarkMode
