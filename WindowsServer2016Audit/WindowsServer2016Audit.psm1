@@ -3568,7 +3568,7 @@ function Test-SV-87907r1_rule_2 {
 			"S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681" {
 				$foundIdentities += $acl.IdentityReference
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
-				
+
 			}
 
 			Default {
@@ -3640,7 +3640,7 @@ function Test-SV-87907r1_rule_3 {
 			"S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681" {
 				$foundIdentities += $acl.IdentityReference
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -message "Found $($acl.IdentityReference):$($acl.RegistryRights) - expected $($acl.IdentityReference):ReadKey" -Level Error
-				
+
 			}
 
 			Default {
@@ -6964,11 +6964,17 @@ function Get-DisaAuditResult {
 		[string[]] $Exclude
 	)
 
+	if ($PerformanceOptimized) {
+		$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
+	}
+
 	foreach ($test in $DisaTest) {
-		if ($test -notin "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule") {
+		if ($test -NotIn $Exclude) {
 			& $test
 		}
 	}
+
+	# "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
 
 	# if (-not $PerformanceOptimized) {
 	# 	"Test-SV-87923r1_rule"
@@ -7034,7 +7040,7 @@ function Get-WindowsServer2016HtmlReport {
 				AuditInfos = Get-CisAuditPolicyResult | Convert-ToAuditInfo
 			}
 		)
-	
+
 		Get-ATAPHtmlReport `
 			-Path $Path `
 			-Title "Windows Server 2016 Audit Report" `
