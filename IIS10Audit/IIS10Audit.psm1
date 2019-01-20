@@ -2356,6 +2356,8 @@ function Test-IISAES128Disabled {
 			$audit = [AuditStatus]::False
 		}
 	}
+	catch {}
+	
 	# If the key/value is not present,Triple AES 128/128 Cipher is disabled
 
 	New-Object -TypeName AuditInfo -Property @{
