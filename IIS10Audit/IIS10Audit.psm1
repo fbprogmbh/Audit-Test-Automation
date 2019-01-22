@@ -2341,8 +2341,8 @@ function Test-IISAES128Disabled {
 		Enabling AES 128/128 may be required for client compatibility. Enable or disable this cipher suite accordingly.
 	#>
 
-	$message = $MESSAGE_ALLGOOD
-	$audit = [AuditStatus]::True
+	$message = "AES 128/128 Cipher Suite is still enabled"
+	$audit = [AuditStatus]::False
 
 	try {
 		# Get-ItemProperty returns a [UInt32]
@@ -2351,12 +2351,15 @@ function Test-IISAES128Disabled {
 		| Select-Object `
 			-ExpandProperty Enabled
 
-		if ($enabled -ne 0) {
-			$message = "AES 128/128 Cipher registry key is enabled"
-			$audit = [AuditStatus]::False
+		if ($enabled -eq 0) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = [AuditStatus]::True
 		}
+
 	}
-	catch {}
+	catch {
+		# do anything here
+	}
 	
 	# If the key/value is not present,Triple AES 128/128 Cipher is disabled
 
