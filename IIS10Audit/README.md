@@ -1,6 +1,6 @@
 # CIS IIS 10 Audit
 
-_based on CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017_
+_based on CIS Microsoft IIS 10 Benchmark v1.1.0 - 12-11-2018"_
 
 ## Overview
 
