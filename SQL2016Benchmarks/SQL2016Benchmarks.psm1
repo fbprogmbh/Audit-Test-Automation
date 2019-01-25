@@ -548,7 +548,7 @@ function Test-SQLTrustworthyDatabaseOff {
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Found $sqlResult.name")
+            $obj | Add-Member NoteProperty Status("Found: " + $sqlResult.name)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -641,7 +641,7 @@ function Test-SQLUseNonStandardPorts {
 #>
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true, ParameterSetName = "By Instance")]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1275,8 +1275,8 @@ function Test-SQLAuthenticationDisabled {
 
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
-            $obj | Add-Member NoteProperty ID("7.1")
-            $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+            $obj | Add-Member NoteProperty ID("3.4")
+            $obj | Add-Member NoteProperty Task("Ensure SQL Authentication is not used in contained databases")
             $obj | Add-Member NoteProperty Status("No databases found")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             Write-Output $obj
@@ -1339,11 +1339,11 @@ function Test-SQLAuthenticationDisabled {
 function Test-SQLServerServiceAccountIsNotAnAdministrator {
     <#
 .Synopsis
-    Ensure the SQL Server’s MSSQL Service Account is Not an Administrator
+    Ensure the SQL Server’s MSSQL Service Account is Not an Administrator.
 .DESCRIPTION
     CIS SQL Server 2016 Benchmark - 3  Authentication and Authorization
 
-    3.5 - Ensure the SQL Server’s MSSQL Service Account is Not an Administrator
+    3.5 - Ensure the SQL Server’s MSSQL Service Account is Not an Administrator.
 
     The service account and/or service SID used by the MSSQLSERVER service for a default instance or MSSQL$<InstanceName> service for a named instance should not be a member of the Windows Administrator group either directly or indirectly (via a group). This also means that the account known as LocalSystem (aka NT AUTHORITY\SYSTEM) should not be used for the MSSQL service as this account has higher privileges than the SQL Server service requires.
 
@@ -1419,11 +1419,11 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
 function Test-SQLAgentServiceAccountIsNotAnAdministrator {
     <#
 .Synopsis
-    Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator
+    Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator.
 .DESCRIPTION
     CIS SQL Server 2016 Benchmark - 3  Authentication and Authorization
 
-    3.6 - Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator
+    3.6 - Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator.
 
     The service account and/or service SID used by the SQLSERVERAGENT service for a default instance or SQLAGENT$<InstanceName> service for a named instance should not be a member of the Windows Administrator group either directly or indirectly (via a group). This also means that the account known as LocalSystem (aka NT AUTHORITY\SYSTEM) should not be used for the SQLAGENT service as this account has higher privileges than the SQL Server service requires.
 
