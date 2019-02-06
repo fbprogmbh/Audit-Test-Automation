@@ -2516,6 +2516,52 @@ function Get-IIS10SystemReport {
 	Test-IISTLSCipherOrder
 }
 
+function Get-IIS10ApplicationHostReport {
+	$Configuration = (Get-IISServerManager).GetApplicationHostConfiguration()
+
+	$ApplicationHostAuditInfos = @()
+
+	# Section 1
+	$ApplicationHostAuditInfos += $Configuration | Test-IISDirectoryBrowsing
+	$ApplicationHostAuditInfos += $Configuration | Test-IISAnonymouseUserIdentity
+
+	# Section 2
+	$ApplicationHostAuditInfos += $Configuration | Test-IISGlobalAuthorization
+	$ApplicationHostAuditInfos += $Configuration | Test-IISAuthenticatedPricipals
+	$ApplicationHostAuditInfos += $Configuration | Test-IISFormsAuthenticationSSL
+	$ApplicationHostAuditInfos += $Configuration | Test-IISFormsAuthenticationCookies
+	$ApplicationHostAuditInfos += $Configuration | Test-IISFormsAuthenticationProtection
+	$ApplicationHostAuditInfos += $Configuration | Test-IISPasswordFormatNotClear
+	$ApplicationHostAuditInfos += $Configuration | Test-IISCredentialsNotStored
+
+	# Section 3
+	$ApplicationHostAuditInfos += $Configuration | Test-IISDebugOff
+	$ApplicationHostAuditInfos += $Configuration | Test-IISCustomErrorsNotOff
+	$ApplicationHostAuditInfos += $Configuration | Test-IISHttpErrorsHidden
+	$ApplicationHostAuditInfos += $Configuration | Test-IISAspNetTracingDisabled
+	$ApplicationHostAuditInfos += $Configuration | Test-IISCookielessSessionState
+	$ApplicationHostAuditInfos += $Configuration | Test-IISCookiesHttpOnly
+
+	# Section 4
+	$ApplicationHostAuditInfos += $Configuration | Test-IISMaxAllowedContentLength
+	$ApplicationHostAuditInfos += $Configuration | Test-IISMaxURLRequestFilter
+	$ApplicationHostAuditInfos += $Configuration | Test-IISMaxQueryStringRequestFilter
+	$ApplicationHostAuditInfos += $Configuration | Test-IISNonASCIICharURLForbidden
+	$ApplicationHostAuditInfos += $Configuration | Test-IISRejectDoubleEncodedRequests
+	$ApplicationHostAuditInfos += $Configuration | Test-IISHTTPTraceMethodeDisabled
+	$ApplicationHostAuditInfos += $Configuration | Test-IISBlockUnlistedFileExtensions
+	$ApplicationHostAuditInfos += $Configuration | Test-IISHandlerDenyWrite
+
+	# Section 5
+
+	# Section 6
+
+	# Section 7
+	$ApplicationHostAuditInfos += $Configuration | Test-IISHSTSHeaderSet
+
+	Write-Output $ApplicationHostAuditInfos
+}
+
 function Get-IIS10SiteReport {
 
 	param(
@@ -2648,6 +2694,8 @@ function Get-IIS10HtmlReport {
 
 		[AuditInfo[]] $SystemAuditInfos = (Get-IIS10SystemReport),
 
+		[AuditInfo[]] $ApplicationHostInfos = (Get-IIS10ApplicationHostReport),
+
 		[SiteAudit[]] $SiteAudits = (Get-IISSite | Get-IIS10SiteReport),
 
 		[switch] $DarkMode
@@ -2658,6 +2706,11 @@ function Get-IIS10HtmlReport {
 	$reportSections += @{
 		Title = "System Report"
 		AuditInfos = $SystemAuditInfos
+	}
+
+	$reportSections += @{
+		Title = "ApplicationHost"
+		AuditInfos = $ApplicationHostInfos
 	}
 
 	foreach ($SiteAudit in $SiteAudits) {
