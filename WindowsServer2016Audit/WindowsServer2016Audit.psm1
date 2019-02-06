@@ -1,4 +1,6 @@
-﻿<#
+﻿#Requires -RunAsAdministrator
+
+<#
 BSD 3-Clause License
 
 Copyright (c) 2018, FB Pro GmbH
@@ -7029,7 +7031,8 @@ function Get-WindowsServer2016HtmlReport {
 		[switch] $PerformanceOptimized
 	)
 
-	if (Test-Path $Path) {
+	$parent = Split-Path $Path
+	if (Test-Path $parent) {
 		[hashtable[]]$sections = @(
 			@{
 				Title = "DISA Settings"
