@@ -260,43 +260,45 @@ function Get-UserRightPolicyAudit {
 		[string[]] $Identity
 	)
 
-	$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
-	$currentUserRights = $securityPolicy["Privilege Rights"][$Policy]
+	process {
+		$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
+		$currentUserRights = $securityPolicy["Privilege Rights"][$Policy]
 
-	$identityAccounts = $Identity | ConvertTo-NTAccountUser
+		$identityAccounts = $Identity | ConvertTo-NTAccountUser
 
-	$usersWithTooManyRights = $currentUserRights | Where-Object { $_ -notin $identityAccounts }
-	$usersWithoutRights = $identityAccounts | Where-Object { $_ -notin $currentUserRights }
+		$usersWithTooManyRights = $currentUserRights | Where-Object { $_ -notin $identityAccounts }
+		$usersWithoutRights = $identityAccounts | Where-Object { $_ -notin $currentUserRights }
 
-	if ($usersWithTooManyRights.Count -gt 0) {
-		$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
-		Write-Verbose -Message $message
+		if ($usersWithTooManyRights.Count -gt 0) {
+			$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
+			Write-Verbose -Message $message
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = $message
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		if ($usersWithoutRights.Count -gt 0) {
+			$message = "The following users have don't have the rights: " + ($usersWithoutRights -join ", ")
+			Write-Verbose -Message $message
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = $message
+				Audit = [AuditStatus]::False
+			}
+		}
 
 		return [AuditInfo]@{
 			Id = $Id
 			Task = $Task
-			Message = $message
-			Audit = [AuditStatus]::False
+			Message = "Compliant"
+			Audit = [AuditStatus]::True
 		}
-	}
-
-	if ($usersWithoutRights.Count -gt 0) {
-		$message = "The following users have don't have the rights: " + ($usersWithoutRights -join ", ")
-		Write-Verbose -Message $message
-
-		return [AuditInfo]@{
-			Id = $Id
-			Task = $Task
-			Message = $message
-			Audit = [AuditStatus]::False
-		}
-	}
-
-	return [AuditInfo]@{
-		Id = $Id
-		Task = $Task
-		Message = "Compliant"
-		Audit = [AuditStatus]::True
 	}
 }
 
@@ -365,28 +367,30 @@ function Get-LocalAdminNames {
 		| ForEach-Object { $_.Substring($env:COMPUTERNAME.Length + 1) }
 }
 
-
 function Get-RoleAudit {
 	param(
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
-		[Parameter(Mandatory = $true)]
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Task,
-		[Parameter(Mandatory = $true)]
-		[string[]] $Role
+
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[string[]] $Role = @("MemberServer","StandaloneServer")
 	)
 
-	$domainRoles = $Role | ForEach-Object { [DomainRole]$_ }
-	if ((Get-DomainRole) -notin $domainRoles) {
-		return New-Object -TypeName AuditInfo -Property @{
-			Id = $Id
-			Task = $Task
-			Message = "This audit could not be run because the computer is not a " + $Role -join " or a " + "."
-			AuditStatus = [AuditStatus]::None
+	process {
+		$domainRoles = $Role | ForEach-Object { [DomainRole]$_ }
+		if ((Get-DomainRole) -notin $domainRoles) {
+			return New-Object -TypeName AuditInfo -Property @{
+				Id = $Id
+				Task = $Task
+				Message = "This audit could not be run because the computer is not a " + $Role -join " or a " + "."
+				Audit = [AuditStatus]::None
+			}
 		}
+		return $null
 	}
-
-	return $PSBoundParameters
 }
 
 function Convert-ToAuditInfo {
@@ -407,57 +411,125 @@ function Convert-ToAuditInfo {
 
 function Get-RegistryAudit {
 	param(
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
-		[Parameter(Mandatory = $true)]
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Task,
-		[Parameter(Mandatory = $true)]
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Path,
-		[Parameter(Mandatory = $true)]
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Name,
-		[Parameter(Mandatory = $true)]
-		[Scriptblock] $Predicate
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Value,
+
+		# [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		# [Scriptblock] $Predicate,
+
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[string] $ValueType
 	)
 
-	$Message = "Error: Test was not run."
-	$Audit = [AuditStatus]::False
+	process {
+		# Preprocess ValueType to get the predicate and the value
+		if ($ValueType -eq "ValueRange") {
+			# Create a predicate from the range specifice by the text
+			$predicates = @()
+			if ($Value.ToLower() -match "([0-9]+)[a-z ]* or less") {
+				$y = [int]$Matches[1]
+				$predicates += { param($x) $x -le $y }.GetNewClosure()
+			}
+			if ($Value.ToLower() -match "([0-9]+)[ a-z]* or greater") {
+				$y = [int]$Matches[1]
+				$predicates += { param($x) $x -ge $y }.GetNewClosure()
+			}
+			if ($Value.ToLower() -match "not ([0-9]+)") {
+				$y = [int]$Matches[1]
+				$predicates += { param($x) $x -ne $y }.GetNewClosure()
+			}
 
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
-			| Select-Object -ExpandProperty $Name
+			$Predicate = {
+				param($x)
 
-		if (& $Predicate $regValue) {
-			$Message = "Compliant"
-			$Audit = [AuditStatus]::True
+				# combine predicates with an and
+				foreach ($predicate in $predicates) {
+					if (-not (& $predicate $x)) {
+						return $false
+					}
+				}
+				return $true
+			}.GetNewClosure()
+		}
+		# Replace the value in the registry test with the one from settings
+		elseif ($ValueType -eq "ValuePlaceholder") {
+			$Value = $Settings[$Value]
+			$Predicate = { param($x) $x -eq $Value }.GetNewClosure()
+
+			if ([string]::IsNullOrEmpty($Value)) {
+				$Value = "Non-empty string."
+				$Predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
+			}
 		}
 		else {
-			$Message = "Registry value: $regValue. Differs from expected value: $ExpectedValue."
-			$Audit = [AuditStatus]::False
-
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-				-Message "${$Id}: Registry value $Name in registry key $Path is not correct."
+			$Predicate = { param($x) $Value -eq $x }.GetNewClosure()
 		}
-	}
-	catch [System.Management.Automation.PSArgumentException] {
-		$Message = "Registry value not found."
-		$Audit = [AuditStatus]::False
 
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-			-Message "${$StigId}: Could not get value $Name in registry key $path."
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$Message = "Registry key not found."
-		$Audit = [AuditStatus]::False
+		try {
+			$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
+				| Select-Object -ExpandProperty $Name
 
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-			-Message "${$StigId}: Could not get key $Name in registry key $path."
-	}
+			if (& $Predicate $regValue) {
+				return [AuditInfo]@{
+					Id = $Id
+					Task = $Task
+					Message = "Compliant"
+					Audit = [AuditStatus]::True
+				}
+			}
+			else{
+				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
+					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
 
-	return [AuditInfo]@{
-		Id = $Id
-		Task = $Task
-		Message = $Message
-		Audit = $Audit
+				return [AuditInfo]@{
+					Id = $Id
+					Task = $Task
+					Message = "Registry value: $regValue. Differs from expected value: $Value."
+					Audit = [AuditStatus]::False
+				}
+			}
+		}
+		catch [System.Management.Automation.PSArgumentException] {
+			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
+				-Message "$($Id): Could not get value $Name in registry key $path."
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Registry value not found."
+				Audit = [AuditStatus]::False
+			}
+		}
+		catch [System.Management.Automation.ItemNotFoundException] {
+			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
+				-Message "$($Id): Could not get key $Name in registry key $path."
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Registry key not found."
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = "An error occured."
+			Audit = [AuditStatus]::False
+		}
 	}
 }
 #endregion
@@ -487,8 +559,6 @@ function Get-RegistryAuditWithValueType {
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Task,
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string[]] $Role,
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Path,
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Name,
@@ -502,12 +572,6 @@ function Get-RegistryAuditWithValueType {
 	process {
 		$registryTest = $PSBoundParameters
 
-		# Check roles
-		$roleAudit = Get-RoleAudit @registryTest
-		if ($null -ne $roleAudit) {
-			return $audit
-		}
-
 		# Get the predicate
 		$registryTest.Predicate = { param($x) $false }
 		switch ($ValueType) {
@@ -515,16 +579,16 @@ function Get-RegistryAuditWithValueType {
 			"ValueRange" {
 				$predicates = @()
 				if ($registryTest.Value.ToLower() -match "([0-9]+)[ a-z]* or less") {
-					$val = [int]$Matches[1]
-					$predicates += { param($x) $x -le $val }.GetNewClosure()
+					$y = [int]$Matches[1]
+					$predicates += { param($x) $x -le $y }.GetNewClosure()
 				}
 				if ($registryTest.Value.ToLower() -match "([0-9]+)[ a-z]* or greater") {
-					$val = [int]$Matches[1]
-					$predicates += { param($x) $x -ge $val }.GetNewClosure()
+					$y = [int]$Matches[1]
+					$predicates += { param($x) $x -ge $y }.GetNewClosure()
 				}
 				if ($registryTest.Value.ToLower() -match "not ([0-9]+)") {
-					$val = [int]$Matches[1]
-					$predicates += { param($x) $x -ne $val }.GetNewClosure()
+					$y = [int]$Matches[1]
+					$predicates += { param($x) $x -ne $y }.GetNewClosure()
 				}
 
 				$registryTest.Predicate = {
@@ -564,12 +628,6 @@ function Get-RegistryAuditWithValueType {
 		Get-RegistryAudit @registryTest
 	}
 }
-
-
-
-
-
-
 
 #endregion
 
@@ -4433,7 +4491,13 @@ function Get-AuditPolicySubcategoryGUID {
 function Get-AuditPolicyAudit {
 	[CmdletBinding()]
 	Param(
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[ValidateSet(
 			'Security System Extension',
 			'System Integrity',
@@ -4494,68 +4558,69 @@ function Get-AuditPolicyAudit {
 			'Other Account Logon Events',
 			'Kerberos Authentication Service',
 			'Credential Validation')]
-		[System.String]$Subcategory,
+		[string] $Subcategory,
 
-		[Parameter(Mandatory = $true)]
-		[ValidateSet('Success', 'Failure', 'Success and Failure', 'No Auditing')]
-		[System.String]$AuditFlag,
-
-		[Parameter(Mandatory = $true)]
-		[System.String]$Id
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ValidateSet(
+			'Success',
+			'Failure',
+			'Success and Failure',
+			'No Auditing')]
+		[string] $AuditFlag
 	)
 
-	$Task = "$Subcategory is set to $AuditFlag"
+	process {
+		# Get the audit policy for the subcategory $subcategory
+		$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $Subcategory
+		$auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
 
-	# Get the audit policy for the subcategory $subcategory
-	$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $Subcategory
-	$auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+		# auditpol does not throw exceptions, so test the results and throw if needed
+		if ($LASTEXITCODE -ne 0) {
+			$errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+			throw [System.ArgumentException] $errorString
+			Write-Error -Message $errorString
+		}
 
-	# auditpol does not throw exceptions, so test the results and throw if needed
-	if ($LASTEXITCODE -ne 0) {
-		$errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-		throw [System.ArgumentException] $errorString
-		Write-Error -Message $errorString
-	}
+		if ($null -eq $auditPolicyString) {
+			return [AuditInfo]@{
+				Id      = $Id
+				Task    = $Task
+				Message = "Couldn't get setting. Auditpol returned nothing."
+				Audit   = [AuditStatus]::False
+			}
+		}
 
-	if ($null -eq $auditPolicyString) {
+		# Remove empty lines and headers
+		$line = $auditPolicyString `
+			| Where-Object { $_ } `
+			| Select-Object -Skip 3
+
+		if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+			return [AuditInfo]@{
+				Id      = $Id
+				Task    = $Task
+				Message = "Couldn't get setting."
+				Audit   = [AuditStatus]::False
+			}
+		}
+
+		$setting = $Matches[0]
+
+		if ($setting -ne $AuditFlag) {
+			return [AuditInfo]@{
+				Id      = $Id
+				Task    = $Task
+				Message = "Set to: $setting"
+				Audit   = [AuditStatus]::False
+			}
+		}
+
 		return [AuditInfo]@{
 			Id      = $Id
 			Task    = $Task
-			Message = "Couldn't get setting. Auditpol returned nothing."
-			Audit   = [AuditStatus]::False
+			Message = "Compliant"
+			Audit   = [AuditStatus]::True
 		}
-	}
-
-	# Remove empty lines and headers
-	$line = $auditPolicyString `
-		| Where-Object { $_ } `
-		| Select-Object -Skip 3
-
-	if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
-		return [AuditInfo]@{
-			Id      = $Id
-			Task    = $Task
-			Message = "Couldn't get setting."
-			Audit   = [AuditStatus]::False
-		}
-	}
-
-	$setting = $Matches[0]
-
-	if ($setting -ne $AuditFlag) {
-		return [AuditInfo]@{
-			Id      = $Id
-			Task    = $Task
-			Message = "Set to: $setting"
-			Audit   = [AuditStatus]::False
-		}
-	}
-
-	return [AuditInfo]@{
-		Id      = $Id
-		Task    = $Task
-		Message = "Compliant"
-		Audit   = [AuditStatus]::True
 	}
 }
 #endregion
@@ -4574,8 +4639,10 @@ function AuditPipeline {
 		)
 
 		process {
+			$auditSettingObj = New-Object -TypeName psobject -Property $AuditSetting
+
 			foreach ($auditFunction in $AuditFunctions) {
-				$audit = & $auditFunction @AuditSetting
+				$audit = $auditSettingObj | & $auditFunction
 				if ($audit -is [AuditInfo]) {
 					return $audit
 				}
@@ -4588,6 +4655,7 @@ function AuditPipeline {
 function Get-DisaAudit {
 	Param(
 		[switch] $PerformanceOptimized,
+
 		[string[]] $Exclude
 	)
 
@@ -4596,14 +4664,14 @@ function Get-DisaAudit {
 	}
 
 	# define pipelines
-	$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAuditWithValueType}
-	$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightAudit}
+	$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
+	$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
 
 	# Disa registry settings
 	$DisaRequirements.RegistrySettings | &$registryAuditPipline
 
 	# Disa user rights
-	$DisaRequirements.PriviligeRights | &$userRightAuditPipline
+	$DisaRequirements.UserRights | &$userRightAuditPipline
 }
 
 function Get-CisAudit {

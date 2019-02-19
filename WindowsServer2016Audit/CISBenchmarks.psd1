@@ -86,121 +86,145 @@
 	AuditPolicies = @(
 		@{
 			Id = "CIS 17.1.1"
+			Task = "Credential Validation is set to Success and Failure"
 			Subcategory = "Credential Validation"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.1"
+			Task = "Application Group Management is set to Success and Failure"
 			Subcategory = "Application Group Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.2"
+			Task = "Computer Account Management is set to Success and Failure"
 			Subcategory = "Computer Account Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.4"
+			Task = "Other Account Management Events is set to Success and Failure"
 			Subcategory = "Other Account Management Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.5"
+			Task = "Security Group Management is set to Success and Failure"
 			Subcategory = "Security Group Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.5"
+			Task = "User Account Management is set to Success and Failure"
 			Subcategory = "User Account Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.3.1"
+			Task = "Plug and Play Events is set to Success"
 			Subcategory = "Plug and Play Events"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.3.2"
+			Task = "Process Creation is set to Success"
 			Subcategory = "Process Creation"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.5.1"
+			Task = "Account Lockout is set to Success and Failure"
 			Subcategory = "Account Lockout"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.5.2"
+			Task = "Group Membership is set to Success"
 			Subcategory = "Group Membership"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.5.3"
+			Task = "Logoff is set to Success"
 			Subcategory = "Logoff"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.5.4"
+			Task = "Logon is set to Success and Failure"
 			Subcategory = "Logon"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.5.5"
+			Task = "Other Logon/Logoff Events is set to Success and Failure"
 			Subcategory = "Other Logon/Logoff Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.5.6"
+			Task = "Special Logon is set to Success"
 			Subcategory = "Special Logon"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.6.1"
+			Task = "Removable Storage is set to Success and Failure"
 			Subcategory = "Removable Storage"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.7.1"
+			Task = "Audit Policy Change is set to Success and Failure"
 			Subcategory = "Audit Policy Change"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.7.2"
+			Task = "Authentication Policy Change is set to Success"
 			Subcategory = "Authentication Policy Change"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.7.3"
+			Task = "Authorization Policy Change is set to Success"
 			Subcategory = "Authorization Policy Change"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.8.1"
+			Task = "Sensitive Privilege Use is set to Success and Failure"
 			Subcategory = "Sensitive Privilege Use"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.1"
+			Task = "IPsec Driver is set to Success and Failure"
 			Subcategory = "IPsec Driver"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.2"
+			Task = "Other System Events is set to Success and Failure"
 			Subcategory = "Other System Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.3"
+			Task = "Security State Change is set to Success"
 			Subcategory = "Security State Change"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.9.4"
+			Task = "Security System Extension is set to Success and Failure"
 			Subcategory = "Security System Extension"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.5"
+			Task = "System Integrity is set to Success and Failure"
 			Subcategory = "System Integrity"
 			AuditFlag = 'Success and Failure'
 		}
