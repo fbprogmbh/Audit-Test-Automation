@@ -46,4 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	# Standard logfile name, used if no other name is passed as parameter
 	LogFileName = "auditreport.log"
+
+	LegalNoticeTitle = "MyCompanyName"
+	LegalNoticeText = "Be sure to comply with the guidelines for administrators."
 }

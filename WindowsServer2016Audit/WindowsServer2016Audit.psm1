@@ -46,6 +46,12 @@ using namespace Microsoft.PowerShell.Commands
 # Import setting from file
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
+#region Import tests
+$DisaRequirements = Import-LocalizedData -FileName "DisaRequirements.psd1"
+$CisBenchmarks    = Import-LocalizedData -FileName "CisBenchmarks.psd1"
+#endregion
+
+
 #region Logging functions
 function Set-LogFile {
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
@@ -144,80 +150,157 @@ function Get-FullPath {
 #endregion
 
 #region Helper functions
-function Get-SecPolSetting {
-	<#
-.Synopsis
-	Wrapper for the cmdline tool secedit.exe.
-.DESCRIPTION
-	Converts one or many PSCustomObject Testresult to a html table with one result per row.
-	Newlines are converted into <br> (only in status column!)
-#>
-	[CmdletBinding()]
+
+function ConvertTo-NTAccountUser {
 	Param(
-		[Parameter(ParameterSetName = 'SystemAccess')]
-		[switch]$SystemAccess,
-
-		[Parameter(ParameterSetName = 'SystemAccess', Mandatory = $true)]
-		[ValidateSet('MinimumPasswordAge', 'MaximumPasswordAge', 'MinimumPasswordLength', 'PasswordComplexity', 'PasswordHistorySize', 'LockoutBadCount', 'ResetLockoutCount',
-			'LockoutDuration', 'RequireLogonToChangePassword', 'ForceLogoffWhenHourExpire', 'NewAdministratorName', 'NewGuestName', 'ClearTextPassword',
-			'LSAAnonymousNameLookup', 'EnableAdminAccount', 'EnableGuestAccount')]
-		[String]$SystemAccessSetting,
-
-		[Parameter(ParameterSetName = 'PriviligeRights')]
-		[switch]$PrivilegeRights,
-
-		[Parameter(ParameterSetName = 'PriviligeRights', Mandatory = $true)]
-		[validateSet('SeNetworkLogonRight', 'SeTcbPrivilege', 'SeBackupPrivilege', 'SeChangeNotifyPrivilege', 'SeSystemtimePrivilege', 'SeCreatePagefilePrivilege', 'SeDebugPrivilege',
-			'SeRemoteShutdownPrivilege', 'SeAuditPrivilege', 'SeIncreaseQuotaPrivilege', 'SeLoadDriverPrivilege', 'SeBatchLogonRight', 'SeServiceLogonRight',
-			'SeInteractiveLogonRight', 'SeSecurityPrivilege', 'SeSystemEnvironmentPrivilege', 'SeProfileSingleProcessPrivilege', 'SeSystemProfilePrivilege',
-			'SeAssignPrimaryTokenPrivilege', 'SeTakeOwnershipPrivilege', 'SeDenyNetworkLogonRight', 'SeDenyBatchLogonRight', 'SeDenyServiceLogonRight',
-			'SeDenyInteractiveLogonRight', 'SeUndockPrivilege', 'SeManageVolumePrivilege', 'SeRemoteInteractiveLogonRight', 'SeDenyRemoteInteractiveLogonRight',
-			'SeImpersonatePrivilege', 'SeCreateGlobalPrivilege', 'SeIncreaseWorkingSetPrivilege', 'SeTimeZonePrivilege', 'SeCreateSymbolicLinkPrivilege',
-			'SeDelegateSessionUserImpersonatePrivilege', 'SeCreateTokenPrivilege', 'SeCreatePermanentPrivilege', 'SeIncreaseBasePriorityPrivilege', 'SeLockMemoryPrivilege',
-			'SeRestorePrivilege', 'SeTrustedCredManAccessPrivilege', 'SeEnableDelegationPrivilege')]
-		[String]$PrivilegeRightsSetting
-
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[string] $Name
 	)
 
+	process {
+		if ($_ -match "^(S-[0-9-]{3,})") {
+			$sidAccount = [System.Security.Principal.SecurityIdentifier]$Name
+		}
+		else {
+			$sidAccount = ([System.Security.Principal.NTAccount]$Name).Translate([System.Security.Principal.SecurityIdentifier])
+		}
+		return $sidAccount.Translate([System.Security.Principal.NTAccount])
+	}
+}
+
+function Get-SecurityPolicy {
 	# get a temporary file to save and process the secedit settings
 	Write-Verbose -Message "Get temporary file"
-	$tmp = [System.IO.Path]::GetTempFileName()
+	$securityPolicyPath = Join-Path -Path $env:TEMP -ChildPath 'SecurityPolicy.inf'
 	Write-Verbose -Message "Tempory file: $tmp"
 
 	# export the secedit settings to this temporary file
 	Write-Verbose "Export current Local Security Policy"
-	secedit.exe /export /cfg "$($tmp)" | Out-Null
+	secedit.exe /export /cfg $securityPolicyPath | Out-Null
 
-	# load the settings from the temporary file
-	$securitySettings = Get-Content -Path $tmp
-
-	$currentSetting = ""
-
-	# go through the file content line by line and check the setting we are dealing with
-	foreach ($line in $securitySettings) {
-
-		# Account Policy settings
-		if ($SystemAccess) {
-			if ( $line -like "$SystemAccessSetting*" ) {
-				$x = $line.split("=", [System.StringSplitOptions]::RemoveEmptyEntries)
-				$currentSetting = $x[1].Trim()
-				Write-Verbose "Found System Access setting: $SystemAccessSetting::$currentSetting"
-				break
-			}
+	$config = @{}
+	switch -regex -file $securityPolicyPath {
+		"^\[(.+)\]" { # Section
+			$section = $matches[1]
+			$config[$section] = @{}
 		}
-
-		# User Rights Assignment settings
-		if ($PrivilegeRights) {
-			if ( $line -like "$PrivilegeRightsSetting*" ) {
-				$x = $line.split("=", [System.StringSplitOptions]::RemoveEmptyEntries)
-				$currentSetting = $x[1].Trim()
-				Write-Verbose "Found Privilige Rights setting: $PrivilegeRightsSetting::$currentSetting"
-				break
-			}
+		"(.+?)\s*=(.*)" { # Key
+			$name = $matches[1]
+			$value = $matches[2] -replace "\*"
+			$config[$section][$name] = $value
 		}
 	}
 
-	Write-Output $currentSetting
+	$privilegeRights = @{}
+	foreach ($key in $config["Privilege Rights"].Keys) {
+		# Make all accounts SIDs
+		$accounts = $($config["Privilege Rights"][$key] -split ",").Trim() | ConvertTo-NTAccountUser
+		$privilegeRights[$key] = $accounts
+	}
+	$config["Privilege Rights"] = $privilegeRights
+
+	return $config
+}
+
+function Get-UserRightPolicyAudit {
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ValidateSet(
+			'SeNetworkLogonRight',
+			'SeTcbPrivilege',
+			'SeBackupPrivilege',
+			'SeChangeNotifyPrivilege',
+			'SeSystemtimePrivilege',
+			'SeCreatePagefilePrivilege',
+			'SeDebugPrivilege',
+			'SeRemoteShutdownPrivilege',
+			'SeAuditPrivilege',
+			'SeIncreaseQuotaPrivilege',
+			'SeLoadDriverPrivilege',
+			'SeBatchLogonRight',
+			'SeServiceLogonRight',
+			'SeInteractiveLogonRight',
+			'SeSecurityPrivilege',
+			'SeSystemEnvironmentPrivilege',
+			'SeProfileSingleProcessPrivilege',
+			'SeSystemProfilePrivilege',
+			'SeAssignPrimaryTokenPrivilege',
+			'SeTakeOwnershipPrivilege',
+			'SeDenyNetworkLogonRight',
+			'SeDenyBatchLogonRight',
+			'SeDenyServiceLogonRight',
+			'SeDenyInteractiveLogonRight',
+			'SeUndockPrivilege',
+			'SeManageVolumePrivilege',
+			'SeRemoteInteractiveLogonRight',
+			'SeDenyRemoteInteractiveLogonRight',
+			'SeImpersonatePrivilege',
+			'SeCreateGlobalPrivilege',
+			'SeIncreaseWorkingSetPrivilege',
+			'SeTimeZonePrivilege',
+			'SeCreateSymbolicLinkPrivilege',
+			'SeDelegateSessionUserImpersonatePrivilege',
+			'SeCreateTokenPrivilege',
+			'SeCreatePermanentPrivilege',
+			'SeIncreaseBasePriorityPrivilege',
+			'SeLockMemoryPrivilege',
+			'SeRestorePrivilege',
+			'SeTrustedCredManAccessPrivilege',
+			'SeEnableDelegationPrivilege')]
+		[string] $Policy,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[AllowEmptyCollection()]
+		[string[]] $Identity
+	)
+
+	$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
+	$currentUserRights = $securityPolicy["Privilege Rights"][$Policy]
+
+	$identityAccounts = $Identity | ConvertTo-NTAccountUser
+
+	$usersWithTooManyRights = $currentUserRights | Where-Object { $_ -notin $identityAccounts }
+	$usersWithoutRights = $identityAccounts | Where-Object { $_ -notin $currentUserRights }
+
+	if ($usersWithTooManyRights.Count -gt 0) {
+		$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
+		Write-Verbose -Message $message
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = $message
+			Audit = [AuditStatus]::False
+		}
+	}
+
+	if ($usersWithoutRights.Count -gt 0) {
+		$message = "The following users have don't have the rights: " + ($usersWithoutRights -join ", ")
+		Write-Verbose -Message $message
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = $message
+			Audit = [AuditStatus]::False
+		}
+	}
+
+	return [AuditInfo]@{
+		Id = $Id
+		Task = $Task
+		Message = "Compliant"
+		Audit = [AuditStatus]::True
+	}
+}
+
+function Get-SecPolSetting {
 }
 
 # Get domain role
@@ -282,6 +365,30 @@ function Get-LocalAdminNames {
 		| ForEach-Object { $_.Substring($env:COMPUTERNAME.Length + 1) }
 }
 
+
+function Get-RoleAudit {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string] $Id,
+		[Parameter(Mandatory = $true)]
+		[string] $Task,
+		[Parameter(Mandatory = $true)]
+		[string[]] $Role
+	)
+
+	$domainRoles = $Role | ForEach-Object { [DomainRole]$_ }
+	if ((Get-DomainRole) -notin $domainRoles) {
+		return New-Object -TypeName AuditInfo -Property @{
+			Id = $Id
+			Task = $Task
+			Message = "This audit could not be run because the computer is not a " + $Role -join " or a " + "."
+			AuditStatus = [AuditStatus]::None
+		}
+	}
+
+	return $PSBoundParameters
+}
+
 function Convert-ToAuditInfo {
 	param (
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -298,61 +405,63 @@ function Convert-ToAuditInfo {
 	}
 }
 
-function Test-RegistrySetting {
+function Get-RegistryAudit {
 	param(
 		[Parameter(Mandatory = $true)]
-		[PSObject] $obj,
+		[string] $Id,
 		[Parameter(Mandatory = $true)]
-		[string] $StigId,
+		[string] $Task,
 		[Parameter(Mandatory = $true)]
 		[string] $Path,
 		[Parameter(Mandatory = $true)]
 		[string] $Name,
 		[Parameter(Mandatory = $true)]
-		$ExpectedValue,
-
-		[Parameter(ParameterSetName = "WithPredicate")]
 		[Scriptblock] $Predicate
 	)
 
-	if ($PSCmdlet.ParameterSetName -ne "WithPredicate") {
-		$Predicate = { param($value) $value -eq $ExpectedValue }
-	}
+	$Message = "Error: Test was not run."
+	$Audit = [AuditStatus]::False
 
 	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
 			| Select-Object -ExpandProperty $Name
 
 		if (& $Predicate $regValue) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
+			$Message = "Compliant"
+			$Audit = [AuditStatus]::True
 		}
 		else {
-			$obj | Add-Member NoteProperty Status("Registry value: $regValue. Differs from expected value: $ExpectedValue.")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+			$Message = "Registry value: $regValue. Differs from expected value: $ExpectedValue."
+			$Audit = [AuditStatus]::False
 
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-				-Message "${$StigId}: Registry value $Name in registry key $Path is not correct."
+				-Message "${$Id}: Registry value $Name in registry key $Path is not correct."
 		}
 	}
 	catch [System.Management.Automation.PSArgumentException] {
-		$obj | Add-Member NoteProperty Status("Registry value not found.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+		$Message = "Registry value not found."
+		$Audit = [AuditStatus]::False
 
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 			-Message "${$StigId}: Could not get value $Name in registry key $path."
 	}
 	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Registry key not found.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+		$Message = "Registry key not found."
+		$Audit = [AuditStatus]::False
 
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 			-Message "${$StigId}: Could not get key $Name in registry key $path."
 	}
 
-	return $obj
+	return [AuditInfo]@{
+		Id = $Id
+		Task = $Task
+		Message = $Message
+		Audit = $Audit
+	}
 }
 #endregion
+
 
 #region Audit tests
 <#
@@ -368,2617 +477,99 @@ function Test-RegistrySetting {
 
 #region DISA STIG Audit functions
 
-#region Registry test
-
 $DisaTest = @()
 
-# Administrator accounts must not be enumerated during elevation.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000280
-# Group ID (Vulid): V-73487
-# CCI: CCI-001084
-#
-# Enumeration of administrator accounts when elevating can provide part of the logon information
-# to an unauthorized user. This setting configures the system to always require users to type
-# in a username and password to elevate a running application.
-$DisaTest += "Test-SV-88139r1_rule"
-function Test-SV-88139r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88139r1_rule")
-	$obj | Add-Member NoteProperty Task("Administrator accounts must not be enumerated during elevation.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000280" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\" `
-		-Name "EnumerateAdministrators" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Local administrator accounts must have their privileged token filtered to prevent elevated
-# privileges from being used over the network on domain systems.
-# - - - - - - - - - - - - -
-# StigID: WN16-MS-000020
-# Group ID (Vulid): V-73495
-# CCI: CCI-001084
-#
-# A compromised local administrator account can provide means for an attacker to move laterally
-# between domain systems.With User Account Control enabled, filtering the privileged token
-# for local administrator accounts will prevent the elevated privileges of these accounts
-# from being used over the network.
-$DisaTest += "Test-SV-88147r1_rule"
-function Test-SV-88147r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88147r1_rule")
-	$obj | Add-Member NoteProperty Task("Local administrator accounts must have their privileged token filtered to prevent elevated privileges from being used over the network on domain systems.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-MS-000020" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
-		-Name "LocalAccountTokenFilterPolicy" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# WDigest Authentication must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000030
-# Group ID (Vulid): V-73497
-# CCI: CCI-000381
-#
-# When the WDigest Authentication protocol is enabled, plain-text passwords are stored in the
-# Local Security Authority Subsystem Service (LSASS), exposing them to theft. WDigest is disabled
-# by default in Windows 10. This setting ensures this is enforced.
-$DisaTest += "Test-SV-88149r1_rule"
-function Test-SV-88149r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88149r1_rule")
-	$obj | Add-Member NoteProperty Task("WDigest Authentication must be disabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000030" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Wdigest\" `
-		-Name "UseLogonCredential" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Internet Protocol version 6 (IPv6) source routing must be configured to the highest protection
-# level to prevent IP source routing.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000040
-# Group ID (Vulid): V-73499
-# CCI: CCI-000366
-#
-# Configuring the system to disable IPv6 source routing protects against spoofing.
-$DisaTest += "Test-SV-88151r1_rule"
-function Test-SV-88151r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88151r1_rule")
-	$obj | Add-Member NoteProperty Task("Internet Protocol version 6 (IPv6) source routing must be configured to the highest protection level to prevent IP source routing.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000040" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\" `
-		-Name "DisableIPSourceRouting" `
-		-ExpectedValue 2 `
-	| Write-Output
-}
-
-# Source routing must be configured to the highest protection level to prevent Internet Protocol
-# (IP) source routing.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000050
-# Group ID (Vulid): V-73501
-# CCI: CCI-000366
-#
-# Configuring the system to disable IP source routing protects against spoofing.
-$DisaTest += "Test-SV-88153r1_rule"
-function Test-SV-88153r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88153r1_rule")
-	$obj | Add-Member NoteProperty Task("Source routing must be configured to the highest protection level to prevent Internet Protocol (IP) source routing.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000050" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" `
-		-Name "DisableIPSourceRouting" `
-		-ExpectedValue 2 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to prevent Internet Control Message Protocol (ICMP)
-# redirects from overriding Open Shortest Path First (OSPF)-generated routes.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000060
-# Group ID (Vulid): V-73503
-# CCI: CCI-000366
-#
-# Allowing ICMP redirect of routes can lead to traffic not being routed properly. When disabled,
-# this forces ICMP to be routed via the shortest path first.
-$DisaTest += "Test-SV-88155r1_rule"
-function Test-SV-88155r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88155r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent Internet Control Message Protocol (ICMP) redirects from overriding Open Shortest Path First (OSPF)-generated routes.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000060" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\" `
-		-Name "EnableICMPRedirect" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to ignore NetBIOS name release requests except from
-# WINS servers.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000070
-# Group ID (Vulid): V-73505
-# CCI: CCI-002385
-#
-# Configuring the system to ignore name release requests, except from WINS servers, prevents
-# a denial of service (DoS) attack. The DoS consists of sending a NetBIOS name release request
-# to the server for each entry in the servers cache, causing a response delay in the normal
-# operation of the servers WINS resolution capability.
-$DisaTest += "Test-SV-88157r1_rule"
-function Test-SV-88157r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88157r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to ignore NetBIOS name release requests except from WINS servers.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000070" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netbt\Parameters\" `
-		-Name "NoNameReleaseOnDemand" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Insecure logons to an SMB server must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000080
-# Group ID (Vulid): V-73507
-# CCI: CCI-000366
-#
-# Insecure guest logons allow unauthenticated access to shared folders. Shared resources on
-# a system must require authentication to establish proper access.
-$DisaTest += "Test-SV-88159r1_rule"
-function Test-SV-88159r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88159r1_rule")
-	$obj | Add-Member NoteProperty Task("Insecure logons to an SMB server must be disabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000080" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\" `
-		-Name "AllowInsecureGuestAuth" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Command line data must be included in process creation events.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000100
-# Group ID (Vulid): V-73511
-# CCI: CCI-000135
-#
-# Maintaining an audit trail of system activity logs can help identify configuration errors,
-# troubleshoot service disruptions, and analyze compromises that have occurred, as well as
-# detect attacks. Audit logs are necessary to provide a trail of evidence in case the system
-# or network is compromised. Collecting this data is essential for analyzing the security
-# of information assets and detecting signs of suspicious and unexpected behavior.Enabling
-# Include command line data for process creation events will record the command line information
-# with the process creation events in the log. This can provide additional detail when malware
-# has run on a system.
-$DisaTest += "Test-SV-88163r1_rule"
-function Test-SV-88163r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88163r1_rule")
-	$obj | Add-Member NoteProperty Task("Command line data must be included in process creation events.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000100" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit\" `
-		-Name "ProcessCreationIncludeCmdLine_Enabled" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Early Launch Antimalware, Boot-Start Driver Initialization Policy must prevent boot drivers
-# identified as bad.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000140
-# Group ID (Vulid): V-73521
-# CCI: CCI-000366
-#
-# Compromised boot drivers can introduce malware prior to protection mechanisms that load after
-# initialization. The Early Launch Antimalware driver can limit allowed drivers based on classifications
-# determined by the malware protection application. At a minimum, drivers determined to be
-# bad must not be allowed.
-$DisaTest += "Test-SV-88173r1_rule"
-function Test-SV-88173r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88173r1_rule")
-	$obj | Add-Member NoteProperty Task("Early Launch Antimalware, Boot-Start Driver Initialization Policy must prevent boot drivers identified as bad.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000140" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Policies\EarlyLaunch\" `
-		-Name "DriverLoadPolicy" `
-		-ExpectedValue 8 `
-	| Write-Output
-}
-
-# Group Policy objects must be reprocessed even if they have not changed.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000150
-# Group ID (Vulid): V-73525
-# CCI: CCI-000366
-#
-# Registry entries for group policy settings can potentially be changed from the required configuration.
-# This could occur as part of troubleshooting or by a malicious process on a compromised system.
-# Enabling this setting and then Select-Objecting the Process even if the Group Policy objects have
-# not changed option ensures the policies will be reprocessed even if none have been changed.
-# This way, any unauthorized changes are forced to match the domain-based group policy settings
-# again.
-$DisaTest += "Test-SV-88177r1_rule"
-function Test-SV-88177r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88177r1_rule")
-	$obj | Add-Member NoteProperty Task("Group Policy objects must be reprocessed even if they have not changed.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000150" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\" `
-		-Name "NoGPOListChanges" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Downloading print driver packages over HTTP must be prevented.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000160
-# Group ID (Vulid): V-73527
-# CCI: CCI-000381
-#
-# Some features may communicate with the vendor, sending system information or downloading
-# data or components for the feature. Turning off this capability will prevent potentially
-# sensitive information from being sent outside the enterprise and will prevent uncontrolled
-# updates to the system. This setting prevents the computer from downloading print driver
-# packages over HTTP.
-$DisaTest += "Test-SV-88179r1_rule"
-function Test-SV-88179r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88179r1_rule")
-	$obj | Add-Member NoteProperty Task("Downloading print driver packages over HTTP must be prevented.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000160" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" `
-		-Name "DisableWebPnPDownload" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Printing over HTTP must be prevented.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000170
-# Group ID (Vulid): V-73529
-# CCI: CCI-000381
-#
-# Some features may communicate with the vendor, sending system information or downloading
-# data or components for the feature. Turning off this capability will prevent potentially
-# sensitive information from being sent outside the enterprise and will prevent uncontrolled
-# updates to the system.This setting prevents the client computer from printing over HTTP,
-# which allows the computer to print to printers on the intranet as well as the Internet.
-$DisaTest += "Test-SV-88181r1_rule"
-function Test-SV-88181r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88181r1_rule")
-	$obj | Add-Member NoteProperty Task("Printing over HTTP must be prevented.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000170" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\" `
-		-Name "DisableHTTPPrinting" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The network Select-Objection user interface (UI) must not be displayed on the logon screen.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000180
-# Group ID (Vulid): V-73531
-# CCI: CCI-000381
-#
-# Enabling interaction with the network Select-Objection UI allows users to change connections to
-# available networks without signing in to Windows.
-$DisaTest += "Test-SV-88185r1_rule"
-function Test-SV-88185r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88185r1_rule")
-	$obj | Add-Member NoteProperty Task("The network selection user interface (UI) must not be displayed on the logon screen.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000180" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\" `
-		-Name "DontDisplayNetworkSelectionUI" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Local users on domain-joined computers must not be enumerated.
-# - - - - - - - - - - - - -
-# StigID: WN16-MS-000030
-# Group ID (Vulid): V-73533
-# CCI: CCI-000381
-#
-# The username is one part of logon credentials that could be used to gain access to a system.
-# Preventing the enumeration of users limits this information to authorized personnel.
-$DisaTest += "Test-SV-88187r1_rule"
-function Test-SV-88187r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88187r1_rule")
-	$obj | Add-Member NoteProperty Task("Local users on domain-joined computers must not be enumerated.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-MS-000030" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\" `
-		-Name "EnumerateLocalUsers" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to block untrusted fonts from loading.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000200
-# Group ID (Vulid): V-73535
-# CCI: CCI-000366
-#
-# Attackers may use fonts that include malicious code to compromise a system. This setting
-# will prevent untrusted fonts, processed by the Graphics Device Interface (GDI), from loading
-# if installed outside of the %windir%/Fonts directory.
-$DisaTest += "Test-SV-88189r1_rule"
-function Test-SV-88189r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88189r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to block untrusted fonts from loading.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000200" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions\" `
-		-Name "MitigationOptions_FontBocking" `
-		-ExpectedValue "1000000000000" `
-	| Write-Output
-}
-
-# Users must be prompted to authenticate when the system wakes from sleep (on battery).
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000210
-# Group ID (Vulid): V-73537
-# CCI: CCI-000366
-#
-# A system that does not require authentication when resuming from sleep may provide access
-# to unauthorized users. Authentication must always be required when accessing a system. This
-# setting ensures users are prompted for a password when the system wakes from sleep (on battery).
-#
-$DisaTest += "Test-SV-88197r1_rule"
-function Test-SV-88197r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88197r1_rule")
-	$obj | Add-Member NoteProperty Task("Users must be prompted to authenticate when the system wakes from sleep (on battery).")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000210" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" `
-		-Name "DCSettingIndex" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Users must be prompted to authenticate when the system wakes from sleep (plugged in).
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000220
-# Group ID (Vulid): V-73539
-# CCI: CCI-000366
-#
-# A system that does not require authentication when resuming from sleep may provide access
-# to unauthorized users. Authentication must always be required when accessing a system. This
-# setting ensures users are prompted for a password when the system wakes from sleep (plugged
-# in).
-$DisaTest += "Test-SV-88201r1_rule"
-function Test-SV-88201r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88201r1_rule")
-	$obj | Add-Member NoteProperty Task("Users must be prompted to authenticate when the system wakes from sleep (plugged in).")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000220" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" `
-		-Name "ACSettingIndex" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Unauthenticated Remote Procedure Call (RPC) clients must be restricted from connecting to
-# the RPC server.
-# - - - - - - - - - - - - -
-# StigID: WN16-MS-000040
-# Group ID (Vulid): V-73541
-# CCI: CCI-001967
-#
-# Unauthenticated RPC clients may allow anonymous access to sensitive information. Configuring
-# RPC to restrict unauthenticated RPC clients from connecting to the RPC server will prevent
-# anonymous connections.
-$DisaTest += "Test-SV-88203r1_rule"
-function Test-SV-88203r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88203r1_rule")
-	$obj | Add-Member NoteProperty Task("Unauthenticated Remote Procedure Call (RPC) clients must be restricted from connecting to the RPC server.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-MS-000040" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc\" `
-		-Name "RestrictRemoteClients" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The Application Compatibility Program Inventory must be prevented from collecting data and
-# sending the information to Microsoft.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000240
-# Group ID (Vulid): V-73543
-# CCI: CCI-000381
-#
-# Some features may communicate with the vendor, sending system information or downloading
-# data or components for the feature. Turning off this capability will prevent potentially
-# sensitive information from being sent outside the enterprise and will prevent uncontrolled
-# updates to the system.This setting will prevent the Program Inventory from collecting data
-# about a system and sending the information to Microsoft.
-$DisaTest += "Test-SV-88207r1_rule"
-function Test-SV-88207r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88207r1_rule")
-	$obj | Add-Member NoteProperty Task("The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000240" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat\" `
-		-Name "DisableInventory" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# AutoPlay must be turned off for non-volume devices.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000250
-# Group ID (Vulid): V-73545
-# CCI: CCI-001764
-#
-# Allowing AutoPlay to execute may introduce malicious code to a system. AutoPlay begins reading
-# from a drive as soon as media is inserted into the drive. As a result, the setup file of
-# programs or music on audio media may start. This setting will disable AutoPlay for non-volume
-# devices, such as Media Transfer Protocol (MTP) devices.
-$DisaTest += "Test-SV-88209r1_rule"
-function Test-SV-88209r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88209r1_rule")
-	$obj | Add-Member NoteProperty Task("AutoPlay must be turned off for non-volume devices.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000250" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\" `
-		-Name "NoAutoplayfornonVolume" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The default AutoRun behavior must be configured to prevent AutoRun commands.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000260
-# Group ID (Vulid): V-73547
-# CCI: CCI-001764
-#
-# Allowing AutoRun commands to execute may introduce malicious code to a system. Configuring
-# this setting prevents AutoRun commands from executing.
-$DisaTest += "Test-SV-88211r1_rule"
-function Test-SV-88211r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88211r1_rule")
-	$obj | Add-Member NoteProperty Task("The default AutoRun behavior must be configured to prevent AutoRun commands.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000260" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" `
-		-Name "NoAutorun" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# AutoPlay must be disabled for all drives.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000270
-# Group ID (Vulid): V-73549
-# CCI: CCI-001764
-#
-# Allowing AutoPlay to execute may introduce malicious code to a system. AutoPlay begins reading
-# from a drive as soon media is inserted into the drive. As a result, the setup file of programs
-# or music on audio media may start. By default, AutoPlay is disabled on removable drives,
-# such as the floppy disk drive (but not the CD-ROM drive) and on network drives. Enabling
-# this policy disables AutoPlay on all drives.
-$DisaTest += "Test-SV-88213r1_rule"
-function Test-SV-88213r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88213r1_rule")
-	$obj | Add-Member NoteProperty Task("AutoPlay must be disabled for all drives.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000270" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\" `
-		-Name "NoDriveTypeAutoRun" `
-		-ExpectedValue 255 `
-	| Write-Output
-}
-
-# Windows Telemetry must be configured to Security or Basic.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000290
-# Group ID (Vulid): V-73551
-# CCI: CCI-000366
-#
-# Some features may communicate with the vendor, sending system information or downloading
-# data or components for the feature. Limiting this capability will prevent potentially sensitive
-# information from being sent outside the enterprise. The Security option for Telemetry configures
-# the lowest amount of data, effectively none outside of the Malicious Software Removal Tool
-# (MSRT), Defender, and telemetry client settings. Basic sends basic diagnostic and usage
-# data and may be required to support some Microsoft services.
-$DisaTest += "Test-SV-88215r1_rule"
-function Test-SV-88215r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88215r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Telemetry must be configured to Security or Basic.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000290" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection\" `
-		-Name "AllowTelemetry" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Application event log size must be configured to 32768 KB or greater.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000300
-# Group ID (Vulid): V-73553
-# CCI: CCI-001849
-#
-# Inadequate log size will cause the log to fill up quickly. This may prevent audit events
-# from being recorded properly and require frequent attention by administrative personnel.
-#
-$DisaTest += "Test-SV-88217r1_rule"
-function Test-SV-88217r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88217r1_rule")
-	$obj | Add-Member NoteProperty Task("The Application event log size must be configured to 32768 KB or greater.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000300" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\" `
-		-Name "MaxSize" `
-		-ExpectedValue 32768 `
-	| Write-Output
-}
-
-# The Security event log size must be configured to 196608 KB or greater.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000310
-# Group ID (Vulid): V-73555
-# CCI: CCI-001849
-#
-# Inadequate log size will cause the log to fill up quickly. This may prevent audit events
-# from being recorded properly and require frequent attention by administrative personnel.
-#
-$DisaTest += "Test-SV-88219r1_rule"
-function Test-SV-88219r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88219r1_rule")
-	$obj | Add-Member NoteProperty Task("The Security event log size must be configured to 196608 KB or greater.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000310" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security\" `
-		-Name "MaxSize" `
-		-ExpectedValue 196608 `
-	| Write-Output
-}
-
-# The System event log size must be configured to 32768 KB or greater.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000320
-# Group ID (Vulid): V-73557
-# CCI: CCI-001849
-#
-# Inadequate log size will cause the log to fill up quickly. This may prevent audit events
-# from being recorded properly and require frequent attention by administrative personnel.
-#
-$DisaTest += "Test-SV-88221r1_rule"
-function Test-SV-88221r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88221r1_rule")
-	$obj | Add-Member NoteProperty Task("The System event log size must be configured to 32768 KB or greater.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000320" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System\" `
-		-Name "MaxSize" `
-		-ExpectedValue 32768 `
-	| Write-Output
-}
-
-# Windows SmartScreen must be enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000330
-# Group ID (Vulid): V-73559
-# CCI: CCI-000381
-#
-# Windows SmartScreen helps protect systems from programs downloaded from the internet that
-# may be malicious. Enabling SmartScreen will warn users of potentially malicious programs.
-#
-$DisaTest += "Test-SV-88223r1_rule"
-function Test-SV-88223r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88223r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows SmartScreen must be enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000330" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\" `
-		-Name "EnableSmartScreen" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Explorer Data Execution Prevention must be enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000340
-# Group ID (Vulid): V-73561
-# CCI: CCI-002824
-#
-# Data Execution Prevention provides additional protection by performing checks on memory to
-# help prevent malicious code from running. This setting will prevent Data Execution Prevention
-# from being turned off for File Explorer.
-$DisaTest += "Test-SV-88225r1_rule"
-function Test-SV-88225r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88225r1_rule")
-	$obj | Add-Member NoteProperty Task("Explorer Data Execution Prevention must be enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000340" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\" `
-		-Name "NoDataExecutionPrevention" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Turning off File Explorer heap termination on corruption must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000350
-# Group ID (Vulid): V-73563
-# CCI: CCI-000366
-#
-# Legacy plug-in applications may continue to function when a File Explorer session has become
-# corrupt. Disabling this feature will prevent this.
-$DisaTest += "Test-SV-88227r1_rule"
-function Test-SV-88227r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88227r1_rule")
-	$obj | Add-Member NoteProperty Task("Turning off File Explorer heap termination on corruption must be disabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000350" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\" `
-		-Name "NoHeapTerminationOnCorruption" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# File Explorer shell protocol must run in protected mode.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000360
-# Group ID (Vulid): V-73565
-# CCI: CCI-000366
-#
-# The shell protocol will limit the set of folders that applications can open when run in protected
-# mode. Restricting files an application can open to a limited set of folders increases the
-# security of Windows.
-$DisaTest += "Test-SV-88229r1_rule"
-function Test-SV-88229r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88229r1_rule")
-	$obj | Add-Member NoteProperty Task("File Explorer shell protocol must run in protected mode.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000360" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\" `
-		-Name "PreXPSP2ShellProtocolBehavior" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Passwords must not be saved in the Remote Desktop Client.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000370
-# Group ID (Vulid): V-73567
-# CCI: CCI-002038
-#
-# Saving passwords in the Remote Desktop Client could allow an unauthorized user to establish
-# a remote desktop session to another system. The system must be configured to prevent users
-# from saving passwords in the Remote Desktop Client.Satisfies: SRG-OS-000373-GPOS-00157,
-# SRG-OS-000373-GPOS-00156
-$DisaTest += "Test-SV-88231r1_rule"
-function Test-SV-88231r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88231r1_rule")
-	$obj | Add-Member NoteProperty Task("Passwords must not be saved in the Remote Desktop Client.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000370" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
-		-Name "DisablePasswordSaving" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Local drives must be prevented from sharing with Remote Desktop Session Hosts.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000380
-# Group ID (Vulid): V-73569
-# CCI: CCI-001090
-#
-# Preventing users from sharing the local drives on their client computers with Remote Session
-# Hosts that they access helps reduce possible exposure of sensitive data.
-$DisaTest += "Test-SV-88233r1_rule"
-function Test-SV-88233r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88233r1_rule")
-	$obj | Add-Member NoteProperty Task("Local drives must be prevented from sharing with Remote Desktop Session Hosts.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000380" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
-		-Name "fDisableCdm" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Remote Desktop Services must always prompt a client for passwords upon connection.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000390
-# Group ID (Vulid): V-73571
-# CCI: CCI-002038
-#
-# This setting controls the ability of users to supply passwords automatically as part of their
-# remote desktop connection. Disabling this setting would allow anyone to use the stored credentials
-# in a connection item to connect to the terminal server.Satisfies: SRG-OS-000373-GPOS-00157,
-# SRG-OS-000373-GPOS-00156
-$DisaTest += "Test-SV-88235r1_rule"
-function Test-SV-88235r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88235r1_rule")
-	$obj | Add-Member NoteProperty Task("Remote Desktop Services must always prompt a client for passwords upon connection.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000390" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
-		-Name "fPromptForPassword" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The Remote Desktop Session Host must require secure Remote Procedure Call (RPC) communications.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000400
-# Group ID (Vulid): V-73573
-# CCI: CCI-001453
-#
-# Allowing unsecure RPC communication exposes the system to man-in-the-middle attacks and data
-# disclosure attacks. A man-in-the-middle attack occurs when an intruder captures packets
-# between a client and server and modifies them before allowing the packets to be exchanged.
-# Usually the attacker will modify the information in the packets in an attempt to cause either
-# the client or server to reveal sensitive information.
-$DisaTest += "Test-SV-88237r1_rule"
-function Test-SV-88237r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88237r1_rule")
-	$obj | Add-Member NoteProperty Task("The Remote Desktop Session Host must require secure Remote Procedure Call (RPC) communications.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000400" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
-		-Name "fEncryptRPCTraffic" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Remote Desktop Services must be configured with the client connection encryption set to High
-# Level.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000410
-# Group ID (Vulid): V-73575
-# CCI: CCI-001453
-#
-# Remote connections must be encrypted to prevent interception of data or sensitive information.
-# Select-Objecting High Level will ensure encryption of Remote Desktop Services sessions in both
-# directions.
-$DisaTest += "Test-SV-88239r1_rule"
-function Test-SV-88239r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88239r1_rule")
-	$obj | Add-Member NoteProperty Task("Remote Desktop Services must be configured with the client connection encryption set to High Level.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000410" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\" `
-		-Name "MinEncryptionLevel" `
-		-ExpectedValue 3 `
-	| Write-Output
-}
-
-# Attachments must be prevented from being downloaded from RSS feeds.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000420
-# Group ID (Vulid): V-73577
-# CCI: CCI-000366
-#
-# Attachments from RSS feeds may not be secure. This setting will prevent attachments from
-# being downloaded from RSS feeds.
-$DisaTest += "Test-SV-88241r1_rule"
-function Test-SV-88241r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88241r1_rule")
-	$obj | Add-Member NoteProperty Task("Attachments must be prevented from being downloaded from RSS feeds.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000420" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" `
-		-Name "DisableEnclosureDownload" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Basic authentication for RSS feeds over HTTP must not be used.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000430
-# Group ID (Vulid): V-73579
-# CCI: CCI-000381
-#
-# Basic authentication uses plain-text passwords that could be used to compromise a system.
-# Disabling Basic authentication will reduce this potential.
-$DisaTest += "Test-SV-88243r1_rule"
-function Test-SV-88243r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88243r1_rule")
-	$obj | Add-Member NoteProperty Task("Basic authentication for RSS feeds over HTTP must not be used.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000430" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\" `
-		-Name "AllowBasicAuthInClear" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Indexing of encrypted files must be turned off.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000440
-# Group ID (Vulid): V-73581
-# CCI: CCI-000381
-#
-# Indexing of encrypted files may expose sensitive data. This setting prevents encrypted files
-# from being indexed.
-$DisaTest += "Test-SV-88245r1_rule"
-function Test-SV-88245r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88245r1_rule")
-	$obj | Add-Member NoteProperty Task("Indexing of encrypted files must be turned off.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000440" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search\" `
-		-Name "AllowIndexingEncryptedStoresOrItems" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Users must be prevented from changing installation options.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000450
-# Group ID (Vulid): V-73583
-# CCI: CCI-001812
-#
-# Installation options for applications are typically controlled by administrators. This setting
-# prevents users from changing installation options that may bypass security features.
-$DisaTest += "Test-SV-88247r1_rule"
-function Test-SV-88247r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88247r1_rule")
-	$obj | Add-Member NoteProperty Task("Users must be prevented from changing installation options.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000450" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\" `
-		-Name "EnableUserControl" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Windows Installer Always install with elevated privileges option must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000460
-# Group ID (Vulid): V-73585
-# CCI: CCI-001812
-#
-# Standard user accounts must not be granted elevated privileges. Enabling Windows Installer
-# to elevate privileges when installing applications can allow malicious persons and applications
-# to gain full control of a system.
-$DisaTest += "Test-SV-88249r1_rule"
-function Test-SV-88249r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88249r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Installer Always install with elevated privileges option must be disabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000460" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\" `
-		-Name "AlwaysInstallElevated" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Users must be notified if a web-based program attempts to install software.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000470
-# Group ID (Vulid): V-73587
-# CCI: CCI-000366
-#
-# Web-based programs may attempt to install malicious software on a system. Ensuring users
-# are notified if a web-based program attempts to install software allows them to refuse the
-# installation.
-$DisaTest += "Test-SV-88251r1_rule"
-function Test-SV-88251r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88251r1_rule")
-	$obj | Add-Member NoteProperty Task("Users must be notified if a web-based program attempts to install software.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000470" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\" `
-		-Name "SafeForScripting" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Automatically signing in the last interactive user after a system-initiated restart must
-# be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000480
-# Group ID (Vulid): V-73589
-# CCI: CCI-000366
-#
-# Windows can be configured to automatically sign the user back in after a Windows Update restart.
-# Some protections are in place to help ensure this is done in a secure fashion; however,
-# disabling this will prevent the caching of credentials for this purpose and also ensure
-# the user is aware of the restart.
-$DisaTest += "Test-SV-88253r1_rule"
-function Test-SV-88253r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88253r1_rule")
-	$obj | Add-Member NoteProperty Task("Automatically signing in the last interactive user after a system-initiated restart must be disabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000480" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "DisableAutomaticRestartSignOn" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# PowerShell script block logging must be enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000490
-# Group ID (Vulid): V-73591
-# CCI: CCI-000135
-#
-# Maintaining an audit trail of system activity logs can help identify configuration errors,
-# troubleshoot service disruptions, and analyze compromises that have occurred, as well as
-# detect attacks. Audit logs are necessary to provide a trail of evidence in case the system
-# or network is compromised. Collecting this data is essential for analyzing the security
-# of information assets and detecting signs of suspicious and unexpected behavior.Enabling
-# PowerShell script block logging will record detailed information from the processing of
-# PowerShell commands and scripts. This can provide additional detail when malware has run
-# on a system.
-$DisaTest += "Test-SV-88255r1_rule"
-function Test-SV-88255r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88255r1_rule")
-	$obj | Add-Member NoteProperty Task("PowerShell script block logging must be enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000490" `
-		-Path "HKLM:\SOFTWARE\ Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging\" `
-		-Name "EnableScriptBlockLogging" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The Windows Remote Management (WinRM) client must not use Basic authentication.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000500
-# Group ID (Vulid): V-73593
-# CCI: CCI-000877
-#
-# Basic authentication uses plain-text passwords that could be used to compromise a system.
-# Disabling Basic authentication will reduce this potential.
-$DisaTest += "Test-SV-88257r1_rule"
-function Test-SV-88257r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88257r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) client must not use Basic authentication.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000500" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" `
-		-Name "AllowBasic" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Windows Remote Management (WinRM) client must not allow unencrypted traffic.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000510
-# Group ID (Vulid): V-73595
-# CCI: CCI-002890 CCI-003123
-#
-# Unencrypted remote access to a system can allow sensitive information to be compromised.
-# Windows remote management connections must be encrypted to prevent this.Satisfies: SRG-OS-000393-GPOS-00173,
-# SRG-OS-000394-GPOS-00174
-$DisaTest += "Test-SV-88259r1_rule"
-function Test-SV-88259r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88259r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) client must not allow unencrypted traffic.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000510" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" `
-		-Name "AllowUnencryptedTraffic" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Windows Remote Management (WinRM) client must not use Digest authentication.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000520
-# Group ID (Vulid): V-73597
-# CCI: CCI-000877
-#
-# Digest authentication is not as strong as other options and may be subject to man-in-the-middle
-# attacks. Disallowing Digest authentication will reduce this potential.
-$DisaTest += "Test-SV-88261r1_rule"
-function Test-SV-88261r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88261r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) client must not use Digest authentication.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000520" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\" `
-		-Name "AllowDigest" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Windows Remote Management (WinRM) service must not use Basic authentication.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000530
-# Group ID (Vulid): V-73599
-# CCI: CCI-000877
-#
-# Basic authentication uses plain-text passwords that could be used to compromise a system.
-# Disabling Basic authentication will reduce this potential.
-$DisaTest += "Test-SV-88263r1_rule"
-function Test-SV-88263r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88263r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) service must not use Basic authentication.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000530" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" `
-		-Name "AllowBasic" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Windows Remote Management (WinRM) service must not allow unencrypted traffic.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000540
-# Group ID (Vulid): V-73601
-# CCI: CCI-002890 CCI-003123
-#
-# Unencrypted remote access to a system can allow sensitive information to be compromised.
-# Windows remote management connections must be encrypted to prevent this.Satisfies: SRG-OS-000393-GPOS-00173,
-# SRG-OS-000394-GPOS-00174
-$DisaTest += "Test-SV-88265r1_rule"
-function Test-SV-88265r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88265r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) service must not allow unencrypted traffic.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000540" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" `
-		-Name "AllowUnencryptedTraffic" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The Windows Remote Management (WinRM) service must not store RunAs credentials.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000550
-# Group ID (Vulid): V-73603
-# CCI: CCI-002038
-#
-# Storage of administrative credentials could allow unauthorized access. Disallowing the storage
-# of RunAs credentials for Windows Remote Management will prevent them from being used with
-# plug-ins.Satisfies: SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00156
-$DisaTest += "Test-SV-88267r1_rule"
-function Test-SV-88267r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88267r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows Remote Management (WinRM) service must not store RunAs credentials.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000550" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\" `
-		-Name "DisableRunAs" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Local accounts with blank passwords must be restricted to prevent access from the network.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000020
-# Group ID (Vulid): V-73621
-# CCI: CCI-000366
-#
-# An account without a password can allow unauthorized access to a system as only the username
-# would be required. Password policies should prevent accounts with blank passwords from existing
-# on a system. However, if a local account with a blank password does exist, enabling this
-# setting will prevent network access, limiting the account to local console logon only.
-$DisaTest += "Test-SV-88285r1_rule"
-function Test-SV-88285r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88285r1_rule")
-	$obj | Add-Member NoteProperty Task("Local accounts with blank passwords must be restricted to prevent access from the network.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000020" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "LimitBlankPasswordUse" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Audit policy using subcategories must be enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000050
-# Group ID (Vulid): V-73627
-# CCI: CCI-000169
-#
-# Maintaining an audit trail of system activity logs can help identify configuration errors,
-# troubleshoot service disruptions, and analyze compromises that have occurred, as well as
-# detect attacks. Audit logs are necessary to provide a trail of evidence in case the system
-# or network is compromised. Collecting this data is essential for analyzing the security
-# of information assets and detecting signs of suspicious and unexpected behavior. This setting
-# allows administrators to enable more precise auditing capabilities.
-$DisaTest += "Test-SV-88291r1_rule"
-function Test-SV-88291r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88291r1_rule")
-	$obj | Add-Member NoteProperty Task("Audit policy using subcategories must be enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000050" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "SCENoApplyLegacyAuditPolicy" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Domain controllers must require LDAP access signing.
-# - - - - - - - - - - - - -
-# StigID: WN16-DC-000320
-# Group ID (Vulid): V-73629
-# CCI: CCI-002418 CCI-002421
-#
-# Unsigned network traffic is susceptible to man-in-the-middle attacks, where an intruder captures
-# packets between the server and the client and modifies them before forwarding them to the
-# client. In the case of an LDAP server, this means that an attacker could cause a client
-# to make decisions based on false records from the LDAP directory. The risk of an attacker
-# pulling this off can be decreased by implementing strong physical security measures to protect
-# the network infrastructure. Furthermore, implementing Internet Protocol security (IPsec)
-# authentication header mode (AH), which performs mutual authentication and packet integrity
-# for Internet Protocol (IP) traffic, can make all types of man-in-the-middle attacks extremely
-# difficult.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
-$DisaTest += "Test-SV-88293r1_rule"
-function Test-SV-88293r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88293r1_rule")
-	$obj | Add-Member NoteProperty Task("Domain controllers must require LDAP access signing.")
-
-	#TODO: Test function on domain connected server
-
-	if (Test-DomainController) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-DC-000320" `
-			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\" `
-			-Name "LDAPServerIntegrity" `
-			-ExpectedValue 2
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not a domain controller. Test irrelevant.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-	}
-
-	Write-Output $obj
-}
-
-# Domain controllers must be configured to allow reset of machine account passwords.
-# - - - - - - - - - - - - -
-# StigID: WN16-DC-000330
-# Group ID (Vulid): V-73631
-# CCI: CCI-000366
-#
-# Enabling this setting on all domain controllers in a domain prevents domain members from
-# changing their computer account passwords. If these passwords are weak or compromised, the
-# inability to change them may leave these computers vulnerable.
-$DisaTest += "Test-SV-88295r1_rule"
-function Test-SV-88295r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88295r1_rule")
-	$obj | Add-Member NoteProperty Task("Domain controllers must be configured to allow reset of machine account passwords.")
-
-	if (Test-DomainController) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-DC-000330" `
-			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-			-Name "RefusePasswordChange" `
-			-ExpectedValue 0
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not a domain controller. Test irrelevant.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-	}
-
-	Write-Output $obj
-}
-
-# The setting Domain member: Digitally encrypt or sign secure channel data (always) must be
-# configured to Enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000080
-# Group ID (Vulid): V-73633
-# CCI: CCI-002418 CCI-002421
-#
-# Requests sent on the secure channel are authenticated, and sensitive information (such as
-# passwords) is encrypted, but not all information is encrypted. If this policy is enabled,
-# outgoing secure channel traffic will be encrypted and signed.Satisfies: SRG-OS-000423-GPOS-00187,
-# SRG-OS-000424-GPOS-00188
-$DisaTest += "Test-SV-88297r1_rule"
-function Test-SV-88297r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88297r1_rule")
-	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled.")
-
-	if (Test-DomainJoined) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-SO-000080" `
-			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-			-Name "RequireSignOrSeal" `
-			-ExpectedValue 1
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not a domain member. Test irrelevant.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-	}
-
-	Write-Output $obj
-}
-
-# The setting Domain member: Digitally encrypt secure channel data (when possible) must be
-# configured to enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000090
-# Group ID (Vulid): V-73635
-# CCI: CCI-002418 CCI-002421
-#
-# Requests sent on the secure channel are authenticated, and sensitive information (such as
-# passwords) is encrypted, but not all information is encrypted. If this policy is enabled,
-# outgoing secure channel traffic will be encrypted.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
-#
-$DisaTest += "Test-SV-88299r1_rule"
-function Test-SV-88299r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88299r1_rule")
-	$obj | Add-Member NoteProperty Task("Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled.")
-
-	if (Test-DomainJoined) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-SO-000090" `
-			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-			-Name "SealSecureChannel" `
-			-ExpectedValue 1
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not a domain member. Test irrelevant.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-	}
-
-	Write-Output $obj
-}
-
-# The setting Domain member: Digitally sign secure channel data (when possible) must be configured
-# to Enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000100
-# Group ID (Vulid): V-73637
-# CCI: CCI-002418 CCI-002421
-#
-# Requests sent on the secure channel are authenticated, and sensitive information (such as
-# passwords) is encrypted, but the channel is not integrity checked. If this policy is enabled,
-# outgoing secure channel traffic will be signed.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
-#
-$DisaTest += "Test-SV-88301r1_rule"
-function Test-SV-88301r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88301r1_rule")
-	$obj | Add-Member NoteProperty Task("Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled.")
-
-	if (Test-DomainJoined) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-SO-000100" `
-			-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-			-Name "SignSecureChannel" `
-			-ExpectedValue 1
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Not a domain member. Test irrelevant.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-	}
-
-
-	Write-Output $obj
-}
-
-# The computer account password must not be prevented from being reset.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000110
-# Group ID (Vulid): V-73639
-# CCI: CCI-001967
-#
-# Computer account passwords are changed automatically on a regular basis. Disabling automatic
-# password changes can make the system more vulnerable to malicious access. Frequent password
-# changes can be a significant safeguard for the system. A new password for the computer account
-# will be generated every 30 days.
-$DisaTest += "Test-SV-88303r1_rule"
-function Test-SV-88303r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88303r1_rule")
-	$obj | Add-Member NoteProperty Task("The computer account password must not be prevented from being reset.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000110" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-		-Name "DisablePasswordChange" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The maximum age for machine account passwords must be configured to 30 days or less.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000120
-# Group ID (Vulid): V-73641
-# CCI: CCI-000366
-#
-# Computer account passwords are changed automatically on a regular basis. This setting controls
-# the maximum password age that a machine account may have. This must be set to no more than
-# 30 days, ensuring the machine changes its password monthly.
-$DisaTest += "Test-SV-88305r1_rule"
-function Test-SV-88305r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88305r1_rule")
-	$obj | Add-Member NoteProperty Task("The maximum age for machine account passwords must be configured to 30 days or less.")
-
-	#TODO: Change
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000120" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-		-Name "MaximumPasswordAge" `
-		-ExpectedValue "Less than 30 days, but not 0." `
-		-Predicate { param($regValue) $regValue -le 30 -and $regValue -ne 0 } `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to require a strong session key.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000130
-# Group ID (Vulid): V-73643
-# CCI: CCI-002418 CCI-002421
-#
-# A computer connecting to a domain controller will establish a secure channel. The secure
-# channel connection may be subject to compromise, such as hijacking or eavesdropping, if
-# strong session keys are not used to establish the connection. Requiring strong session keys
-# enforces 128-bit encryption between systems.Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
-#
-$DisaTest += "Test-SV-88307r1_rule"
-function Test-SV-88307r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88307r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to require a strong session key.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000130" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\" `
-		-Name "RequireStrongKey" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The machine inactivity limit must be set to 15 minutes, locking the system with the screen
-# saver.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000140
-# Group ID (Vulid): V-73645
-# CCI: CCI-000057
-#
-# Unattended systems are susceptible to unauthorized use and should be locked when unattended.
-# The screen saver should be set at a maximum of 15 minutes and be password protected. This
-# protects critical and sensitive data from exposure to unauthorized personnel with physical
-# access to the computer.
-$DisaTest += "Test-SV-88309r2_rule"
-function Test-SV-88309r2_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88309r2_rule")
-	$obj | Add-Member NoteProperty Task("The machine inactivity limit must be set to 15 minutes, locking the system with the screen saver.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000140" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "InactivityTimeoutSecs" `
-		-ExpectedValue "Less than 900 seconds." `
-		-Predicate { param($regValue) ($regValue -le 900 -and $regValue -ne 0)} `
-	| Write-Output
-}
-
-# The required legal notice must be configured to display before console logon.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000150
-# Group ID (Vulid): V-73647
-# CCI: CCI-000048 CCI-000050 CCI-001384 CCI-001385 CCI-001386 CCI-001387 CCI-001388
-#
-# Failure to display the logon banner prior to a logon attempt will negate legal proceedings
-# resulting from unauthorized access to system resources.Satisfies: SRG-OS-000023-GPOS-00006,
-# SRG-OS-000024-GPOS-00007, SRG-OS-000228-GPOS-00088
-$DisaTest += "Test-SV-88311r2_rule"
-function Test-SV-88311r2_rule {
-	[CmdletBinding()]
-	Param(
-		[string] $msg
+#region Registry test
+function Get-RegistryAuditWithValueType {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]] $Role,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Path,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Name,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Value,
+
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[string] $ValueType
 	)
 
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88311r2_rule")
-	$obj | Add-Member NoteProperty Task("The required legal notice must be configured to display before console logon.")
+	process {
+		$registryTest = $PSBoundParameters
 
-	$ExpectedValue = ""
-	$Predicate = $null
+		# Check roles
+		$roleAudit = Get-RoleAudit @registryTest
+		if ($null -ne $roleAudit) {
+			return $audit
+		}
 
-	if ($PSBoundParameters.ContainsKey("msg")) {
-		$ExpectedValue = "$msg"
-		$Predicate = { param($regValue) $regValue -eq $msg }
-	}
-	else {
-		$ExpectedValue = "Non-empty string."
-		$Predicate = { param($regValue) $null -ne $regValue -and $regValue -ne "" }
-	}
+		# Get the predicate
+		$registryTest.Predicate = { param($x) $false }
+		switch ($ValueType) {
+			# Create a predicate from the range specifice by the text
+			"ValueRange" {
+				$predicates = @()
+				if ($registryTest.Value.ToLower() -match "([0-9]+)[ a-z]* or less") {
+					$val = [int]$Matches[1]
+					$predicates += { param($x) $x -le $val }.GetNewClosure()
+				}
+				if ($registryTest.Value.ToLower() -match "([0-9]+)[ a-z]* or greater") {
+					$val = [int]$Matches[1]
+					$predicates += { param($x) $x -ge $val }.GetNewClosure()
+				}
+				if ($registryTest.Value.ToLower() -match "not ([0-9]+)") {
+					$val = [int]$Matches[1]
+					$predicates += { param($x) $x -ne $val }.GetNewClosure()
+				}
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000150" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "LegalNoticeText" `
-		-ExpectedValue $ExpectedValue `
-		-Predicate $Predicate `
-	| Write-Output
-}
+				$registryTest.Predicate = {
+					param($x)
 
-# The Windows dialog box title for the legal banner must be configured with the appropriate
-# text.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000160
-# Group ID (Vulid): V-73649
-# CCI: CCI-000048 CCI-001384 CCI-001385 CCI-001386 CCI-001387 CCI-001388
-#
-# Failure to display the logon banner prior to a logon attempt will negate legal proceedings
-# resulting from unauthorized access to system resources.Satisfies: SRG-OS-000023-GPOS-00006,
-# SRG-OS-000228-GPOS-00088
-$DisaTest += "Test-SV-88313r1_rule"
-function Test-SV-88313r1_rule {
-	Param(
-		[string] $msg
-	)
+					# combine predicates with an and
+					foreach ($predicate in $predicates) {
+						if (-not (& $predicate $x)) {
+							return $false
+						}
+					}
+					return $true
+				}.GetNewClosure()
+			}
+			# Replace the value in the registry test with the one from settings
+			"ValuePlaceholder" {
+				$val = ""
 
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88313r1_rule")
-	$obj | Add-Member NoteProperty Task("The Windows dialog box title for the legal banner must be configured with the appropriate text.")
+				if ($Settings.Keys -contains $registryTest.Value) {
+					$val = $Settings[$registryTest.Value]
+				}
 
-	if ($PSBoundParameters.ContainsKey("msg")) {
-		$ExpectedValue = "$msg"
-		$Predicate = { param($regValue) $regValue -eq $msg }
-	}
-	else {
-		$ExpectedValue = "Non-empty string."
-		$Predicate = { param($regValue) $null -ne $regValue -and $regValue -ne "" }
-	}
+				if ([string]::IsNullOrEmpty($val)) {
+					$registryTest.Value = "Non-empty string."
+					$registryTest.Predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
+				}
+				else {
+					$registryTest.Value = $val
+					$registryTest.Predicate = { param($x) $x -eq $val }.GetNewClosure()
+				}
+			}
+			default {
+				$registryTest.Predicate = { param($x) $registryTest.Value -eq $x }.GetNewClosure()
+			}
+		}
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000160" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "LegalNoticeCaption" `
-		-ExpectedValue $ExpectedValue `
-		-Predicate $Predicate `
-	| Write-Output
-}
-
-# Caching of logon credentials must be limited.
-# - - - - - - - - - - - - -
-# StigID: WN16-MS-000050
-# Group ID (Vulid): V-73651
-# CCI: CCI-000366
-#
-# The default Windows configuration caches the last logon credentials for users who log on
-# interactively to a system. This feature is provided for system availability reasons, such
-# as the users machine being disconnected from the network or domain controllers being unavailable.
-# Even though the credential cache is well protected, if a system is attacked, an unauthorized
-# individual may isolate the password to a domain user account using a password-cracking program
-# and gain access to the domain.
-$DisaTest += "Test-SV-88315r1_rule"
-function Test-SV-88315r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88315r1_rule")
-	$obj | Add-Member NoteProperty Task("Caching of logon credentials must be limited.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-MS-000050" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" `
-		-Name "CachedLogonsCount" `
-		-ExpectedValue "Less than 4" `
-		-Predicate { param($regValue) $regValue -le "4" } `
-	| Write-Output
-}
-
-# The setting Microsoft network client: Digitally sign communications (always) must be configured
-# to Enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000190
-# Group ID (Vulid): V-73653
-# CCI: CCI-002418 CCI-002421
-#
-# The server message block (SMB) protocol provides the basis for many network operations. Digitally
-# signed SMB packets aid in preventing man-in-the-middle attacks. If this policy is enabled,
-# the SMB client will only communicate with an SMB server that performs SMB packet signing.Satisfies:
-# SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
-$DisaTest += "Test-SV-88317r1_rule"
-function Test-SV-88317r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88317r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Microsoft network client: Digitally sign communications (always) must be configured to Enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000190" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" `
-		-Name "RequireSecuritySignature" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The setting Microsoft network client: Digitally sign communications (if server agrees) must
-# be configured to Enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000200
-# Group ID (Vulid): V-73655
-# CCI: CCI-002418 CCI-002421
-#
-# The server message block (SMB) protocol provides the basis for many network operations. If
-# this policy is enabled, the SMB client will request packet signing when communicating with
-# an SMB server that is enabled or required to perform SMB packet signing.Satisfies: SRG-OS-000423-GPOS-00187,
-# SRG-OS-000424-GPOS-00188
-$DisaTest += "Test-SV-88319r1_rule"
-function Test-SV-88319r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88319r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Microsoft network client: Digitally sign communications (if server agrees) must be configured to Enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000200" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" `
-		-Name "EnableSecuritySignature" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Unencrypted passwords must not be sent to third-party Server Message Block (SMB) servers.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000210
-# Group ID (Vulid): V-73657
-# CCI: CCI-000197
-#
-# Some non-Microsoft SMB servers only support unencrypted (plain-text) password authentication.
-# Sending plain-text passwords across the network when authenticating to an SMB server reduces
-# the overall security of the environment. Check with the vendor of the SMB server to determine
-# if there is a way to support encrypted password authentication.
-$DisaTest += "Test-SV-88321r1_rule"
-function Test-SV-88321r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88321r1_rule")
-	$obj | Add-Member NoteProperty Task("Unencrypted passwords must not be sent to third-party Server Message Block (SMB) servers.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000210" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\" `
-		-Name "EnablePlainTextPassword" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# The amount of idle time required before suspending a session must be configured to 15 minutes
-# or less.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000220
-# Group ID (Vulid): V-73659
-# CCI: CCI-001133 CCI-002361
-#
-# Open sessions can increase the avenues of attack on a system. This setting is used to control
-# when a computer disconnects an inactive SMB session. If client activity resumes, the session
-# is automatically reestablished. This protects critical and sensitive network data from exposure
-# to unauthorized personnel with physical access to the computer.Satisfies: SRG-OS-000163-GPOS-00072,
-# SRG-OS-000279-GPOS-00109
-$DisaTest += "Test-SV-88323r1_rule"
-function Test-SV-88323r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88323r1_rule")
-	$obj | Add-Member NoteProperty Task("The amount of idle time required before suspending a session must be configured to 15 minutes or less.")
-
-	#TODO: Change
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000220" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
-		-Name "autodisconnect" `
-		-ExpectedValue "Less than 15 minutes." `
-		-Predicate { param($regValue) $regValue -le 15 } `
-	| Write-Output
-}
-
-# The setting Microsoft network server: Digitally sign communications (always) must be configured
-# to Enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000230
-# Group ID (Vulid): V-73661
-# CCI: CCI-002418 CCI-002421
-#
-# The server message block (SMB) protocol provides the basis for many network operations. Digitally
-# signed SMB packets aid in preventing man-in-the-middle attacks. If this policy is enabled,
-# the SMB server will only communicate with an SMB client that performs SMB packet signing.Satisfies:
-# SRG-OS-000423-GPOS-00187, SRG-OS-000424-GPOS-00188
-$DisaTest += "Test-SV-88325r1_rule"
-function Test-SV-88325r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88325r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Microsoft network server: Digitally sign communications (always) must be configured to Enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000230" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
-		-Name "RequireSecuritySignature" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The setting Microsoft network server: Digitally sign communications (if client agrees) must
-# be configured to Enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000240
-# Group ID (Vulid): V-73663
-# CCI: CCI-002418 CCI-002421
-#
-# The server message block (SMB) protocol provides the basis for many network operations. Digitally
-# signed SMB packets aid in preventing man-in-the-middle attacks. If this policy is enabled,
-# the SMB server will negotiate SMB packet signing as requested by the client.Satisfies: SRG-OS-000423-GPOS-00187,
-# SRG-OS-000424-GPOS-00188
-$DisaTest += "Test-SV-88327r1_rule"
-function Test-SV-88327r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88327r1_rule")
-	$obj | Add-Member NoteProperty Task("The setting Microsoft network server: Digitally sign communications (if client agrees) must be configured to Enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000240" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
-		-Name "EnableSecuritySignature" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Anonymous enumeration of Security Account Manager (SAM) accounts must not be allowed.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000260
-# Group ID (Vulid): V-73667
-# CCI: CCI-000366
-#
-# Anonymous enumeration of SAM accounts allows anonymous logon users (null session connections)
-# to list all accounts names, thus providing a list of potential points to attack the system.
-#
-$DisaTest += "Test-SV-88331r1_rule"
-function Test-SV-88331r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88331r1_rule")
-	$obj | Add-Member NoteProperty Task("Anonymous enumeration of Security Account Manager (SAM) accounts must not be allowed.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000260" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "RestrictAnonymousSAM" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Anonymous enumeration of shares must not be allowed.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000270
-# Group ID (Vulid): V-73669
-# CCI: CCI-001090
-#
-# Allowing anonymous logon users (null session connections) to list all account names and enumerate
-# all shared resources can provide a map of potential points to attack the system.
-$DisaTest += "Test-SV-88333r1_rule"
-function Test-SV-88333r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88333r1_rule")
-	$obj | Add-Member NoteProperty Task("Anonymous enumeration of shares must not be allowed.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000270" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "RestrictAnonymous" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to prevent the storage of passwords and credentials.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000280
-# Group ID (Vulid): V-73671
-# CCI: CCI-002038
-#
-# This setting controls the storage of passwords and credentials for network authentication
-# on the local system. Such credentials must not be stored on the local machine, as that may
-# lead to account compromise.Satisfies: SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00156
-#
-$DisaTest += "Test-SV-88335r1_rule"
-function Test-SV-88335r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88335r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent the storage of passwords and credentials.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000280" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "DisableDomainCreds" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to prevent anonymous users from having the same permissions
-# as the Everyone group.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000290
-# Group ID (Vulid): V-73673
-# CCI: CCI-000366
-#
-# Access by anonymous users must be restricted. If this setting is enabled, anonymous users
-# have the same rights and permissions as the built-in Everyone group. Anonymous users must
-# not have these permissions or rights.
-$DisaTest += "Test-SV-88337r1_rule"
-function Test-SV-88337r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88337r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent anonymous users from having the same permissions as the Everyone group.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000290" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "EveryoneIncludesAnonymous" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Anonymous access to Named Pipes and Shares must be restricted.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000300
-# Group ID (Vulid): V-73675
-# CCI: CCI-001090
-#
-# Allowing anonymous access to named pipes or shares provides the potential for unauthorized
-# system access. This setting restricts access to those defined in Network access: Named Pipes
-# that can be accessed anonymously and Network access: Shares that can be accessed anonymously,
-# both of which must be blank under other requirements.
-$DisaTest += "Test-SV-88339r1_rule"
-function Test-SV-88339r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88339r1_rule")
-	$obj | Add-Member NoteProperty Task("Anonymous access to Named Pipes and Shares must be restricted.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000300" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters\" `
-		-Name "RestrictNullSessAccess" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Remote calls to the Security Account Manager (SAM) must be restricted to Administrators.
-# - - - - - - - - - - - - -
-# StigID: WN16-MS-000310
-# Group ID (Vulid): V-73677
-# CCI: CCI-002235
-#
-# The Windows Security Account Manager (SAM) stores users passwords. Restricting Remote Procedure
-# Call (RPC) connections to the SAM to Administrators helps protect those credentials.
-$DisaTest += "Test-SV-88341r2_rule"
-function Test-SV-88341r2_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88341r2_rule")
-	$obj | Add-Member NoteProperty Task("Remote calls to the Security Account Manager (SAM) must be restricted to Administrators.")
-
-	if (Test-StandaloneOrMemberServer) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-MS-000310" `
-			-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-			-Name "RestrictRemoteSAM" `
-			-ExpectedValue "O:BAG:BAD:(A;;RC;;;BA)" `
-		| Write-Output
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Only applies to member servers and standalone systems.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-		Write-Output $obj
+		Get-RegistryAudit @registryTest
 	}
 }
 
-# Services using Local System that use Negotiate when reverting to NTLM authentication must
-# use the computer identity instead of authenticating anonymously.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000320
-# Group ID (Vulid): V-73679
-# CCI: CCI-000366
-#
-# Services using Local System that use Negotiate when reverting to NTLM authentication may
-# gain unauthorized access if allowed to authenticate anonymously versus using the computer
-# identity.
-$DisaTest += "Test-SV-88343r1_rule"
-function Test-SV-88343r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88343r1_rule")
-	$obj | Add-Member NoteProperty Task("Services using Local System that use Negotiate when reverting to NTLM authentication must use the computer identity instead of authenticating anonymously.")
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000320" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\" `
-		-Name "UseMachineId" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
 
-# NTLM must be prevented from falling back to a Null session.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000330
-# Group ID (Vulid): V-73681
-# CCI: CCI-000366
-#
-# NTLM sessions that are allowed to fall back to Null (unauthenticated) sessions may gain unauthorized
-# access.
-$DisaTest += "Test-SV-88345r1_rule"
-function Test-SV-88345r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88345r1_rule")
-	$obj | Add-Member NoteProperty Task("NTLM must be prevented from falling back to a Null session.")
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000330" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\MSV1_0\" `
-		-Name "allownullsessionfallback" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
 
-# PKU2U authentication using online identities must be prevented.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000340
-# Group ID (Vulid): V-73683
-# CCI: CCI-000366
-#
-# PKU2U is a peer-to-peer authentication protocol. This setting prevents online identities
-# from authenticating to domain-joined systems. Authentication will be centrally managed with
-# Windows user accounts.
-$DisaTest += "Test-SV-88347r1_rule"
-function Test-SV-88347r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88347r1_rule")
-	$obj | Add-Member NoteProperty Task("PKU2U authentication using online identities must be prevented.")
 
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000340" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\pku2u\" `
-		-Name "AllowOnlineID" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption
-# suites.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000350
-# Group ID (Vulid): V-73685
-# CCI: CCI-000803
-#
-# Certain encryption types are no longer considered secure. The DES and RC4 encryption suites
-# must not be used for Kerberos encryption.
-$DisaTest += "Test-SV-88349r1_rule"
-function Test-SV-88349r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88349r1_rule")
-	$obj | Add-Member NoteProperty Task("Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000350" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\" `
-		-Name "SupportedEncryptionTypes" `
-		-ExpectedValue 2147483640 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to prevent the storage of the LAN Manager hash of
-# passwords.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000360
-# Group ID (Vulid): V-73687
-# CCI: CCI-000196
-#
-# The LAN Manager hash uses a weak encryption algorithm and there are several tools available
-# that use this hash to retrieve account passwords. This setting controls whether a LAN Manager
-# hash of the password is stored in the SAM the next time the password is changed.
-$DisaTest += "Test-SV-88351r1_rule"
-function Test-SV-88351r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88351r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to prevent the storage of the LAN Manager hash of passwords.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000360" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "NoLMHash" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The LAN Manager authentication level must be set to send NTLMv2 response only and to refuse
-# LM and NTLM.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000380
-# Group ID (Vulid): V-73691
-# CCI: CCI-000366
-#
-# The Kerberos v5 authentication protocol is the default for authentication of users who are
-# logging on to domain accounts. NTLM, which is less secure, is retained in later Windows
-# versions for compatibility with clients and servers that are running earlier versions of
-# Windows or applications that still use it. It is also used to authenticate logons to standalone
-# computers that are running later versions.
-$DisaTest += "Test-SV-88355r1_rule"
-function Test-SV-88355r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88355r1_rule")
-	$obj | Add-Member NoteProperty Task("The LAN Manager authentication level must be set to send NTLMv2 response only and to refuse LM and NTLM.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000380" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\" `
-		-Name "LmCompatibilityLevel" `
-		-ExpectedValue 5 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to at least negotiate signing for LDAP client signing.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000390
-# Group ID (Vulid): V-73693
-# CCI: CCI-000366
-#
-# This setting controls the signing requirements for LDAP clients. This must be set to Negotiate
-# signing or Require signing, depending on the environment and type of LDAP server in use.
-#
-$DisaTest += "Test-SV-88357r1_rule"
-function Test-SV-88357r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88357r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to at least negotiate signing for LDAP client signing.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000390" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Services\LDAP\" `
-		-Name "LDAPClientIntegrity" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Session security for NTLM SSP-based clients must be configured to require NTLMv2 session
-# security and 128-bit encryption.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000400
-# Group ID (Vulid): V-73695
-# CCI: CCI-000366
-#
-# Microsoft has implemented a variety of security support providers for use with Remote Procedure
-# Call (RPC) sessions. All of the options must be enabled to ensure the maximum security level.
-#
-$DisaTest += "Test-SV-88359r1_rule"
-function Test-SV-88359r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88359r1_rule")
-	$obj | Add-Member NoteProperty Task("Session security for NTLM SSP-based clients must be configured to require NTLMv2 session security and 128-bit encryption.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000400" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" `
-		-Name "NTLMMinClientSec" `
-		-ExpectedValue 537395200 `
-	| Write-Output
-}
-
-# Session security for NTLM SSP-based servers must be configured to require NTLMv2 session
-# security and 128-bit encryption.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000410
-# Group ID (Vulid): V-73697
-# CCI: CCI-000366
-#
-# Microsoft has implemented a variety of security support providers for use with Remote Procedure
-# Call (RPC) sessions. All of the options must be enabled to ensure the maximum security level.
-#
-$DisaTest += "Test-SV-88361r1_rule"
-function Test-SV-88361r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88361r1_rule")
-	$obj | Add-Member NoteProperty Task("Session security for NTLM SSP-based servers must be configured to require NTLMv2 session security and 128-bit encryption.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000410" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\" `
-		-Name "NTLMMinServerSec" `
-		-ExpectedValue 537395200 `
-	| Write-Output
-}
-
-# Users must be required to enter a password to access private keys stored on the computer.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000420
-# Group ID (Vulid): V-73699
-# CCI: CCI-000186
-#
-# If the private key is discovered, an attacker can use the key to authenticate as an authorized
-# user and gain access to the network infrastructure.The cornerstone of the PKI is the private
-# key used to encrypt or digitally sign information.If the private key is stolen, this will
-# lead to the compromise of the authentication and non-repudiation gained through PKI because
-# the attacker can use the private key to digitally sign documents and pretend to be the authorized
-# user.Both the holders of a digital certificate and the issuing authority must protect the
-# computers, storage devices, or whatever they use to keep the private keys.
-$DisaTest += "Test-SV-88363r1_rule"
-function Test-SV-88363r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88363r1_rule")
-	$obj | Add-Member NoteProperty Task("Users must be required to enter a password to access private keys stored on the computer.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000420" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\" `
-		-Name "ForceKeyProtection" `
-		-ExpectedValue 2 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to use FIPS-compliant algorithms for encryption, hashing,
-# and signing.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000430
-# Group ID (Vulid): V-73701
-# CCI: CCI-000068 CCI-002450
-#
-# This setting ensures the system uses algorithms that are FIPS-compliant for encryption, hashing,
-# and signing. FIPS-compliant algorithms meet specific standards established by the U.S. Government
-# and must be the algorithms used for all OS encryption functions.Satisfies: SRG-OS-000033-GPOS-00014,
-# SRG-OS-000478-GPOS-00223
-$DisaTest += "Test-SV-88365r1_rule"
-function Test-SV-88365r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88365r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to use FIPS-compliant algorithms for encryption, hashing, and signing.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000430" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\" `
-		-Name "Enabled" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# Windows Server 2016 must be configured to require case insensitivity for non-Windows subsystems.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000440
-# Group ID (Vulid): V-73703
-# CCI: CCI-000366
-#
-# This setting controls the behavior of non-Windows subsystems when dealing with the case of
-# arguments or commands. Case sensitivity could lead to the access of files or commands that
-# must be restricted. To prevent this from happening, case insensitivity restrictions must
-# be required.
-$DisaTest += "Test-SV-88367r1_rule"
-function Test-SV-88367r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88367r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to require case insensitivity for non-Windows subsystems.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000440" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel\" `
-		-Name "ObCaseInsensitive" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# The default permissions of global system objects must be strengthened.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000450
-# Group ID (Vulid): V-73705
-# CCI: CCI-000366
-#
-# Windows systems maintain a global list of shared system resources such as DOS device names,
-# mutexes, and semaphores. Each type of object is created with a default Discretionary Access
-# Control List (DACL) that specifies who can access the objects with what permissions. When
-# this policy is enabled, the default DACL is stronger, allowing non-administrative users
-# to read shared objects but not to modify shared objects they did not create.
-$DisaTest += "Test-SV-88369r1_rule"
-function Test-SV-88369r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88369r1_rule")
-	$obj | Add-Member NoteProperty Task("The default permissions of global system objects must be strengthened.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000450" `
-		-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\" `
-		-Name "ProtectionMode" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# User Account Control approval mode for the built-in Administrator must be enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000460
-# Group ID (Vulid): V-73707
-# CCI: CCI-002038
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting configures the built-in
-# Administrator account so that it runs in Admin Approval Mode.Satisfies: SRG-OS-000373-GPOS-00157,
-# SRG-OS-000373-GPOS-00156
-$DisaTest += "Test-SV-88371r1_rule"
-function Test-SV-88371r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88371r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control approval mode for the built-in Administrator must be enabled.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000460" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "FilterAdministratorToken" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# UIAccess applications must not be allowed to prompt for elevation without using the secure
-# desktop.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000470
-# Group ID (Vulid): V-73709
-# CCI: CCI-001084
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting prevents User Interface
-# Accessibility programs from disabling the secure desktop for elevation prompts.
-$DisaTest += "Test-SV-88373r1_rule"
-function Test-SV-88373r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88373r1_rule")
-	$obj | Add-Member NoteProperty Task("UIAccess applications must not be allowed to prompt for elevation without using the secure desktop.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000470" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "EnableUIADesktopToggle" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# User Account Control must, at a minimum, prompt administrators for consent on the secure
-# desktop.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000480
-# Group ID (Vulid): V-73711
-# CCI: CCI-001084
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting configures the elevation
-# requirements for logged-on administrators to complete a task that requires raised privileges.
-#
-$DisaTest += "Test-SV-88375r1_rule"
-function Test-SV-88375r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88375r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control must, at a minimum, prompt administrators for consent on the secure desktop.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000480" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "ConsentPromptBehaviorAdmin" `
-		-ExpectedValue 2 `
-	| Write-Output
-}
-
-# User Account Control must automatically deny standard user requests for elevation.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000490
-# Group ID (Vulid): V-73713
-# CCI: CCI-002038
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting controls the behavior
-# of elevation when requested by a standard user account.Satisfies: SRG-OS-000373-GPOS-00157,
-# SRG-OS-000373-GPOS-00156
-$DisaTest += "Test-SV-88377r1_rule"
-function Test-SV-88377r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88377r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control must automatically deny standard user requests for elevation.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000490" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "ConsentPromptBehaviorUser" `
-		-ExpectedValue 0 `
-	| Write-Output
-}
-
-# User Account Control must be configured to detect application installations and prompt for
-# elevation.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000500
-# Group ID (Vulid): V-73715
-# CCI: CCI-001084
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting requires Windows to respond
-# to application installation requests by prompting for credentials.
-$DisaTest += "Test-SV-88379r1_rule"
-function Test-SV-88379r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88379r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control must be configured to detect application installations and prompt for elevation.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000500" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "EnableInstallerDetection" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# User Account Control must only elevate UIAccess applications that are installed in secure
-# locations.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000510
-# Group ID (Vulid): V-73717
-# CCI: CCI-001084
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting configures Windows to
-# only allow applications installed in a secure location on the file system, such as the Program
-# Files or the Windows\System32 folders, to run with elevated privileges.
-$DisaTest += "Test-SV-88381r1_rule"
-function Test-SV-88381r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88381r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control must only elevate UIAccess applications that are installed in secure locations.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000510" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "EnableSecureUIAPaths" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# User Account Control must run all administrators in Admin Approval Mode, enabling UAC.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000520
-# Group ID (Vulid): V-73719
-# CCI: CCI-002038
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting enables UAC.Satisfies:
-# SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00156
-$DisaTest += "Test-SV-88383r1_rule"
-function Test-SV-88383r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88383r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control must run all administrators in Admin Approval Mode, enabling UAC.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000520" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "EnableLUA" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# User Account Control must virtualize file and registry write failures to per-user locations.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000530
-# Group ID (Vulid): V-73721
-# CCI: CCI-001084
-#
-# User Account Control (UAC) is a security mechanism for limiting the elevation of privileges,
-# including administrative accounts, unless authorized. This setting configures non-UAC-compliant
-# applications to run in virtualized file and registry entries in per-user locations, allowing
-# them to run.
-$DisaTest += "Test-SV-88385r1_rule"
-function Test-SV-88385r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88385r1_rule")
-	$obj | Add-Member NoteProperty Task("User Account Control must virtualize file and registry write failures to per-user locations.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000530" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\" `
-		-Name "EnableVirtualization" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-# A screen saver must be enabled on the system.
-# - - - - - - - - - - - - -
-# StigID: WN16-UC-000010
-# Group ID (Vulid): V-73723
-# CCI: CCI-000060
-#
-# Unattended systems are susceptible to unauthorized use and must be locked when unattended.
-# Enabling a password-protected screen saver to engage after a specified period of time helps
-# protects critical and sensitive data from exposure to unauthorized personnel with physical
-# access to the computer.
-$DisaTest += "Test-SV-88387r1_rule"
-function Test-SV-88387r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88387r1_rule")
-	$obj | Add-Member NoteProperty Task("A screen saver must be enabled on the system.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "ScreenSaveActive" `
-		-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" `
-		-Name "ScreenSaveActive" `
-		-ExpectedValue "1" `
-	| Write-Output
-}
-
-# The screen saver must be password protected.
-# - - - - - - - - - - - - -
-# StigID: WN16-UC-000020
-# Group ID (Vulid): V-73725
-# CCI: CCI-000056
-#
-# Unattended systems are susceptible to unauthorized use and must be locked when unattended.
-# Enabling a password-protected screen saver to engage after a specified period of time helps
-# protects critical and sensitive data from exposure to unauthorized personnel with physical
-# access to the computer.
-$DisaTest += "Test-SV-88389r1_rule"
-function Test-SV-88389r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88389r1_rule")
-	$obj | Add-Member NoteProperty Task("The screen saver must be password protected.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-UC-000020" `
-		-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop\" `
-		-Name "ScreenSaverIsSecure" `
-		-ExpectedValue "1" `
-	| Write-Output
-}
-
-# Zone information must be preserved when saving attachments.
-# - - - - - - - - - - - - -
-# StigID: WN16-UC-000030
-# Group ID (Vulid): V-73727
-# CCI: CCI-000366
-#
-# Attachments from outside sources may contain malicious code. Preserving zone of origin (Internet,
-# intranet, local, restricted) information on file attachments allows Windows to determine
-# risk.
-$DisaTest += "Test-SV-88391r1_rule"
-function Test-SV-88391r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88391r1_rule")
-	$obj | Add-Member NoteProperty Task("Zone information must be preserved when saving attachments.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-UC-000030" `
-		-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments\" `
-		-Name "SaveZoneInformation" `
-		-ExpectedValue 2 `
-	| Write-Output
-}
-
-# The Smart Card removal option must be configured to Force Logoff or Lock Workstation.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000180
-# Group ID (Vulid): V-73807
-# CCI: CCI-000366
-#
-# Unattended systems are susceptible to unauthorized use and must be locked. Configuring a
-# system to lock when a smart card is removed will ensure the system is inaccessible when
-# unattended.
-$DisaTest += "Test-SV-88473r1_rule"
-function Test-SV-88473r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88473r1_rule")
-	$obj | Add-Member NoteProperty Task("The Smart Card removal option must be configured to Force Logoff or Lock Workstation.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-SO-000180" `
-		-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" `
-		-Name "scremoveoption" `
-		-ExpectedValue "1" `
-	| Write-Output
-}
 
 #endregion
 
@@ -6839,11 +4430,12 @@ function Get-AuditPolicySubcategoryGUID {
 	}
 }
 
-function Test-AuditPolicySetting {
+function Get-AuditPolicyAudit {
 	[CmdletBinding()]
 	Param(
 		[Parameter(Mandatory = $true)]
-		[ValidateSet('Security System Extension',
+		[ValidateSet(
+			'Security System Extension',
 			'System Integrity',
 			'IPsec Driver',
 			'Other System Events',
@@ -6909,12 +4501,10 @@ function Test-AuditPolicySetting {
 		[System.String]$AuditFlag,
 
 		[Parameter(Mandatory = $true)]
-		[System.String]$ID
+		[System.String]$Id
 	)
 
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("$ID")
-	$obj | Add-Member NoteProperty Task("$Subcategory is set to $AuditFlag")
+	$Task = "$Subcategory is set to $AuditFlag"
 
 	# Get the audit policy for the subcategory $subcategory
 	$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $Subcategory
@@ -6927,40 +4517,75 @@ function Test-AuditPolicySetting {
 		Write-Error -Message $errorString
 	}
 
-	if ($null -ne $auditPolicyString) {
-		# Remove empty lines and headers
-		$line = $auditPolicyString `
-			| Where-Object { $_ } `
-			| Select-Object -Skip 3
-
-		if ($line -match "(No Auditing|Success and Failure|Success|Failure)$") {
-			$setting = $Matches[0]
-
-			if ($setting -eq $AuditFlag) {
-				$obj | Add-Member NoteProperty Status("Compliant")
-				$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-			}
-			else {
-				$obj | Add-Member NoteProperty Status("Set to: $setting")
-				$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-			}
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Couldn't get setting.")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+	if ($null -eq $auditPolicyString) {
+		return [AuditInfo]@{
+			Id      = $Id
+			Task    = $Task
+			Message = "Couldn't get setting. Auditpol returned nothing."
+			Audit   = [AuditStatus]::False
 		}
 	}
-	else {
-		$obj | Add-Member NoteProperty Status("Couldn't get setting. Auditpol returned nothing.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
+
+	# Remove empty lines and headers
+	$line = $auditPolicyString `
+		| Where-Object { $_ } `
+		| Select-Object -Skip 3
+
+	if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+		return [AuditInfo]@{
+			Id      = $Id
+			Task    = $Task
+			Message = "Couldn't get setting."
+			Audit   = [AuditStatus]::False
+		}
 	}
 
-	Write-Output $obj
+	$setting = $Matches[0]
+
+	if ($setting -ne $AuditFlag) {
+		return [AuditInfo]@{
+			Id      = $Id
+			Task    = $Task
+			Message = "Set to: $setting"
+			Audit   = [AuditStatus]::False
+		}
+	}
+
+	return [AuditInfo]@{
+		Id      = $Id
+		Task    = $Task
+		Message = "Compliant"
+		Audit   = [AuditStatus]::True
+	}
 }
 #endregion
 #endregion
 
-function Get-DisaAuditResult {
+function AuditPipeline {
+	param(
+		[Parameter(Mandatory = $true, Position = 0)]
+		[scriptblock[]] $AuditFunctions
+	)
+
+	return {
+		param(
+			[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+			[hashtable] $AuditSetting
+		)
+
+		process {
+			foreach ($auditFunction in $AuditFunctions) {
+				$audit = & $auditFunction @AuditSetting
+				if ($audit -is [AuditInfo]) {
+					return $audit
+				}
+			}
+			return $null
+		}
+	}.GetNewClosure()
+}
+
+function Get-DisaAudit {
 	Param(
 		[switch] $PerformanceOptimized,
 		[string[]] $Exclude
@@ -6970,51 +4595,23 @@ function Get-DisaAuditResult {
 		$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
 	}
 
-	foreach ($test in $DisaTest) {
-		if ($test -NotIn $Exclude) {
-			& $test
-		}
-	}
+	# define pipelines
+	$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAuditWithValueType}
+	$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightAudit}
 
-	# "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
+	# Disa registry settings
+	$DisaRequirements.RegistrySettings | &$registryAuditPipline
 
-	# if (-not $PerformanceOptimized) {
-	# 	"Test-SV-87923r1_rule"
-	# }
-
-	# "Test-SV-88423r1_rule" -IsDomainIntegrated
-	# "Test-SV-88427r1_rule" -IsDomainIntegrated
-	# "Test-SV-88431r1_rule" -IsDomainIntegrated
-	# "Test-SV-88435r1_rule" -IsDomainIntegrated
-	# "Test-SV-88439r1_rule" -IsDomainIntegrated
-
+	# Disa user rights
+	$DisaRequirements.PriviligeRights | &$userRightAuditPipline
 }
 
-function Get-CisAuditPolicyResult {
-	Test-AuditPolicySetting -Subcategory "Credential Validation" -AuditFlag 'Success and Failure' -id "CIS 17.1.1"
-	Test-AuditPolicySetting -Subcategory "Application Group Management" -AuditFlag 'Success and Failure' -id "CIS 17.2.1"
-	Test-AuditPolicySetting -Subcategory "Computer Account Management" -AuditFlag 'Success and Failure' -id "CIS 17.2.2"
-	Test-AuditPolicySetting -Subcategory "Other Account Management Events" -AuditFlag 'Success and Failure' -id "CIS 17.2.4"
-	Test-AuditPolicySetting -Subcategory "Security Group Management" -AuditFlag 'Success and Failure' -id "CIS 17.2.5"
-	Test-AuditPolicySetting -Subcategory "User Account Management" -AuditFlag 'Success and Failure' -id "CIS 17.2.5"
-	Test-AuditPolicySetting -Subcategory "Plug and Play Events" -AuditFlag 'Success' -id "CIS 17.3.1"
-	Test-AuditPolicySetting -Subcategory "Process Creation" -AuditFlag 'Success' -id "CIS 17.3.2"
-	Test-AuditPolicySetting -Subcategory "Account Lockout" -AuditFlag 'Success and Failure' -id "CIS 17.5.1"
-	Test-AuditPolicySetting -Subcategory "Group Membership" -AuditFlag 'Success' -id "CIS 17.5.2"
-	Test-AuditPolicySetting -Subcategory "Logoff" -AuditFlag 'Success' -id "CIS 17.5.3"
-	Test-AuditPolicySetting -Subcategory "Logon" -AuditFlag 'Success and Failure' -id "CIS 17.5.4"
-	Test-AuditPolicySetting -Subcategory "Other Logon/Logoff Events" -AuditFlag 'Success and Failure' -id "CIS 17.5.5"
-	Test-AuditPolicySetting -Subcategory "Special Logon" -AuditFlag 'Success' -id "CIS 17.5.6"
-	Test-AuditPolicySetting -Subcategory "Removable Storage" -AuditFlag 'Success and Failure' -id "CIS 17.6.1"
-	Test-AuditPolicySetting -Subcategory "Audit Policy Change" -AuditFlag 'Success and Failure' -id "CIS 17.7.1"
-	Test-AuditPolicySetting -Subcategory "Authentication Policy Change" -AuditFlag 'Success' -id "CIS 17.7.2"
-	Test-AuditPolicySetting -Subcategory "Authorization Policy Change" -AuditFlag 'Success' -id "CIS 17.7.3"
-	Test-AuditPolicySetting -Subcategory "Sensitive Privilege Use" -AuditFlag 'Success and Failure' -id "CIS 17.8.1"
-	Test-AuditPolicySetting -Subcategory "IPsec Driver" -AuditFlag 'Success and Failure' -id "CIS 17.9.1"
-	Test-AuditPolicySetting -Subcategory "Other System Events" -AuditFlag 'Success and Failure' -id "CIS 17.9.2"
-	Test-AuditPolicySetting -Subcategory "Security State Change" -AuditFlag 'Success' -id "CIS 17.9.3"
-	Test-AuditPolicySetting -Subcategory "Security System Extension" -AuditFlag 'Success and Failure' -id "CIS 17.9.4"
-	Test-AuditPolicySetting -Subcategory "System Integrity" -AuditFlag 'Success and Failure' -id "CIS 17.9.5"
+function Get-CisAudit {
+	# define pipelines
+	$auditPolicyAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AuditPolicyAudit}
+
+	# Disa registry settings
+	$CisBenchmarks.AuditPolicies | &$auditPolicyAuditPipline
 }
 
 #region Report-Generation
@@ -7022,7 +4619,7 @@ function Get-CisAuditPolicyResult {
 	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
 #>
 
-function Get-WindowsServer2016HtmlReport {
+function Get-HtmlReport {
 	param (
 		[string] $Path = "$($env:HOMEPATH)\Documents\$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
@@ -7035,12 +4632,12 @@ function Get-WindowsServer2016HtmlReport {
 	if (Test-Path $parent) {
 		[hashtable[]]$sections = @(
 			@{
-				Title = "DISA Settings"
-				AuditInfos = Get-DisaAuditResult -PerfomanceOptimized:$PerformanceOptimized | Convert-ToAuditInfo | Sort-Object -Property Id
+				Title = "DISA Recommendations"
+				AuditInfos = Get-DisaAudit -PerfomanceOptimized:$PerformanceOptimized | Sort-Object -Property Id
 			},
 			@{
-				Title = "CIS advanced audit policy settings"
-				AuditInfos = Get-CisAuditPolicyResult | Convert-ToAuditInfo
+				Title = "CIS Benchmarks"
+				AuditInfos = Get-CisAudit | Convert-ToAuditInfo | Sort-Object -Property Id
 			}
 		)
 
