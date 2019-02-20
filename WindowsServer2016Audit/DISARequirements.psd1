@@ -988,6 +988,8 @@
 			Role = "MemberServer"
 
 			Policy = "SeDenyNetworkLogonRight"
+			# Old audit:     "Enterprise Admins", "Domain Admins", "Guests"
+			# Old hardening: "Enterprise Admins", "Domain Admins", "Administrators", "Guests"
 			Identity = "Enterprise Admins", "Domain Admins", "Administrators", "Guests"
 		}
 		@{
@@ -996,7 +998,10 @@
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyNetworkLogonRight"
-			Identity = "Administrators", "Guests" # Why are Administrators here?
+			# Old audit:    "Guests"
+			# Old hardening: "Administrators", "Guests"
+			# Why are Administrators here?
+			Identity = "Guests"
 		}
 		@{
 			Id = "WN16-DC-000380"
@@ -1044,7 +1049,9 @@
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyServiceLogonRight"
-			Identity = @() # Hardening has "Enterprise Admins" ?
+			# Old audit:     @()
+			# Old hardening: "Enterprise Admins"
+			Identity = @()
 		}
 		@{
 			Id = "WN16-DC-000400"
@@ -1084,7 +1091,8 @@
 			Role = "MemberServer"
 
 			Policy = "SeDenyRemoteInteractiveLogonRight"
-			Identity = "Enterprise Admins", "Domain Admins", "Guests" # Local account
+			# Disa Recommendation add local account
+			Identity = "Enterprise Admins", "Domain Admins", "Guests"
 		}
 		@{
 			Id = "WN16-MS-000410 SS"
@@ -1170,6 +1178,7 @@
 			Id = "WN16-UR-000280"
 			Task = "The Perform volume maintenance tasks user right must only be assigned to the Administrators group."
 
+			# Old audit: checks SeSystemEnvironmentPrivilege
 			Policy = "SeManageVolumePrivilege"
 			Identity = "Administrators"
 		}
@@ -1193,6 +1202,95 @@
 
 			Policy = "SeTakeOwnershipPrivilege"
 			Identity = "Administrators"
+		}
+	)
+	AccountPolicies = @(
+		@{
+			Id = "WN16-AC-000010"
+			Task = "Windows 2016 account lockout duration must be configured to 15 minutes or greater."
+
+			Policy = "LockoutDuration"
+			Value = "15 minutes or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000020"
+			Task = "The number of allowed bad logon attempts must be configured to three or less."
+
+			Policy = "LockoutBadCount"
+			# Old audit: 0 not excluded
+			Value = "3 or less, but not 0"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000030"
+			Task = "The period of time before the bad logon counter is reset must be configured to 15 minutes or greater."
+
+			Policy = "ResetLockoutCount"
+			Value = "15 minutes or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000040"
+			Task = "The password history must be configured to 24 passwords remembered."
+
+			Policy = "PasswordHistorySize"
+			# Old audit: only 24 is allowed
+			Value = "24 or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000050"
+			Task = "The maximum password age must be configured to 60 days or less."
+
+			Policy = "MaximumPasswordAge"
+			Value = "60 days or less"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000060"
+			Task = "The minimum password age must be configured to at least one day."
+
+			Policy = "MinimumPasswordAge"
+			Value = "1 day or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000070"
+			Task = "The minimum password length must be configured to 14 characters."
+
+			Policy = "MinimumPasswordLength"
+			Value = "14 characters or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "WN16-AC-000080"
+			Task = "The built-in Windows password complexity policy must be enabled."
+
+			Policy = "PasswordComplexity"
+			Value = 1
+		}
+		@{
+			Id = "WN16-AC-000090"
+			Task = "Reversible password encryption must be disabled."
+
+			Policy = "ClearTextPassword"
+			Value = 0
+		}
+		@{
+			Id = "WN16-SO-000250"
+			Task = "Anonymous SID/Name translation must not be allowed."
+
+			Policy = "LSAAnonymousNameLookup"
+			Value = 0
+		}
+		# ...
+		@{
+			Id = "WN16-SO-000370"
+			Task = "Windows Server 2016 must be configured to force users to log off when their allowed logon hours expire."
+
+			Policy = "ForceLogoffWhenHourExpire"
+			Value = 1
 		}
 	)
 }

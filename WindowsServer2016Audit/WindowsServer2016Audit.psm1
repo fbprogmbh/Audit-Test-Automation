@@ -235,11 +235,6 @@ function Get-SecurityPolicy {
 	return $config
 }
 
-
-
-function Get-SecPolSetting {
-}
-
 # Get domain role
 # 0 {"Standalone Workstation"}
 # 1 {"Member Workstation"}
@@ -286,6 +281,86 @@ function Get-LocalAdminNames {
 		| ForEach-Object { $_.Substring($env:COMPUTERNAME.Length + 1) }
 }
 
+function Get-AuditPolicySubcategoryGUID {
+	Param(
+		[Parameter(Mandatory = $true)]
+		[string] $Subcategory
+	)
+	switch ($Subcategory) {
+		# Information availabe with: auditpol /list /subcategory:* /v
+		# System
+		'Security State Change'                  { "{0CCE9210-69AE-11D9-BED3-505054503030}" }
+		'Security System Extension'              { "{0CCE9211-69AE-11D9-BED3-505054503030}" }
+		'System Integrity'                       { "{0CCE9212-69AE-11D9-BED3-505054503030}" }
+		'IPsec Driver'                           { "{0CCE9213-69AE-11D9-BED3-505054503030}" }
+		'Other System Events'                    { "{0CCE9214-69AE-11D9-BED3-505054503030}" }
+		# Logon/Logoff
+		'Logon'                                  { "{0CCE9215-69AE-11D9-BED3-505054503030}" }
+		'Logoff'                                 { "{0CCE9216-69AE-11D9-BED3-505054503030}" }
+		'Account Lockout'                        { "{0CCE9217-69AE-11D9-BED3-505054503030}" }
+		'IPsec Main Mode'                        { "{0CCE9218-69AE-11D9-BED3-505054503030}" }
+		'IPsec Quick Mode'                       { "{0CCE9219-69AE-11D9-BED3-505054503030}" }
+		'IPsec Extended Mode'                    { "{0CCE921A-69AE-11D9-BED3-505054503030}" }
+		'Special Logon'                          { "{0CCE921B-69AE-11D9-BED3-505054503030}" }
+		'Other Logon/Logoff Events'              { "{0CCE921C-69AE-11D9-BED3-505054503030}" }
+		'Network Policy Server'                  { "{0CCE9243-69AE-11D9-BED3-505054503030}" }
+		'User / Device Claims'                   { "{0CCE9247-69AE-11D9-BED3-505054503030}" }
+		'Group Membership'                       { "{0CCE9249-69AE-11D9-BED3-505054503030}" }
+		# Object Access
+		'File System'                            { "{0CCE921D-69AE-11D9-BED3-505054503030}" }
+		'Registry'                               { "{0CCE921E-69AE-11D9-BED3-505054503030}" }
+		'Kernel Object'                          { "{0CCE921F-69AE-11D9-BED3-505054503030}" }
+		'SAM'                                    { "{0CCE9220-69AE-11D9-BED3-505054503030}" }
+		'Certification Services'                 { "{0CCE9221-69AE-11D9-BED3-505054503030}" }
+		'Application Generated'                  { "{0CCE9222-69AE-11D9-BED3-505054503030}" }
+		'Handle Manipulation'                    { "{0CCE9223-69AE-11D9-BED3-505054503030}" }
+		'File Share'                             { "{0CCE9224-69AE-11D9-BED3-505054503030}" }
+		'Filtering Platform Packet Drop'         { "{0CCE9225-69AE-11D9-BED3-505054503030}" }
+		'Filtering Platform Connection'          { "{0CCE9226-69AE-11D9-BED3-505054503030}" }
+		'Other Object Access Events'             { "{0CCE9227-69AE-11D9-BED3-505054503030}" }
+		'Detailed File Share'                    { "{0CCE9244-69AE-11D9-BED3-505054503030}" }
+		'Removable Storage'                      { "{0CCE9245-69AE-11D9-BED3-505054503030}" }
+		'Central Policy Staging'                 { "{0CCE9246-69AE-11D9-BED3-505054503030}" }
+		# Privelege Use
+		'Sensitive Privilege Use'                { "{0CCE9228-69AE-11D9-BED3-505054503030}" }
+		'Non Sensitive Privilege Use'            { "{0CCE9229-69AE-11D9-BED3-505054503030}" }
+		'Other Privilege Use Events'             { "{0CCE922A-69AE-11D9-BED3-505054503030}" }
+		# Detailed Tracking
+		'Process Creation'                       { "{0CCE922B-69AE-11D9-BED3-505054503030}" }
+		'Process Termination'                    { "{0CCE922C-69AE-11D9-BED3-505054503030}" }
+		'DPAPI Activity'                         { "{0CCE922D-69AE-11D9-BED3-505054503030}" }
+		'RPC Events'                             { "{0CCE922E-69AE-11D9-BED3-505054503030}" }
+		'Plug and Play Events'                   { "{0CCE9248-69AE-11D9-BED3-505054503030}" }
+		'Token Right Adjusted Events'            { "{0CCE924A-69AE-11D9-BED3-505054503030}" }
+		# Policy Change
+		'Audit Policy Change'                    { "{0CCE922F-69AE-11D9-BED3-505054503030}" }
+		'Authentication Policy Change'           { "{0CCE9230-69AE-11D9-BED3-505054503030}" }
+		'Authorization Policy Change'            { "{0CCE9231-69AE-11D9-BED3-505054503030}" }
+		'MPSSVC Rule-Level Policy Change'        { "{0CCE9232-69AE-11D9-BED3-505054503030}" }
+		'Filtering Platform Policy Change'       { "{0CCE9233-69AE-11D9-BED3-505054503030}" }
+		'Other Policy Change Events'             { "{0CCE9234-69AE-11D9-BED3-505054503030}" }
+		# Account Management
+		'User Account Management'                { "{0CCE9235-69AE-11D9-BED3-505054503030}" }
+		'Computer Account Management'            { "{0CCE9236-69AE-11D9-BED3-505054503030}" }
+		'Security Group Management'              { "{0CCE9237-69AE-11D9-BED3-505054503030}" }
+		'Distribution Group Management'          { "{0CCE9238-69AE-11D9-BED3-505054503030}" }
+		'Application Group Management'           { "{0CCE9239-69AE-11D9-BED3-505054503030}" }
+		'Other Account Management Events'        { "{0CCE923A-69AE-11D9-BED3-505054503030}" }
+		# DS Access
+		'Directory Service Access'               { "{0CCE923B-69AE-11D9-BED3-505054503030}" }
+		'Directory Service Changes'              { "{0CCE923C-69AE-11D9-BED3-505054503030}" }
+		'Directory Service Replication'          { "{0CCE923D-69AE-11D9-BED3-505054503030}" }
+		'Detailed Directory Service Replication' { "{0CCE923E-69AE-11D9-BED3-505054503030}" }
+		# Account Logon
+		'Credential Validation'                  { "{0CCE923F-69AE-11D9-BED3-505054503030}" }
+		'Kerberos Service Ticket Operations'     { "{0CCE9240-69AE-11D9-BED3-505054503030}" }
+		'Other Account Logon Events'             { "{0CCE9241-69AE-11D9-BED3-505054503030}" }
+		'Kerberos Authentication Service'        { "{0CCE9242-69AE-11D9-BED3-505054503030}" }
+
+		Default                                  { "" }
+	}
+}
+
 function Convert-ToAuditInfo {
 	param (
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -322,7 +397,7 @@ function Get-RoleAudit {
 			return New-Object -TypeName AuditInfo -Property @{
 				Id = $Id
 				Task = $Task
-				Message = "Not applicable. This audit applies to" + ($Role -join " and ") + "."
+				Message = "Not applicable. This audit applies to " + ($Role -join " and ") + "."
 				Audit = [AuditStatus]::None
 			}
 		}
@@ -477,7 +552,8 @@ function Get-UserRightPolicyAudit {
 			'SeLockMemoryPrivilege',
 			'SeRestorePrivilege',
 			'SeTrustedCredManAccessPrivilege',
-			'SeEnableDelegationPrivilege')]
+			'SeEnableDelegationPrivilege'
+		)]
 		[string] $Policy,
 
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -527,6 +603,218 @@ function Get-UserRightPolicyAudit {
 	}
 }
 
+function Get-AccountPolicyAudit {
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ValidateSet(
+			'MinimumPasswordAge',
+			'MaximumPasswordAge',
+			'MinimumPasswordLength',
+			'PasswordComplexity',
+			'PasswordHistorySize',
+			'LockoutBadCount',
+			'ResetLockoutCount',
+			'LockoutDuration',
+			'RequireLogonToChangePassword',
+			'ForceLogoffWhenHourExpire',
+			'NewAdministratorName',
+			'NewGuestName',
+			'ClearTextPassword',
+			'LSAAnonymousNameLookup',
+			'EnableAdminAccount',
+			'EnableGuestAccount'
+		)]
+		[string] $Policy,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[object] $Value,
+
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[string] $ValueType
+	)
+
+	process {
+		$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
+		$currentAccountPolicy = $securityPolicy["System Access"][$Policy]
+
+		# Sanitize input
+		$currentAccountPolicy = $currentAccountPolicy.Trim()
+
+		if ($ValueType -eq "ValueRange") {
+			$Predicate = Get-ValueRange -Text $Value
+		}
+		else {
+			$Predicate = { param($x) $x -eq $currentAccountPolicy }.GetNewClosure()
+		}
+
+		if ($null -eq $currentAccountPolicy) {
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Currently not set."
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		if (-not (& $Predicate $currentAccountPolicy)) {
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Currently set to: $currentAccountPolicy. Differs from expected value: $Value"
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = "Compliant"
+			Audit = [AuditStatus]::True
+		}
+	}
+}
+
+function Get-AuditPolicyAudit {
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ValidateSet(
+			'Security System Extension',
+			'System Integrity',
+			'IPsec Driver',
+			'Other System Events',
+			'Security State Change',
+			'Logon',
+			'Logoff',
+			'Account Lockout',
+			'IPsec Main Mode',
+			'IPsec Quick Mode',
+			'IPsec Extended Mode',
+			'Special Logon',
+			'Other Logon/Logoff Events',
+			'Network Policy Server',
+			'User / Device Claims',
+			'Group Membership',
+			'File System',
+			'Registry',
+			'Kernel Object',
+			'SAM',
+			'Certification Services',
+			'Application Generated',
+			'Handle Manipulation',
+			'File Share',
+			'Filtering Platform Packet Drop',
+			'Filtering Platform Connection',
+			'Other Object Access Events',
+			'Detailed File Share',
+			'Removable Storage',
+			'Central Policy Staging',
+			'Non Sensitive Privilege Use',
+			'Other Privilege Use Events',
+			'Sensitive Privilege Use',
+			'Process Creation',
+			'Process Termination',
+			'DPAPI Activity',
+			'RPC Events',
+			'Plug and Play Events',
+			'Token Right Adjusted Events',
+			'Audit Policy Change',
+			'Authentication Policy Change',
+			'Authorization Policy Change',
+			'MPSSVC Rule-Level Policy Change',
+			'Filtering Platform Policy Change',
+			'Other Policy Change Events',
+			'Computer Account Management',
+			'Security Group Management',
+			'Distribution Group Management',
+			'Application Group Management',
+			'Other Account Management Events',
+			'User Account Management',
+			'Directory Service Access',
+			'Directory Service Changes',
+			'Directory Service Replication',
+			'Detailed Directory Service Replication',
+			'Kerberos Service Ticket Operations',
+			'Other Account Logon Events',
+			'Kerberos Authentication Service',
+			'Credential Validation')]
+		[string] $Subcategory,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ValidateSet(
+			'Success',
+			'Failure',
+			'Success and Failure',
+			'No Auditing')]
+		[string] $AuditFlag
+	)
+
+	process {
+		# Get the audit policy for the subcategory $subcategory
+		$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $Subcategory
+		$auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+
+		# auditpol does not throw exceptions, so test the results and throw if needed
+		if ($LASTEXITCODE -ne 0) {
+			$errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+			throw [System.ArgumentException] $errorString
+			Write-Error -Message $errorString
+		}
+
+		if ($null -eq $auditPolicyString) {
+			return [AuditInfo]@{
+				Id      = $Id
+				Task    = $Task
+				Message = "Couldn't get setting. Auditpol returned nothing."
+				Audit   = [AuditStatus]::False
+			}
+		}
+
+		# Remove empty lines and headers
+		$line = $auditPolicyString `
+			| Where-Object { $_ } `
+			| Select-Object -Skip 3
+
+		if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+			return [AuditInfo]@{
+				Id      = $Id
+				Task    = $Task
+				Message = "Couldn't get setting."
+				Audit   = [AuditStatus]::False
+			}
+		}
+
+		$setting = $Matches[0]
+
+		if ($setting -ne $AuditFlag) {
+			return [AuditInfo]@{
+				Id      = $Id
+				Task    = $Task
+				Message = "Set to: $setting"
+				Audit   = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id      = $Id
+			Task    = $Task
+			Message = "Compliant"
+			Audit   = [AuditStatus]::True
+		}
+	}
+}
 #endregion
 
 #region Audit tests
@@ -1766,286 +2054,6 @@ function Test-SV-87953r1_rule {
 	Write-Output $obj
 }
 
-
-# Windows 2016 account lockout duration must be configured to 15 minutes or greater.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000010
-# Group ID (Vulid): V-73309
-# CCI: CCI-002238
-#
-# The account lockout feature, when enabled, prevents brute-force password attacks on the system.
-# This parameter specifies the period of time that an account will remain locked after the
-# specified number of failed logon attempts.
-$DisaTest += "Test-SV-87961r2_rule"
-function Test-SV-87961r2_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87961r2_rule")
-	$obj | Add-Member NoteProperty Task("Windows 2016 account lockout duration must be configured to 15 minutes or greater.")
-
-	$lockoutDuration = Get-SecPolSetting -SystemAccess -SystemAccessSetting LockoutDuration
-
-	if ( $lockoutDuration -ge 15 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Windows 2016 account lockout duration is not configured to 15 minutes or greater, found $lockoutDuration.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Windows 2016 account lockout duration is not configured to 15 minutes or greater, found $lockoutDuration." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The number of allowed bad logon attempts must be configured to three or less.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000020
-# Group ID (Vulid): V-73311
-# CCI: CCI-000044
-#
-# The account lockout feature, when enabled, prevents brute-force password attacks on the system.
-# The higher this value is, the less effective the account lockout feature will be in protecting
-# the local system. The number of bad logon attempts must be reasonably small to minimize
-# the possibility of a successful password attack while allowing for honest errors made during
-# normal user logon.
-$DisaTest += "Test-SV-87963r1_rule"
-function Test-SV-87963r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87963r1_rule")
-	$obj | Add-Member NoteProperty Task("The number of allowed bad logon attempts must be configured to three or less.")
-
-	$badLogons = Get-SecPolSetting -SystemAccess -SystemAccessSetting LockoutBadCount
-
-	if ( $badLogons -le 3 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The number of allowed bad logon attempts is not configured to three or less, found $badLogons.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The number of allowed bad logon attempts is not configured to three or less, found $badLogons." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The period of time before the bad logon counter is reset must be configured to 15 minutes
-# or greater.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000030
-# Group ID (Vulid): V-73313
-# CCI: CCI-000044 CCI-002238
-#
-# The account lockout feature, when enabled, prevents brute-force password attacks on the system.
-# This parameter specifies the period of time that must pass after failed logon attempts before
-# the counter is reset to 0. The smaller this value is, the less effective the account lockout
-# feature will be in protecting the local system.Satisfies: SRG-OS-000021-GPOS-00005, SRG-OS-000329-GPOS-00128
-#
-$DisaTest += "Test-SV-87965r1_rule"
-function Test-SV-87965r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87965r1_rule")
-	$obj | Add-Member NoteProperty Task("The period of time before the bad logon counter is reset must be configured to 15 minutes or greater.")
-
-	$logonCounterReset = Get-SecPolSetting -SystemAccess -SystemAccessSetting ResetLockoutCount
-
-	if ( $logonCounterReset -ge 15 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The period of time before the bad logon counter is reset is not configured to 15 minutes or greater, found $passwordAge.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The period of time before the bad logon counter is reset is not configured to 15 minutes or greater, found $passwordAge." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The password history must be configured to 24 passwords remembered.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000040
-# Group ID (Vulid): V-73315
-# CCI: CCI-000200
-#
-# A system is more vulnerable to unauthorized access when system users recycle the same password
-# several times without being required to change to a unique password on a regularly scheduled
-# basis. This enables users to effectively negate the purpose of mandating periodic password
-# changes. The default value is 24 for Windows domain systems. DoD has decided this is the
-# appropriate value for all Windows systems.
-$DisaTest += "Test-SV-87967r1_rule"
-function Test-SV-87967r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87967r1_rule")
-	$obj | Add-Member NoteProperty Task("The password history must be configured to 24 passwords remembered.")
-
-	$passwordHistory = Get-SecPolSetting -SystemAccess -SystemAccessSetting PasswordHistorySize
-
-	if ( $passwordHistory -eq 24 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The password history is not configured to 24 passwords remembered, found $passwordHistory.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The password history is not configured to 24 passwords remembered, found $passwordHistory." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The maximum password age must be configured to 60 days or less.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000050
-# Group ID (Vulid): V-73317
-# CCI: CCI-000199
-#
-# The longer a password is in use, the greater the opportunity for someone to gain unauthorized
-# knowledge of the passwords. Scheduled changing of passwords hinders the ability of unauthorized
-# system users to crack passwords and gain access to a system.
-$DisaTest += "Test-SV-87969r1_rule"
-function Test-SV-87969r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87969r1_rule")
-	$obj | Add-Member NoteProperty Task("The maximum password age must be configured to 60 days or less.")
-
-	$passwordAge = Get-SecPolSetting -SystemAccess -SystemAccessSetting MaximumPasswordAge
-
-	if ( $passwordAge -le 60 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Maximum password age not configured to 60 days or less, found $passwordAge.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Maximum password age not configured to 60 days or less, found $passwordAge." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The minimum password age must be configured to at least one day.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000060
-# Group ID (Vulid): V-73319
-# CCI: CCI-000198
-#
-# Permitting passwords to be changed in immediate succession within the same day allows users
-# to cycle passwords through their history database. This enables users to effectively negate
-# the purpose of mandating periodic password changes.
-$DisaTest += "Test-SV-87971r1_rule"
-function Test-SV-87971r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87971r1_rule")
-	$obj | Add-Member NoteProperty Task("The minimum password age must be configured to at least one day.")
-
-	$passwordAge = Get-SecPolSetting -SystemAccess -SystemAccessSetting MinimumPasswordAge
-
-	if ( $passwordAge -ge 1 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The minimum password age is not configured to at least one day, found $passwordAge.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The minimum password age is not configured to at least one day, found $passwordAge." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The minimum password length must be configured to 14 characters.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000070
-# Group ID (Vulid): V-73321
-# CCI: CCI-000205
-#
-# Information systems not protected with strong password schemes (including passwords of minimum
-# length) provide the opportunity for anyone to crack the password, thus gaining access to
-# the system and compromising the device, information, or the local network.
-$DisaTest += "Test-SV-87973r1_rule"
-function Test-SV-87973r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87973r1_rule")
-	$obj | Add-Member NoteProperty Task("The minimum password length must be configured to 14 characters.")
-
-	$passwordLength = Get-SecPolSetting -SystemAccess -SystemAccessSetting MinimumPasswordLength
-
-	if ( $passwordLength -ge 14 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The minimum password length is not configured to 14 character, found $passwordLength.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The minimum password length is not configured to 14 character, found $passwordLength." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# The built-in Windows password complexity policy must be enabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000080
-# Group ID (Vulid): V-73323
-# CCI: CCI-000192 CCI-000193 CCI-000194 CCI-001619
-#
-# The use of complex passwords increases their strength against attack. The built-in Windows
-# password complexity policy requires passwords to contain at least three of the four types
-# of characters (numbers, upper- and lower-case letters, and special characters) and prevents
-# the inclusion of user names or parts of user names.Satisfies: SRG-OS-000069-GPOS-00037,
-# SRG-OS-000070-GPOS-00038, SRG-OS-000071-GPOS-00039, SRG-OS-000266-GPOS-00101
-$DisaTest += "Test-SV-87975r1_rule"
-function Test-SV-87975r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87975r1_rule")
-	$obj | Add-Member NoteProperty Task("The built-in Windows password complexity policy must be enabled.")
-
-	$passwordComplexity = Get-SecPolSetting -SystemAccess -SystemAccessSetting PasswordComplexity
-
-	if ( $passwordComplexity -eq 1 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The built-in Windows password complexity policy is not enabled.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "The built-in Windows password complexity policy is not enabled." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# Reversible password encryption must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-AC-000090
-# Group ID (Vulid): V-73325
-# CCI: CCI-000196
-#
-# Storing passwords using reversible encryption is essentially the same as storing clear-text
-# versions of the passwords, which are easily compromised. For this reason, this policy must
-# never be enabled.
-$DisaTest += "Test-SV-87977r1_rule"
-function Test-SV-87977r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87977r1_rule")
-	$obj | Add-Member NoteProperty Task("Reversible password encryption must be disabled.")
-
-	$passwordReversibleEncryption = Get-SecPolSetting -SystemAccess -SystemAccessSetting ClearTextPassword
-
-	if ( $passwordReversibleEncryption -eq 0 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Reversible password encryption is not disabled.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "Reversible password encryption is not disabled." -Level Error
-	}
-
-	Write-Output $obj
-}
-
 # Permissions for the Application event log must prevent access by non-privileged accounts.
 #
 # - - - - - - - - - - - - -
@@ -2633,66 +2641,6 @@ function Test-SV-88289r1_rule {
 	Write-Output $obj
 }
 
-# Anonymous SID/Name translation must not be allowed.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000250
-# Group ID (Vulid): V-73665
-# CCI: CCI-000366
-#
-# Allowing anonymous SID/Name translation can provide sensitive information for accessing a
-# system. Only authorized users must be able to perform such translations.
-$DisaTest += "Test-SV-88329r1_rule"
-function Test-SV-88329r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88329r1_rule")
-	$obj | Add-Member NoteProperty Task("Anonymous SID/Name translation must not be allowed.")
-
-	$anonymousTranslation = Get-SecPolSetting -SystemAccess -SystemAccessSetting LSAAnonymousNameLookup
-
-	if ( $anonymousTranslation -eq 0 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Anonymous SID/Name translation not disabled.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000250: Anonymous SID/Name translation not disabled." -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# Windows Server 2016 must be configured to force users to log off when their allowed logon
-# hours expire.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000370
-# Group ID (Vulid): V-73689
-# CCI: CCI-001133
-#
-# Limiting logon hours can help protect data by allowing access only during specified times.
-# This setting controls whether users are forced to log off when their allowed logon hours
-# expire. If logon hours are set for users, this must be enforced.
-$DisaTest += "Test-SV-88353r1_rule"
-function Test-SV-88353r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88353r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows Server 2016 must be configured to force users to log off when their allowed logon hours expire.")
-
-	$logoffHours = Get-SecPolSetting -SystemAccess -SystemAccessSetting ForceLogoffWhenHourExpire
-
-	if ( $logoffHours -eq 1 ) {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Force users to log off when their allowed logon hours expire not enabled.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-SO-000370: Force users to log off when their allowed logon hours expire not enabled." -Level Error
-	}
-
-	Write-Output $obj
-}
-
 
 # The built-in guest account must be disabled.
 # - - - - - - - - - - - - -
@@ -2734,223 +2682,7 @@ function Test-SV-88475r1_rule {
 
 #endregion
 
-#region CIS Advanced Audit Policy settings Audit functions
-function Get-AuditPolicySubcategoryGUID {
-	Param(
-		[Parameter(Mandatory = $true)]
-		[string] $Subcategory
-	)
-	switch ($Subcategory) {
-		# Information availabe with: auditpol /list /subcategory:* /v
-		# System
-		'Security State Change'                  { "{0CCE9210-69AE-11D9-BED3-505054503030}" }
-		'Security System Extension'              { "{0CCE9211-69AE-11D9-BED3-505054503030}" }
-		'System Integrity'                       { "{0CCE9212-69AE-11D9-BED3-505054503030}" }
-		'IPsec Driver'                           { "{0CCE9213-69AE-11D9-BED3-505054503030}" }
-		'Other System Events'                    { "{0CCE9214-69AE-11D9-BED3-505054503030}" }
-		# Logon/Logoff
-		'Logon'                                  { "{0CCE9215-69AE-11D9-BED3-505054503030}" }
-		'Logoff'                                 { "{0CCE9216-69AE-11D9-BED3-505054503030}" }
-		'Account Lockout'                        { "{0CCE9217-69AE-11D9-BED3-505054503030}" }
-		'IPsec Main Mode'                        { "{0CCE9218-69AE-11D9-BED3-505054503030}" }
-		'IPsec Quick Mode'                       { "{0CCE9219-69AE-11D9-BED3-505054503030}" }
-		'IPsec Extended Mode'                    { "{0CCE921A-69AE-11D9-BED3-505054503030}" }
-		'Special Logon'                          { "{0CCE921B-69AE-11D9-BED3-505054503030}" }
-		'Other Logon/Logoff Events'              { "{0CCE921C-69AE-11D9-BED3-505054503030}" }
-		'Network Policy Server'                  { "{0CCE9243-69AE-11D9-BED3-505054503030}" }
-		'User / Device Claims'                   { "{0CCE9247-69AE-11D9-BED3-505054503030}" }
-		'Group Membership'                       { "{0CCE9249-69AE-11D9-BED3-505054503030}" }
-		# Object Access
-		'File System'                            { "{0CCE921D-69AE-11D9-BED3-505054503030}" }
-		'Registry'                               { "{0CCE921E-69AE-11D9-BED3-505054503030}" }
-		'Kernel Object'                          { "{0CCE921F-69AE-11D9-BED3-505054503030}" }
-		'SAM'                                    { "{0CCE9220-69AE-11D9-BED3-505054503030}" }
-		'Certification Services'                 { "{0CCE9221-69AE-11D9-BED3-505054503030}" }
-		'Application Generated'                  { "{0CCE9222-69AE-11D9-BED3-505054503030}" }
-		'Handle Manipulation'                    { "{0CCE9223-69AE-11D9-BED3-505054503030}" }
-		'File Share'                             { "{0CCE9224-69AE-11D9-BED3-505054503030}" }
-		'Filtering Platform Packet Drop'         { "{0CCE9225-69AE-11D9-BED3-505054503030}" }
-		'Filtering Platform Connection'          { "{0CCE9226-69AE-11D9-BED3-505054503030}" }
-		'Other Object Access Events'             { "{0CCE9227-69AE-11D9-BED3-505054503030}" }
-		'Detailed File Share'                    { "{0CCE9244-69AE-11D9-BED3-505054503030}" }
-		'Removable Storage'                      { "{0CCE9245-69AE-11D9-BED3-505054503030}" }
-		'Central Policy Staging'                 { "{0CCE9246-69AE-11D9-BED3-505054503030}" }
-		# Privelege Use
-		'Sensitive Privilege Use'                { "{0CCE9228-69AE-11D9-BED3-505054503030}" }
-		'Non Sensitive Privilege Use'            { "{0CCE9229-69AE-11D9-BED3-505054503030}" }
-		'Other Privilege Use Events'             { "{0CCE922A-69AE-11D9-BED3-505054503030}" }
-		# Detailed Tracking
-		'Process Creation'                       { "{0CCE922B-69AE-11D9-BED3-505054503030}" }
-		'Process Termination'                    { "{0CCE922C-69AE-11D9-BED3-505054503030}" }
-		'DPAPI Activity'                         { "{0CCE922D-69AE-11D9-BED3-505054503030}" }
-		'RPC Events'                             { "{0CCE922E-69AE-11D9-BED3-505054503030}" }
-		'Plug and Play Events'                   { "{0CCE9248-69AE-11D9-BED3-505054503030}" }
-		'Token Right Adjusted Events'            { "{0CCE924A-69AE-11D9-BED3-505054503030}" }
-		# Policy Change
-		'Audit Policy Change'                    { "{0CCE922F-69AE-11D9-BED3-505054503030}" }
-		'Authentication Policy Change'           { "{0CCE9230-69AE-11D9-BED3-505054503030}" }
-		'Authorization Policy Change'            { "{0CCE9231-69AE-11D9-BED3-505054503030}" }
-		'MPSSVC Rule-Level Policy Change'        { "{0CCE9232-69AE-11D9-BED3-505054503030}" }
-		'Filtering Platform Policy Change'       { "{0CCE9233-69AE-11D9-BED3-505054503030}" }
-		'Other Policy Change Events'             { "{0CCE9234-69AE-11D9-BED3-505054503030}" }
-		# Account Management
-		'User Account Management'                { "{0CCE9235-69AE-11D9-BED3-505054503030}" }
-		'Computer Account Management'            { "{0CCE9236-69AE-11D9-BED3-505054503030}" }
-		'Security Group Management'              { "{0CCE9237-69AE-11D9-BED3-505054503030}" }
-		'Distribution Group Management'          { "{0CCE9238-69AE-11D9-BED3-505054503030}" }
-		'Application Group Management'           { "{0CCE9239-69AE-11D9-BED3-505054503030}" }
-		'Other Account Management Events'        { "{0CCE923A-69AE-11D9-BED3-505054503030}" }
-		# DS Access
-		'Directory Service Access'               { "{0CCE923B-69AE-11D9-BED3-505054503030}" }
-		'Directory Service Changes'              { "{0CCE923C-69AE-11D9-BED3-505054503030}" }
-		'Directory Service Replication'          { "{0CCE923D-69AE-11D9-BED3-505054503030}" }
-		'Detailed Directory Service Replication' { "{0CCE923E-69AE-11D9-BED3-505054503030}" }
-		# Account Logon
-		'Credential Validation'                  { "{0CCE923F-69AE-11D9-BED3-505054503030}" }
-		'Kerberos Service Ticket Operations'     { "{0CCE9240-69AE-11D9-BED3-505054503030}" }
-		'Other Account Logon Events'             { "{0CCE9241-69AE-11D9-BED3-505054503030}" }
-		'Kerberos Authentication Service'        { "{0CCE9242-69AE-11D9-BED3-505054503030}" }
 
-		Default                                  { "" }
-	}
-}
-
-function Get-AuditPolicyAudit {
-	[CmdletBinding()]
-	Param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Id,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Task,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[ValidateSet(
-			'Security System Extension',
-			'System Integrity',
-			'IPsec Driver',
-			'Other System Events',
-			'Security State Change',
-			'Logon',
-			'Logoff',
-			'Account Lockout',
-			'IPsec Main Mode',
-			'IPsec Quick Mode',
-			'IPsec Extended Mode',
-			'Special Logon',
-			'Other Logon/Logoff Events',
-			'Network Policy Server',
-			'User / Device Claims',
-			'Group Membership',
-			'File System',
-			'Registry',
-			'Kernel Object',
-			'SAM',
-			'Certification Services',
-			'Application Generated',
-			'Handle Manipulation',
-			'File Share',
-			'Filtering Platform Packet Drop',
-			'Filtering Platform Connection',
-			'Other Object Access Events',
-			'Detailed File Share',
-			'Removable Storage',
-			'Central Policy Staging',
-			'Non Sensitive Privilege Use',
-			'Other Privilege Use Events',
-			'Sensitive Privilege Use',
-			'Process Creation',
-			'Process Termination',
-			'DPAPI Activity',
-			'RPC Events',
-			'Plug and Play Events',
-			'Token Right Adjusted Events',
-			'Audit Policy Change',
-			'Authentication Policy Change',
-			'Authorization Policy Change',
-			'MPSSVC Rule-Level Policy Change',
-			'Filtering Platform Policy Change',
-			'Other Policy Change Events',
-			'Computer Account Management',
-			'Security Group Management',
-			'Distribution Group Management',
-			'Application Group Management',
-			'Other Account Management Events',
-			'User Account Management',
-			'Directory Service Access',
-			'Directory Service Changes',
-			'Directory Service Replication',
-			'Detailed Directory Service Replication',
-			'Kerberos Service Ticket Operations',
-			'Other Account Logon Events',
-			'Kerberos Authentication Service',
-			'Credential Validation')]
-		[string] $Subcategory,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[ValidateSet(
-			'Success',
-			'Failure',
-			'Success and Failure',
-			'No Auditing')]
-		[string] $AuditFlag
-	)
-
-	process {
-		# Get the audit policy for the subcategory $subcategory
-		$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $Subcategory
-		$auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-
-		# auditpol does not throw exceptions, so test the results and throw if needed
-		if ($LASTEXITCODE -ne 0) {
-			$errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-			throw [System.ArgumentException] $errorString
-			Write-Error -Message $errorString
-		}
-
-		if ($null -eq $auditPolicyString) {
-			return [AuditInfo]@{
-				Id      = $Id
-				Task    = $Task
-				Message = "Couldn't get setting. Auditpol returned nothing."
-				Audit   = [AuditStatus]::False
-			}
-		}
-
-		# Remove empty lines and headers
-		$line = $auditPolicyString `
-			| Where-Object { $_ } `
-			| Select-Object -Skip 3
-
-		if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
-			return [AuditInfo]@{
-				Id      = $Id
-				Task    = $Task
-				Message = "Couldn't get setting."
-				Audit   = [AuditStatus]::False
-			}
-		}
-
-		$setting = $Matches[0]
-
-		if ($setting -ne $AuditFlag) {
-			return [AuditInfo]@{
-				Id      = $Id
-				Task    = $Task
-				Message = "Set to: $setting"
-				Audit   = [AuditStatus]::False
-			}
-		}
-
-		return [AuditInfo]@{
-			Id      = $Id
-			Task    = $Task
-			Message = "Compliant"
-			Audit   = [AuditStatus]::True
-		}
-	}
-}
-#endregion
 #endregion
 
 function AuditPipeline {
@@ -2981,24 +2713,36 @@ function AuditPipeline {
 
 function Get-DisaAudit {
 	Param(
-		[switch] $PerformanceOptimized,
+		# [switch] $PerformanceOptimized,
 
-		[string[]] $Exclude
+		# [string[]] $Exclude
+
+		[switch] $RegistrySettings,
+
+		[switch] $UserRights,
+
+		[switch] $AccountPolicies
 	)
 
-	if ($PerformanceOptimized) {
-		$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
-	}
-
-	# define pipelines
-	$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
-	$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
+	# if ($PerformanceOptimized) {
+	# 	$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
+	# }
 
 	# disa registry settings
-	$DisaRequirements.RegistrySettings | &$registryAuditPipline
-
+	if ($RegistrySettings) {
+		$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
+		$DisaRequirements.RegistrySettings | &$registryAuditPipline
+	}
 	# disa user rights
-	$DisaRequirements.UserRights | &$userRightAuditPipline
+	if ($UserRights) {
+		$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
+		$DisaRequirements.UserRights | &$userRightAuditPipline
+	}
+	# disa account policy
+	if ($AccountPolicies) {
+		$accountPolicyAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
+		$DisaRequirements.AccountPolicies | &$accountPolicyAuditPipline
+	}
 }
 
 function Get-CisAudit {
