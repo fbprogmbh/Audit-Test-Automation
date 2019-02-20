@@ -1364,14 +1364,39 @@
 			}
 		}
 		@{
-			Id = "WN16-AU-000030"
-			Task = "Permissions for the Application event log must prevent access by non-privileged accounts."
+			Id = "WN16-AU-000040"
+			Task = "Permissions for the Security event log must prevent access by non-privileged accounts."
 
-			Target = "\System32\winevt\Logs\Application.evtx"
+			Target = "\System32\winevt\Logs\Security.evtx"
 			PrincipalRights = @{
 				"NT SERVICE\EventLog"    = "FullControl"
 				"NT AUTHORITY\SYSTEM"    = "FullControl"
 				"BUILTIN\Administrators" = "FullControl"
+			}
+		}
+		@{
+			Id = "WN16-AU-000050"
+			Task = "Permissions for the System event log must prevent access by non-privileged accounts."
+
+			Target = "\System32\winevt\Logs\Security.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\EventLog"    = "FullControl"
+				"NT AUTHORITY\SYSTEM"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+			}
+		}
+		@{
+			Id = "WN16-AU-000060"
+			Task = "Event Viewer must be protected from unauthorized modification and deletion."
+
+			Target = "\System32\winevt\Logs\Security.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\TrustedInstaller"                                       = "FullControl"
+				"NT Authority\System"                                               = "ReadAndExecute, Synchronize"
+				"BUILTIN\Administrators"                                            = "ReadAndExecute, Synchronize"
+				"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
+				"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
 			}
 		}
 	)
