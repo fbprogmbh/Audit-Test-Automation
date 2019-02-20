@@ -450,15 +450,7 @@ function Get-RegistryAudit {
 			$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
 				| Select-Object -ExpandProperty $Name
 
-			if (& $Predicate $regValue) {
-				return [AuditInfo]@{
-					Id = $Id
-					Task = $Task
-					Message = "Compliant"
-					Audit = [AuditStatus]::True
-				}
-			}
-			else{
+			if (-not (& $Predicate $regValue)) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
 
@@ -496,8 +488,8 @@ function Get-RegistryAudit {
 		return [AuditInfo]@{
 			Id = $Id
 			Task = $Task
-			Message = "An error occured."
-			Audit = [AuditStatus]::False
+			Message = "Compliant"
+			Audit = [AuditStatus]::True
 		}
 	}
 }
@@ -815,6 +807,103 @@ function Get-AuditPolicyAudit {
 		}
 	}
 }
+
+function Get-WindowsFeatureAudit {
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Feature
+	)
+
+	process {
+		$installState = (Get-WindowsFeature | Where-Object Name -eq $Feature).InstallState
+
+		if ($installState -eq "Installed") {
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "The feature is installed."
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = "Compliant"
+			Audit = [AuditStatus]::True
+		}
+	}
+}
+
+function Get-FileSystemPermissionAudit {
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Target,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[hashtable] $PrincipalRights
+	)
+
+	process {
+		$acls = (Get-Acl ($env:SystemRoot + $Target)).Access
+
+		Write-Verbose "File system permissions for target: $($env:SystemRoot + $Target)"
+
+		$prinicpalsWithTooManyRights = $acls | where {
+			$_.IdentityReference.Value -NotIn $PrincipalRights.Keys
+		}
+		$principalsWithWrongRights = $acls | where {
+			$idKey = $_.IdentityReference.Value
+			($idKey -in $PrincipalRights.Keys) -and ($_.FileSystemRights -ne $PrincipalRights[$idKey])
+		}
+
+		if (($prinicpalsWithTooManyRights.Count -gt 0) -or ($principalsWithWrongRights.Count -gt 0)) {
+			$logOptions = @{
+				Path = $Settings.LogFilePath
+				Name = $Settings.LogFileName
+				Level = "Error"
+			}
+
+			$messages = @()
+			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
+				"Unexpected '$($_.IdentityReference)' with access '$($_.FileSystemRights)'"
+			}
+			$messages += $principalsWithWrongRights | ForEach-Object {
+				$idKey = $_.IdentityReference.Value
+				"Found '$($idKey)' with access '$($_.FileSystemRights)' instead of '$($PrincipalRights[$idKey])'"
+			}.GetNewClosure()
+			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = $messages -join "; "
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = "Compliant"
+			Audit = [AuditStatus]::True
+		}
+	}
+}
+
 #endregion
 
 #region Audit tests
@@ -1839,221 +1928,6 @@ function Test-SV-87931r1_rule {
 	Write-Output $obj
 }
 
-# The Fax Server role must not be installed.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000350
-# Group ID (Vulid): V-73287
-# CCI: CCI-000381
-#
-# Unnecessary services increase the attack surface of a system. Some of these services may
-# not support required levels of authentication or encryption or may provide unauthorized
-# access to the system.
-$DisaTest += "Test-SV-87939r1_rule"
-function Test-SV-87939r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87939r1_rule")
-	$obj | Add-Member NoteProperty Task("The Fax Server role must not be installed.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq Fax | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Fax server role is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# The Microsoft FTP service must not be installed unless required.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000360
-# Group ID (Vulid): V-73289
-# CCI: CCI-000382
-#
-# Unnecessary services increase the attack surface of a system. Some of these services may
-# not support required levels of authentication or encryption.
-$DisaTest += "Test-SV-87941r1_rule"
-function Test-SV-87941r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87941r1_rule")
-	$obj | Add-Member NoteProperty Task("The Microsoft FTP service must not be installed unless required.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq Web-Ftp-Service | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("FTP service is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# The Peer Name Resolution Protocol must not be installed.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000370
-# Group ID (Vulid): V-73291
-# CCI: CCI-000381
-#
-# Unnecessary services increase the attack surface of a system. Some of these services may
-# not support required levels of authentication or encryption or may provide unauthorized
-# access to the system.
-$DisaTest += "Test-SV-87943r1_rule"
-function Test-SV-87943r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87943r1_rule")
-	$obj | Add-Member NoteProperty Task("The Peer Name Resolution Protocol must not be installed.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq PNRP | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Peer name resolution protocol is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# Simple TCP/IP Services must not be installed.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000380
-# Group ID (Vulid): V-73293
-# CCI: CCI-000381
-#
-# Unnecessary services increase the attack surface of a system. Some of these services may
-# not support required levels of authentication or encryption or may provide unauthorized
-# access to the system.
-$DisaTest += "Test-SV-87945r1_rule"
-function Test-SV-87945r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87945r1_rule")
-	$obj | Add-Member NoteProperty Task("Simple TCP/IP Services must not be installed.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq Simple-TCPIP | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Simple TCP/IP Services is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# The Telnet Client must not be installed.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000390
-# Group ID (Vulid): V-73295
-# CCI: CCI-000382
-#
-# Unnecessary services increase the attack surface of a system. Some of these services may
-# not support required levels of authentication or encryption or may provide unauthorized
-# access to the system.
-$DisaTest += "Test-SV-87947r1_rule"
-function Test-SV-87947r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87947r1_rule")
-	$obj | Add-Member NoteProperty Task("The Telnet Client must not be installed.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq Telnet-Client | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The Telnet Client is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# The TFTP Client must not be installed.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000400
-# Group ID (Vulid): V-73297
-# CCI: CCI-000381
-#
-# Unnecessary services increase the attack surface of a system. Some of these services may
-# not support required levels of authentication or encryption or may provide unauthorized
-# access to the system.
-$DisaTest += "Test-SV-87949r1_rule"
-function Test-SV-87949r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87949r1_rule")
-	$obj | Add-Member NoteProperty Task("The TFTP Client must not be installed.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq TFTP-Client | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The TFTP Client is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# The Server Message Block (SMB) v1 protocol must be uninstalled.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000410
-# Group ID (Vulid): V-73299
-# CCI: CCI-000381
-#
-# SMBv1 is a legacy protocol that uses the MD5 algorithm as part of SMB. MD5 is known to be
-# vulnerable to a number of attacks such as collision and preimage attacks and is not FIPS
-# compliant.
-$DisaTest += "Test-SV-87951r2_rule"
-function Test-SV-87951r2_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87951r2_rule")
-	$obj | Add-Member NoteProperty Task("The Server Message Block (SMB) v1 protocol must be uninstalled.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq FS-SMB1 | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("The server Message Block (SMB) v1 protocol is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
-# Windows PowerShell 2.0 must not be installed.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000420
-# Group ID (Vulid): V-73301
-# CCI: CCI-000381
-#
-# Windows PowerShell 5.0 added advanced logging features that can provide additional detail
-# when malware has been run on a system. Disabling the Windows PowerShell 2.0 mitigates against
-# a downgrade attack that evades the Windows PowerShell 5.0 script block logging feature.
-$DisaTest += "Test-SV-87953r1_rule"
-function Test-SV-87953r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87953r1_rule")
-	$obj | Add-Member NoteProperty Task("Windows PowerShell 2.0 must not be installed.")
-
-	if ((Get-WindowsFeature | Where-Object Name -eq PowerShell-v2 | Select-Object -ExpandProperty InstallState) -ne "Installed") {
-		$obj | Add-Member NoteProperty Status("Compliant")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Windows PowerShell 2.0 is installed.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-	}
-
-	Write-Output $obj
-}
-
 # Permissions for the Application event log must prevent access by non-privileged accounts.
 #
 # - - - - - - - - - - - - -
@@ -2073,7 +1947,7 @@ function Test-SV-88057r1_rule {
 	$obj | Add-Member NoteProperty Name("SV-88057r1_rule")
 	$obj | Add-Member NoteProperty Task("Permissions for the Application event log must prevent access by non-privileged accounts.")
 
-	$acls = Get-Acl ($env:SystemRoot + "\System32\winevt\Logs\Application.evtx") | Select-Object -ExpandProperty Access
+	$acls = (Get-Acl ($env:SystemRoot + "\System32\winevt\Logs\Application.evtx")).Access
 	$compliant = $true
 
 	foreach ($acl in $acls) {
@@ -2330,130 +2204,6 @@ function Test-SV-88063r1_rule {
 }
 
 
-
-# The display of slide shows on the lock screen must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000010
-# Group ID (Vulid): V-73493
-# CCI: CCI-000381
-#
-# Slide shows that are displayed on the lock screen could display sensitive information to
-# unauthorized personnel. Turning off this feature will limit access to the information to
-# a logged-on user.
-$DisaTest += "Test-SV-88145r1_rule"
-function Test-SV-88145r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88145r1_rule")
-	$obj | Add-Member NoteProperty Task("The display of slide shows on the lock screen must be disabled.")
-
-	try {
-		$regValue = Get-ItemProperty -ErrorAction Stop -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Personalization\" | Select-Object -ExpandProperty NoLockScreenSlideshow
-
-		if ($regValue -eq 1) {
-			$obj | Add-Member NoteProperty Status("Compliant")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
-		}
-		else {
-			$obj | Add-Member NoteProperty Status("Registry value for NoLockScreenSlideshow differs from expected value")
-			$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		}
-	}
-	catch [System.Management.Automation.ItemNotFoundException] {
-		$obj | Add-Member NoteProperty Status("Registry path to NoLockScreenSlideshow does not exist.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000010: Registry Key | Slide Shows NoLockScreenSlideshow not found" -Level Error
-	}
-	catch {
-		$obj | Add-Member NoteProperty Status("Error")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
-		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000010: $($error[0])" -Level Error
-	}
-
-	Write-Output $obj
-}
-
-# Hardened UNC paths must be defined to require mutual authentication and integrity for at
-# least the \\*\SYSVOL and \\*\NETLOGON shares.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000090
-# Group ID (Vulid): V-73509
-# CCI: CCI-000366
-#
-# Additional security requirements are applied to Universal Naming Convention (UNC) paths specified
-# in hardened UNC paths before allowing access to them. This aids in preventing tampering
-# with or spoofing of connections to these paths.
-$DisaTest += "Test-SV-88161r1_rule"
-function Test-SV-88161r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88161r1_rule")
-	$obj | Add-Member NoteProperty Task("Hardened UNC paths must be defined to require mutual authentication and integrity for \\*\NETLOGON shares.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000090" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\" `
-		-Name "\\*\NETLOGON" `
-		-ExpectedValue "RequireMutualAuthentication=1, RequireIntegrity=1" `
-	| Write-Output
-}
-
-# Hardend Path \\*\SYSVOL
-$DisaTest += "Test-SV-88161r1_rule_2"
-function Test-SV-88161r1_rule_2 {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88161r1_rule_2")
-	$obj | Add-Member NoteProperty Task("Hardened UNC paths must be defined to require mutual authentication and integrity for \\*\SYSVOL shares.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000090" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\" `
-		-Name "\\*\SYSVOL" `
-		-ExpectedValue "RequireMutualAuthentication=1, RequireIntegrity=1" `
-	| Write-Output
-}
-
-# Virtualization-based security must be enabled with the platform security level configured
-# to Secure Boot or Secure Boot with DMA Protection.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000110
-# Group ID (Vulid): V-73513
-# CCI: CCI-000366
-#
-# Virtualization Based Security (VBS) provides the platform for the additional security features
-# Credential Guard and virtualization-based protection of code integrity. Secure Boot is the
-# minimum security level, with DMA protection providing additional memory protection. DMA
-# Protection requires a CPU that supports input/output memory management unit (IOMMU).
-$DisaTest += "Test-SV-88165r1_rule"
-function Test-SV-88165r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88165r1_rule")
-	$obj | Add-Member NoteProperty Task("Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (EnableVirtualizationBasedSecurity).")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000110" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
-		-Name "EnableVirtualizationBasedSecurity" `
-		-ExpectedValue 1 `
-	| Write-Output
-}
-
-$DisaTest += "Test-SV-88165r1_rule_2"
-function Test-SV-88165r1_rule_2 {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_2")
-	$obj | Add-Member NoteProperty Task("Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (RequirePlatformSecurityFeatures).")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000110" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
-		-Name "RequirePlatformSecurityFeatures" `
-		-ExpectedValue 3 `
-	| Write-Output
-}
-
 $DisaTest += "Test-SV-88165r1_rule_3"
 function Test-SV-88165r1_rule_3 {
 	$obj = New-Object PSObject
@@ -2504,32 +2254,6 @@ function Test-SV-88167r1_rule_2 {
 	}
 
 	Write-Output $obj
-}
-
-# Virtualization-based protection of code integrity must be enabled on domain-joined systems.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000130
-# Group ID (Vulid): V-73517
-# CCI: CCI-000366
-#
-# Virtualization-based protection of code integrity enforces kernel mode memory protections
-# as well as protecting Code Integrity validation paths. This isolates the processes from
-# the rest of the operating system and can only be accessed by privileged system software.
-#
-$DisaTest += "Test-SV-88169r1_rule"
-function Test-SV-88169r1_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88169r1_rule")
-	$obj | Add-Member NoteProperty Task("Virtualization-based protection of code integrity must be enabled on domain-joined systems.")
-
-	Test-RegistrySetting `
-		-obj $obj `
-		-StigId "WN16-CC-000130" `
-		-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard" `
-		-Name "HypervisorEnforcedCodeIntegrity" `
-		-ExpectedValue 1 `
-	| Write-Output
 }
 
 $DisaTest += "Test-SV-88169r1_rule_2"
@@ -2685,7 +2409,8 @@ function Test-SV-88475r1_rule {
 
 #endregion
 
-function AuditPipeline {
+function New-AuditPipeline {
+	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $true, Position = 0)]
 		[scriptblock[]] $AuditFunctions
@@ -2701,7 +2426,7 @@ function AuditPipeline {
 			$auditSettingObj = New-Object -TypeName psobject -Property $AuditSetting
 
 			foreach ($auditFunction in $AuditFunctions) {
-				$audit = $auditSettingObj | & $auditFunction
+				$audit = $auditSettingObj | & $auditFunction -Verbose:$VerbosePreference
 				if ($audit -is [AuditInfo]) {
 					return $audit
 				}
@@ -2712,6 +2437,7 @@ function AuditPipeline {
 }
 
 function Get-DisaAudit {
+	[CmdletBinding()]
 	Param(
 		# [switch] $PerformanceOptimized,
 
@@ -2721,7 +2447,11 @@ function Get-DisaAudit {
 
 		[switch] $UserRights,
 
-		[switch] $AccountPolicies
+		[switch] $AccountPolicies,
+
+		[switch] $WindowsFeatures,
+
+		[switch] $FileSystemPermissions
 	)
 
 	# if ($PerformanceOptimized) {
@@ -2730,26 +2460,34 @@ function Get-DisaAudit {
 
 	# disa registry settings
 	if ($RegistrySettings) {
-		$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
-		$DisaRequirements.RegistrySettings | &$registryAuditPipline
+		$registryAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
+		$DisaRequirements.RegistrySettings | &$registryAuditPipline -Verbose:$VerbosePreference
 	}
 	# disa user rights
 	if ($UserRights) {
-		$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
-		$DisaRequirements.UserRights | &$userRightAuditPipline
+		$userRightAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
+		$DisaRequirements.UserRights | &$userRightAuditPipline -Verbose:$VerbosePreference
 	}
 	# disa account policy
 	if ($AccountPolicies) {
-		$accountPolicyAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
-		$DisaRequirements.AccountPolicies | &$accountPolicyAuditPipline
+		$accountPolicyAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
+		$DisaRequirements.AccountPolicies | &$accountPolicyAuditPipline -Verbose:$VerbosePreference
+	}
+	# disa windows features
+	if ($WindowsFeatures) {
+		$windowsFeatureAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-WindowsFeatureAudit}
+		$DisaRequirements.WindowsFeatures | &$windowsFeatureAuditPipline -Verbose:$VerbosePreference
+	}
+	# disa file system permissions
+	if ($FileSystemPermissions) {
+		$fileSystemPermissionsAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-FileSystemPermissionAudit}
+		$DisaRequirements.FileSystemPermission | &$fileSystemPermissionsAuditPipline -Verbose:$VerbosePreference
 	}
 }
 
 function Get-CisAudit {
-	# define pipelines
-	$auditPolicyAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AuditPolicyAudit}
-
 	# Disa registry settings
+	$auditPolicyAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AuditPolicyAudit}
 	$CisBenchmarks.AuditPolicies | &$auditPolicyAuditPipline
 }
 
@@ -2772,7 +2510,7 @@ function Get-HtmlReport {
 		[hashtable[]]$sections = @(
 			@{
 				Title = "DISA Recommendations"
-				AuditInfos = Get-DisaAudit -PerfomanceOptimized:$PerformanceOptimized | Sort-Object -Property Id
+				AuditInfos = Get-DisaAudit | Sort-Object -Property Id
 			},
 			@{
 				Title = "CIS Benchmarks"

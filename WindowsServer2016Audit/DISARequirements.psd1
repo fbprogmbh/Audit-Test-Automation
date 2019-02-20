@@ -9,6 +9,14 @@
 			Value = 0
 		}
 		@{
+			Id = "WN16-CC-000010"
+			Task = "The display of slide shows on the lock screen must be disabled."
+
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization\"
+			Name = "NoLockScreenSlideshow"
+			Value = 1
+		}
+		@{
 			Id = "WN16-MS-000020"
 			Task = "Local administrator accounts must have their privileged token filtered to prevent elevated privileges from being used over the network on domain systems."
 
@@ -822,7 +830,7 @@
 		}
 
 		@{
-			Id = "WN16-CC-000090"
+			Id = "WN16-CC-000090 1"
 			Task = "Hardened UNC paths must be defined to require mutual authentication and integrity for at least the \\*\SYSVOL and \\*\NETLOGON shares."
 
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\"
@@ -830,7 +838,7 @@
 			Value = "RequireMutualAuthentication=1, RequireIntegrity=1"
 		}
 		@{
-			Id = "WN16-CC-000090"
+			Id = "WN16-CC-000090 2"
 			Task = "Hardened UNC paths must be defined to require mutual authentication and integrity for at least the \\*\SYSVOL and \\*\NETLOGON shares."
 
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\"
@@ -838,7 +846,7 @@
 			Value = "RequireMutualAuthentication=1, RequireIntegrity=1"
 		}
 		@{
-			Id = "WN16-CC-000110"
+			Id = "WN16-CC-000110 1"
 			Task = "Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection."
 
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\"
@@ -846,7 +854,7 @@
 			Value = 1
 		}
 		@{
-			Id = "WN16-CC-000110"
+			Id = "WN16-CC-000110 2"
 			Task = "Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection."
 
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\"
@@ -1291,6 +1299,80 @@
 
 			Policy = "ForceLogoffWhenHourExpire"
 			Value = 1
+		}
+	)
+	WindowsFeatures = @(
+		@{
+			Id = "WN16-00-000350"
+			Task = "The Fax Server role must not be installed."
+
+			Feature = "Fax"
+		}
+		@{
+			Id = "WN16-00-000360"
+			Task = "The Microsoft FTP service must not be installed unless required."
+
+			Feature = "Web-Ftp-Service"
+		}
+		@{
+			Id = "WN16-00-000370"
+			Task = "The Peer Name Resolution Protocol must not be installed."
+
+			Feature = "PNRP"
+		}
+		@{
+			Id = "WN16-00-000380"
+			Task = "Simple TCP/IP Services must not be installed."
+
+			Feature = "Simple-TCPIP"
+		}
+		@{
+			Id = "WN16-00-000390"
+			Task = "The Telnet Client must not be installed."
+
+			Feature = "Telnet-Client"
+		}
+		@{
+			Id = "WN16-00-000400"
+			Task = "The TFTP Client must not be installed."
+
+			Feature = "TFTP-Client"
+		}
+		@{
+			Id = "WN16-00-000410"
+			Task = "The Server Message Block (SMB) v1 protocol must be uninstalled."
+
+			Feature = "FS-SMB1"
+		}
+		@{
+			Id = "WN16-00-000420"
+			Task = "Windows PowerShell 2.0 must not be installed."
+
+			Feature = "PowerShell-v2"
+		}
+	)
+	FileSystemPermission = @(
+		@{
+			Id = "WN16-AU-000030"
+			Task = "Permissions for the Application event log must prevent access by non-privileged accounts."
+
+			Target = "\System32\winevt\Logs\Application.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\EventLog"    = "FullControl"
+				"NT AUTHORITY\SYSTEM"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+			}
+		}
+		@{
+			Id = "WN16-AU-000030"
+			Task = "Permissions for the Application event log must prevent access by non-privileged accounts."
+
+			Target = "\System32\winevt\Logs\Application.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\EventLog"    = "FullControl"
+				"NT AUTHORITY\SYSTEM"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+			}
 		}
 	)
 }
