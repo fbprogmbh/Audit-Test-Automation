@@ -2557,38 +2557,6 @@ function Test-SV-88165r1_rule_3 {
 	Write-Output $obj
 }
 
-# Credential Guard must be running on domain-joined member server.
-# - - - - - - - - - - - - -
-# StigID: WN16-CC-000120
-# Group ID (Vulid): V-73515
-# CCI: CCI-000366
-#
-# Credential Guard uses virtualization-based security to protect data that could be used in
-# credential theft attacks if compromised. This authentication information, which was stored
-# in the Local Security Authority (LSA) in previous versions of Windows, is isolated from
-# the rest of operating system and can only be accessed by privileged system software.
-$DisaTest += "Test-SV-88167r2_rule"
-function Test-SV-88167r2_rule {
-	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88167r2_rule")
-	$obj | Add-Member NoteProperty Task("Credential Guard must be running on domain-joined member servers.")
-
-	if (((Get-DomainRole) -eq [DomainRole]::MemberServer) -and (Test-DomainJoined)) {
-		Test-RegistrySetting `
-			-obj $obj `
-			-StigId "WN16-CC-000120" `
-			-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\" `
-			-Name "LsaCfgFlags" `
-			-ExpectedValue 1 `
-		| Write-Output
-	}
-	else {
-		$obj | Add-Member NoteProperty Status("Only applies to domain-joined member servers.")
-		$obj | Add-Member NoteProperty Passed([AuditStatus]::None)
-		Write-Output $obj
-	}
-
-}
 
 # Credential Guard running
 $DisaTest += "Test-SV-88167r1_rule_2"

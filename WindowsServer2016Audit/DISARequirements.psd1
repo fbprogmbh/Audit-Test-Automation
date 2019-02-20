@@ -885,7 +885,7 @@
 			Role = "PrimaryDomainController"
 
 			Policy = "SeNetworkLogonRight"
-			Identity = "NT AUTHORITY\Authenticated Users", "Administrators"
+			Identity = "NT AUTHORITY\Authenticated Users", "Administrators" #, "Enterprise Domain Controllers"
 		}
 		@{
 			Id = "WN16-MS-000340"
@@ -895,23 +895,304 @@
 			Policy = "SeNetworkLogonRight"
 			Identity = "NT AUTHORITY\Authenticated Users", "Administrators"
 		}
-
-		# ...
 		@{
-			Id = "WN16-MS-000370"
+			Id = "WN16-UR-000030"
+			Task = "The Act as part of the operating system user right must not be assigned to any groups or accounts."
+
+			Policy = "SeTcbPrivilege"
+			Identity = @()
+		}
+		@{
+			Id = "WN16-DC-000350"
+			Task = "The Add workstations to domain user right must only be assigned to the Administrators group."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeMachineAccountPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000050"
+			Task = "The Allow log on locally user right must only be assigned to the Administrators group."
+
+			Policy = "SeInteractiveLogonRight"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-DC-000360"
+			Task = "The Allow log on through Remote Desktop Services user right must only be assigned to the Administrators group."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeRemoteInteractiveLogonRight"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000070"
+			Task = "The Back up files and directories user right must only be assigned to the Administrators group."
+
+			Policy = "SeBackupPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000080"
+			Task = "The Create a pagefile user right must only be assigned to the Administrators group."
+
+			Policy = "SeCreatePagefilePrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000090"
+			Task = "The Create a token object user right must not be assigned to any groups or accounts."
+
+			Policy = "SeCreateTokenPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000100"
+			Task = "The Create global objects user right must only be assigned to Administrators, Service, Local Service, and Network Service."
+
+			Policy = "SeCreateGlobalPrivilege"
+			Identity = "Administrators", "Service", "Local Service", "Network Service"
+		}
+		@{
+			Id = "WN16-UR-000110"
+			Task = "The Create permanent shared objects user right must not be assigned to any groups or accounts."
+
+			Policy = "SeCreatePermanentPrivilege"
+			Identity = @()
+		}
+		@{
+			Id = "WN16-UR-000120"
+			Task = "The Create symbolic links user right must only be assigned to the Administrators group."
+
+			Policy = "SeCreateSymbolicLinkPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000130"
+			Task = "The Debug programs user right must only be assigned to the Administrators group."
+
+			Policy = "SeDebugPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-DC-000370"
+			Task = "The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeDenyNetworkLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-MS-000370 MS"
 			Task = "The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems."
 			Role = "MemberServer"
 
 			Policy = "SeDenyNetworkLogonRight"
-			Identity = 'Enterprise Admins', 'Domain Admins', 'Administrators', 'Guests'
+			Identity = "Enterprise Admins", "Domain Admins", "Administrators", "Guests"
 		}
 		@{
-			Id = "WN16-MS-000370"
+			Id = "WN16-MS-000370 SS"
 			Task = "The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems."
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyNetworkLogonRight"
-			Identity = 'Enterprise Admins', 'Domain Admins', 'Administrators', 'Guests'
+			Identity = "Administrators", "Guests" # Why are Administrators here?
+		}
+		@{
+			Id = "WN16-DC-000380"
+			Task = "The Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeDenyBatchLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-MS-000380 MS"
+			Task = "The Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "MemberServer"
+
+			Policy = "SeDenyBatchLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins", "Guests"
+		}
+		@{
+			Id = "WN16-MS-000380 SS"
+			Task = "The Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "StandaloneServer"
+
+			Policy = "SeDenyBatchLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-DC-000390"
+			Task = "The Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeDenyServiceLogonRight"
+			Identity = @()
+		}
+		@{
+			Id = "WN16-MS-000390 MS"
+			Task = "The Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
+			Role = "MemberServer"
+
+			Policy = "SeDenyServiceLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins"
+		}
+		@{
+			Id = "WN16-MS-000390 SS"
+			Task = "The Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
+			Role = "StandaloneServer"
+
+			Policy = "SeDenyServiceLogonRight"
+			Identity = @() # Hardening has "Enterprise Admins" ?
+		}
+		@{
+			Id = "WN16-DC-000400"
+			Task = "The Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeDenyInteractiveLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-MS-000400 MS"
+			Task = "The Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "MemberServer"
+
+			Policy = "SeDenyInteractiveLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins", "Guests"
+		}
+		@{
+			Id = "WN16-MS-000400 SS"
+			Task = "The Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "StandaloneServer"
+
+			Policy = "SeDenyInteractiveLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-DC-000410"
+			Task = "The Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeDenyRemoteInteractiveLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-MS-000410 MS"
+			Task = "The Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "MemberServer"
+
+			Policy = "SeDenyRemoteInteractiveLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins", "Guests" # Local account
+		}
+		@{
+			Id = "WN16-MS-000410 SS"
+			Task = "The Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
+			Role = "StandaloneServer"
+
+			Policy = "SeDenyRemoteInteractiveLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id = "WN16-DC-000420"
+			Task = "The Enable computer and user accounts to be trusted for delegation user right must only be assigned to the Administrators group on domain controllers."
+			Role = "PrimaryDomainController"
+
+			Policy = "SeEnableDelegationPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-MS-000420"
+			Task = "The Enable computer and user accounts to be trusted for delegation user right must only be assigned to the Administrators group on domain controllers."
+			Role = "MemberServer", "StandaloneServer"
+
+			Policy = "SeEnableDelegationPrivilege"
+			Identity = @()
+		}
+		@{
+			Id = "WN16-UR-000200"
+			Task = "The Force shutdown from a remote system user right must only be assigned to the Administrators group."
+
+			Policy = "SeRemoteShutdownPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000210"
+			Task = "The Generate security audits user right must only be assigned to Local Service and Network Service."
+
+			Policy = "SeAuditPrivilege"
+			Identity = "Local Service", "Network Service"
+		}
+		@{
+			Id = "WN16-UR-000220"
+			Task = "The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service."
+
+			Policy = "SeImpersonatePrivilege"
+			Identity = "Administrators", "Service", "Local Service", "Network Service"
+		}
+		@{
+			Id = "WN16-UR-000230"
+			Task = "The Increase scheduling priority user right must only be assigned to the Administrators group."
+
+			Policy = "SeIncreaseBasePriorityPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000240"
+			Task = "The Load and unload device drivers user right must only be assigned to the Administrators group."
+
+			Policy = "SeLoadDriverPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000250"
+			Task = "The Lock pages in memory user right must not be assigned to any groups or accounts."
+
+			Policy = "SeLockMemoryPrivilege"
+			Identity = @()
+		}
+		@{
+			Id = "WN16-UR-000260"
+			Task = "The Manage auditing and security log user right must only be assigned to the Administrators group."
+
+			Policy = "SeSecurityPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000270"
+			Task = "The Modify firmware environment values user right must only be assigned to the Administrators group."
+
+			Policy = "SeSystemEnvironmentPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000280"
+			Task = "The Perform volume maintenance tasks user right must only be assigned to the Administrators group."
+
+			Policy = "SeManageVolumePrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000290"
+			Task = "The Profile single process user right must only be assigned to the Administrators group."
+
+			Policy = "SeProfileSingleProcessPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000300"
+			Task = "The Restore files and directories user right must only be assigned to the Administrators group."
+
+			Policy = "SeRestorePrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id = "WN16-UR-000310"
+			Task = "The Take ownership of files or other objects user right must only be assigned to the Administrators group."
+
+			Policy = "SeTakeOwnershipPrivilege"
+			Identity = "Administrators"
 		}
 	)
 }
