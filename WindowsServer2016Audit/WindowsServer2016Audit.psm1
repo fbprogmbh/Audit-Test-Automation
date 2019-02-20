@@ -150,6 +150,39 @@ function Get-FullPath {
 #endregion
 
 #region Helper functions
+function Get-ValueRange {
+	param(
+		[string] $Text
+	)
+
+	$Text = $Text.ToLower()
+
+	$predicates = @()
+	if ($Text -match "([0-9]+)[a-z ]* or less") {
+		$y = [int]$Matches[1]
+		$predicates += { param($x) $x -le $y }.GetNewClosure()
+	}
+	if ($Text -match "([0-9]+)[ a-z]* or greater") {
+		$y = [int]$Matches[1]
+		$predicates += { param($x) $x -ge $y }.GetNewClosure()
+	}
+	if ($Text -match "not ([0-9]+)") {
+		$y = [int]$Matches[1]
+		$predicates += { param($x) $x -ne $y }.GetNewClosure()
+	}
+
+	return {
+		param($x)
+
+		# combine predicates with an and
+		foreach ($predicate in $predicates) {
+			if (-not (& $predicate $x)) {
+				return $false
+			}
+		}
+		return $true
+	}.GetNewClosure()
+}
 
 function ConvertTo-NTAccountUser {
 	Param(
@@ -200,6 +233,198 @@ function Get-SecurityPolicy {
 	$config["Privilege Rights"] = $privilegeRights
 
 	return $config
+}
+
+
+
+function Get-SecPolSetting {
+}
+
+# Get domain role
+# 0 {"Standalone Workstation"}
+# 1 {"Member Workstation"}
+# 2 {"Standalone Server"}
+# 3 {"Member Server"}
+# 4 {"Backup Domain Controller"}
+# 5 {"Primary Domain Controller"}
+function Get-DomainRole {
+	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+}
+
+function Get-PrimaryDomainSID {
+	<#
+	.SYNOPSIS
+		Obtains SID of the primary AD domain for the local computer
+	#>
+
+	[CmdletBinding()]
+	Param()
+	# Note: this script obtains SID of the primary AD domain for the local computer. It works both
+	#       if the local computer is a domain member (DomainRole = 1 or DomainRole = 3)
+	#       or if the local computer is a domain controller (DomainRole = 4 or DomainRole = 4).
+	#       The code works even under local user account and does not require calling user
+	#       to be domain account.
+
+	[string]$domainSID = $null
+
+	[int]$domainRole = Get-DomainRole
+
+	if (($domainRole -ne [DomainRole]::StandaloneWorkstation) -and ($domainRole -ne [DomainRole]::StandaloneServer)) {
+
+		[string] $domain = Get-CimInstance Win32_ComputerSystem | Select-Object -Expand Domain
+		[string] $krbtgtSID = (New-Object Security.Principal.NTAccount $domain\krbtgt).Translate([Security.Principal.SecurityIdentifier]).Value
+		$domainSID = $krbtgtSID.SubString(0, $krbtgtSID.LastIndexOf('-'))
+	}
+
+	return $domainSID
+}
+
+function Get-LocalAdminNames {
+	# The Administrators Group has the SID S-1-5-32-544
+	return (Get-LocalGroupMember -SID "S-1-5-32-544").Name `
+		| Where-Object { $_.StartsWith($env:COMPUTERNAME) } `
+		| ForEach-Object { $_.Substring($env:COMPUTERNAME.Length + 1) }
+}
+
+function Convert-ToAuditInfo {
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Psobject] $auditObject
+	)
+
+	process {
+		Write-Output (New-Object -TypeName AuditInfo -Property @{
+			Id      = $auditObject.Name
+			Task    = $auditObject.Task
+			Message = $auditObject.Status
+			Audit   = $auditObject.Passed
+		})
+	}
+}
+#endregion
+
+#region Audit functions
+function Get-RoleAudit {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[string[]] $Role = @("MemberServer","StandaloneServer")
+	)
+
+	process {
+		$domainRoles = $Role | ForEach-Object { [DomainRole]$_ }
+		if ((Get-DomainRole) -notin $domainRoles) {
+			return New-Object -TypeName AuditInfo -Property @{
+				Id = $Id
+				Task = $Task
+				Message = "Not applicable. This audit applies to" + ($Role -join " and ") + "."
+				Audit = [AuditStatus]::None
+			}
+		}
+		return $null
+	}
+}
+
+function Get-RegistryAudit {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Path,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Name,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Value,
+
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[string] $ValueType
+	)
+
+	process {
+		# Preprocess ValueType to get the predicate and the value
+		if ($ValueType -eq "ValueRange") {
+			# Create a predicate from the range specifice by the text
+			$Predicate = Get-ValueRange -Text $Value
+		}
+		# Replace the value in the registry test with the one from settings
+		elseif ($ValueType -eq "ValuePlaceholder") {
+			$Value = $Settings[$Value]
+			$Predicate = { param($x) $x -eq $Value }.GetNewClosure()
+
+			if ([string]::IsNullOrEmpty($Value)) {
+				$Value = "Non-empty string."
+				$Predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
+			}
+		}
+		else {
+			$Predicate = { param($x) $Value -eq $x }.GetNewClosure()
+		}
+
+		try {
+			$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
+				| Select-Object -ExpandProperty $Name
+
+			if (& $Predicate $regValue) {
+				return [AuditInfo]@{
+					Id = $Id
+					Task = $Task
+					Message = "Compliant"
+					Audit = [AuditStatus]::True
+				}
+			}
+			else{
+				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
+					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
+
+				return [AuditInfo]@{
+					Id = $Id
+					Task = $Task
+					Message = "Registry value: $regValue. Differs from expected value: $Value."
+					Audit = [AuditStatus]::False
+				}
+			}
+		}
+		catch [System.Management.Automation.PSArgumentException] {
+			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
+				-Message "$($Id): Could not get value $Name in registry key $path."
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Registry value not found."
+				Audit = [AuditStatus]::False
+			}
+		}
+		catch [System.Management.Automation.ItemNotFoundException] {
+			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
+				-Message "$($Id): Could not get key $Name in registry key $path."
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Registry key not found."
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = "An error occured."
+			Audit = [AuditStatus]::False
+		}
+	}
 }
 
 function Get-UserRightPolicyAudit {
@@ -302,238 +527,7 @@ function Get-UserRightPolicyAudit {
 	}
 }
 
-function Get-SecPolSetting {
-}
-
-# Get domain role
-# 0 {"Standalone Workstation"}
-# 1 {"Member Workstation"}
-# 2 {"Standalone Server"}
-# 3 {"Member Server"}
-# 4 {"Backup Domain Controller"}
-# 5 {"Primary Domain Controller"}
-function Get-DomainRole {
-	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-}
-
-function Test-StandaloneOrMemberServer {
-	$domainRole = Get-DomainRole
-
-	return ($domainRole -eq [DomainRole]::MemberServer) -or ($domainRole -eq [DomainRole]::StandaloneServer) -or ($domainRole -eq [DomainRole]::StandaloneWorkstation)
-}
-
-function Test-DomainJoined {
-	return (Get-CimInstance -Class Win32_ComputerSystem).PartOfDomain
-}
-
-function Test-DomainController {
-	$domainRole = Get-DomainRole
-
-	return ($domainRole -eq [DomainRole]::BackupDomainController) -or ($domainRole -eq [DomainRole]::PrimaryDomainController)
-}
-
-function Get-PrimaryDomainSID {
-	<#
-	.SYNOPSIS
-		Obtains SID of the primary AD domain for the local computer
-	#>
-
-	[CmdletBinding()]
-	Param()
-	# Note: this script obtains SID of the primary AD domain for the local computer. It works both
-	#       if the local computer is a domain member (DomainRole = 1 or DomainRole = 3)
-	#       or if the local computer is a domain controller (DomainRole = 4 or DomainRole = 4).
-	#       The code works even under local user account and does not require calling user
-	#       to be domain account.
-
-	[string]$domainSID = $null
-
-	[int]$domainRole = Get-DomainRole
-
-	if (($domainRole -ne [DomainRole]::StandaloneWorkstation) -and ($domainRole -ne [DomainRole]::StandaloneServer)) {
-
-		[string] $domain = Get-CimInstance Win32_ComputerSystem | Select-Object -Expand Domain
-		[string] $krbtgtSID = (New-Object Security.Principal.NTAccount $domain\krbtgt).Translate([Security.Principal.SecurityIdentifier]).Value
-		$domainSID = $krbtgtSID.SubString(0, $krbtgtSID.LastIndexOf('-'))
-	}
-
-	return $domainSID
-}
-
-function Get-LocalAdminNames {
-	# The Administrators Group has the SID S-1-5-32-544
-	return (Get-LocalGroupMember -SID "S-1-5-32-544").Name `
-		| Where-Object { $_.StartsWith($env:COMPUTERNAME) } `
-		| ForEach-Object { $_.Substring($env:COMPUTERNAME.Length + 1) }
-}
-
-function Get-RoleAudit {
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Id,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Task,
-
-		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[string[]] $Role = @("MemberServer","StandaloneServer")
-	)
-
-	process {
-		$domainRoles = $Role | ForEach-Object { [DomainRole]$_ }
-		if ((Get-DomainRole) -notin $domainRoles) {
-			return New-Object -TypeName AuditInfo -Property @{
-				Id = $Id
-				Task = $Task
-				Message = "This audit could not be run because the computer is not a " + $Role -join " or a " + "."
-				Audit = [AuditStatus]::None
-			}
-		}
-		return $null
-	}
-}
-
-function Convert-ToAuditInfo {
-	param (
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[Psobject] $auditObject
-	)
-
-	process {
-		Write-Output (New-Object -TypeName AuditInfo -Property @{
-			Id      = $auditObject.Name
-			Task    = $auditObject.Task
-			Message = $auditObject.Status
-			Audit   = $auditObject.Passed
-		})
-	}
-}
-
-function Get-RegistryAudit {
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Id,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Task,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Path,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Name,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Value,
-
-		# [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		# [Scriptblock] $Predicate,
-
-		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[string] $ValueType
-	)
-
-	process {
-		# Preprocess ValueType to get the predicate and the value
-		if ($ValueType -eq "ValueRange") {
-			# Create a predicate from the range specifice by the text
-			$predicates = @()
-			if ($Value.ToLower() -match "([0-9]+)[a-z ]* or less") {
-				$y = [int]$Matches[1]
-				$predicates += { param($x) $x -le $y }.GetNewClosure()
-			}
-			if ($Value.ToLower() -match "([0-9]+)[ a-z]* or greater") {
-				$y = [int]$Matches[1]
-				$predicates += { param($x) $x -ge $y }.GetNewClosure()
-			}
-			if ($Value.ToLower() -match "not ([0-9]+)") {
-				$y = [int]$Matches[1]
-				$predicates += { param($x) $x -ne $y }.GetNewClosure()
-			}
-
-			$Predicate = {
-				param($x)
-
-				# combine predicates with an and
-				foreach ($predicate in $predicates) {
-					if (-not (& $predicate $x)) {
-						return $false
-					}
-				}
-				return $true
-			}.GetNewClosure()
-		}
-		# Replace the value in the registry test with the one from settings
-		elseif ($ValueType -eq "ValuePlaceholder") {
-			$Value = $Settings[$Value]
-			$Predicate = { param($x) $x -eq $Value }.GetNewClosure()
-
-			if ([string]::IsNullOrEmpty($Value)) {
-				$Value = "Non-empty string."
-				$Predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
-			}
-		}
-		else {
-			$Predicate = { param($x) $Value -eq $x }.GetNewClosure()
-		}
-
-		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
-				| Select-Object -ExpandProperty $Name
-
-			if (& $Predicate $regValue) {
-				return [AuditInfo]@{
-					Id = $Id
-					Task = $Task
-					Message = "Compliant"
-					Audit = [AuditStatus]::True
-				}
-			}
-			else{
-				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
-
-				return [AuditInfo]@{
-					Id = $Id
-					Task = $Task
-					Message = "Registry value: $regValue. Differs from expected value: $Value."
-					Audit = [AuditStatus]::False
-				}
-			}
-		}
-		catch [System.Management.Automation.PSArgumentException] {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-				-Message "$($Id): Could not get value $Name in registry key $path."
-
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Registry value not found."
-				Audit = [AuditStatus]::False
-			}
-		}
-		catch [System.Management.Automation.ItemNotFoundException] {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-				-Message "$($Id): Could not get key $Name in registry key $path."
-
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Registry key not found."
-				Audit = [AuditStatus]::False
-			}
-		}
-
-		return [AuditInfo]@{
-			Id = $Id
-			Task = $Task
-			Message = "An error occured."
-			Audit = [AuditStatus]::False
-		}
-	}
-}
 #endregion
-
 
 #region Audit tests
 <#
@@ -548,89 +542,7 @@ function Get-RegistryAudit {
 #>
 
 #region DISA STIG Audit functions
-
 $DisaTest = @()
-
-#region Registry test
-function Get-RegistryAuditWithValueType {
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Id,
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Task,
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Path,
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Name,
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Value,
-
-		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[string] $ValueType
-	)
-
-	process {
-		$registryTest = $PSBoundParameters
-
-		# Get the predicate
-		$registryTest.Predicate = { param($x) $false }
-		switch ($ValueType) {
-			# Create a predicate from the range specifice by the text
-			"ValueRange" {
-				$predicates = @()
-				if ($registryTest.Value.ToLower() -match "([0-9]+)[ a-z]* or less") {
-					$y = [int]$Matches[1]
-					$predicates += { param($x) $x -le $y }.GetNewClosure()
-				}
-				if ($registryTest.Value.ToLower() -match "([0-9]+)[ a-z]* or greater") {
-					$y = [int]$Matches[1]
-					$predicates += { param($x) $x -ge $y }.GetNewClosure()
-				}
-				if ($registryTest.Value.ToLower() -match "not ([0-9]+)") {
-					$y = [int]$Matches[1]
-					$predicates += { param($x) $x -ne $y }.GetNewClosure()
-				}
-
-				$registryTest.Predicate = {
-					param($x)
-
-					# combine predicates with an and
-					foreach ($predicate in $predicates) {
-						if (-not (& $predicate $x)) {
-							return $false
-						}
-					}
-					return $true
-				}.GetNewClosure()
-			}
-			# Replace the value in the registry test with the one from settings
-			"ValuePlaceholder" {
-				$val = ""
-
-				if ($Settings.Keys -contains $registryTest.Value) {
-					$val = $Settings[$registryTest.Value]
-				}
-
-				if ([string]::IsNullOrEmpty($val)) {
-					$registryTest.Value = "Non-empty string."
-					$registryTest.Predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
-				}
-				else {
-					$registryTest.Value = $val
-					$registryTest.Predicate = { param($x) $x -eq $val }.GetNewClosure()
-				}
-			}
-			default {
-				$registryTest.Predicate = { param($x) $registryTest.Value -eq $x }.GetNewClosure()
-			}
-		}
-
-		Get-RegistryAudit @registryTest
-	}
-}
-
-#endregion
-
 
 # Passwords for the built-in Administrator account must be changed at least every 60 days.
 # - - - - - - - - - - - - -
@@ -4635,10 +4547,10 @@ function Get-DisaAudit {
 	$registryAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
 	$userRightAuditPipline = AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
 
-	# Disa registry settings
+	# disa registry settings
 	$DisaRequirements.RegistrySettings | &$registryAuditPipline
 
-	# Disa user rights
+	# disa user rights
 	$DisaRequirements.UserRights | &$userRightAuditPipline
 }
 
