@@ -881,19 +881,19 @@
 		}
 		@{
 			Id = "WN16-DC-000340"
-			Task = "The Access this computer from the network user right must only be assigned to the Administrators and Authenticated Users groups on member servers."
+			Task = "The Access this computer from the network user right must only be assigned to the Administrators, Authenticated Users, and Enterprise Domain Controllers groups on domain controllers."
 			Role = "PrimaryDomainController"
 
 			Policy = "SeNetworkLogonRight"
-			Identity = "NT AUTHORITY\Authenticated Users", "Administrators" #, "Enterprise Domain Controllers"
+			Identity = "Administrators", "NT AUTHORITY\Authenticated Users" #, "Enterprise Domain Controllers"
 		}
 		@{
 			Id = "WN16-MS-000340"
 			Task = "The Access this computer from the network user right must only be assigned to the Administrators and Authenticated Users groups on member servers."
-			Role = "MemberServer"
+			Role = "MemberServer", "StandaloneServer"
 
 			Policy = "SeNetworkLogonRight"
-			Identity = "NT AUTHORITY\Authenticated Users", "Administrators"
+			Identity = "Administrators", "NT AUTHORITY\Authenticated Users"
 		}
 		@{
 			Id = "WN16-UR-000030"
@@ -1008,7 +1008,7 @@
 		}
 		@{
 			Id = "WN16-MS-000380 MS"
-			Task = "The Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
+			Task = "The Deny log on as a batch job user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
 			Role = "MemberServer"
 
 			Policy = "SeDenyBatchLogonRight"
@@ -1016,7 +1016,7 @@
 		}
 		@{
 			Id = "WN16-MS-000380 SS"
-			Task = "The Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
+			Task = "The Deny log on as a batch job user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyBatchLogonRight"
@@ -1032,7 +1032,7 @@
 		}
 		@{
 			Id = "WN16-MS-000390 MS"
-			Task = "The Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
+			Task = "The Deny log on as a service user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems. No other groups or accounts must be assigned this right."
 			Role = "MemberServer"
 
 			Policy = "SeDenyServiceLogonRight"
@@ -1040,7 +1040,7 @@
 		}
 		@{
 			Id = "WN16-MS-000390 SS"
-			Task = "The Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
+			Task = "The Deny log on as a service user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems. No other groups or accounts must be assigned this right."
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyServiceLogonRight"
@@ -1056,7 +1056,7 @@
 		}
 		@{
 			Id = "WN16-MS-000400 MS"
-			Task = "The Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
+			Task = "The Deny log on locally user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
 			Role = "MemberServer"
 
 			Policy = "SeDenyInteractiveLogonRight"
@@ -1064,7 +1064,7 @@
 		}
 		@{
 			Id = "WN16-MS-000400 SS"
-			Task = "The Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
+			Task = "The Deny log on locally user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyInteractiveLogonRight"
@@ -1080,7 +1080,7 @@
 		}
 		@{
 			Id = "WN16-MS-000410 MS"
-			Task = "The Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
+			Task = "The Deny log on through Remote Desktop Services user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and from unauthenticated access on all systems."
 			Role = "MemberServer"
 
 			Policy = "SeDenyRemoteInteractiveLogonRight"
@@ -1088,7 +1088,7 @@
 		}
 		@{
 			Id = "WN16-MS-000410 SS"
-			Task = "The Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
+			Task = "The Deny log on through Remote Desktop Services user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and from unauthenticated access on all systems."
 			Role = "StandaloneServer"
 
 			Policy = "SeDenyRemoteInteractiveLogonRight"
@@ -1104,7 +1104,7 @@
 		}
 		@{
 			Id = "WN16-MS-000420"
-			Task = "The Enable computer and user accounts to be trusted for delegation user right must only be assigned to the Administrators group on domain controllers."
+			Task = "The Enable computer and user accounts to be trusted for delegation user right must not be assigned to any groups or accounts on member servers."
 			Role = "MemberServer", "StandaloneServer"
 
 			Policy = "SeEnableDelegationPrivilege"
