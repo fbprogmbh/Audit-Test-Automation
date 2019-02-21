@@ -369,12 +369,12 @@ function Convert-ToAuditInfo {
 	)
 
 	process {
-		Write-Output (New-Object -TypeName AuditInfo -Property @{
+		return [AuditInfo]@{
 			Id      = $auditObject.Name
 			Task    = $auditObject.Task
 			Message = $auditObject.Status
 			Audit   = $auditObject.Passed
-		})
+		}
 	}
 }
 #endregion
@@ -395,7 +395,7 @@ function Get-RoleAudit {
 	process {
 		$domainRoles = $Role | ForEach-Object { [DomainRole]$_ }
 		if ((Get-DomainRole) -notin $domainRoles) {
-			return New-Object -TypeName AuditInfo -Property @{
+			return [AuditInfo]@{
 				Id = $Id
 				Task = $Task
 				Message = "Not applicable. This audit applies to " + ($Role -join " and ") + "."
@@ -636,6 +636,15 @@ function Get-AccountPolicyAudit {
 		$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
 		$currentAccountPolicy = $securityPolicy["System Access"][$Policy]
 
+		if ($null -eq $currentAccountPolicy) {
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "Currently not set."
+				Audit = [AuditStatus]::False
+			}
+		}
+
 		# Sanitize input
 		$currentAccountPolicy = $currentAccountPolicy.Trim()
 
@@ -644,15 +653,6 @@ function Get-AccountPolicyAudit {
 		}
 		else {
 			$Predicate = { param($x) $x -eq $currentAccountPolicy }.GetNewClosure()
-		}
-
-		if ($null -eq $currentAccountPolicy) {
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Currently not set."
-				Audit = [AuditStatus]::False
-			}
 		}
 
 		if (-not (& $Predicate $currentAccountPolicy)) {
@@ -981,7 +981,6 @@ function Get-FileSystemPermissionAudit {
 #>
 
 #region DISA STIG Audit functions
-$DisaTest = @()
 
 # Passwords for the built-in Administrator account must be changed at least every 60 days.
 # - - - - - - - - - - - - -
@@ -996,7 +995,6 @@ $DisaTest = @()
 # that use an automated tool, such Microsofts Local Administrator Password Solution (LAPS),
 # on domain-joined systems can configure this to occur more frequently. LAPS will change the
 # password every 30 days by default.
-$DisaTest += "Test-SV-87875r2_rule"
 function Test-SV-87875r2_rule {
 	Param(
 		[System.Int32] $days = 60
@@ -1033,7 +1031,6 @@ function Test-SV-87875r2_rule {
 # order for Credential Guard to be configured and enabled properly. Without a TPM enabled
 # and ready for use, Credential Guard keys are stored in a less secure method using software.
 #
-$DisaTest += "Test-SV-87889r1_rule"
 function Test-SV-87889r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87889r1_rule")
@@ -1078,7 +1075,6 @@ function Test-SV-87889r1_rule {
 # Systems at unsupported servicing levels will not receive security updates for new vulnerabilities,
 # which leave them subject to exploitation. Systems must be maintained at a servicing level
 # supported by the vendor with new security updates.
-$DisaTest += "Test-SV-87891r1_rule"
 function Test-SV-87891r1_rule {
 	Param(
 		[System.Int32]$version = 14393
@@ -1112,7 +1108,6 @@ function Test-SV-87891r1_rule {
 # The ability to set access permissions and auditing is critical to maintaining the security
 # and proper access controls of a system. To support this, volumes must be formatted using
 # a file system that supports NTFS attributes.
-$DisaTest += "Test-SV-87899r1_rule"
 function Test-SV-87899r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87899r1_rule")
@@ -1146,7 +1141,6 @@ function Test-SV-87899r1_rule {
 # permissions are adequate when the Security Option Network access: Let everyone permissions
 # apply to anonymous users is set to Disabled (WN16-SO-000290).Satisfies: SRG-OS-000312-GPOS-00122,
 # SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124
-$DisaTest += "Test-SV-87901r1_rule"
 function Test-SV-87901r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87901r1_rule")
@@ -1217,7 +1211,6 @@ function Test-SV-87901r1_rule {
 # SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124
 
 # Test for folder C:\Program Files
-$DisaTest += "Test-SV-87903r1_rule"
 function Test-SV-87903r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87903r1_rule")
@@ -1297,7 +1290,6 @@ function Test-SV-87903r1_rule {
 }
 
 # Test for folder C:\Program Files(x86)
-$DisaTest += "Test-SV-87903r1_rule_2"
 function Test-SV-87903r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87903r1_rule")
@@ -1387,7 +1379,6 @@ function Test-SV-87903r1_rule_2 {
 # permissions are adequate when the Security Option Network access: Let everyone permissions
 # apply to anonymous users is set to Disabled (WN16-SO-000290).Satisfies: SRG-OS-000312-GPOS-00122,
 # SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124
-$DisaTest += "Test-SV-87905r1_rule"
 function Test-SV-87905r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87905r1_rule")
@@ -1475,7 +1466,6 @@ function Test-SV-87905r1_rule {
 # The registry is integral to the function, security, and stability of the Windows system.
 # Changing the systems registry permissions allows the possibility of unauthorized and anonymous
 # modification to the operating system.
-$DisaTest += "Test-SV-87907r1_rule"
 function Test-SV-87907r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87907r1_rule")
@@ -1521,7 +1511,6 @@ function Test-SV-87907r1_rule {
 	Write-Output $obj
 }
 
-$DisaTest += "Test-SV-87907r1_rule_2"
 function Test-SV-87907r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87907r1_rule_2")
@@ -1593,7 +1582,6 @@ function Test-SV-87907r1_rule_2 {
 	Write-Output $obj
 }
 
-$DisaTest += "Test-SV-87907r1_rule_3"
 function Test-SV-87907r1_rule_3 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87907r1_rule_3")
@@ -1675,7 +1663,6 @@ function Test-SV-87907r1_rule_3 {
 # Windows shares are a means by which files, folders, printers, and other resources can be
 # published for network users to access. Improper configuration can permit access to devices
 # and data beyond a users need.
-$DisaTest += "Test-SV-87909r1_rule"
 function Test-SV-87909r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87909r1_rule")
@@ -1712,7 +1699,6 @@ function Test-SV-87909r1_rule {
 # Outdated or unused accounts provide penetration points that may go undetected. Inactive accounts
 # must be deleted if no longer necessary or, if still required, disabled until needed.Satisfies:
 # SRG-OS-000104-GPOS-00051, SRG-OS-000118-GPOS-00060
-$DisaTest += "Test-SV-87911r2_rule"
 function Test-SV-87911r2_rule {
 	[CmdletBinding()]
 	Param(
@@ -1758,7 +1744,6 @@ function Test-SV-87911r2_rule {
 # The lack of password protection enables anyone to gain access to the information system,
 # which opens a backdoor opportunity for intruders to compromise the system as well as other
 # resources. Accounts on a system must require passwords.
-$DisaTest += "Test-SV-87913r2_rule"
 function Test-SV-87913r2_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87913r2_rule")
@@ -1798,7 +1783,6 @@ function Test-SV-87913r2_rule {
 #
 # Passwords that do not expire or are reused increase the exposure of a password with greater
 # probability of being discovered or cracked.
-$DisaTest += "Test-SV-87915r2_rule"
 function Test-SV-87915r2_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87915r2_rule")
@@ -1840,7 +1824,6 @@ function Test-SV-87915r2_rule {
 # Shares on a system provide network access. To prevent exposing sensitive information, where
 # shares are necessary, permissions must be reconfigured to give the minimum access to accounts
 # that require it.
-$DisaTest += "Test-SV-87919r1_rule"
 function Test-SV-87919r1_rule {
 	[CmdletBinding()]
 	Param(
@@ -1882,7 +1865,6 @@ function Test-SV-87919r1_rule {
 #
 # Use of software certificates and their accompanying installation files for end users to access
 # resources is less secure than the use of hardware-based certificates.
-$DisaTest += "Test-SV-87923r1_rule"
 function Test-SV-87923r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87923r1_rule")
@@ -1919,7 +1901,6 @@ function Test-SV-87923r1_rule {
 # have the flexibility to either encrypt all information on storage devices (i.e., full disk
 # encryption) or encrypt specific data structures (e.g., files, records, or fields).Satisfies:
 # SRG-OS-000185-GPOS-00079, SRG-OS-000404-GPOS-00183, SRG-OS-000405-GPOS-00184
-$DisaTest += "Test-SV-87925r1_rule"
 function Test-SV-87925r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87925r1_rule")
@@ -1962,7 +1943,6 @@ function Test-SV-87925r1_rule {
 #
 # A firewall provides a line of defense against attack, allowing or blocking inbound and outbound
 # connections based on a set of rules.
-$DisaTest += "Test-SV-87931r1_rule"
 function Test-SV-87931r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-87931r1_rule")
@@ -2003,7 +1983,6 @@ function Test-SV-87931r1_rule {
 # or network is compromised. The Application event log may be susceptible to tampering if
 # proper permissions are not applied.Satisfies: SRG-OS-000057-GPOS-00027, SRG-OS-000058-GPOS-00028,
 # SRG-OS-000059-GPOS-00029
-$DisaTest += "Test-SV-88057r1_rule"
 function Test-SV-88057r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88057r1_rule")
@@ -2066,7 +2045,6 @@ function Test-SV-88057r1_rule {
 # or network is compromised. The Security event log may disclose sensitive information or
 # be susceptible to tampering if proper permissions are not applied.Satisfies: SRG-OS-000057-GPOS-00027,
 # SRG-OS-000058-GPOS-00028, SRG-OS-000059-GPOS-00029
-$DisaTest += "Test-SV-88059r1_rule"
 function Test-SV-88059r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88059r1_rule")
@@ -2129,7 +2107,6 @@ function Test-SV-88059r1_rule {
 # or network is compromised. The System event log may be susceptible to tampering if proper
 # permissions are not applied.Satisfies: SRG-OS-000057-GPOS-00027, SRG-OS-000058-GPOS-00028,
 # SRG-OS-000059-GPOS-00029
-$DisaTest += "Test-SV-88061r1_rule"
 function Test-SV-88061r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88061r1_rule")
@@ -2193,7 +2170,6 @@ function Test-SV-88061r1_rule {
 # tools and the corresponding rights the user enjoys in order to make access decisions regarding
 # the modification or deletion of audit tools.Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000258-GPOS-00099
 #
-$DisaTest += "Test-SV-88063r1_rule"
 function Test-SV-88063r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88063r1_rule")
@@ -2266,7 +2242,6 @@ function Test-SV-88063r1_rule {
 }
 
 
-$DisaTest += "Test-SV-88165r1_rule_3"
 function Test-SV-88165r1_rule_3 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_3")
@@ -2291,7 +2266,6 @@ function Test-SV-88165r1_rule_3 {
 
 
 # Credential Guard running
-$DisaTest += "Test-SV-88167r1_rule_2"
 function Test-SV-88167r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88167r1_rule_2")
@@ -2318,7 +2292,6 @@ function Test-SV-88167r1_rule_2 {
 	Write-Output $obj
 }
 
-$DisaTest += "Test-SV-88169r1_rule_2"
 function Test-SV-88169r1_rule_2 {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88169r1_rule_2")
@@ -2354,7 +2327,6 @@ function Test-SV-88169r1_rule_2 {
 #
 # The built-in administrator account is a well-known account subject to attack. Renaming this
 # account to an unidentified name improves the protection of this account and the system.
-$DisaTest += "Test-SV-88287r1_rule"
 function Test-SV-88287r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88287r1_rule")
@@ -2399,7 +2371,6 @@ function Test-SV-88287r1_rule {
 # installed, does not require a password. This can allow access to system resources by unauthorized
 # users. Renaming this account to an unidentified name improves the protection of this account
 # and the system.
-$DisaTest += "Test-SV-88289r1_rule"
 function Test-SV-88289r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88289r1_rule")
@@ -2438,7 +2409,6 @@ function Test-SV-88289r1_rule {
 # This is a known account that exists on all Windows systems and cannot be deleted. This account
 # is initialized during the installation of the operating system with no password assigned.
 #
-$DisaTest += "Test-SV-88475r1_rule"
 function Test-SV-88475r1_rule {
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name("SV-88475r1_rule")
@@ -2467,7 +2437,6 @@ function Test-SV-88475r1_rule {
 }
 
 #endregion
-
 
 #endregion
 
@@ -2501,7 +2470,7 @@ function New-AuditPipeline {
 function Get-DisaAudit {
 	[CmdletBinding()]
 	Param(
-		# [switch] $PerformanceOptimized,
+		[switch] $PerformanceOptimized,
 
 		# [string[]] $Exclude
 
@@ -2513,11 +2482,13 @@ function Get-DisaAudit {
 
 		[switch] $WindowsFeatures,
 
-		[switch] $FileSystemPermissions
+		[switch] $FileSystemPermissions,
+
+		[switch] $OtherAudits
 	)
 
 	# if ($PerformanceOptimized) {
-	# 	$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule","Test-SV-88431r1_rule","Test-SV-88435r1_rule","Test-SV-88439r1_rule"
+	# 	$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule",
 	# }
 
 	# disa registry settings
@@ -2544,6 +2515,41 @@ function Get-DisaAudit {
 	if ($FileSystemPermissions) {
 		$fileSystemPermissionsAuditPipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-FileSystemPermissionAudit}
 		$DisaRequirements.FileSystemPermission | &$fileSystemPermissionsAuditPipline -Verbose:$VerbosePreference
+	}
+	if ($OtherAudits) {
+		Test-SV-87875r2_rule   | Convert-ToAuditInfo
+		Test-SV-87889r1_rule   | Convert-ToAuditInfo
+		Test-SV-87891r1_rule   | Convert-ToAuditInfo
+		Test-SV-87899r1_rule   | Convert-ToAuditInfo
+		Test-SV-87901r1_rule   | Convert-ToAuditInfo
+		Test-SV-87903r1_rule   | Convert-ToAuditInfo
+		Test-SV-87903r1_rule_2 | Convert-ToAuditInfo
+		Test-SV-87905r1_rule   | Convert-ToAuditInfo
+		Test-SV-87907r1_rule   | Convert-ToAuditInfo
+		Test-SV-87907r1_rule_2 | Convert-ToAuditInfo
+		Test-SV-87907r1_rule_3 | Convert-ToAuditInfo
+		Test-SV-87909r1_rule   | Convert-ToAuditInfo
+		Test-SV-87911r2_rule   | Convert-ToAuditInfo
+		Test-SV-87913r2_rule   | Convert-ToAuditInfo
+		Test-SV-87915r2_rule   | Convert-ToAuditInfo
+		Test-SV-87919r1_rule   | Convert-ToAuditInfo
+		if (-not ($PerformanceOptimized)) {
+			Test-SV-87923r1_rule | Convert-ToAuditInfo
+		}
+		Test-SV-87925r1_rule   | Convert-ToAuditInfo
+		Test-SV-87931r1_rule   | Convert-ToAuditInfo
+		Test-SV-88057r1_rule   | Convert-ToAuditInfo
+		Test-SV-88059r1_rule   | Convert-ToAuditInfo
+		Test-SV-88061r1_rule   | Convert-ToAuditInfo
+		Test-SV-88063r1_rule   | Convert-ToAuditInfo
+		Test-SV-88165r1_rule_3 | Convert-ToAuditInfo
+		Test-SV-88167r1_rule_2 | Convert-ToAuditInfo
+		if (-not ($PerformanceOptimized)) {
+			Test-SV-88169r1_rule_2 | Convert-ToAuditInfo
+		}
+		Test-SV-88287r1_rule   | Convert-ToAuditInfo
+		Test-SV-88289r1_rule   | Convert-ToAuditInfo
+		Test-SV-88475r1_rule   | Convert-ToAuditInfo
 	}
 }
 
@@ -2572,11 +2578,38 @@ function Get-HtmlReport {
 		[hashtable[]]$sections = @(
 			@{
 				Title = "DISA Recommendations"
-				AuditInfos = Get-DisaAudit | Sort-Object -Property Id
+				Description = "This section contains all recommendations from the Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27"
+				SubSections = @(
+					@{
+						Title = "Registry Settings/Group Policies"
+						AuditInfos = Get-DisaAudit -RegistrySettings | Sort-Object -Property Id
+					},
+					@{
+						Title = "User Rights Assignment"
+						AuditInfos = Get-DisaAudit -UserRights | Sort-Object -Property Id
+					},
+					@{
+						Title = "Account Policies"
+						AuditInfos = Get-DisaAudit -AccountPolicies | Sort-Object -Property Id
+					},
+					@{
+						Title = "Windows Features"
+						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
+					},
+					@{
+						Title = "File System Permissions"
+						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
+					},
+					@{
+						Title = "Other"
+						AuditInfos = Get-DisaAudit -OtherAudits -PerformanceOptimized:$PerformanceOptimized | Sort-Object -Property Id
+					}
+				)
 			},
 			@{
 				Title = "CIS Benchmarks"
-				AuditInfos = Get-CisAudit | Convert-ToAuditInfo | Sort-Object -Property Id
+				Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017"
+				AuditInfos = Get-CisAudit | Sort-Object -Property Id
 			}
 		)
 
