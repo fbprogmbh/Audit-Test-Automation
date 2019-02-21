@@ -1399,5 +1399,48 @@
 				"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
 			}
 		}
+		@{
+			Id = "WN16-00-000160"
+			Task = "Permissions for the system drive root directory (usually C:\) must conform to minimum requirements."
+
+			Target = "\"
+			PrincipalRights = @{
+				"NT Authority\System"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+				"BUILTIN\Users"          = "ReadAndExecute, Synchronize", "CreateFiles, Synchronize"
+				"CREATOR OWNER"          = "FullControl"
+			}
+		}
+		# @{
+		# 	Id = "WN16-00-000170 1"
+		# 	Task = "Permissions for the system drive root directory (usually C:\) must conform to minimum requirements."
+
+		# 	Target = "%ProgramFiles%\"
+		# 	PrincipalRights = @{
+		# 		"NT SERVICE\TrustedInstaller"                                       = "FullControl"
+		# 		"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
+		# 		"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
+		# 		"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
+		# 		"CREATOR OWNER"                                                     = "FullControl"
+		# 		"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
+		# 		"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
+		# 	}
+		# }
+		# @{
+		# 	Id = "WN16-00-000170 2"
+		# 	Task = "Permissions for the system drive root directory (usually C:\) must conform to minimum requirements."
+
+		# 	Target = "%ProgramFiles(x86)%\"
+		# 	PrincipalRights = @{
+		# 		"NT SERVICE\TrustedInstaller"                                       = "FullControl"
+		# 		"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
+		# 		"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
+		# 		"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
+		# 		"CREATOR OWNER"                                                     = "FullControl"
+		# 		"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
+		# 		"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
+		# 	}
+		# }
+		# ... more tests
 	)
 }

@@ -42,6 +42,7 @@ Last Change: 2018-08-20
 
 using module ATAPHtmlReport
 using namespace Microsoft.PowerShell.Commands
+using namespace System.Security.AccessControl
 
 # Import setting from file
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
@@ -841,6 +842,61 @@ function Get-WindowsFeatureAudit {
 	}
 }
 
+enum GARights {
+	GENERIC_READ    = 0x80000000
+	GENERIC_WRITE   = 0x40000000
+	GENERIC_EXECUTE = 0x20000000
+	GENERIC_ALL     = 0x10000000
+}
+
+# See https://docs.microsoft.com/en-us/windows/desktop/FileIO/file-security-and-access-rights for more information
+enum MappedGARights {
+	FILE_GENERIC_EXECUTE = `
+		[FileSystemRights]::ExecuteFile -bor `
+		[FileSystemRights]::ReadPermissions -bor `
+		[FileSystemRights]::ReadAttributes -bor `
+		[FileSystemRights]::Synchronize
+	FILE_GENERIC_READ = `
+		[FileSystemRights]::ReadAttributes -bor `
+		[FileSystemRights]::ReadData -bor `
+		[FileSystemRights]::ReadExtendedAttributes -bor `
+		[FileSystemRights]::ReadPermissions -bor `
+		[FileSystemRights]::Synchronize
+	FILE_GENERIC_WRITE = `
+		[FileSystemRights]::AppendData -bor `
+		[FileSystemRights]::WriteAttributes -bor `
+		[FileSystemRights]::WriteData -bor `
+		[FileSystemRights]::WriteExtendedAttributes -bor `
+		[FileSystemRights]::ReadPermissions -bor `
+		[FileSystemRights]::Synchronize
+	FILE_GENERIC_ALL = `
+		[FileSystemRights]::FullControl
+}
+
+function Convert-GARightsToFileSystemRights {
+	param(
+		[FileSystemRights] $OriginalRights
+	)
+
+	[FileSystemRights]$MappedRights = [FileSystemRights]::new()
+	if (($OriginalRights.value__ -band [GARights]::GENERIC_EXECUTE.value__) -eq [GARights]::GENERIC_EXECUTE.value__) {
+		$MappedRights = $MappedRights -bor ([MappedGARights]::FILE_GENERIC_EXECUTE)
+	}
+	if (($OriginalRights.value__ -band [GARights]::GENERIC_READ.value__) -eq [GARights]::GENERIC_READ.value__) {
+		$MappedRights = $MappedRights -bor ([MappedGARights]::FILE_GENERIC_READ)
+	}
+	if (($OriginalRights.value__ -band [GARights]::GENERIC_WRITE.value__) -eq [GARights]::GENERIC_WRITE.value__) {
+		$MappedRights = $MappedRights -bor [MappedGARights]::FILE_GENERIC_WRITE
+	}
+	if (($OriginalRights.value__ -band [GARights]::GENERIC_ALL.value__) -eq [GARights]::GENERIC_ALL.value__) {
+		$MappedRights = $MappedRights -bor [MappedGARights]::FILE_GENERIC_ALL
+	}
+	# mask standard access rights and object-specific access rights
+	$MappedRights = $MappedRights -bor ($OriginalRights -band 0x00FFFFFF)
+
+	return $MappedRights
+}
+
 function Get-FileSystemPermissionAudit {
 	[CmdletBinding()]
 	Param(
@@ -865,10 +921,14 @@ function Get-FileSystemPermissionAudit {
 		$prinicpalsWithTooManyRights = $acls | where {
 			$_.IdentityReference.Value -NotIn $PrincipalRights.Keys
 		}
-		$principalsWithWrongRights = $acls | where {
-			$idKey = $_.IdentityReference.Value
-			($idKey -in $PrincipalRights.Keys) -and ($_.FileSystemRights -ne $PrincipalRights[$idKey])
-		}
+		$principalsWithWrongRights = $acls `
+			| where { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
+			| where {
+				$referenceRights = $PrincipalRights[$_.IdentityReference.Value]
+				$mappedRights = Convert-GARightsToFileSystemRights -OriginalRights $_.FileSystemRights
+
+				$mappedRights -notin $referenceRights
+			}
 
 		if (($prinicpalsWithTooManyRights.Count -gt 0) -or ($principalsWithWrongRights.Count -gt 0)) {
 			$logOptions = @{
@@ -879,11 +939,13 @@ function Get-FileSystemPermissionAudit {
 
 			$messages = @()
 			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
-				"Unexpected '$($_.IdentityReference)' with access '$($_.FileSystemRights)'"
+				$mappedRights = Convert-GARightsToFileSystemRights -OriginalRights $_.FileSystemRights
+				"Unexpected '$($_.IdentityReference)' with access '$($mappedRights)'"
 			}
 			$messages += $principalsWithWrongRights | ForEach-Object {
 				$idKey = $_.IdentityReference.Value
-				"Found '$($idKey)' with access '$($_.FileSystemRights)' instead of '$($PrincipalRights[$idKey])'"
+				$mappedRights = Convert-GARightsToFileSystemRights -OriginalRights $_.FileSystemRights
+				"Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
 			}.GetNewClosure()
 			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
 
