@@ -326,146 +326,387 @@
 		@{
 			Id = "CIS 17.1.1"
 			Task = "Credential Validation is set to Success and Failure"
+
 			Subcategory = "Credential Validation"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.1"
 			Task = "Application Group Management is set to Success and Failure"
+
 			Subcategory = "Application Group Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.2"
 			Task = "Computer Account Management is set to Success and Failure"
+
 			Subcategory = "Computer Account Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.4"
 			Task = "Other Account Management Events is set to Success and Failure"
+
 			Subcategory = "Other Account Management Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.5"
 			Task = "Security Group Management is set to Success and Failure"
+
 			Subcategory = "Security Group Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.2.5"
 			Task = "User Account Management is set to Success and Failure"
+
 			Subcategory = "User Account Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.3.1"
 			Task = "Plug and Play Events is set to Success"
+
 			Subcategory = "Plug and Play Events"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.3.2"
 			Task = "Process Creation is set to Success"
+
 			Subcategory = "Process Creation"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.5.1"
 			Task = "Account Lockout is set to Success and Failure"
+
 			Subcategory = "Account Lockout"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.5.2"
 			Task = "Group Membership is set to Success"
+
 			Subcategory = "Group Membership"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.5.3"
 			Task = "Logoff is set to Success"
+
 			Subcategory = "Logoff"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.5.4"
 			Task = "Logon is set to Success and Failure"
+
 			Subcategory = "Logon"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.5.5"
 			Task = "Other Logon/Logoff Events is set to Success and Failure"
+
 			Subcategory = "Other Logon/Logoff Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.5.6"
 			Task = "Special Logon is set to Success"
+
 			Subcategory = "Special Logon"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.6.1"
 			Task = "Removable Storage is set to Success and Failure"
+
 			Subcategory = "Removable Storage"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.7.1"
 			Task = "Audit Policy Change is set to Success and Failure"
+
 			Subcategory = "Audit Policy Change"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.7.2"
 			Task = "Authentication Policy Change is set to Success"
+
 			Subcategory = "Authentication Policy Change"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.7.3"
 			Task = "Authorization Policy Change is set to Success"
+
 			Subcategory = "Authorization Policy Change"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.8.1"
 			Task = "Sensitive Privilege Use is set to Success and Failure"
+
 			Subcategory = "Sensitive Privilege Use"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.1"
 			Task = "IPsec Driver is set to Success and Failure"
+
 			Subcategory = "IPsec Driver"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.2"
 			Task = "Other System Events is set to Success and Failure"
+
 			Subcategory = "Other System Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.3"
 			Task = "Security State Change is set to Success"
+
 			Subcategory = "Security State Change"
 			AuditFlag = 'Success'
 		}
 		@{
 			Id = "CIS 17.9.4"
 			Task = "Security System Extension is set to Success and Failure"
+
 			Subcategory = "Security System Extension"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
 			Id = "CIS 17.9.5"
 			Task = "System Integrity is set to Success and Failure"
+
 			Subcategory = "System Integrity"
 			AuditFlag = 'Success and Failure'
+		}
+	)
+	FirewallProfileSettings = @(
+		@{
+			Id = "9.1.1"
+			Task = "Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
+
+			Profile = "Domain"
+			Setting = "Enabled"
+			Value = "True"
+		}
+		@{
+			Id = "9.1.2"
+			Task = "Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
+
+			Profile = "Domain"
+			Setting = "DefaultInboundAction"
+			Value = "False"
+		}
+		@{
+			Id = "9.1.3"
+			Task = "Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
+
+			Profile = "Domain"
+			Setting = "DefaultOutboundAction"
+			Value = "True"
+		}
+		@{
+			Id = "9.1.4"
+			Task = "Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
+
+			Profile = "Domain"
+			Setting = "NotifyOnListen"
+			Value = "False"
+		}
+		@{
+			Id = "9.1.5"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log'"
+
+			Profile = "Domain"
+			Setting = "LogFileName"
+			Value = "%systemroot%\system32\LogFiles\Firewall\domainfw.log"
+		}
+		@{
+			Id = "9.1.6"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+
+			Profile = "Domain"
+			Setting = "LogMaxSizeKilobytes"
+			Value = "16384 KB or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "9.1.7"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+
+			Profile = "Domain"
+			Setting = "LogBlocked"
+			Value = "True"
+		}
+		@{
+			Id = "9.1.8"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+
+			Profile = "Domain"
+			Setting = "LogAllowed"
+			Value = "True"
+		}
+
+
+		@{
+			Id = "9.2.1"
+			Task = "Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
+
+			Profile = "Private"
+			Setting = "Enabled"
+			Value = "True"
+		}
+		@{
+			Id = "9.2.2"
+			Task = "Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
+
+			Profile = "Private"
+			Setting = "DefaultInboundAction"
+			Value = "False"
+		}
+		@{
+			Id = "9.2.3"
+			Task = "Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
+
+			Profile = "Private"
+			Setting = "DefaultOutboundAction"
+			Value = "True"
+		}
+		@{
+			Id = "9.2.4"
+			Task = "Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
+
+			Profile = "Private"
+			Setting = "NotifyOnListen"
+			Value = "False"
+		}
+		@{
+			Id = "9.2.5"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log'"
+
+			Profile = "Private"
+			Setting = "LogFileName"
+			Value = "%systemroot%\system32\LogFiles\Firewall\privatefw.log"
+		}
+		@{
+			Id = "9.2.6"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+
+			Profile = "Private"
+			Setting = "LogMaxSizeKilobytes"
+			Value = "16384 KB or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "9.2.7"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
+
+			Profile = "Private"
+			Setting = "LogBlocked"
+			Value = "True"
+		}
+		@{
+			Id = "9.2.8"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
+
+			Profile = "Private"
+			Setting = "LogAllowed"
+			Value = "True"
+		}
+
+
+		@{
+			Id = "9.3.1"
+			Task = "Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
+
+			Profile = "Public"
+			Setting = "Enabled"
+			Value = "True"
+		}
+		@{
+			Id = "9.3.2"
+			Task = "Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
+
+			Profile = "Public"
+			Setting = "DefaultInboundAction"
+			Value = "False"
+		}
+		@{
+			Id = "9.3.3"
+			Task = "Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
+
+			Profile = "Public"
+			Setting = "DefaultOutboundAction"
+			Value = "True"
+		}
+		@{
+			Id = "9.3.4"
+			Task = "Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
+
+			Profile = "Public"
+			Setting = "NotifyOnListen"
+			Value = "False"
+		}
+		@{
+			Id = "9.3.5"
+			Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
+
+			Profile = "Public"
+			Setting = "AllowLocalFirewallRules"
+			Value = "False"
+		}
+		@{
+			Id = "9.3.6"
+			Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
+
+			Profile = "Public"
+			Setting = "AllowLocalIPsecRules"
+			Value = "False"
+		}
+		@{
+			Id = "9.3.7"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log'"
+
+			Profile = "Public"
+			Setting = "LogFileName"
+			Value = "%systemroot%\system32\LogFiles\Firewall\publicfw.log"
+		}
+		@{
+			Id = "9.3.8"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+
+			Profile = "Public"
+			Setting = "LogMaxSizeKilobytes"
+			Value = "16384 KB or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "9.3.9"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
+
+			Profile = "Public"
+			Setting = "LogBlocked"
+			Value = "True"
+		}
+		@{
+			Id = "9.3.10"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
+
+			Profile = "Public"
+			Setting = "LogAllowed"
+			Value = "True"
 		}
 	)
 }
