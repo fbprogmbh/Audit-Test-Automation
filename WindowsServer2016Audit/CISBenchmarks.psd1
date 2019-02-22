@@ -659,7 +659,8 @@
 			Setting = "NotifyOnListen"
 			Value = "False"
 		}
-		@{
+		# Run Get-NetFirewallProfile -Name Public -PolicyStore localhost
+		@{ # Problems
 			Id = "9.3.5"
 			Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
 
@@ -667,7 +668,7 @@
 			Setting = "AllowLocalFirewallRules"
 			Value = "False"
 		}
-		@{
+		@{ # Problems
 			Id = "9.3.6"
 			Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
 
