@@ -507,7 +507,7 @@
 
 			Profile = "Domain"
 			Setting = "DefaultInboundAction"
-			Value = "False"
+			Value = "Block"
 		}
 		@{
 			Id = "9.1.3"
@@ -515,7 +515,7 @@
 
 			Profile = "Domain"
 			Setting = "DefaultOutboundAction"
-			Value = "True"
+			Value = "Allow"
 		}
 		@{
 			Id = "9.1.4"
@@ -574,7 +574,7 @@
 
 			Profile = "Private"
 			Setting = "DefaultInboundAction"
-			Value = "False"
+			Value = "Block"
 		}
 		@{
 			Id = "9.2.3"
@@ -582,7 +582,7 @@
 
 			Profile = "Private"
 			Setting = "DefaultOutboundAction"
-			Value = "True"
+			Value = "Allow"
 		}
 		@{
 			Id = "9.2.4"
@@ -641,7 +641,7 @@
 
 			Profile = "Public"
 			Setting = "DefaultInboundAction"
-			Value = "False"
+			Value = "Block"
 		}
 		@{
 			Id = "9.3.3"
@@ -649,7 +649,7 @@
 
 			Profile = "Public"
 			Setting = "DefaultOutboundAction"
-			Value = "True"
+			Value = "Allow"
 		}
 		@{
 			Id = "9.3.4"
