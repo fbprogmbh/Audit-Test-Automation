@@ -1,4 +1,5 @@
 @{
+	# registry values need to be checked
 	RegistrySettings = @(
 		# Account Policies
 		@{
@@ -226,6 +227,327 @@
 			Name = "PasswordAgeDays"
 			Value = 1 #TODO: Need real value
 		}
+
+		# MS Security
+		@{
+			Id = "18.3.4"
+			Task = "Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel"
+			Name = "DisableExceptionChainValidation"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.3.5"
+			Task = "Ensure 'Turn on Windows Defender protection against Potentially Unwanted Applications' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine"
+			Name = "MpEnablePus"
+			Value = 1 #TODO: Need real value
+		}
+
+		# MSS
+		@{
+			Id = "18.4.1"
+			Task = "Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+			Name = "AutoAdminLogon"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.4.5"
+			Task = "Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name = "KeepAliveTime"
+			Value = 300000 #TODO: Need real value
+		}
+		@{
+			Id = "18.4.7"
+			Task = "Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)' is set to 'Disabled'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name = "PerformRouterDiscovery"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.4.8"
+			Task = "Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended)' is set to 'Enabled'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name = "SafeDllSearchMode"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.4.9"
+			Task = "Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+			Name = "ScreenSaverGracePeriod"
+			Value = "5 seconds or fewer" #TODO: Need real value
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "18.4.10"
+			Task = "Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters"
+			Name = "TcpMaxDataRetransmissions"
+			Value = 3 #TODO: Need real value
+		}
+		@{
+			Id = "18.4.11"
+			Task = "Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name = "TcpMaxDataRetransmissions"
+			Value = 3 #TODO: Need real value
+		}
+		@{
+			Id = "18.4.12"
+			Task = "Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'"
+		
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security"
+			Name = "WarningLevel"
+			Value = 1 #TODO: Need real value
+		}
+
+		# Network
+		@{
+			Id = "18.5.5.1"
+			Task = "Ensure 'Enable Font Providers' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "EnableFontProviders"
+			Value = 0 #TODO: Need real value
+		}
+		# @{ # multiple
+		# 	Id = "18.5.9.1"
+		# 	Task = "Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
+		
+		# 	Path = ""
+		# 	Name = ""
+		# 	Value = 0 #TODO: Need real value
+		# }
+		# @{ # multiple
+		# 	Id = "18.5.9.2"
+		# 	Task = "Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled'"
+		
+		# 	Path = ""
+		# 	Name = ""
+		# 	Value = 0 #TODO: Need real value
+		# }
+		@{
+			Id = "18.5.10.2"
+			Task = "Ensure 'Turn off Microsoft Peer-to-Peer Networking Services' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Peernet"
+			Name = "Disabled"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.5.11.2"
+			Task = "Ensure 'Prohibit installation and configuration of Network Bridge on your DNS domain network' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
+			Name = "NC_AllowNetBridge_NLA"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.5.11.3"
+			Task = "Ensure 'Prohibit use of Internet Connection Sharing on your DNS domain network' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
+			Name = "NC_ShowSharedAccessUI"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.5.11.4"
+			Task = "Ensure 'Require domain users to elevate when setting a network's location' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
+			Name = "NC_StdDomainUserSetLocation"
+			Value = 1 #TODO: Need real value
+		}
+		# @{ # multiple
+		# 	Id = "18.5.20.1"
+		# 	Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
+		
+		# 	Path = "HKLM:\"
+		# 	Name = ""
+		# 	Value =  #TODO: Need real value
+		# }
+		@{
+			Id = "18.5.20.2"
+			Task = "Ensure 'Prohibit access of the Windows Connect Now wizards' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\UI"
+			Name = "DisableWcnUi"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.5.21.1"
+			Task = "Ensure 'Minimize the number of simultaneous connections to the Internet or a Windows Domain' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy"
+			Name = "fMinimizeConnections"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.5.21.2"
+			Task = "Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy"
+			Name = "fBlockNonDomain "
+			Value = 1 #TODO: Need real value
+		}
+
+		# System
+		@{
+			Id = "18.8.4.1"
+			Task = "Ensure 'Remote host allows delegation of non-exportable credentials' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation"
+			Name = "AllowProtectedCreds"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.5.1"
+			Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
+			Name = "EnableVirtualizationBasedSecurity"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.5.4"
+			Task = "Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
+			Name = "HVCIMATRequired"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.21.3"
+			Task = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}"
+			Name = "NoGPOListChanges"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.21.4"
+			Task = "Ensure 'Continue experiences on this device' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "EnableCdp"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.21.5"
+			Task = "Ensure 'Turn off background refresh of Group Policy' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+			Name = "DisableBkGndGroupPolicy"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.2"
+			Task = "Ensure 'Turn off handwriting personalization data sharing' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC"
+			Name = "PreventHandwritingDataSharing"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.3"
+			Task = "Ensure 'Turn off handwriting recognition error reporting' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\HandwritingErrorReports"
+			Name = "PreventHandwritingErrorReports"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.4"
+			Task = "Ensure 'Turn off Internet Connection Wizard if URL connection is referring to Microsoft.com' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Internet Connection Wizard"
+			Name = "ExitOnMSICW"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.5"
+			Task = "Ensure 'Turn off Internet download for Web publishing and online ordering wizards' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
+			Name = "NoWebServices "
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.6"
+			Task = "Ensure 'Turn off printing over HTTP' is set to 'Enabled' "
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"
+			Name = "DisableHTTPPrinting"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.7"
+			Task = "Ensure 'Turn off Registration if URL connection is referring to Microsoft.com' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Registration Wizard Control"
+			Name = "NoRegistration"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.8"
+			Task = "Ensure 'Turn off Search Companion content file updates' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\SearchCompanion"
+			Name = "DisableContentFileUpdates"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.9"
+			Task = "Ensure 'Turn off the `"Order Prints`" picture task' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
+			Name = "NoOnlinePrintsWizard"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.10"
+			Task = "Ensure 'Turn off the `"Publish to Web`" task for files and folders' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
+			Name = "NoPublishingWizard"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.11"
+			Task = "Ensure 'Turn off the Windows Messenger Customer Experience Improvement Program' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Messenger\Client"
+			Name = "CEIP"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.22.1.12"
+			Task = "Ensure 'Turn off Windows Customer Experience Improvement Program' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows"
+			Name = "CEIPEnable"
+			Value = 1 #TODO: Need real value
+		}
+		# @{ # multiple
+		# 	Id = "18.8.22.1.13"
+		# 	Task = "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
+		
+		# 	Path = "HKLM:\"
+		# 	Name = ""
+		# 	Value =  #TODO: Need real value
+		# }
 	)
 	UserRights = @(
 		@{

@@ -2697,7 +2697,6 @@ function Get-HtmlReport {
 			@{
 				Title = "CIS Benchmarks"
 				Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-				AuditInfos = Get-CisAudit | Sort-Object -Property Id
 				SubSections = @(
 					@{
 						Title = "Registry Settings/Group Policies"
