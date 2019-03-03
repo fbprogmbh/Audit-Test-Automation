@@ -46,7 +46,6 @@
 		@{
 			Id = "2.3.7.1"
 			Task = "Ensure 'Interactive logon: Do not display last user name' is set to 'Enabled'"
-			Role = "PrimaryDomainController"
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "DontDisplayLastUserName"
@@ -55,7 +54,6 @@
 		@{
 			Id = "2.3.7.2"
 			Task = "Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'"
-			Role = "PrimaryDomainController"
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "DisableCAD"
@@ -72,7 +70,7 @@
 		@{
 			Id = "2.3.9.5"
 			Task = "Ensure 'Microsoft network server: Server SPN target name validation level' is set to 'Accept if provided by client' or higher (MS only)"
-			Role = "MemberServer"
+			Role = "MemberServer", "StandaloneServer"
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name = "SMBServerNameHardeningLevel"
@@ -90,7 +88,7 @@
 		@{
 			Id = "2.3.10.7"
 			Task = "Configure 'Network access: Named Pipes that can be accessed anonymously' (MS only)"
-			Role = "MemberServer"
+			Role = "MemberServer", "StandaloneServer"
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters: "
 			Name = "NullSessionPipes"
@@ -104,15 +102,15 @@
 			Name = "Machine"
 			Value = "System\CurrentControlSet\Control\ProductOptions;System\CurrentControlSet\Control\Server;Applications Software\Microsoft\Windows NT\CurrentVersion" #?
 		}
-		# @{
-		# 	Id = "2.3.10.11"
-		# 	Task = "Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow' (MS only)"
-		# 	Role = "MemberServer"
+		@{
+			Id = "2.3.10.11"
+			Task = "Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow' (MS only)"
+			Role = "MemberServer"
 
-		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-		# 	Name = "restrictremotesam"
-		# 	Value = "Administrators: Remote Access: Allow" #?
-		# }
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+			Name = "restrictremotesam"
+			Value = "Administrators: Remote Access: Allow" #?
+		}
 		@{
 			Id = "2.3.10.12"
 			Task = "Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'"
@@ -413,14 +411,6 @@
 			Value = 1 #TODO: Need real value
 		}
 		@{
-			Id = "18.8.5.1"
-			Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
-		
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
-			Name = "EnableVirtualizationBasedSecurity"
-			Value = 1 #TODO: Need real value
-		}
-		@{
 			Id = "18.8.5.4"
 			Task = "Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'"
 		
@@ -428,14 +418,14 @@
 			Name = "HVCIMATRequired"
 			Value = 1 #TODO: Need real value
 		}
-		@{
-			Id = "18.8.21.3"
-			Task = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
+		# @{ # no key
+		# 	Id = "18.8.21.3"
+		# 	Task = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
 		
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}"
-			Name = "NoGPOListChanges"
-			Value = 1 #TODO: Need real value
-		}
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}"
+		# 	Name = "NoGPOListChanges"
+		# 	Value = 1 #TODO: Need real value
+		# }
 		@{
 			Id = "18.8.21.4"
 			Task = "Ensure 'Continue experiences on this device' is set to 'Disabled'"
@@ -481,7 +471,7 @@
 			Task = "Ensure 'Turn off Internet download for Web publishing and online ordering wizards' is set to 'Enabled'"
 		
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
-			Name = "NoWebServices "
+			Name = "NoWebServices"
 			Value = 1 #TODO: Need real value
 		}
 		@{
@@ -574,10 +564,10 @@
 		}
 		@{
 			Id = "18.8.27.3"
-			Task = "Ensure 'Do not display network selection UI' is set to 'Enabled'"
+			Task = "Ensure 'Do not enumerate connected users on domain-joined computers' is set to 'Enabled'"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
-			Name = "DontDisplayNetworkSelectionUI"
+			Name = "DontEnumerateConnectedUsers"
 			Value = 1 #TODO: Need real value
 		}
 		@{
@@ -647,6 +637,7 @@
 		@{
 			Id = "18.8.36.1"
 			Task = "Ensure 'Enable RPC Endpoint Mapper Client Authentication' is set to 'Enabled' (MS only)"
+			Role = "MemberServer", "StandaloneServer"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc"
 			Name = "EnableAuthEpResolution"
@@ -687,11 +678,14 @@
 		@{
 			Id = "18.8.49.1.2"
 			Task = "Ensure 'Enable Windows NTP Server' is set to 'Disabled' (MS only)"
+			Role = "MemberServer"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpServer"
 			Name = "Enabled"
 			Value = 0 #TODO: Need real value
 		}
+
+		# Windows Compontents
 		@{
 			Id = "18.9.4.1"
 			Task = "Ensure 'Allow a Windows app to share application data between users' is set to 'Disabled'"
@@ -704,8 +698,8 @@
 			Id = "18.9.10.1"
 			Task = "Ensure 'Configure enhanced anti-spoofing' is set to 'Enabled'"
 		
-			Path = "SOFTWARE\Policies\Microsoft\Biometrics\FacialFeatures"
-			Name = "nhancedAntiSpoofing"
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Biometrics\FacialFeatures"
+			Name = "EnhancedAntiSpoofing"
 			Value = 1 #TODO: Need real value
 		}
 		@{
@@ -1197,8 +1191,6 @@
 			Policy = "EnableAdminAccount"
 			Value = "0"
 		}
-		# 2.3.1.2
-
 	)
 	FirewallProfileSettings = @(
 		@{
@@ -1420,168 +1412,168 @@
 	)
 	AuditPolicies = @(
 		@{
-			Id = "CIS 17.1.1"
+			Id = "17.1.1"
 			Task = "Credential Validation is set to Success and Failure"
 
 			Subcategory = "Credential Validation"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.2.1"
+			Id = "17.2.1"
 			Task = "Application Group Management is set to Success and Failure"
 
 			Subcategory = "Application Group Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.2.2"
+			Id = "17.2.2"
 			Task = "Computer Account Management is set to Success and Failure"
 
 			Subcategory = "Computer Account Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.2.4"
+			Id = "17.2.4"
 			Task = "Other Account Management Events is set to Success and Failure"
 
 			Subcategory = "Other Account Management Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.2.5"
+			Id = "17.2.5"
 			Task = "Security Group Management is set to Success and Failure"
 
 			Subcategory = "Security Group Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.2.5"
+			Id = "17.2.5"
 			Task = "User Account Management is set to Success and Failure"
 
 			Subcategory = "User Account Management"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.3.1"
+			Id = "17.3.1"
 			Task = "Plug and Play Events is set to Success"
 
 			Subcategory = "Plug and Play Events"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.3.2"
+			Id = "17.3.2"
 			Task = "Process Creation is set to Success"
 
 			Subcategory = "Process Creation"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.5.1"
+			Id = "17.5.1"
 			Task = "Account Lockout is set to Success and Failure"
 
 			Subcategory = "Account Lockout"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.5.2"
+			Id = "17.5.2"
 			Task = "Group Membership is set to Success"
 
 			Subcategory = "Group Membership"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.5.3"
+			Id = "17.5.3"
 			Task = "Logoff is set to Success"
 
 			Subcategory = "Logoff"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.5.4"
+			Id = "17.5.4"
 			Task = "Logon is set to Success and Failure"
 
 			Subcategory = "Logon"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.5.5"
+			Id = "17.5.5"
 			Task = "Other Logon/Logoff Events is set to Success and Failure"
 
 			Subcategory = "Other Logon/Logoff Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.5.6"
+			Id = "17.5.6"
 			Task = "Special Logon is set to Success"
 
 			Subcategory = "Special Logon"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.6.1"
+			Id = "17.6.1"
 			Task = "Removable Storage is set to Success and Failure"
 
 			Subcategory = "Removable Storage"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.7.1"
+			Id = "17.7.1"
 			Task = "Audit Policy Change is set to Success and Failure"
 
 			Subcategory = "Audit Policy Change"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.7.2"
+			Id = "17.7.2"
 			Task = "Authentication Policy Change is set to Success"
 
 			Subcategory = "Authentication Policy Change"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.7.3"
+			Id = "17.7.3"
 			Task = "Authorization Policy Change is set to Success"
 
 			Subcategory = "Authorization Policy Change"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.8.1"
+			Id = "17.8.1"
 			Task = "Sensitive Privilege Use is set to Success and Failure"
 
 			Subcategory = "Sensitive Privilege Use"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.9.1"
+			Id = "17.9.1"
 			Task = "IPsec Driver is set to Success and Failure"
 
 			Subcategory = "IPsec Driver"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.9.2"
+			Id = "17.9.2"
 			Task = "Other System Events is set to Success and Failure"
 
 			Subcategory = "Other System Events"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.9.3"
+			Id = "17.9.3"
 			Task = "Security State Change is set to Success"
 
 			Subcategory = "Security State Change"
 			AuditFlag = 'Success'
 		}
 		@{
-			Id = "CIS 17.9.4"
+			Id = "17.9.4"
 			Task = "Security System Extension is set to Success and Failure"
 
 			Subcategory = "Security System Extension"
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "CIS 17.9.5"
+			Id = "17.9.5"
 			Task = "System Integrity is set to Success and Failure"
 
 			Subcategory = "System Integrity"
