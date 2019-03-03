@@ -548,6 +548,562 @@
 		# 	Name = ""
 		# 	Value =  #TODO: Need real value
 		# }
+		# @{ # multiple
+		# 	Id = "18.8.25.1"
+		# 	Task = "Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
+		
+		# 	Path = ""
+		# 	Name = ""
+		# 	Value = 1 #TODO: Need real value
+		# }
+		@{
+			Id = "18.8.26.1"
+			Task = "Ensure 'Disallow copying of user input methods to the system account for sign-in' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Control Panel\International"
+			Name = "BlockUserInputMethodsForSignIn"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.27.1"
+			Task = "Ensure 'Block user from showing account details on sign-in' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "BlockUserFromShowingAccountDetailsOnSignin"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.27.3"
+			Task = "Ensure 'Do not display network selection UI' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "DontDisplayNetworkSelectionUI"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.27.5"
+			Task = "Ensure 'Do not enumerate connected users on domain-joined computers' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "DisableLockScreenAppNotifications"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.27.6"
+			Task = "Ensure 'Turn off picture password sign-in' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "BlockDomainPicturePassword"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.27.7"
+			Task = "Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System:"
+			Name = "AllowDomainPINLogon"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.28.1"
+			Task = "Ensure 'Untrusted Font Blocking' is set to 'Enabled: Block untrusted fonts and log events'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions"
+			Name = "MitigationOptions_FontBocking"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.33.6.1"
+			Task = "Ensure 'Allow network connectivity during connected-standby (on battery)' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9"
+			Name = "DCSettingIndex"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.33.6.2"
+			Task = "Ensure 'Allow network connectivity during connected-standby (plugged in)' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9"
+			Name = "ACSettingIndex"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.35.1"
+			Task = "Ensure 'Configure Offer Remote Assistance' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "fAllowUnsolicited"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.35.2"
+			Task = "Ensure 'Configure Solicited Remote Assistance' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "fAllowToGetHelp"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.36.1"
+			Task = "Ensure 'Enable RPC Endpoint Mapper Client Authentication' is set to 'Enabled' (MS only)"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc"
+			Name = "EnableAuthEpResolution"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.44.5.1"
+			Task = "Ensure 'Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\ScriptedDiagnosticsProvider\Policy"
+			Name = "DisableQueryRemoteServer"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.44.11.1"
+			Task = "Ensure 'Enable/Disable PerfTrack' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WDI\{9c5a40da-b965-4fc3-8781-88dd50a6299d}"
+			Name = "ScenarioExecutionEnabled"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.46.1"
+			Task = "Ensure 'Turn off the advertising ID' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\policies\Microsoft\Windows\AdvertisingInfo"
+			Name = "DisabledByGroupPolicy"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.49.1.1"
+			Task = "Ensure 'Enable Windows NTP Client' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpClient"
+			Name = "Enabled"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.8.49.1.2"
+			Task = "Ensure 'Enable Windows NTP Server' is set to 'Disabled' (MS only)"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpServer"
+			Name = "Enabled"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.4.1"
+			Task = "Ensure 'Allow a Windows app to share application data between users' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\AppModel\StateManager"
+			Name = "AllowSharedLocalAppData"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.10.1"
+			Task = "Ensure 'Configure enhanced anti-spoofing' is set to 'Enabled'"
+		
+			Path = "SOFTWARE\Policies\Microsoft\Biometrics\FacialFeatures"
+			Name = "nhancedAntiSpoofing"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.12.1"
+			Task = "Ensure 'Allow Use of Camera' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Camera"
+			Name = "AllowCamera"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.13.1"
+			Task = "Ensure 'Turn off Microsoft consumer experiences' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
+			Name = "DisableWindowsConsumerFeatures"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.14.1"
+			Task = "Ensure 'Require pin for pairing' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Connect"
+			Name = "RequirePinForPairing"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.15.1"
+			Task = "Ensure 'Do not display the password reveal button' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredUI"
+			Name = "DisablePasswordReveal"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.16.2"
+			Task = "Ensure 'Configure Authenticated Proxy usage for the Connected User Experience and Telemetry service' is set to 'Enabled: Disable Authenticated Proxy usage'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
+			Name = "DisableEnterpriseAuthProxy"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.16.3"
+			Task = "Ensure 'Disable pre-release features or settings' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds"
+			Name = "EnableConfigFlighting"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.16.4"
+			Task = "Ensure 'Do not show feedback notifications' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
+			Name = "DoNotShowFeedbackNotifications"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.16.5"
+			Task = "Ensure 'Toggle user control over Insider builds' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds"
+			Name = "AllowBuildPreview"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.26.1.1"
+			Task = "Ensure 'Application: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application"
+			Name = "Retention"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.26.2.1"
+			Task = "Ensure 'Security: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security"
+			Name = "Retention"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.26.3.1"
+			Task = "Ensure 'Setup: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup"
+			Name = "Retention"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.26.3.2"
+			Task = "Ensure 'Setup: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup"
+			Name = "MaxSize"
+			Value = "32768 or greater" #TODO: Need real value
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "18.9.26.4.1"
+			Task = "Ensure 'System: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System"
+			Name = "Retention"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.39.2"
+			Task = "Ensure 'Turn off location' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors"
+			Name = "DisableLocation"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.43.1"
+			Task = "Ensure 'Allow Message Service Cloud Sync' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Messaging"
+			Name = "AllowMessageSync"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.44.1"
+			Task = "Ensure 'Block all consumer Microsoft account user authentication' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftAccount"
+			Name = "DisableUserAuth"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.52.1"
+			Task = "Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
+			Name = "DisableFileSyncNGSC"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.58.3.3.1"
+			Task = "Ensure 'Do not allow COM port redirection' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "fDisableCcm"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.58.3.3.3"
+			Task = "Ensure 'Do not allow LPT port redirection' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "fDisableLPT"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.58.3.3.4"
+			Task = "Ensure 'Do not allow supported Plug and Play device redirection' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "fDisablePNPRedir"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.58.3.10.1"
+			Task = "Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "MaxIdleTime"
+			Value = "15 minutes or less" #TODO: Need real value
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "18.9.58.3.10.2"
+			Task = "Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "MaxDisconnectionTime"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.58.3.11.1"
+			Task = "Ensure 'Do not delete temp folders upon exit' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "DeleteTempDirsOnExit"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.58.3.11.2"
+			Task = "Ensure 'Do not use temporary folders per session' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+			Name = "PerSessionTempDir"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.60.2"
+			Task = "Ensure 'Allow Cloud Search' is set to 'Enabled: Disable Cloud Search'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
+			Name = "AllowCloudSearch"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.65.1"
+			Task = "Ensure 'Turn off KMS Client Online AVS Validation' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform"
+			Name = "NoGenTicket"
+			Value = 1 #TODO: Need real value
+		}
+		# use Get-MpPreference
+
+		@{
+			Id = "18.9.76.3.1"
+			Task = "Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet"
+			Name = "LocalSettingOverrideSpynetReporting"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.3.2"
+			Task = "Ensure 'Join Microsoft MAPS' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet"
+			Name = "SpynetReporting"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.7.1"
+			Task = "Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection"
+			Name = "DisableBehaviorMonitoring"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.9.1"
+			Task = "Ensure 'Configure Watson events' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting"
+			Name = "DisableGenericRePorts"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.10.1"
+			Task = "Ensure 'Scan removable drives' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan"
+			Name = "DisableRemovableDriveScanning"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.10.2"
+			Task = "Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan"
+			Name = "DisableEmailScanning"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.13.1.1"
+			Task = "Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+			Name = "ExploitGuard_ASR_Rules"
+			Value = 1 #TODO: Need real value
+		}
+		# @{ # multiple
+		# 	Id = "18.9.76.13.1.2"
+		# 	Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+		# 	Name = ""
+		# 	Value =  #TODO: Need real value
+		# }
+		@{
+			Id = "18.9.76.13.3.1"
+			Task = "Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection"
+			Name = "EnableNetworkProtection"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.76.14"
+			Task = "Ensure 'Turn off Windows Defender AntiVirus' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender"
+			Name = "DisableAntiSpyware"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.79.1.1"
+			Task = "Ensure 'Prevent users from modifying settings' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection"
+			Name = "DisallowExploitProtectionOverride"
+			Value = 1 #TODO: Need real value
+		}
+		# @{ # multiple
+		# 	Id = "18.9.80.1.1"
+		# 	Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+		
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
+		# 	Name = ""
+		# 	Value = 1 #TODO: Need real value
+		# }
+		@{
+			Id = "18.9.84.1"
+			Task = "Ensure 'Allow suggested apps in Windows Ink Workspace' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace"
+			Name = "AllowSuggestedAppsInWindowsInkWorkspace"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.84.2"
+			Task = "Ensure 'Allow Windows Ink Workspace' is set to 'Enabled: On, but disallow access above lock' OR 'Disabled' but not 'Enabled: On'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace"
+			Name = "AllowWindowsInkWorkspace"
+			Value = 1 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.95.2"
+			Task = "Ensure 'Turn on PowerShell Transcription' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription"
+			Name = "EnableTranscripting"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.97.2.2"
+			Task = "Ensure 'Allow remote server management through WinRM' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service"
+			Name = "AllowAutoConfig"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.98.1"
+			Task = "Ensure 'Allow Remote Shell Access' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\WinRS"
+			Name = "AllowRemoteShellAccess"
+			Value = 0 #TODO: Need real value
+		}
+		# @{ # multiple
+		# 	Id = "18.9.101.1.1"
+		# 	Task = "Ensure 'Manage preview builds' is set to 'Enabled: Disable preview builds'"
+		
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+		# 	Name = ""
+		# 	Value =  #TODO: Need real value
+		# }
+		# @{ # multiple
+		# 	Id = "18.9.101.1.2"
+		# 	Task = "Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: Semi-Annual Channel, 180 or more days'"
+		
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+		# 	Name = ""
+		# 	Value =  #TODO: Need real value
+		# }
+		# @{ # multiple
+		# 	Id = "18.9.101.1.3"
+		# 	Task = "Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
+		
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+		# 	Name = ""
+		# 	Value =  #TODO: Need real value
+		# }
+		@{
+			Id = "18.9.101.2"
+			Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+			Name = "NoAutoUpdate"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.101.3"
+			Task = "Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+			Name = "ScheduledInstallDay"
+			Value = 0 #TODO: Need real value
+		}
+		@{
+			Id = "18.9.101.4"
+			Task = "Ensure 'No auto-restart with logged on users for scheduled automatic updates installations' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+			Name = "NoAutoRebootWithLoggedOnUsers"
+			Value = 0 #TODO: Need real value
+		}
 	)
 	UserRights = @(
 		@{
