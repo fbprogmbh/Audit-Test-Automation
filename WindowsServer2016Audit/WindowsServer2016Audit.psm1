@@ -175,13 +175,8 @@ function Get-ValueRange {
 	return {
 		param($x)
 
-		# combine predicates with an and
-		foreach ($predicate in $predicates) {
-			if (-not (& $predicate $x)) {
-				return $false
-			}
-		}
-		return $true
+		$results = $predicates | ForEach-Object { &$_ $x }
+		return $results -notcontains $false
 	}.GetNewClosure()
 }
 
@@ -421,7 +416,8 @@ function Get-RegistryAudit {
 		[string] $Name,
 
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Value,
+		[AllowEmptyString()]
+		[string[]] $Value,
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[string] $ValueType
@@ -430,11 +426,13 @@ function Get-RegistryAudit {
 	process {
 		# Preprocess ValueType to get the predicate and the value
 		if ($ValueType -eq "ValueRange") {
+			Write-Verbose "ValueRange"
 			# Create a predicate from the range specifice by the text
 			$Predicate = Get-ValueRange -Text $Value
 		}
 		# Replace the value in the registry test with the one from settings
 		elseif ($ValueType -eq "ValuePlaceholder") {
+			Write-Verbose "ValuePlaceholder"
 			$Value = $Settings[$Value]
 			$Predicate = { param($x) $x -eq $Value }.GetNewClosure()
 
@@ -444,16 +442,29 @@ function Get-RegistryAudit {
 			}
 		}
 		else {
-			$Predicate = { param($x) $Value -eq $x }.GetNewClosure()
+			$Predicate = {
+				param([string[]]$xs)
+				
+				if ($xs.Count -ne $Value.Count) {
+					return $false
+				}
+				
+				$comparisonFunction = [Func[String, String, Boolean]]{ param($a, $b) $a -eq $b }
+				$comparison = [System.Linq.Enumerable]::Zip($Value, $xs, $comparisonFunction)
+				return $comparison -notcontains $false
+			}.GetNewClosure()
+			$Value = $Value -join ", "
 		}
 
 		try {
-			$regValue = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
+			$regValues = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
 				| Select-Object -ExpandProperty $Name
 
-			if (-not (& $Predicate $regValue)) {
+			if (-not (& $Predicate $regValues)) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
+
+					$regValue = $regValues -join ", "
 
 				return [AuditInfo]@{
 					Id = $Id
@@ -545,7 +556,9 @@ function Get-UserRightPolicyAudit {
 			'SeLockMemoryPrivilege',
 			'SeRestorePrivilege',
 			'SeTrustedCredManAccessPrivilege',
-			'SeEnableDelegationPrivilege'
+			'SeEnableDelegationPrivilege',
+			'SeRelabelPrivilege',
+			'SeShutdownPrivilege'
 		)]
 		[string] $Policy,
 
@@ -2700,7 +2713,7 @@ function Get-HtmlReport {
 				SubSections = @(
 					@{
 						Title = "Registry Settings/Group Policies"
-						AuditInfos = Get-CisAudit -RegistrySettings | Sort-Object -Property Id
+						AuditInfos = Get-CisAudit -RegistrySettings # | Sort-Object -Property Id
 					}
 					@{
 						Title = "User Rights Assignment"

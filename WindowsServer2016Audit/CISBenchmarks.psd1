@@ -8,7 +8,7 @@
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "NoConnectedUser"
-			Value = 0 #?
+			Value = 3
 		}
 		@{
 			Id = "2.3.2.2"
@@ -16,7 +16,7 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
 			Name = "CrashOnAuditFail"
-			Value = 0 #?
+			Value = 0
 		}
 		@{
 			Id = "2.3.4.1"
@@ -24,7 +24,7 @@
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 			Name = "AllocateDASD"
-			Value = 0 #?
+			Value = 0
 		}
 		@{
 			Id = "2.3.4.2"
@@ -32,7 +32,7 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers"
 			Name = "AddPrinterDrivers"
-			Value = 1 #?
+			Value = 1
 		}
 		@{
 			Id = "2.3.5.1"
@@ -41,7 +41,7 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
 			Name = "SubmitControl"
-			Value = 0 #?
+			Value = 0
 		}
 		@{
 			Id = "2.3.7.1"
@@ -49,7 +49,7 @@
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "DontDisplayLastUserName"
-			Value = 1 #?
+			Value = 1
 		}
 		@{
 			Id = "2.3.7.2"
@@ -57,7 +57,7 @@
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "DisableCAD"
-			Value = 1 #?
+			Value = 0
 		}
 		@{
 			Id = "2.3.9.4"
@@ -65,7 +65,7 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name = "enableforcedlogoff"
-			Value = 1 #?
+			Value = 1
 		}
 		@{
 			Id = "2.3.9.5"
@@ -74,7 +74,7 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name = "SMBServerNameHardeningLevel"
-			Value = 0 #?
+			Value = 1
 		}
 		@{
 			Id = "2.3.10.6"
@@ -83,16 +83,16 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name = "NullSessionPipes"
-			Value = "LSARPC, NETLOGON, SAMR" #?
+			Value = "LSARPC", "NETLOGON", "SAMR"
 		}
 		@{
 			Id = "2.3.10.7"
 			Task = "Configure 'Network access: Named Pipes that can be accessed anonymously' (MS only)"
 			Role = "MemberServer", "StandaloneServer"
 
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters: "
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name = "NullSessionPipes"
-			Value = "" #?
+			Value = ""
 		}
 		@{
 			Id = "2.3.10.8"
@@ -100,17 +100,33 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths"
 			Name = "Machine"
-			Value = "System\CurrentControlSet\Control\ProductOptions;System\CurrentControlSet\Control\Server;Applications Software\Microsoft\Windows NT\CurrentVersion" #?
+			Value = @(
+				"System\CurrentControlSet\Control\ProductOptions",
+				"System\CurrentControlSet\Control\Server Applications", 
+				"Software\Microsoft\Windows NT\CurrentVersion"
+			)
 		}
 		@{
-			Id = "2.3.10.11"
-			Task = "Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow' (MS only)"
-			Role = "MemberServer"
+			Id = "2.3.10.9"
+			Task = "Configure 'Network access: Remotely accessible registry paths and sub-paths'"
 
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-			Name = "restrictremotesam"
-			Value = "Administrators: Remote Access: Allow" #?
+			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths"
+			Name = "Machine"
+			Value = @(
+				"System\CurrentControlSet\Control\Print\Printers", 
+				"System\CurrentControlSet\Services\Eventlog", 
+				"Software\Microsoft\OLAP Server", 
+				"Software\Microsoft\Windows NT\CurrentVersion\Print", 
+				"Software\Microsoft\Windows NT\CurrentVersion\Windows", 
+				"System\CurrentControlSet\Control\ContentIndex", 
+				"System\CurrentControlSet\Control\Terminal Server", 
+				"System\CurrentControlSet\Control\Terminal Server\UserConfig", 
+				"System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration", 
+				"Software\Microsoft\WindowsNT\CurrentVersion\Perflib", 
+				"System\CurrentControlSet\Services\SysmonLog"
+			)
 		}
+
 		@{
 			Id = "2.3.10.12"
 			Task = "Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'"
@@ -173,8 +189,8 @@
 		# LAPS
 		@{
 			Id = "18.2.1"
-			Title = "Ensure LAPS AdmPwd GPO Extension / CSE is installed (MS only)"
-			Task = "MemberServer"
+			Task = "Ensure LAPS AdmPwd GPO Extension / CSE is installed (MS only)"
+			Role = "MemberServer"
 
 			Path = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\GPExtensions\{D76B9641-3288-4f75-942D087DE603E3EA}"
 			Name = "DllName"
@@ -182,8 +198,8 @@
 		}
 		@{
 			Id = "18.2.2"
-			Title = "Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
-			Task = "MemberServer"
+			Task = "Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
+			Role = "MemberServer"
 
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
 			Name = "PwdExpirationProtectionEnabled"
