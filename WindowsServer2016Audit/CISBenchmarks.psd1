@@ -122,18 +122,17 @@
 				"System\CurrentControlSet\Control\Terminal Server", 
 				"System\CurrentControlSet\Control\Terminal Server\UserConfig", 
 				"System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration", 
-				"Software\Microsoft\WindowsNT\CurrentVersion\Perflib", 
+				"Software\Microsoft\Windows NT\CurrentVersion\Perflib", 
 				"System\CurrentControlSet\Services\SysmonLog"
 			)
 		}
-
 		@{
 			Id = "2.3.10.12"
 			Task = "Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'"
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name = "NullSessionShares"
-			Value = "" #?
+			Value = ""
 		}
 		@{
 			Id = "2.3.10.13"
@@ -141,7 +140,7 @@
 
 			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
 			Name = "ForceGuest"
-			Value = "Classic - local users authenticate as themselves." #?
+			Value = 0
 		}
 		@{
 			Id = "2.3.13.1"
@@ -149,7 +148,7 @@
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "ShutdownWithoutLogon"
-			Value = 0 #?
+			Value = 0
 		}
 		@{
 			Id = "2.3.17.8"
@@ -157,7 +156,7 @@
 
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "PromptOnSecureDesktop"
-			Value = 1 #?
+			Value = 1
 		}
 
 		# Control Panel
@@ -334,7 +333,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "EnableFontProviders"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		# @{ # multiple
 		# 	Id = "18.5.9.1"
@@ -366,7 +365,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
 			Name = "NC_AllowNetBridge_NLA"
-			Value = 1 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.5.11.3"
@@ -374,7 +373,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
 			Name = "NC_ShowSharedAccessUI"
-			Value = 1 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.5.11.4"
@@ -382,7 +381,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections"
 			Name = "NC_StdDomainUserSetLocation"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		# @{ # multiple
 		# 	Id = "18.5.20.1"
@@ -398,7 +397,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\UI"
 			Name = "DisableWcnUi"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.5.21.1"
@@ -406,15 +405,15 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy"
 			Name = "fMinimizeConnections"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.5.21.2"
 			Task = "Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled'"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy"
-			Name = "fBlockNonDomain "
-			Value = 1 #TODO: Need real value
+			Name = "fBlockNonDomain"
+			Value = 1
 		}
 
 		# System
@@ -424,7 +423,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation"
 			Name = "AllowProtectedCreds"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.5.4"
@@ -432,23 +431,23 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
 			Name = "HVCIMATRequired"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
-		# @{ # no key
-		# 	Id = "18.8.21.3"
-		# 	Task = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
+		@{ # Doesn't update some times
+			Id = "18.8.21.3"
+			Task = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
 		
-		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}"
-		# 	Name = "NoGPOListChanges"
-		# 	Value = 1 #TODO: Need real value
-		# }
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}"
+			Name = "NoGPOListChanges"
+			Value = 0
+		}
 		@{
 			Id = "18.8.21.4"
 			Task = "Ensure 'Continue experiences on this device' is set to 'Disabled'"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "EnableCdp"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.21.5"
@@ -456,7 +455,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name = "DisableBkGndGroupPolicy"
-			Value = 0 #TODO: Need real value
+			DoesNotExist = $true
 		}
 		@{
 			Id = "18.8.22.1.2"
@@ -464,7 +463,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC"
 			Name = "PreventHandwritingDataSharing"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.3"
@@ -472,7 +471,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\HandwritingErrorReports"
 			Name = "PreventHandwritingErrorReports"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.4"
@@ -480,15 +479,15 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Internet Connection Wizard"
 			Name = "ExitOnMSICW"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.5"
 			Task = "Ensure 'Turn off Internet download for Web publishing and online ordering wizards' is set to 'Enabled'"
 		
-			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 			Name = "NoWebServices"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.6"
@@ -496,7 +495,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"
 			Name = "DisableHTTPPrinting"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.7"
@@ -504,7 +503,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Registration Wizard Control"
 			Name = "NoRegistration"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.8"
@@ -512,23 +511,23 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\SearchCompanion"
 			Name = "DisableContentFileUpdates"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.9"
 			Task = "Ensure 'Turn off the `"Order Prints`" picture task' is set to 'Enabled'"
 		
-			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 			Name = "NoOnlinePrintsWizard"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.10"
 			Task = "Ensure 'Turn off the `"Publish to Web`" task for files and folders' is set to 'Enabled'"
 		
-			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explore r"
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
 			Name = "NoPublishingWizard"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.22.1.11"
@@ -536,7 +535,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Messenger\Client"
 			Name = "CEIP"
-			Value = 1 #TODO: Need real value
+			Value = 2
 		}
 		@{
 			Id = "18.8.22.1.12"
@@ -544,7 +543,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows"
 			Name = "CEIPEnable"
-			Value = 1 #TODO: Need real value
+			Value = 0
 		}
 		# @{ # multiple
 		# 	Id = "18.8.22.1.13"
@@ -568,7 +567,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Control Panel\International"
 			Name = "BlockUserInputMethodsForSignIn"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.27.1"
@@ -576,7 +575,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "BlockUserFromShowingAccountDetailsOnSignin"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.27.3"
@@ -584,15 +583,15 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "DontEnumerateConnectedUsers"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.27.5"
-			Task = "Ensure 'Do not enumerate connected users on domain-joined computers' is set to 'Enabled'"
+			Task = "Ensure 'Turn off app notifications on the lock screen' is set to 'Enabled'"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "DisableLockScreenAppNotifications"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.27.6"
@@ -600,15 +599,15 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "BlockDomainPicturePassword"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.27.7"
 			Task = "Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'"
 		
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System:"
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name = "AllowDomainPINLogon"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.28.1"
@@ -616,7 +615,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions"
 			Name = "MitigationOptions_FontBocking"
-			Value = 1 #TODO: Need real value
+			Value = 1000000000000
 		}
 		@{
 			Id = "18.8.33.6.1"
@@ -624,7 +623,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9"
 			Name = "DCSettingIndex"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.33.6.2"
@@ -632,7 +631,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9"
 			Name = "ACSettingIndex"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.35.1"
@@ -640,7 +639,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "fAllowUnsolicited"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.35.2"
@@ -648,7 +647,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "fAllowToGetHelp"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.36.1"
@@ -657,7 +656,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc"
 			Name = "EnableAuthEpResolution"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.44.5.1"
@@ -665,7 +664,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\ScriptedDiagnosticsProvider\Policy"
 			Name = "DisableQueryRemoteServer"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.44.11.1"
@@ -673,7 +672,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WDI\{9c5a40da-b965-4fc3-8781-88dd50a6299d}"
 			Name = "ScenarioExecutionEnabled"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.8.46.1"
@@ -681,7 +680,7 @@
 		
 			Path = "HKLM:\SOFTWARE\policies\Microsoft\Windows\AdvertisingInfo"
 			Name = "DisabledByGroupPolicy"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.49.1.1"
@@ -689,7 +688,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpClient"
 			Name = "Enabled"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.8.49.1.2"
@@ -698,7 +697,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpServer"
 			Name = "Enabled"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 
 		# Windows Compontents
@@ -708,7 +707,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\AppModel\StateManager"
 			Name = "AllowSharedLocalAppData"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.10.1"
@@ -716,7 +715,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Biometrics\FacialFeatures"
 			Name = "EnhancedAntiSpoofing"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.12.1"
@@ -724,7 +723,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Camera"
 			Name = "AllowCamera"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.13.1"
@@ -732,7 +731,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
 			Name = "DisableWindowsConsumerFeatures"
-			Value = 0 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.14.1"
@@ -740,7 +739,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Connect"
 			Name = "RequirePinForPairing"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.15.1"
@@ -748,7 +747,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredUI"
 			Name = "DisablePasswordReveal"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.16.2"
@@ -756,7 +755,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
 			Name = "DisableEnterpriseAuthProxy"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.16.3"
@@ -764,7 +763,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds"
 			Name = "EnableConfigFlighting"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.16.4"
@@ -772,7 +771,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
 			Name = "DoNotShowFeedbackNotifications"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.16.5"
@@ -780,7 +779,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds"
 			Name = "AllowBuildPreview"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.26.1.1"
@@ -788,7 +787,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application"
 			Name = "Retention"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.26.2.1"
@@ -796,7 +795,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security"
 			Name = "Retention"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.26.3.1"
@@ -804,7 +803,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup"
 			Name = "Retention"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.26.3.2"
@@ -812,7 +811,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup"
 			Name = "MaxSize"
-			Value = "32768 or greater" #TODO: Need real value
+			Value = "32768 or greater"
 			ValueType = "ValueRange"
 		}
 		@{
@@ -821,7 +820,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System"
 			Name = "Retention"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.39.2"
@@ -829,7 +828,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors"
 			Name = "DisableLocation"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.43.1"
@@ -837,7 +836,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Messaging"
 			Name = "AllowMessageSync"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.44.1"
@@ -845,7 +844,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftAccount"
 			Name = "DisableUserAuth"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.52.1"
@@ -853,7 +852,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
 			Name = "DisableFileSyncNGSC"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.58.3.3.1"
@@ -861,7 +860,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "fDisableCcm"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.58.3.3.3"
@@ -869,7 +868,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "fDisableLPT"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.58.3.3.4"
@@ -877,7 +876,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "fDisablePNPRedir"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.58.3.10.1"
@@ -885,7 +884,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "MaxIdleTime"
-			Value = "15 minutes or less" #TODO: Need real value
+			Value = "900000 milliseconds or less"
 			ValueType = "ValueRange"
 		}
 		@{
@@ -894,7 +893,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "MaxDisconnectionTime"
-			Value = 1 #TODO: Need real value
+			Value = 60000
 		}
 		@{
 			Id = "18.9.58.3.11.1"
@@ -902,7 +901,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "DeleteTempDirsOnExit"
-			Value = 0 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.58.3.11.2"
@@ -910,7 +909,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name = "PerSessionTempDir"
-			Value = 0 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.60.2"
@@ -918,7 +917,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
 			Name = "AllowCloudSearch"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.65.1"
@@ -926,7 +925,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform"
 			Name = "NoGenTicket"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		# use Get-MpPreference
 
@@ -936,7 +935,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet"
 			Name = "LocalSettingOverrideSpynetReporting"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.76.3.2"
@@ -944,7 +943,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet"
 			Name = "SpynetReporting"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.76.7.1"
@@ -952,7 +951,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection"
 			Name = "DisableBehaviorMonitoring"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.76.9.1"
@@ -960,7 +959,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting"
 			Name = "DisableGenericRePorts"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.76.10.1"
@@ -968,7 +967,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan"
 			Name = "DisableRemovableDriveScanning"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.76.10.2"
@@ -976,7 +975,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan"
 			Name = "DisableEmailScanning"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.76.13.1.1"
@@ -984,7 +983,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
 			Name = "ExploitGuard_ASR_Rules"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		# @{ # multiple
 		# 	Id = "18.9.76.13.1.2"
@@ -1000,7 +999,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection"
 			Name = "EnableNetworkProtection"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.9.76.14"
@@ -1008,7 +1007,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender"
 			Name = "DisableAntiSpyware"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.79.1.1"
@@ -1032,7 +1031,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace"
 			Name = "AllowSuggestedAppsInWindowsInkWorkspace"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.84.2"
@@ -1040,7 +1039,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace"
 			Name = "AllowWindowsInkWorkspace"
-			Value = 1 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.95.2"
@@ -1048,7 +1047,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription"
 			Name = "EnableTranscripting"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.97.2.2"
@@ -1056,7 +1055,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service"
 			Name = "AllowAutoConfig"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.98.1"
@@ -1064,7 +1063,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\WinRS"
 			Name = "AllowRemoteShellAccess"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		# @{ # multiple
 		# 	Id = "18.9.101.1.1"
@@ -1096,7 +1095,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
 			Name = "NoAutoUpdate"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.101.3"
@@ -1104,7 +1103,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
 			Name = "ScheduledInstallDay"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 		@{
 			Id = "18.9.101.4"
@@ -1112,7 +1111,7 @@
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
 			Name = "NoAutoRebootWithLoggedOnUsers"
-			Value = 0 #TODO: Need real value
+			Value = 0
 		}
 	)
 	UserRights = @(
