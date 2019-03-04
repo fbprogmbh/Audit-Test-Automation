@@ -463,14 +463,14 @@ function Get-RegistryAudit {
 			$regValues = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
 				| Select-Object -ExpandProperty $Name
 
-            if ($DoesNotExist) {
-                return [AuditInfo]@{
-				    Id = $Id
-				    Task = $Task
-				    Message = "Registry value found."
-				    Audit = [AuditStatus]::False
-			    }
-            }
+			if ($DoesNotExist) {
+				return [AuditInfo]@{
+					Id = $Id
+					Task = $Task
+					Message = "Registry value found."
+					Audit = [AuditStatus]::False
+				}
+			}
 
 			if (-not (& $Predicate $regValues)) {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
@@ -489,15 +489,15 @@ function Get-RegistryAudit {
 		catch [System.Management.Automation.PSArgumentException] {
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 				-Message "$($Id): Could not get value $Name in registry key $path."
-            
-            if ($DoesNotExist) {
-                return [AuditInfo]@{
-				    Id = $Id
-				    Task = $Task
-				    Message = "Compliant. Registry value not found."
-				    Audit = [AuditStatus]::True
-			    }
-            }
+			
+			if ($DoesNotExist) {
+				return [AuditInfo]@{
+					Id = $Id
+					Task = $Task
+					Message = "Compliant. Registry value not found."
+					Audit = [AuditStatus]::True
+				}
+			}
 
 			return [AuditInfo]@{
 				Id = $Id
