@@ -186,145 +186,145 @@
 		}
 
 		# LAPS
-		@{
-			Id = "18.2.1"
-			Task = "Ensure LAPS AdmPwd GPO Extension / CSE is installed (MS only)"
-			Role = "MemberServer"
+		# @{
+		# 	Id = "18.2.1"
+		# 	Task = "Ensure LAPS AdmPwd GPO Extension / CSE is installed (MS only)"
+		# 	Role = "MemberServer"
 
-			Path = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\GPExtensions\{D76B9641-3288-4f75-942D087DE603E3EA}"
-			Name = "DllName"
-			Value = 1 #TODO: Need real value
-		}
-		@{
-			Id = "18.2.2"
-			Task = "Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
-			Role = "MemberServer"
+		# 	Path = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\GPExtensions\{D76B9641-3288-4f75-942D087DE603E3EA}"
+		# 	Name = "DllName"
+		# 	Value = 1 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.2.2"
+		# 	Task = "Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
+		# 	Role = "MemberServer"
 
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-			Name = "PwdExpirationProtectionEnabled"
-			Value = 1 #TODO: Need real value
-		}
-		@{
-			Id = "18.2.3"
-			Task = "Ensure 'Enable Local Admin Password Management' is set to 'Enabled'"
-			Role = "MemberServer"
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+		# 	Name = "PwdExpirationProtectionEnabled"
+		# 	Value = 1 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.2.3"
+		# 	Task = "Ensure 'Enable Local Admin Password Management' is set to 'Enabled'"
+		# 	Role = "MemberServer"
 
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-			Name = "AdmPwdEnabled"
-			Value = 1 #TODO: Need real value
-		}
-		@{
-			Id = "18.2.4"
-			Task = "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' "
-			Role = "MemberServer"
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+		# 	Name = "AdmPwdEnabled"
+		# 	Value = 1 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.2.4"
+		# 	Task = "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' "
+		# 	Role = "MemberServer"
 
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-			Name = "PasswordComplexity"
-			Value = 1 #TODO: Need real value
-		}
-		@{
-			Id = "18.2.5"
-			Task = "Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
-			Role = "MemberServer"
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+		# 	Name = "PasswordComplexity"
+		# 	Value = 1 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.2.5"
+		# 	Task = "Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
+		# 	Role = "MemberServer"
 
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-			Name = "PasswordLength"
-			Value = 1 #TODO: Need real value
-		}
-		@{
-			Id = "18.2.6"
-			Task = "Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
-			Role = "MemberServer"
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+		# 	Name = "PasswordLength"
+		# 	Value = 1 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.2.6"
+		# 	Task = "Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
+		# 	Role = "MemberServer"
 
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-			Name = "PasswordAgeDays"
-			Value = 1 #TODO: Need real value
-		}
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+		# 	Name = "PasswordAgeDays"
+		# 	Value = 1 #TODO: Need real value
+		# }
 
 		# MS Security
-		@{
-			Id = "18.3.4"
-			Task = "Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
+		# @{
+		# 	Id = "18.3.4"
+		# 	Task = "Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel"
-			Name = "DisableExceptionChainValidation"
-			Value = 0 #TODO: Need real value
-		}
-		@{
-			Id = "18.3.5"
-			Task = "Ensure 'Turn on Windows Defender protection against Potentially Unwanted Applications' is set to 'Enabled'"
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel"
+		# 	Name = "DisableExceptionChainValidation"
+		# 	Value = 0 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.3.5"
+		# 	Task = "Ensure 'Turn on Windows Defender protection against Potentially Unwanted Applications' is set to 'Enabled'"
 		
-			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine"
-			Name = "MpEnablePus"
-			Value = 1 #TODO: Need real value
-		}
+		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine"
+		# 	Name = "MpEnablePus"
+		# 	Value = 1 #TODO: Need real value
+		# }
 
 		# MSS
-		@{
-			Id = "18.4.1"
-			Task = "Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'"
+		# @{
+		# 	Id = "18.4.1"
+		# 	Task = "Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'"
 		
-			Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-			Name = "AutoAdminLogon"
-			Value = 0 #TODO: Need real value
-		}
-		@{
-			Id = "18.4.5"
-			Task = "Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'"
+		# 	Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+		# 	Name = "AutoAdminLogon"
+		# 	Value = 0 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.4.5"
+		# 	Task = "Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-			Name = "KeepAliveTime"
-			Value = 300000 #TODO: Need real value
-		}
-		@{
-			Id = "18.4.7"
-			Task = "Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)' is set to 'Disabled'"
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+		# 	Name = "KeepAliveTime"
+		# 	Value = 300000 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.4.7"
+		# 	Task = "Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)' is set to 'Disabled'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-			Name = "PerformRouterDiscovery"
-			Value = 0 #TODO: Need real value
-		}
-		@{
-			Id = "18.4.8"
-			Task = "Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended)' is set to 'Enabled'"
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+		# 	Name = "PerformRouterDiscovery"
+		# 	Value = 0 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.4.8"
+		# 	Task = "Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended)' is set to 'Enabled'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-			Name = "SafeDllSearchMode"
-			Value = 1 #TODO: Need real value
-		}
-		@{
-			Id = "18.4.9"
-			Task = "Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+		# 	Name = "SafeDllSearchMode"
+		# 	Value = 1 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.4.9"
+		# 	Task = "Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
 		
-			Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-			Name = "ScreenSaverGracePeriod"
-			Value = "5 seconds or fewer" #TODO: Need real value
-			ValueType = "ValueRange"
-		}
-		@{
-			Id = "18.4.10"
-			Task = "Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
+		# 	Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+		# 	Name = "ScreenSaverGracePeriod"
+		# 	Value = "5 seconds or fewer" #TODO: Need real value
+		# 	ValueType = "ValueRange"
+		# }
+		# @{
+		# 	Id = "18.4.10"
+		# 	Task = "Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters"
-			Name = "TcpMaxDataRetransmissions"
-			Value = 3 #TODO: Need real value
-		}
-		@{
-			Id = "18.4.11"
-			Task = "Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters"
+		# 	Name = "TcpMaxDataRetransmissions"
+		# 	Value = 3 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.4.11"
+		# 	Task = "Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-			Name = "TcpMaxDataRetransmissions"
-			Value = 3 #TODO: Need real value
-		}
-		@{
-			Id = "18.4.12"
-			Task = "Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'"
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+		# 	Name = "TcpMaxDataRetransmissions"
+		# 	Value = 3 #TODO: Need real value
+		# }
+		# @{
+		# 	Id = "18.4.12"
+		# 	Task = "Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'"
 		
-			Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security"
-			Name = "WarningLevel"
-			Value = 1 #TODO: Need real value
-		}
+		# 	Path = "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security"
+		# 	Name = "WarningLevel"
+		# 	Value = 1 #TODO: Need real value
+		# }
 
 		# Network
 		@{
@@ -335,29 +335,77 @@
 			Name = "EnableFontProviders"
 			Value = 0
 		}
-		# @{ # multiple
-		# 	Id = "18.5.9.1"
-		# 	Task = "Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
+		@{
+			Id = "18.5.9.1 A"
+			Task = "Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
 		
-		# 	Path = ""
-		# 	Name = ""
-		# 	Value = 0 #TODO: Need real value
-		# }
-		# @{ # multiple
-		# 	Id = "18.5.9.2"
-		# 	Task = "Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled'"
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "AllowLLTDIOOnDomain"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.1 B"
+			Task = "Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
 		
-		# 	Path = ""
-		# 	Name = ""
-		# 	Value = 0 #TODO: Need real value
-		# }
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "AllowLLTDIOOnPublicNet"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.1 C"
+			Task = "Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "EnableLLTDIO"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.1 D"
+			Task = "Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "ProhibitLLTDIOOnPrivateNet"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.2 A"
+			Task = "Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "AllowRspndrOnDomain"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.2 B"
+			Task = "Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "AllowRspndrOnPublicNet"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.2 C"
+			Task = "Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "EnableRspndr"
+			Value = 0
+		}
+		@{
+			Id = "18.5.9.2 D"
+			Task = "Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LLTD"
+			Name = "ProhibitRspndrOnPrivateNet"
+			Value = 0
+		}
 		@{
 			Id = "18.5.10.2"
 			Task = "Ensure 'Turn off Microsoft Peer-to-Peer Networking Services' is set to 'Enabled'"
 		
 			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Peernet"
 			Name = "Disabled"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id = "18.5.11.2"
@@ -383,14 +431,46 @@
 			Name = "NC_StdDomainUserSetLocation"
 			Value = 1
 		}
-		# @{ # multiple
-		# 	Id = "18.5.20.1"
-		# 	Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
+		@{
+			Id = "18.5.20.1 A"
+			Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
 		
-		# 	Path = "HKLM:\"
-		# 	Name = ""
-		# 	Value =  #TODO: Need real value
-		# }
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars"
+			Name = "EnableRegistrars"
+			Value = 0
+		}
+		@{
+			Id = "18.5.20.1 B"
+			Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars"
+			Name = "DisableUPnPRegistrar"
+			Value = 0
+		}
+		@{
+			Id = "18.5.20.1 C"
+			Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars"
+			Name = "DisableInBand802DOT11Registrar"
+			Value = 0
+		}
+		@{
+			Id = "18.5.20.1 D"
+			Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars"
+			Name = "DisableFlashConfigRegistrar"
+			Value = 0
+		}
+		@{
+			Id = "18.5.20.1 E"
+			Task = "Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars"
+			Name = "DisableWPDRegistrar"
+			Value = 0
+		}
 		@{
 			Id = "18.5.20.2"
 			Task = "Ensure 'Prohibit access of the Windows Connect Now wizards' is set to 'Enabled'"
@@ -545,22 +625,38 @@
 			Name = "CEIPEnable"
 			Value = 0
 		}
-		# @{ # multiple
-		# 	Id = "18.8.22.1.13"
-		# 	Task = "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
+		@{
+			Id = "18.8.22.1.13"
+			Task = "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
 		
-		# 	Path = "HKLM:\"
-		# 	Name = ""
-		# 	Value =  #TODO: Need real value
-		# }
-		# @{ # multiple
-		# 	Id = "18.8.25.1"
-		# 	Task = "Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting"
+			Name = "Disabled"
+			Value = 1
+		}
+		@{
+			Id = "18.8.22.1.13"
+			Task = "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
 		
-		# 	Path = ""
-		# 	Name = ""
-		# 	Value = 1 #TODO: Need real value
-		# }
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\PCHealth\ErrorReporting"
+			Name = "DoReport"
+			Value = 0
+		}
+		@{
+			Id = "18.8.25.1 A"
+			Task = "Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\kerberos\parameters"
+			Name = "DevicePKInitBehavior"
+			Value = 0
+		}
+		@{
+			Id = "18.8.25.1 B"
+			Task = "Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
+		
+			Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\kerberos\parameters"
+			Name = "DevicePKInitEnabled"
+			Value = 1
+		}
 		@{
 			Id = "18.8.26.1"
 			Task = "Ensure 'Disallow copying of user input methods to the system account for sign-in' is set to 'Enabled'"
@@ -985,14 +1081,62 @@
 			Name = "ExploitGuard_ASR_Rules"
 			Value = 1
 		}
-		# @{ # multiple
-		# 	Id = "18.9.76.13.1.2"
-		# 	Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		@{
+			Id = "18.9.76.13.1.2 A"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
 		
-		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
-		# 	Name = ""
-		# 	Value =  #TODO: Need real value
-		# }
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+			Value = 1
+		}
+		@{
+			Id = "18.9.76.13.1.2 B"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "3b576869-a4ec-4529-8536-b80a7769e899"
+			Value = 1
+		}
+		@{
+			Id = "18.9.76.13.1.2 C"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+			Value = 1
+		}
+		@{
+			Id = "18.9.76.13.1.2 D"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+			Value = 1
+		}
+		@{
+			Id = "18.9.76.13.1.2 E"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
+			Value = 1
+		}
+		@{
+			Id = "18.9.76.13.1.2 F"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "d3e037e1-3eb8-44c8-a917-57927947596d"
+			Value = 1
+		}
+		@{
+			Id = "18.9.76.13.1.2 G"
+			Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+			Name = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+			Value = 1
+		}
 		@{
 			Id = "18.9.76.13.3.1"
 			Task = "Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
@@ -1017,14 +1161,22 @@
 			Name = "DisallowExploitProtectionOverride"
 			Value = 1 #TODO: Need real value
 		}
-		# @{ # multiple
-		# 	Id = "18.9.80.1.1"
-		# 	Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+		@{
+			Id = "18.9.80.1.1 A"
+			Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
 		
-		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
-		# 	Name = ""
-		# 	Value = 1 #TODO: Need real value
-		# }
+			Path = "HKLM:SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "EnableSmartScreen"
+			Value = 1
+		}
+		@{
+			Id = "18.9.80.1.1 B"
+			Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+		
+			Path = "HKLM:SOFTWARE\Policies\Microsoft\Windows\System"
+			Name = "ShellSmartScreenLevel"
+			Value = "Block"
+		}
 		@{
 			Id = "18.9.84.1"
 			Task = "Ensure 'Allow suggested apps in Windows Ink Workspace' is set to 'Disabled'"
@@ -1065,30 +1217,64 @@
 			Name = "AllowRemoteShellAccess"
 			Value = 0
 		}
-		# @{ # multiple
-		# 	Id = "18.9.101.1.1"
-		# 	Task = "Ensure 'Manage preview builds' is set to 'Enabled: Disable preview builds'"
+		@{
+			Id = "18.9.101.1.1 A"
+			Task = "Ensure 'Manage preview builds' is set to 'Enabled: Disable preview builds'"
 		
-		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
-		# 	Name = ""
-		# 	Value =  #TODO: Need real value
-		# }
-		# @{ # multiple
-		# 	Id = "18.9.101.1.2"
-		# 	Task = "Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: Semi-Annual Channel, 180 or more days'"
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "ManagePreviewBuilds"
+			Value = 1
+		}
 		
-		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
-		# 	Name = ""
-		# 	Value =  #TODO: Need real value
-		# }
-		# @{ # multiple
-		# 	Id = "18.9.101.1.3"
-		# 	Task = "Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
+		@{
+			Id = "18.9.101.1.1 B"
+			Task = "Ensure 'Manage preview builds' is set to 'Enabled: Disable preview builds'"
 		
-		# 	Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
-		# 	Name = ""
-		# 	Value =  #TODO: Need real value
-		# }
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "ManagePreviewBuildsPolicyValue"
+			Value = 0
+		}
+		@{
+			Id = "18.9.101.1.2 A"
+			Task = "Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: Semi-Annual Channel, 180 or more days'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "DeferFeatureUpdates"
+			Value = 1
+		}
+		@{
+			Id = "18.9.101.1.2 B"
+			Task = "Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: Semi-Annual Channel, 180 or more days'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "DeferFeatureUpdatesPeriodInDays"
+			Value = "180 days or greater"
+			ValueType = "ValueRange"
+		}
+		@{
+			Id = "18.9.101.1.2 C"
+			Task = "Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: Semi-Annual Channel, 180 or more days'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "BranchReadinessLevel"
+			Value = 32
+		}
+		@{
+			Id = "18.9.101.1.3 A"
+			Task = "Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "DeferQualityUpdates"
+			Value = 1
+		}
+		@{
+			Id = "18.9.101.1.3 B"
+			Task = "Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
+		
+			Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+			Name = "DeferQualityUpdatesPeriodInDays"
+			Value = 0
+		}
 		@{
 			Id = "18.9.101.2"
 			Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
