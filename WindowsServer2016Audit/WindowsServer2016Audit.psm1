@@ -3,7 +3,7 @@
 <#
 BSD 3-Clause License
 
-Copyright (c) 2018, FB Pro GmbH
+Copyright (c) 2019, FB Pro GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,14 +30,6 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#>
-
-<#
-
-Author(s):   Dennis Esly, Benedikt Böhme
-Date:        2018-05-31
-Last Change: 2018-08-20
-
 #>
 
 using module ATAPHtmlReport
@@ -978,12 +970,12 @@ function Get-PermissionsAudit {
 
 		Write-Verbose "File system permissions for target: $Target)"
 
-		$prinicpalsWithTooManyRights = $acls | where {
+		$prinicpalsWithTooManyRights = $acls | Where-Object {
 			$_.IdentityReference.Value -NotIn $PrincipalRights.Keys
 		}
 		$principalsWithWrongRights = $acls `
-			| where { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
-			| where {
+			| Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
+			| Where-Object {
 				# convert string to rights enum
 				$referenceRights = $PrincipalRights[$_.IdentityReference.Value]
 				if ($_ -is [FileSystemAccessRule]) {
@@ -2269,4 +2261,6 @@ function Get-HtmlReport {
 		Write-Error "The path doesn't not exist!"
 	}
 }
+
+Set-Alias -Name Get-WindowsServer2016HtmlReport -Value Get-HtmlReport
 #endregion
