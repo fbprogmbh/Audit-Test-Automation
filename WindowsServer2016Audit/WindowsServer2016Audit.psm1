@@ -884,54 +884,74 @@ enum GARights {
 }
 
 # See https://docs.microsoft.com/en-us/windows/desktop/FileIO/file-security-and-access-rights for more information
-enum MappedGARights {
-	FILE_GENERIC_EXECUTE = `
-		[FileSystemRights]::ExecuteFile -bor `
-		[FileSystemRights]::ReadPermissions -bor `
-		[FileSystemRights]::ReadAttributes -bor `
-		[FileSystemRights]::Synchronize
-	FILE_GENERIC_READ = `
+$GAToFSRMapping = @{
+	[GARights]::GENERIC_READ = `
 		[FileSystemRights]::ReadAttributes -bor `
 		[FileSystemRights]::ReadData -bor `
 		[FileSystemRights]::ReadExtendedAttributes -bor `
 		[FileSystemRights]::ReadPermissions -bor `
 		[FileSystemRights]::Synchronize
-	FILE_GENERIC_WRITE = `
+	[GARights]::GENERIC_WRITE = `
 		[FileSystemRights]::AppendData -bor `
 		[FileSystemRights]::WriteAttributes -bor `
 		[FileSystemRights]::WriteData -bor `
 		[FileSystemRights]::WriteExtendedAttributes -bor `
 		[FileSystemRights]::ReadPermissions -bor `
 		[FileSystemRights]::Synchronize
-	FILE_GENERIC_ALL = `
+	[GARights]::GENERIC_EXECUTE = `
+		[FileSystemRights]::ExecuteFile -bor `
+		[FileSystemRights]::ReadPermissions -bor `
+		[FileSystemRights]::ReadAttributes -bor `
+		[FileSystemRights]::Synchronize
+	[GARights]::GENERIC_ALL = `
 		[FileSystemRights]::FullControl
 }
 
-function Convert-GARightsToFileSystemRights {
-	param(
-		[FileSystemRights] $OriginalRights
-	)
+# Non official mappings
+$GAToRRMaping = @{
+	[GARights]::GENERIC_READ = `
+		[RegistryRights]::ReadKey
+	[GARights]::GENERIC_WRITE = `
+		[RegistryRights]::WriteKey
+	[GARights]::GENERIC_ALL = `
+		[RegistryRights]::FullControl
+}
 
-	[FileSystemRights]$MappedRights = [FileSystemRights]::new()
-	if (($OriginalRights.value__ -band [GARights]::GENERIC_EXECUTE.value__) -eq [GARights]::GENERIC_EXECUTE.value__) {
-		$MappedRights = $MappedRights -bor ([MappedGARights]::FILE_GENERIC_EXECUTE)
+function Convert-AccessRuleRights {
+	param(
+		[Parameter(Mandatory = $true)]
+		$AccessRule
+	)
+	
+	# determine correct mapping
+	if ($AccessRule -is [FileSystemAccessRule]) {
+		$OriginalRights = $AccessRule.FileSystemRights
+		[FileSystemRights]$MappedRights = [FileSystemRights]::new()
+		$mapping = $GAToFSRMapping
 	}
-	if (($OriginalRights.value__ -band [GARights]::GENERIC_READ.value__) -eq [GARights]::GENERIC_READ.value__) {
-		$MappedRights = $MappedRights -bor ([MappedGARights]::FILE_GENERIC_READ)
+	elseif ($AccessRule -is [RegistryAccessRule]) {
+		$OriginalRights = $AccessRule.RegistryRights
+		[RegistryRights]$MappedRights = [RegistryRights]::new()
+		$mapping = $GAToRRMaping
 	}
-	if (($OriginalRights.value__ -band [GARights]::GENERIC_WRITE.value__) -eq [GARights]::GENERIC_WRITE.value__) {
-		$MappedRights = $MappedRights -bor [MappedGARights]::FILE_GENERIC_WRITE
+	else {
+		return
 	}
-	if (($OriginalRights.value__ -band [GARights]::GENERIC_ALL.value__) -eq [GARights]::GENERIC_ALL.value__) {
-		$MappedRights = $MappedRights -bor [MappedGARights]::FILE_GENERIC_ALL
+	
+	# map generic access right
+	foreach ($GAR in $mapping.Keys) {
+		if (($OriginalRights.value__ -band $GAR.value__) -eq $GAR.value__) {
+			$MappedRights = $MappedRights -bor $mapping[$GAR]
+		}
 	}
+
 	# mask standard access rights and object-specific access rights
 	$MappedRights = $MappedRights -bor ($OriginalRights -band 0x00FFFFFF)
 
 	return $MappedRights
 }
 
-function Get-FileSystemPermissionAudit {
+function Get-PermissionsAudit {
 	[CmdletBinding()]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -948,9 +968,15 @@ function Get-FileSystemPermissionAudit {
 	)
 
 	process {
-		$acls = (Get-Acl ($env:SystemRoot + $Target)).Access
+		if ($Target -match "(%(.+)%)") {
+			$varName = $Matches[2]
+			$replaceValue = (Get-Item -Path "Env:$varName").Value
+			$Target = $Target.Replace($Matches[1], $replaceValue)
+		}
 
-		Write-Verbose "File system permissions for target: $($env:SystemRoot + $Target)"
+		$acls = (Get-Acl $Target).Access
+
+		Write-Verbose "File system permissions for target: $Target)"
 
 		$prinicpalsWithTooManyRights = $acls | where {
 			$_.IdentityReference.Value -NotIn $PrincipalRights.Keys
@@ -958,9 +984,15 @@ function Get-FileSystemPermissionAudit {
 		$principalsWithWrongRights = $acls `
 			| where { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
 			| where {
+				# convert string to rights enum
 				$referenceRights = $PrincipalRights[$_.IdentityReference.Value]
-				$mappedRights = Convert-GARightsToFileSystemRights -OriginalRights $_.FileSystemRights
-
+				if ($_ -is [FileSystemAccessRule]) {
+					$referenceRights = $referenceRights | ForEach-Object { [FileSystemRights]$_ }
+				}
+				elseif ($_ -is [RegistryAccessRule]) {
+					$referenceRights = $referenceRights | ForEach-Object { [RegistryRights]$_ }
+				}
+				$mappedRights = Convert-AccessRuleRights -AccessRule $_
 				$mappedRights -notin $referenceRights
 			}
 
@@ -973,12 +1005,12 @@ function Get-FileSystemPermissionAudit {
 
 			$messages = @()
 			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
-				$mappedRights = Convert-GARightsToFileSystemRights -OriginalRights $_.FileSystemRights
+				$mappedRights = Convert-AccessRuleRights -AccessRule $_
 				"Unexpected '$($_.IdentityReference)' with access '$($mappedRights)'"
 			}
 			$messages += $principalsWithWrongRights | ForEach-Object {
 				$idKey = $_.IdentityReference.Value
-				$mappedRights = Convert-GARightsToFileSystemRights -OriginalRights $_.FileSystemRights
+				$mappedRights = Convert-AccessRuleRights -AccessRule $_
 				"Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
 			}.GetNewClosure()
 			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
@@ -2565,7 +2597,7 @@ function Get-DisaAudit {
 
 		[switch] $WindowsFeatures,
 
-		[switch] $FileSystemPermissions,
+		[switch] $Permissions,
 
 		[switch] $OtherAudits
 	)
@@ -2595,9 +2627,9 @@ function Get-DisaAudit {
 		$DisaRequirements.WindowsFeatures | &$pipline -Verbose:$VerbosePreference
 	}
 	# disa file system permissions
-	if ($FileSystemPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-FileSystemPermissionAudit}
-		$DisaRequirements.FileSystemPermission | &$pipline -Verbose:$VerbosePreference
+	if ($Permissions) {
+		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-PermissionsAudit}
+		$DisaRequirements.Permissions | &$pipline -Verbose:$VerbosePreference
 	}
 	
 	if ($OtherAudits) {
@@ -2719,8 +2751,8 @@ function Get-HtmlReport {
 						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
 					},
 					@{
-						Title = "File System Permissions"
-						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
+						Title = "File System/Registry Permissions"
+						AuditInfos = Get-DisaAudit -Permissions | Sort-Object -Property Id
 					},
 					@{
 						Title = "Other"

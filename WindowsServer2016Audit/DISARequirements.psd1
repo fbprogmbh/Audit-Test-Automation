@@ -1351,12 +1351,12 @@
 			Feature = "PowerShell-v2"
 		}
 	)
-	FileSystemPermission = @(
+	Permissions = @(
 		@{
 			Id = "WN16-AU-000030"
 			Task = "Permissions for the Application event log must prevent access by non-privileged accounts."
 
-			Target = "\System32\winevt\Logs\Application.evtx"
+			Target = "%SystemRoot%\System32\winevt\Logs\Application.evtx"
 			PrincipalRights = @{
 				"NT SERVICE\EventLog"    = "FullControl"
 				"NT AUTHORITY\SYSTEM"    = "FullControl"
@@ -1367,7 +1367,7 @@
 			Id = "WN16-AU-000040"
 			Task = "Permissions for the Security event log must prevent access by non-privileged accounts."
 
-			Target = "\System32\winevt\Logs\Security.evtx"
+			Target = "%SystemRoot%\System32\winevt\Logs\Security.evtx"
 			PrincipalRights = @{
 				"NT SERVICE\EventLog"    = "FullControl"
 				"NT AUTHORITY\SYSTEM"    = "FullControl"
@@ -1378,7 +1378,7 @@
 			Id = "WN16-AU-000050"
 			Task = "Permissions for the System event log must prevent access by non-privileged accounts."
 
-			Target = "\System32\winevt\Logs\Security.evtx"
+			Target = "%SystemRoot%\System32\winevt\Logs\System.evtx"
 			PrincipalRights = @{
 				"NT SERVICE\EventLog"    = "FullControl"
 				"NT AUTHORITY\SYSTEM"    = "FullControl"
@@ -1389,7 +1389,7 @@
 			Id = "WN16-AU-000060"
 			Task = "Event Viewer must be protected from unauthorized modification and deletion."
 
-			Target = "\System32\winevt\Logs\Security.evtx"
+			Target = "%SystemRoot%\System32\Eventvwr.exe"
 			PrincipalRights = @{
 				"NT SERVICE\TrustedInstaller"                                       = "FullControl"
 				"NT Authority\System"                                               = "ReadAndExecute, Synchronize"
@@ -1403,44 +1403,95 @@
 			Id = "WN16-00-000160"
 			Task = "Permissions for the system drive root directory (usually C:\) must conform to minimum requirements."
 
-			Target = "\"
+			Target = "%SystemDrive%\"
 			PrincipalRights = @{
 				"NT Authority\System"    = "FullControl"
 				"BUILTIN\Administrators" = "FullControl"
-				"BUILTIN\Users"          = "ReadAndExecute, Synchronize", "CreateFiles, Synchronize"
+				"BUILTIN\Users"          = "ReadAndExecute, Synchronize", "CreateFiles", "CreateDirectories"
 				"CREATOR OWNER"          = "FullControl"
 			}
 		}
-		# @{
-		# 	Id = "WN16-00-000170 1"
-		# 	Task = "Permissions for the system drive root directory (usually C:\) must conform to minimum requirements."
+		@{
+			Id = "WN16-00-000170 A"
+			Task = "Permissions for program file directories must conform to minimum requirements."
 
-		# 	Target = "%ProgramFiles%\"
-		# 	PrincipalRights = @{
-		# 		"NT SERVICE\TrustedInstaller"                                       = "FullControl"
-		# 		"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
-		# 		"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
-		# 		"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
-		# 		"CREATOR OWNER"                                                     = "FullControl"
-		# 		"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
-		# 		"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
-		# 	}
-		# }
-		# @{
-		# 	Id = "WN16-00-000170 2"
-		# 	Task = "Permissions for the system drive root directory (usually C:\) must conform to minimum requirements."
+			Target = "%ProgramFiles%\"
+			PrincipalRights = @{
+				"NT SERVICE\TrustedInstaller"                                       = "FullControl"
+				"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
+				"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
+				"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
+				"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
+			}
+		}
+		@{
+			Id = "WN16-00-000170 B"
+			Task = "Permissions for program file directories must conform to minimum requirements."
 
-		# 	Target = "%ProgramFiles(x86)%\"
-		# 	PrincipalRights = @{
-		# 		"NT SERVICE\TrustedInstaller"                                       = "FullControl"
-		# 		"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
-		# 		"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
-		# 		"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
-		# 		"CREATOR OWNER"                                                     = "FullControl"
-		# 		"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
-		# 		"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
-		# 	}
-		# }
-		# ... more tests
+			Target = "%ProgramFiles(x86)%\"
+			PrincipalRights = @{
+				"NT SERVICE\TrustedInstaller"                                       = "FullControl"
+				"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
+				"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
+				"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
+				"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
+			}
+		}
+		@{
+			Id = "WN16-00-000180"
+			Task = "Permissions for the Windows installation directory must conform to minimum requirements."
+
+			Target = "%windir%\"
+			PrincipalRights = @{
+				"NT SERVICE\TrustedInstaller"                                       = "FullControl"
+				"NT Authority\System"                                               = "FullControl", "Modify, Synchronize"
+				"BUILTIN\Administrators"                                            = "FullControl", "Modify, Synchronize"
+				"BUILTIN\Users"                                                     = "ReadAndExecute, Synchronize"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadAndExecute, Synchronize"
+				"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
+			}
+		}
+		@{
+			Id = "WN16-00-000190 A"
+			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
+
+			Target = "HKLM:\SECURITY"
+			PrincipalRights = @{
+				"NT Authority\System"                                               = "FullControl"
+				"BUILTIN\Administrators"                                            = "ReadPermissions, ChangePermissions"
+			}
+		}
+		# Special user "S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681"
+		@{
+			Id = "WN16-00-000190 B"
+			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
+
+			Target = "HKLM:\SOFTWARE"
+			PrincipalRights = @{
+				"BUILTIN\Users"                                                     = "ReadKey"
+				"BUILTIN\Administrators"                                            = "FullControl"
+				"NT Authority\System"                                               = "FullControl"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadKey"
+			}
+		}
+		@{
+			Id = "WN16-00-000190 C"
+			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
+
+			Target = "HKLM:\SYSTEM"
+			PrincipalRights = @{
+				"BUILTIN\Users"                                                     = "ReadKey"
+				"BUILTIN\Administrators"                                            = "FullControl"
+				"NT Authority\System"                                               = "FullControl"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadKey"
+			}
+		}
 	)
 }
