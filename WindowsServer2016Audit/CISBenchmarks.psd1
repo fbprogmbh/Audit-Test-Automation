@@ -298,8 +298,11 @@
 		
 		# 	Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 		# 	Name  = "ScreenSaverGracePeriod"
-		# 	Value = "5 seconds or fewer" #TODO: Need real value
-		# 	ValueType = "ValueRange"
+		# 	Value = 5
+		# 	SpecialValue = @{
+		# 		Type = "Range"
+		# 		Value = "5 seconds or fewer" #TODO: Need real value
+		# 	}
 		# }
 		# @{
 		# 	Id    = "18.4.10"
@@ -907,8 +910,11 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup"
 			Name  = "MaxSize"
-			Value = "32768 or greater"
-			ValueType = "ValueRange"
+			Value = 32768
+			SpecialValue = @{
+				Type = "Range"
+				Value = "32768 or greater"
+			}
 		}
 		@{
 			Id    = "18.9.26.4.1"
@@ -980,8 +986,11 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
 			Name  = "MaxIdleTime"
-			Value = "900000 milliseconds or less"
-			ValueType = "ValueRange"
+			Value = 900000
+			SpecialValue = @{
+				Type = "Range"
+				Value = "900000 milliseconds or less"
+			}
 		}
 		@{
 			Id    = "18.9.58.3.10.2"
@@ -1248,8 +1257,11 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 			Name  = "DeferFeatureUpdatesPeriodInDays"
-			Value = "180 days or greater"
-			ValueType = "ValueRange"
+			Value = 180
+			SpecialValue = @{
+				Type = "Range"
+				Value = "180 days or greater"
+			}
 		}
 		@{
 			Id    = "18.9.101.1.2 C"
@@ -1440,8 +1452,11 @@
 
 			Profile = "Domain"
 			Setting = "LogMaxSizeKilobytes"
-			Value = "16384 KB or greater"
-			ValueType = "ValueRange"
+			Value = 16384
+			SpecialValue = @{
+				Type = "Range"
+				Value = "16384 KB or greater"
+			}
 		}
 		@{
 			Id = "9.1.7"
@@ -1507,8 +1522,11 @@
 
 			Profile = "Private"
 			Setting = "LogMaxSizeKilobytes"
-			Value = "16384 KB or greater"
-			ValueType = "ValueRange"
+			Value = 16384
+			SpecialValue = @{
+				Type = "Range"
+				Value = "16384 KB or greater"
+			}
 		}
 		@{
 			Id = "9.2.7"
@@ -1591,8 +1609,11 @@
 
 			Profile = "Public"
 			Setting = "LogMaxSizeKilobytes"
-			Value = "16384 KB or greater"
-			ValueType = "ValueRange"
+			Value = 16384
+			SpecialValue = @{
+				Type = "Range"
+				Value = "16384 KB or greater"
+			}
 		}
 		@{
 			Id = "9.3.9"

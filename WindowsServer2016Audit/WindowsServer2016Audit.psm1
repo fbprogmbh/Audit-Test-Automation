@@ -143,33 +143,87 @@ function Get-FullPath {
 #endregion
 
 #region Helper functions
-function Get-ValueRange {
+
+function PreprocessSpecialValueSetting {
 	param(
-		[string] $Text
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable] $InputObject
 	)
 
-	$Text = $Text.ToLower()
+	process {
+		if ($InputObject.Keys -contains "SpecialValue") {
+			$Type = $InputObject.SpecialValue.Type
+			$PreValue = $InputObject.SpecialValue.Value
 
-	$predicates = @()
-	if ($Text -match "([0-9]+)[a-z ]* or less") {
-		$y = [int]$Matches[1]
-		$predicates += { param($x) $x -le $y }.GetNewClosure()
-	}
-	if ($Text -match "([0-9]+)[ a-z]* or greater") {
-		$y = [int]$Matches[1]
-		$predicates += { param($x) $x -ge $y }.GetNewClosure()
-	}
-	if ($Text -match "not ([0-9]+)") {
-		$y = [int]$Matches[1]
-		$predicates += { param($x) $x -ne $y }.GetNewClosure()
-	}
+			$InputObject.Remove("SpecialValue")
+		}
 
-	return {
-		param($x)
+		switch ($Type) {
+			"Range" {
+				$preValue = $preValue.ToLower()
 
-		$results = $predicates | ForEach-Object { &$_ $x }
-		return $results -notcontains $false
-	}.GetNewClosure()
+				$predicates = @()
+				if ($preValue -match "([0-9]+)[a-z ]* or less") {
+					$y = [int]$Matches[1]
+					$predicates += { param($x) $x -le $y }.GetNewClosure()
+				}
+				if ($preValue -match "([0-9]+)[ a-z]* or greater") {
+					$y = [int]$Matches[1]
+					$predicates += { param($x) $x -ge $y }.GetNewClosure()
+				}
+				if ($preValue -match "not ([0-9]+)") {
+					$y = [int]$Matches[1]
+					$predicates += { param($x) $x -ne $y }.GetNewClosure()
+				}
+				
+				$expectedValue = $preValue
+				$predicate = {
+					param($x)
+					return ($predicates | ForEach-Object { &$_ $x }) -notcontains $false
+				}.GetNewClosure()
+				break
+			}
+			"Placeholder" {
+				$value = $Settings[$preValue]
+				$InputObject.Value = $value
+				$expectedValue = $value
+				$predicate = { param($x) $x -eq $value }.GetNewClosure()
+
+				if ([string]::IsNullOrEmpty($value)) {
+					$expectedValue = "Non-empty string."
+					$predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
+				}
+				break
+			}
+			default {
+				$value = $InputObject.Value
+
+				if ($value.Count -gt 1) {
+					$expectedValue = $value -join ", "
+					$predicate = {
+						param([string[]]$xs)
+						
+						if ($xs.Count -ne $value.Count) {
+							return $false
+						}
+						
+						$comparisonFunction = [Func[string, string, Boolean]]{ param($a, $b) $a -eq $b }
+						$comparison = [System.Linq.Enumerable]::Zip([string[]]$value, $xs, $comparisonFunction)
+						return $comparison -notcontains $false
+					}.GetNewClosure()
+				}
+				else {
+					$expectedValue = $value
+					$predicate = { param([string] $x) $value -eq $x }.GetNewClosure()
+				}
+			}
+		}
+
+		$InputObject.ExpectedValue = $expectedValue
+		$InputObject.Predicate = $predicate
+
+		return $InputObject
+	}
 }
 
 function ConvertTo-NTAccountUser {
@@ -409,48 +463,19 @@ function Get-RegistryAudit {
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[AllowEmptyString()]
-		[string[]] $Value,
+		[object[]] $Value,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ScriptBlock] $Predicate,
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[string] $ValueType,
+		[String] $ExpectedValue,
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[bool] $DoesNotExist = $false
 	)
 
 	process {
-		# Preprocess ValueType to get the predicate and the value
-		if ($ValueType -eq "ValueRange") {
-			Write-Verbose "ValueRange"
-			# Create a predicate from the range specifice by the text
-			$Predicate = Get-ValueRange -Text $Value
-		}
-		# Replace the value in the registry test with the one from settings
-		elseif ($ValueType -eq "ValuePlaceholder") {
-			Write-Verbose "ValuePlaceholder"
-			$Value = $Settings[$Value]
-			$Predicate = { param($x) $x -eq $Value }.GetNewClosure()
-
-			if ([string]::IsNullOrEmpty($Value)) {
-				$Value = "Non-empty string."
-				$Predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
-			}
-		}
-		else {
-			$Predicate = {
-				param([string[]]$xs)
-				
-				if ($xs.Count -ne $Value.Count) {
-					return $false
-				}
-				
-				$comparisonFunction = [Func[String, String, Boolean]]{ param($a, $b) $a -eq $b }
-				$comparison = [System.Linq.Enumerable]::Zip($Value, $xs, $comparisonFunction)
-				return $comparison -notcontains $false
-			}.GetNewClosure()
-			$Value = $Value -join ", "
-		}
-
 		try {
 			$regValues = Get-ItemProperty -ErrorAction Stop -Path $Path -Name $Name `
 				| Select-Object -ExpandProperty $Name
@@ -473,7 +498,7 @@ function Get-RegistryAudit {
 				return [AuditInfo]@{
 					Id = $Id
 					Task = $Task
-					Message = "Registry value: $regValue. Differs from expected value: $Value."
+					Message = "Registry value: $regValue. Differs from expected value: $ExpectedValue."
 					Audit = [AuditStatus]::False
 				}
 			}
@@ -654,8 +679,8 @@ function Get-AccountPolicyAudit {
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[object] $Value,
 
-		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[string] $ValueType
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ScriptBlock] $Predicate
 	)
 
 	process {
@@ -674,18 +699,11 @@ function Get-AccountPolicyAudit {
 		# Sanitize input
 		$currentAccountPolicy = $currentAccountPolicy.Trim()
 
-		if ($ValueType -eq "ValueRange") {
-			$Predicate = Get-ValueRange -Text $Value
-		}
-		else {
-			$Predicate = { param($x) $x -eq $currentAccountPolicy }.GetNewClosure()
-		}
-
 		if (-not (& $Predicate $currentAccountPolicy)) {
 			return [AuditInfo]@{
 				Id = $Id
 				Task = $Task
-				Message = "Currently set to: $currentAccountPolicy. Differs from expected value: $Value"
+				Message = "Currently set to: $currentAccountPolicy. Differs from expected value: $ExpectedValue"
 				Audit = [AuditStatus]::False
 			}
 		}
@@ -899,6 +917,27 @@ $GAToFSRMapping = @{
 		[FileSystemRights]::FullControl
 }
 
+function Convert-FileSystemRights {
+	param(
+		[Parameter(Mandatory = $true)]
+		[FileSystemRights] $OriginalRights
+	)
+	
+	[FileSystemRights]$MappedRights = [FileSystemRights]::new()
+	
+	# map generic access right
+	foreach ($GAR in $GAToFSRMapping.Keys) {
+		if (($OriginalRights.value__ -band $GAR.value__) -eq $GAR.value__) {
+			$MappedRights = $MappedRights -bor $GAToFSRMapping[$GAR]
+		}
+	}
+
+	# mask standard access rights and object-specific access rights
+	$MappedRights = $MappedRights -bor ($OriginalRights -band 0x00FFFFFF)
+
+	return $MappedRights
+}
+
 # Non official mappings
 $GAToRRMaping = @{
 	[GARights]::GENERIC_READ = `
@@ -909,41 +948,7 @@ $GAToRRMaping = @{
 		[RegistryRights]::FullControl
 }
 
-function Convert-AccessRuleRights {
-	param(
-		[Parameter(Mandatory = $true)]
-		$AccessRule
-	)
-	
-	# determine correct mapping
-	if ($AccessRule -is [FileSystemAccessRule]) {
-		$OriginalRights = $AccessRule.FileSystemRights
-		[FileSystemRights]$MappedRights = [FileSystemRights]::new()
-		$mapping = $GAToFSRMapping
-	}
-	elseif ($AccessRule -is [RegistryAccessRule]) {
-		$OriginalRights = $AccessRule.RegistryRights
-		[RegistryRights]$MappedRights = [RegistryRights]::new()
-		$mapping = $GAToRRMaping
-	}
-	else {
-		return
-	}
-	
-	# map generic access right
-	foreach ($GAR in $mapping.Keys) {
-		if (($OriginalRights.value__ -band $GAR.value__) -eq $GAR.value__) {
-			$MappedRights = $MappedRights -bor $mapping[$GAR]
-		}
-	}
-
-	# mask standard access rights and object-specific access rights
-	$MappedRights = $MappedRights -bor ($OriginalRights -band 0x00FFFFFF)
-
-	return $MappedRights
-}
-
-function Get-PermissionsAudit {
+function Get-FileSystemPermissionsAudit {
 	[CmdletBinding()]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -977,14 +982,8 @@ function Get-PermissionsAudit {
 			| Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
 			| Where-Object {
 				# convert string to rights enum
-				$referenceRights = $PrincipalRights[$_.IdentityReference.Value]
-				if ($_ -is [FileSystemAccessRule]) {
-					$referenceRights = $referenceRights | ForEach-Object { [FileSystemRights]$_ }
-				}
-				elseif ($_ -is [RegistryAccessRule]) {
-					$referenceRights = $referenceRights | ForEach-Object { [RegistryRights]$_ }
-				}
-				$mappedRights = Convert-AccessRuleRights -AccessRule $_
+				$referenceRights = $PrincipalRights[$_.IdentityReference.Value] | ForEach-Object { [FileSystemRights]$_ }
+				$mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
 				$mappedRights -notin $referenceRights
 			}
 
@@ -997,12 +996,12 @@ function Get-PermissionsAudit {
 
 			$messages = @()
 			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
-				$mappedRights = Convert-AccessRuleRights -AccessRule $_
+				$mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
 				"Unexpected '$($_.IdentityReference)' with access '$($mappedRights)'"
 			}
 			$messages += $principalsWithWrongRights | ForEach-Object {
 				$idKey = $_.IdentityReference.Value
-				$mappedRights = Convert-AccessRuleRights -AccessRule $_
+				$mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
 				"Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
 			}.GetNewClosure()
 			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
@@ -1024,6 +1023,101 @@ function Get-PermissionsAudit {
 	}
 }
 
+function Convert-RegistryRights {
+	param(
+		[Parameter(Mandatory = $true)]
+		[RegistryRights] $OriginalRights
+	)
+	
+	[RegistryRights]$MappedRights = [RegistryRights]::new()
+	
+	# map generic access right
+	foreach ($GAR in $GAToRRMaping.Keys) {
+		if (($OriginalRights.value__ -band $GAR.value__) -eq $GAR.value__) {
+			$MappedRights = $MappedRights -bor $GAToRRMaping[$GAR]
+		}
+	}
+
+	# mask standard access rights and object-specific access rights
+	$MappedRights = $MappedRights -bor ($OriginalRights -band 0x00FFFFFF)
+
+	return $MappedRights
+}
+
+function Get-RegistryPermissionsAudit {
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Target,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[hashtable] $PrincipalRights
+	)
+
+	process {
+		if ($Target -match "(%(.+)%)") {
+			$varName = $Matches[2]
+			$replaceValue = (Get-Item -Path "Env:$varName").Value
+			$Target = $Target.Replace($Matches[1], $replaceValue)
+		}
+
+		$acls = (Get-Acl $Target).Access
+
+		Write-Verbose "Registry permissions for target: $Target)"
+
+		$prinicpalsWithTooManyRights = $acls | Where-Object {
+			$_.IdentityReference.Value -NotIn $PrincipalRights.Keys
+		}
+		$principalsWithWrongRights = $acls `
+			| Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
+			| Where-Object {
+				# convert string to rights enum
+				$referenceRights = $PrincipalRights[$_.IdentityReference.Value] | ForEach-Object { [RegistryRights]$_ }
+				$mappedRights = Convert-RegistryRights -OriginalRights $_.RegistryRights
+				$mappedRights -notin $referenceRights
+			}
+
+		if (($prinicpalsWithTooManyRights.Count -gt 0) -or ($principalsWithWrongRights.Count -gt 0)) {
+			$logOptions = @{
+				Path = $Settings.LogFilePath
+				Name = $Settings.LogFileName
+				Level = "Error"
+			}
+
+			$messages = @()
+			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
+				$mappedRights = Convert-RegistryRights -OriginalRights $_.RegistryRights
+				"Unexpected '$($_.IdentityReference)' with access '$($mappedRights)'"
+			}
+			$messages += $principalsWithWrongRights | ForEach-Object {
+				$idKey = $_.IdentityReference.Value
+				$mappedRights = Convert-RegistryRights -OriginalRights $_.RegistryRights
+				"Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
+			}.GetNewClosure()
+			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
+
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = $messages -join "; "
+				Audit = [AuditStatus]::False
+			}
+		}
+
+		return [AuditInfo]@{
+			Id = $Id
+			Task = $Task
+			Message = "Compliant"
+			Audit = [AuditStatus]::True
+		}
+	}
+}
 
 function Get-FirewallProfileAudit {
 	[CmdletBinding()]
@@ -2065,7 +2159,9 @@ function Get-DisaAudit {
 
 		[switch] $WindowsFeatures,
 
-		[switch] $Permissions,
+		[switch] $FileSystemPermissions,
+
+		[switch] $RegistryPermissions,
 
 		[switch] $OtherAudits
 	)
@@ -2077,7 +2173,7 @@ function Get-DisaAudit {
 	# disa registry settings
 	if ($RegistrySettings) {
 		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
-		$DisaRequirements.RegistrySettings | &$pipline -Verbose:$VerbosePreference
+		$DisaRequirements.RegistrySettings | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
 	}
 	# disa user rights
 	if ($UserRights) {
@@ -2087,7 +2183,7 @@ function Get-DisaAudit {
 	# disa account policy
 	if ($AccountPolicies) {
 		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
-		$DisaRequirements.AccountPolicies | &$pipline -Verbose:$VerbosePreference
+		$DisaRequirements.AccountPolicies | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
 	}
 	# disa windows features
 	if ($WindowsFeatures) {
@@ -2095,9 +2191,14 @@ function Get-DisaAudit {
 		$DisaRequirements.WindowsFeatures | &$pipline -Verbose:$VerbosePreference
 	}
 	# disa file system permissions
-	if ($Permissions) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-PermissionsAudit}
-		$DisaRequirements.Permissions | &$pipline -Verbose:$VerbosePreference
+	if ($FileSystemPermissions) {
+		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-FileSystemPermissionsAudit}
+		$DisaRequirements.FileSystemPermissions | &$pipline -Verbose:$VerbosePreference
+	}
+	# disa registry permissions
+	if ($RegistryPermissions) {
+		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryPermissionsAudit}
+		$DisaRequirements.RegistryPermissions | &$pipline -Verbose:$VerbosePreference
 	}
 	
 	if ($OtherAudits) {
@@ -2150,7 +2251,7 @@ function Get-CisAudit {
 	# cis registry settings
 	if ($RegistrySettings) {
 		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
-		$CisBenchmarks.RegistrySettings | &$pipline -Verbose:$VerbosePreference
+		$CisBenchmarks.RegistrySettings | PreprocessSpecialValueSetting | &$pipline -Verbose:$VerbosePreference
 	}
 	# cis user rights
 	if ($UserRights) {
@@ -2160,7 +2261,7 @@ function Get-CisAudit {
 	# cis account policies
 	if ($AccountPolicies) {
 		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
-		$CisBenchmarks.AccountPolicies | &$pipline -Verbose:$VerbosePreference
+		$CisBenchmarks.AccountPolicies | PreprocessSpecialValueSetting | &$pipline -Verbose:$VerbosePreference
 	}
 	# cis firewall profiles
 	if ($FirewallProfiles) {
@@ -2212,8 +2313,13 @@ function Get-HtmlReport {
 						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
 					},
 					@{
-						Title = "File System/Registry Permissions"
-						AuditInfos = Get-DisaAudit -Permissions | Sort-Object -Property Id
+						Title = "File System Permissions"
+						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
+					},
+					
+					@{
+						Title = "Registry Permissions"
+						AuditInfos = Get-DisaAudit -RegistryPermissions | Sort-Object -Property Id
 					},
 					@{
 						Title = "Other"

@@ -123,6 +123,7 @@
 		@{
 			Id    = "WN16-MS-000030"
 			Task  = "Local users on domain-joined computers must not be enumerated."
+			Role  = "MemberServer"
 
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System"
 			Name  = "EnumerateLocalUsers"
@@ -483,8 +484,11 @@
 
 			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters"
 			Name  = "MaximumPasswordAge"
-			Value = "30 days or less, but not 0"
-			ValueType = "ValueRange"
+			Value = 30
+			SpecialValue = @{
+				Type = "Range"
+				Value = "30 days or less, but not 0"
+			}
 		}
 		@{
 			Id    = "WN16-SO-000130"
@@ -500,8 +504,11 @@
 
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name  = "InactivityTimeoutSecs"
-			Value = "900 seconds or less, but not 0"
-			ValueType = "ValueRange"
+			Value = 900
+			SpecialValue = @{
+				Type = "Range"
+				Value = "900 seconds or less, but not 0"
+			}
 		}
 		@{
 			Id    = "WN16-SO-000150"
@@ -509,8 +516,11 @@
 
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name  = "LegalNoticeText"
-			Value = "LegalNoticeText"
-			ValueType = "ValuePlaceholder"
+
+			SpecialValue = @{
+				Type = "Placeholder"
+				Value = "LegalNoticeText"
+			}
 		}
 		@{
 			Id    = "WN16-SO-000160"
@@ -518,8 +528,11 @@
 
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 			Name  = "LegalNoticeCaption"
-			Value = "LegalNoticeTitle"
-			ValueType = "ValuePlaceholder"
+			
+			SpecialValue = @{
+				Type = "Placeholder"
+				Value = "LegalNoticeText"
+			}
 		}
 		@{
 			Id    = "WN16-MS-000050"
@@ -527,8 +540,11 @@
 
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 			Name  = "CachedLogonsCount"
-			Value = "4 or less"
-			ValueType = "ValueRange"
+			Value = 4
+			SpecialValue = @{
+				Type = "Range"
+				Value = "4 or less"
+			}
 		}
 		@{
 			Id    = "WN16-SO-000190"
@@ -560,8 +576,11 @@
 
 			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name  = "autodisconnect"
-			Value = "15 minutes or less" # Exclude 0
-			ValueType = "ValueRange"
+			Value = 15
+			SpecialValue = @{
+				Type = "Range"
+				Value = "15 minutes or less" # Exclude 0
+			}
 		}
 		@{
 			Id    = "WN16-SO-000230"
@@ -1218,58 +1237,79 @@
 			Task = "Windows 2016 account lockout duration must be configured to 15 minutes or greater."
 
 			Policy = "LockoutDuration"
-			Value = "15 minutes or greater"
-			ValueType = "ValueRange"
+			Value = 15
+			SpecialValue = @{
+				Type = "Range"
+				Value = "15 minutes or greater"
+			}
 		}
 		@{
 			Id = "WN16-AC-000020"
 			Task = "The number of allowed bad logon attempts must be configured to three or less."
 
 			Policy = "LockoutBadCount"
-			# Old audit: 0 not excluded
-			Value = "3 or less, but not 0"
-			ValueType = "ValueRange"
+			Value = 3
+			SpecialValue = @{
+				Type = "Range"
+				# Old audit: 0 not excluded
+				Value = "3 or less, but not 0"
+			}
 		}
 		@{
 			Id = "WN16-AC-000030"
 			Task = "The period of time before the bad logon counter is reset must be configured to 15 minutes or greater."
 
 			Policy = "ResetLockoutCount"
-			Value = "15 minutes or greater"
-			ValueType = "ValueRange"
+			Value = 15
+			SpecialValue = @{
+				Type = "Range"
+				Value = "15 minutes or greater"
+			}
 		}
 		@{
 			Id = "WN16-AC-000040"
 			Task = "The password history must be configured to 24 passwords remembered."
 
 			Policy = "PasswordHistorySize"
-			# Old audit: only 24 is allowed
-			Value = "24 or greater"
-			ValueType = "ValueRange"
+			Value = 24
+			SpecialValue = @{
+				Type = "Range"
+				# Old audit: only 24 is allowed
+				Value = "24 or greater"
+			}
 		}
 		@{
 			Id = "WN16-AC-000050"
 			Task = "The maximum password age must be configured to 60 days or less."
 
 			Policy = "MaximumPasswordAge"
-			Value = "60 days or less"
-			ValueType = "ValueRange"
+			Value = 60
+			SpecialValue = @{
+				Type = "Range"
+				Value = "60 days or less"
+			}
 		}
 		@{
 			Id = "WN16-AC-000060"
 			Task = "The minimum password age must be configured to at least one day."
 
 			Policy = "MinimumPasswordAge"
-			Value = "1 day or greater"
-			ValueType = "ValueRange"
+			Value = 1
+			SpecialValue = @{
+				Type = "Range"
+				Value = "1 day or greater"
+			}
 		}
 		@{
 			Id = "WN16-AC-000070"
 			Task = "The minimum password length must be configured to 14 characters."
 
 			Policy = "MinimumPasswordLength"
-			Value = "14 characters or greater"
-			ValueType = "ValueRange"
+			Value = 14
+			SpecialValue = @{
+				Type = "Range"
+				Value = "14 characters or greater"
+			}
 		}
 		@{
 			Id = "WN16-AC-000080"
@@ -1351,7 +1391,7 @@
 			Feature = "PowerShell-v2"
 		}
 	)
-	Permissions = @(
+	FileSystemPermissions = @(
 		@{
 			Id = "WN16-AU-000030"
 			Task = "Permissions for the Application event log must prevent access by non-privileged accounts."
@@ -1456,6 +1496,8 @@
 				"APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES" = "ReadAndExecute, Synchronize"
 			}
 		}
+	)
+	RegistryPermissions = @(
 		@{
 			Id = "WN16-00-000190 A"
 			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
