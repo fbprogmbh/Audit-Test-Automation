@@ -531,7 +531,7 @@
 			
 			SpecialValue = @{
 				Type = "Placeholder"
-				Value = "LegalNoticeText"
+				Value = "LegalNoticeTitle"
 			}
 		}
 		@{
@@ -540,7 +540,7 @@
 
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 			Name  = "CachedLogonsCount"
-			Value = 4
+			Value = "4"
 			SpecialValue = @{
 				Type = "Range"
 				Value = "4 or less"
