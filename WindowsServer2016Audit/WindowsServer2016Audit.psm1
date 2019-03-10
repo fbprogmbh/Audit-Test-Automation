@@ -156,12 +156,9 @@ function PreprocessSpecialValueSetting {
 			$PreValue = $InputObject.SpecialValue.Value
 
 			$InputObject.Remove("SpecialValue")
-		}
-
-		switch ($Type) {
-			"Range" {
+			if ($Type -eq "Range") {
 				$preValue = $preValue.ToLower()
-
+	
 				$predicates = @()
 				if ($preValue -match "([0-9]+)[a-z ]* or less") {
 					$y = [int]$Matches[1]
@@ -176,52 +173,49 @@ function PreprocessSpecialValueSetting {
 					$predicates += { param($x) $x -ne $y }.GetNewClosure()
 				}
 				
-				$expectedValue = $preValue
-				$predicate = {
+				$InputObject.ExpectedValue = $preValue
+				$InputObject.Predicate     = {
 					param($x)
 					return ($predicates | ForEach-Object { &$_ $x }) -notcontains $false
 				}.GetNewClosure()
-				break
+				return $InputObject
 			}
-			"Placeholder" {
+			elseif ($Type -eq "Placeholder") {
 				$value = $Settings[$preValue]
 				$InputObject.Value = $value
-				$expectedValue = $value
-				$predicate = { param($x) $x -eq $value }.GetNewClosure()
-
+	
 				if ([string]::IsNullOrEmpty($value)) {
-					$expectedValue = "Non-empty string."
-					$predicate = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
+					$InputObject.ExpectedValue = "Non-empty string."
+					$InputObject.Predicate     = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
+					return $InputObject
 				}
-				break
-			}
-			default {
-				$value = $InputObject.Value
 
-				if ($value.Count -gt 1) {
-					$expectedValue = $value -join ", "
-					$predicate = {
-						param([string[]]$xs)
-						
-						if ($xs.Count -ne $value.Count) {
-							return $false
-						}
-						
-						$comparisonFunction = [Func[string, string, Boolean]]{ param($a, $b) $a -eq $b }
-						$comparison = [System.Linq.Enumerable]::Zip([string[]]$value, $xs, $comparisonFunction)
-						return $comparison -notcontains $false
-					}.GetNewClosure()
-				}
-				else {
-					$expectedValue = $value
-					$predicate = { param([string] $x) $value -eq $x }.GetNewClosure()
-				}
+				$InputObject.ExpectedValue = $value
+				$InputObject.Predicate     = { param($x) $x -eq $value }.GetNewClosure()
+				return $InputObject
 			}
 		}
 
-		$InputObject.ExpectedValue = $expectedValue
-		$InputObject.Predicate = $predicate
+		$value = $InputObject.Value
 
+		if ($value.Count -gt 1) {
+			$InputObject.ExpectedValue = $value -join ", "
+			$InputObject.Predicate     = {
+				param([string[]]$xs)
+				
+				if ($xs.Count -ne $value.Count) {
+					return $false
+				}
+				
+				$comparisonFunction = [Func[string, string, Boolean]]{ param($a, $b) $a -eq $b }
+				$comparison = [System.Linq.Enumerable]::Zip([string[]]$value, $xs, $comparisonFunction)
+				return $comparison -notcontains $false
+			}.GetNewClosure()
+			return $InputObject
+		}
+
+		$InputObject.ExpectedValue = $value
+		$InputObject.Predicate     = { param([string] $x) $value -eq $x }.GetNewClosure()
 		return $InputObject
 	}
 }
@@ -468,7 +462,7 @@ function Get-RegistryAudit {
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[ScriptBlock] $Predicate,
 
-		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[String] $ExpectedValue,
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]

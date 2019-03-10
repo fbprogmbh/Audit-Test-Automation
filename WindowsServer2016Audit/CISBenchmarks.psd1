@@ -516,12 +516,12 @@
 			Name  = "HVCIMATRequired"
 			Value = 1
 		}
-		@{ # Doesn't update some times
-			Id    = "18.8.21.3"
+		@{
+			Id    = "18.8.21.2"
 			Task  = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}"
-			Name  = "NoGPOListChanges"
+			Name  = "NoBackgroundPolicy"
 			Value = 0
 		}
 		@{
@@ -573,14 +573,6 @@
 			Value = 1
 		}
 		@{
-			Id    = "18.8.22.1.6"
-			Task  = "Ensure 'Turn off printing over HTTP' is set to 'Enabled' "
-		
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"
-			Name  = "DisableHTTPPrinting"
-			Value = 1
-		}
-		@{
 			Id    = "18.8.22.1.7"
 			Task  = "Ensure 'Turn off Registration if URL connection is referring to Microsoft.com' is set to 'Enabled'"
 		
@@ -629,7 +621,7 @@
 			Value = 0
 		}
 		@{
-			Id    = "18.8.22.1.13"
+			Id    = "18.8.22.1.13 A"
 			Task  = "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting"
@@ -637,7 +629,7 @@
 			Value = 1
 		}
 		@{
-			Id    = "18.8.22.1.13"
+			Id    = "18.8.22.1.13 B"
 			Task  = "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\PCHealth\ErrorReporting"
@@ -708,14 +700,14 @@
 			Name  = "AllowDomainPINLogon"
 			Value = 0
 		}
-		@{
-			Id    = "18.8.28.1"
-			Task  = "Ensure 'Untrusted Font Blocking' is set to 'Enabled: Block untrusted fonts and log events'"
+		# @{
+		# 	Id    = "18.8.28.1"
+		# 	Task  = "Ensure 'Untrusted Font Blocking' is set to 'Enabled: Block untrusted fonts and log events'"
 		
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions"
-			Name  = "MitigationOptions_FontBocking"
-			Value = 1000000000000
-		}
+		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions"
+		# 	Name  = "MitigationOptions_FontBocking"
+		# 	Value = 1000000000000
+		# }
 		@{
 			Id    = "18.8.33.6.1"
 			Task  = "Ensure 'Allow network connectivity during connected-standby (on battery)' is set to 'Disabled'"
@@ -1669,7 +1661,7 @@
 			AuditFlag = 'Success and Failure'
 		}
 		@{
-			Id = "17.2.5"
+			Id = "17.2.6"
 			Task = "User Account Management is set to Success and Failure"
 
 			Subcategory = "User Account Management"

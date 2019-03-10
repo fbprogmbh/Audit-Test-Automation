@@ -129,14 +129,14 @@
 			Name  = "EnumerateLocalUsers"
 			Value = 0
 		}
-		@{
-			Id    = "WN16-CC-000200"
-			Task  = "Windows Server 2016 must be configured to block untrusted fonts from loading."
+		# @{
+		# 	Id    = "WN16-CC-000200"
+		# 	Task  = "Windows Server 2016 must be configured to block untrusted fonts from loading."
 
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions"
-			Name  = "MitigationOptions_FontBocking"
-			Value = "1000000000000"
-		}
+		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions"
+		# 	Name  = "MitigationOptions_FontBocking"
+		# 	Value = "1000000000000"
+		# }
 		@{
 			Id    = "WN16-CC-000210"
 			Task  = "Users must be prompted to authenticate when the system wakes from sleep (on battery)."
