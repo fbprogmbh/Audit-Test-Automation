@@ -1782,7 +1782,7 @@ function Test-SV-88475r1_rule {
 		# local guest account SID ends with 501
 		$account = Get-localUser | Where-Object -Property sid -like "S-1-5-*-501"
 
-		if ( $account.Disabled ) {
+		if ( $account.Enabled -eq $false ) {
 			$obj | Add-Member NoteProperty Status("Compliant")
 			$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 		}
