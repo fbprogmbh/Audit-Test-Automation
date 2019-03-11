@@ -195,139 +195,151 @@
 		# 	Name  = "DllName"
 		# 	Value = 1 #TODO: Need real value
 		# }
-		# @{
-		# 	Id    = "18.2.2"
-		# 	Task  = "Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
-		# 	Role = "MemberServer"
+		@{
+			Id    = "18.2.2"
+			Task  = "Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
+			Role = "MemberServer"
 
-		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-		# 	Name  = "PwdExpirationProtectionEnabled"
-		# 	Value = 1 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.2.3"
-		# 	Task  = "Ensure 'Enable Local Admin Password Management' is set to 'Enabled'"
-		# 	Role = "MemberServer"
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+			Name  = "PwdExpirationProtectionEnabled"
+			Value = 1
+		}
+		@{
+			Id    = "18.2.3"
+			Task  = "Ensure 'Enable Local Admin Password Management' is set to 'Enabled'"
+			Role = "MemberServer"
 
-		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-		# 	Name  = "AdmPwdEnabled"
-		# 	Value = 1 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.2.4"
-		# 	Task  = "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' "
-		# 	Role = "MemberServer"
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+			Name  = "AdmPwdEnabled"
+			Value = 1
+		}
+		@{
+			Id    = "18.2.4"
+			Task  = "Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' "
+			Role = "MemberServer"
 
-		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-		# 	Name  = "PasswordComplexity"
-		# 	Value = 1 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.2.5"
-		# 	Task  = "Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
-		# 	Role = "MemberServer"
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+			Name  = "PasswordComplexity"
+			Value = 4
+		}
+		@{
+			Id    = "18.2.5"
+			Task  = "Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
+			Role = "MemberServer"
 
-		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-		# 	Name  = "PasswordLength"
-		# 	Value = 1 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.2.6"
-		# 	Task  = "Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
-		# 	Role = "MemberServer"
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+			Name  = "PasswordLength"
+			Value = 15
+			SpecialValue = @{
+				Type = "Range"
+				Value = "15 or greater"
+			}
+		}
+		@{
+			Id    = "18.2.6"
+			Task  = "Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
+			Role = "MemberServer"
 
-		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
-		# 	Name  = "PasswordAgeDays"
-		# 	Value = 1 #TODO: Need real value
-		# }
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft Services\AdmPwd"
+			Name  = "PasswordAgeDays"
+			Value = 30
+			SpecialValue = @{
+				Type = "Range"
+				Value = "30 or less"
+			}
+		}
 
 		# MS Security
-		# @{
-		# 	Id    = "18.3.4"
-		# 	Task  = "Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
+		@{
+			Id    = "18.3.4"
+			Task  = "Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel"
-		# 	Name  = "DisableExceptionChainValidation"
-		# 	Value = 0 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.3.5"
-		# 	Task  = "Ensure 'Turn on Windows Defender protection against Potentially Unwanted Applications' is set to 'Enabled'"
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel"
+			Name  = "DisableExceptionChainValidation"
+			Value = 0
+		}
+		@{
+			Id    = "18.3.5"
+			Task  = "Ensure 'Turn on Windows Defender protection against Potentially Unwanted Applications' is set to 'Enabled'"
 		
-		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine"
-		# 	Name  = "MpEnablePus"
-		# 	Value = 1 #TODO: Need real value
-		# }
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine"
+			Name  = "MpEnablePus"
+			Value = 1
+		}
 
 		# MSS
-		# @{
-		# 	Id    = "18.4.1"
-		# 	Task  = "Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'"
+		@{
+			Id    = "18.4.1"
+			Task  = "Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'"
 		
-		# 	Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-		# 	Name  = "AutoAdminLogon"
-		# 	Value = 0 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.4.5"
-		# 	Task  = "Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'"
+			Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+			Name  = "AutoAdminLogon"
+			Value = "0"
+		}
+		@{
+			Id    = "18.4.5"
+			Task  = "Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-		# 	Name  = "KeepAliveTime"
-		# 	Value = 300000 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.4.7"
-		# 	Task  = "Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)' is set to 'Disabled'"
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name  = "KeepAliveTime"
+			Value = 300000
+		}
+		@{
+			Id    = "18.4.7"
+			Task  = "Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)' is set to 'Disabled'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-		# 	Name  = "PerformRouterDiscovery"
-		# 	Value = 0 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.4.8"
-		# 	Task  = "Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended)' is set to 'Enabled'"
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name  = "PerformRouterDiscovery"
+			Value = 0
+		}
+		@{
+			Id    = "18.4.8"
+			Task  = "Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended)' is set to 'Enabled'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-		# 	Name  = "SafeDllSearchMode"
-		# 	Value = 1 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.4.9"
-		# 	Task  = "Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name  = "SafeDllSearchMode"
+			Value = 1
+		}
+		@{
+			Id    = "18.4.9"
+			Task  = "Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
 		
-		# 	Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-		# 	Name  = "ScreenSaverGracePeriod"
-		# 	Value = 5
-		# 	SpecialValue = @{
-		# 		Type = "Range"
-		# 		Value = "5 seconds or fewer" #TODO: Need real value
-		# 	}
-		# }
-		# @{
-		# 	Id    = "18.4.10"
-		# 	Task  = "Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
+			Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+			Name  = "ScreenSaverGracePeriod"
+			Value = 5
+			SpecialValue = @{
+				Type = "Range"
+				Value = "5 seconds or less"
+			}
+		}
+		@{
+			Id    = "18.4.10"
+			Task  = "Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters"
-		# 	Name  = "TcpMaxDataRetransmissions"
-		# 	Value = 3 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.4.11"
-		# 	Task  = "Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters"
+			Name  = "TcpMaxDataRetransmissions"
+			Value = 3
+		}
+		@{
+			Id    = "18.4.11"
+			Task  = "Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-		# 	Name  = "TcpMaxDataRetransmissions"
-		# 	Value = 3 #TODO: Need real value
-		# }
-		# @{
-		# 	Id    = "18.4.12"
-		# 	Task  = "Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'"
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+			Name  = "TcpMaxDataRetransmissions"
+			Value = 3
+		}
+		@{
+			Id    = "18.4.12"
+			Task  = "Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'"
 		
-		# 	Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security"
-		# 	Name  = "WarningLevel"
-		# 	Value = 1 #TODO: Need real value
-		# }
+			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security"
+			Name  = "WarningLevel"
+			Value = 90
+			SpecialValue = @{
+				Type = "Range"
+				Value = "90 percent or less"
+			}
+		}
 
 		# Network
 		@{
@@ -878,7 +890,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application"
 			Name  = "Retention"
-			Value = 0
+			Value = "0"
 		}
 		@{
 			Id    = "18.9.26.2.1"
@@ -886,7 +898,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security"
 			Name  = "Retention"
-			Value = 0
+			Value = "0"
 		}
 		@{
 			Id    = "18.9.26.3.1"
@@ -894,7 +906,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup"
 			Name  = "Retention"
-			Value = 0
+			Value = "0"
 		}
 		@{
 			Id    = "18.9.26.3.2"
@@ -914,7 +926,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System"
 			Name  = "Retention"
-			Value = 0
+			Value = "0"
 		}
 		@{
 			Id    = "18.9.39.2"
@@ -1088,7 +1100,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.1.2 B"
@@ -1096,7 +1108,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "3b576869-a4ec-4529-8536-b80a7769e899"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.1.2 C"
@@ -1104,7 +1116,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.1.2 D"
@@ -1112,7 +1124,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.1.2 E"
@@ -1120,7 +1132,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.1.2 F"
@@ -1128,7 +1140,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "d3e037e1-3eb8-44c8-a917-57927947596d"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.1.2 G"
@@ -1136,7 +1148,7 @@
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
 			Name  = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "18.9.76.13.3.1"
@@ -1154,13 +1166,13 @@
 			Name  = "DisableAntiSpyware"
 			Value = 0
 		}
-		@{
+		@{ # found under Computer Configuration\Administrative Templates\Windows Components\Windows Security\App and browser protection
 			Id    = "18.9.79.1.1"
 			Task  = "Ensure 'Prevent users from modifying settings' is set to 'Enabled'"
 		
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection"
 			Name  = "DisallowExploitProtectionOverride"
-			Value = 1 #TODO: Need real value
+			Value = 1
 		}
 		@{
 			Id    = "18.9.80.1.1 A"
