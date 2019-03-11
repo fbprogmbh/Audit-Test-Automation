@@ -92,7 +92,8 @@
 
 			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name  = "NullSessionPipes"
-			Value = ""
+			Value = @("")
+			ValueType  = "MultiString"
 		}
 		@{
 			Id    = "2.3.10.8"
@@ -132,7 +133,8 @@
 
 			Path  = "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters"
 			Name  = "NullSessionShares"
-			Value = ""
+			Value = @("")
+			ValueType  = "MultiString"
 		}
 		@{
 			Id    = "2.3.10.13"

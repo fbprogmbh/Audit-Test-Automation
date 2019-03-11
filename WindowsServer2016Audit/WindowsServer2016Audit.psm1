@@ -198,24 +198,18 @@ function PreprocessSpecialValueSetting {
 
 		$value = $InputObject.Value
 
-		if ($value.Count -gt 1) {
-			$InputObject.ExpectedValue = $value -join ", "
-			$InputObject.Predicate     = {
-				param([string[]]$xs)
-				
-				if ($xs.Count -ne $value.Count) {
-					return $false
-				}
-				
-				$comparisonFunction = [Func[string, string, Boolean]]{ param($a, $b) $a -eq $b }
-				$comparison = [System.Linq.Enumerable]::Zip([string[]]$value, $xs, $comparisonFunction)
-				return $comparison -notcontains $false
-			}.GetNewClosure()
-			return $InputObject
-		}
-
-		$InputObject.ExpectedValue = $value
-		$InputObject.Predicate     = { param([string] $x) $value -eq $x }.GetNewClosure()
+		$InputObject.ExpectedValue = $value -join ", "
+		$InputObject.Predicate     = {
+			param([string[]]$xs)
+			
+			if ($xs.Count -ne $value.Count) {
+				return $false
+			}
+			
+			$comparisonFunction = [Func[string, string, Boolean]]{ param($a, $b) $a -eq $b }
+			$comparison = [System.Linq.Enumerable]::Zip([string[]]$value, $xs, $comparisonFunction)
+			return $comparison -notcontains $false
+		}.GetNewClosure()
 		return $InputObject
 	}
 }
@@ -457,12 +451,13 @@ function Get-RegistryAudit {
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[AllowEmptyString()]
-		[object[]] $Value,
+		[AllowEmptyCollection()]
+		[string[]] $Value,
 
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[ScriptBlock] $Predicate,
 
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[String] $ExpectedValue,
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
@@ -487,7 +482,7 @@ function Get-RegistryAudit {
 				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
 
-					$regValue = $regValues -join ", "
+				$regValue = $regValues -join ", "
 
 				return [AuditInfo]@{
 					Id = $Id
