@@ -73,11 +73,60 @@
 			Value = 0
 		}
 		@{
+			Id    = "WN16-CC-000090 A"
+			Task  = "Hardened UNC paths must be defined to require mutual authentication and integrity for at least the \\*\SYSVOL and \\*\NETLOGON shares."
+
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths"
+			Name  = "\\*\NETLOGON"
+			Value = "RequireMutualAuthentication=1, RequireIntegrity=1"
+		}
+		@{
+			Id    = "WN16-CC-000090 B"
+			Task  = "Hardened UNC paths must be defined to require mutual authentication and integrity for at least the \\*\SYSVOL and \\*\NETLOGON shares."
+
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths"
+			Name  = "\\*\SYSVOL"
+			Value = "RequireMutualAuthentication=1, RequireIntegrity=1"
+		}
+		@{
 			Id    = "WN16-CC-000100"
 			Task  = "Command line data must be included in process creation events."
 
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
 			Name  = "ProcessCreationIncludeCmdLine_Enabled"
+			Value = 1
+		}
+		@{
+			Id    = "WN16-CC-000110 A"
+			Task  = "Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection."
+
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
+			Name  = "EnableVirtualizationBasedSecurity"
+			Value = 1
+		}
+		@{
+			Id    = "WN16-CC-000110 B"
+			Task  = "Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection."
+
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
+			Name  = "RequirePlatformSecurityFeatures"
+			Value = 3
+		}
+		@{
+			Id    = "WN16-CC-000120"
+			Task  = "Credential Guard must be running on domain-joined member servers."
+			Role = "MemberServer"
+
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
+			Name  = "LsaCfgFlags"
+			Value = 1
+		}
+		@{
+			Id    = "WN16-CC-000130"
+			Task  = "Virtualization-based protection of code integrity must be enabled on domain-joined systems."
+
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
+			Name  = "HypervisorEnforcedCodeIntegrity"
 			Value = 1
 		}
 		@{
@@ -848,55 +897,9 @@
 			Value = "1"
 		}
 
-		@{
-			Id    = "WN16-CC-000090 A"
-			Task  = "Hardened UNC paths must be defined to require mutual authentication and integrity for at least the \\*\SYSVOL and \\*\NETLOGON shares."
 
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths"
-			Name  = "\\*\NETLOGON"
-			Value = "RequireMutualAuthentication=1, RequireIntegrity=1"
-		}
-		@{
-			Id    = "WN16-CC-000090 B"
-			Task  = "Hardened UNC paths must be defined to require mutual authentication and integrity for at least the \\*\SYSVOL and \\*\NETLOGON shares."
 
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths"
-			Name  = "\\*\SYSVOL"
-			Value = "RequireMutualAuthentication=1, RequireIntegrity=1"
-		}
-		@{
-			Id    = "WN16-CC-000110 A"
-			Task  = "Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection."
 
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
-			Name  = "EnableVirtualizationBasedSecurity"
-			Value = 1
-		}
-		@{
-			Id    = "WN16-CC-000110 B"
-			Task  = "Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection."
-
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
-			Name  = "RequirePlatformSecurityFeatures"
-			Value = 3
-		}
-		@{
-			Id    = "WN16-CC-000120"
-			Task  = "Credential Guard must be running on domain-joined member servers."
-			Role = "MemberServer"
-
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
-			Name  = "LsaCfgFlags"
-			Value = 1
-		}
-		@{
-			Id    = "WN16-CC-000130"
-			Task  = "Virtualization-based protection of code integrity must be enabled on domain-joined systems."
-
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard"
-			Name  = "HypervisorEnforcedCodeIntegrity"
-			Value = 1
-		}
 	)
 	UserRights = @(
 		@{
