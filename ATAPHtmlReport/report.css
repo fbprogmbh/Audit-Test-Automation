@@ -22,6 +22,18 @@ li a:hover {
 	background-color: #f2f2f2;
 }
 
+.gauge {
+	height: 25px;
+	background: #a7a7a7;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.gauge .gauge-meter {
+	height: 100%;
+	display: inline-block;
+}
+
 table {
 	border-collapse: collapse;
     font-family: Arial, sans-serif;
@@ -52,7 +64,7 @@ table.audit-info tr:nth-child(even) {
 
 /* First column in an audit-info table */
 table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
-	text-align: right;
+	text-align: left;
 	white-space: nowrap;
     width: 40px;
 }

@@ -217,6 +217,45 @@ function Get-ATAPHostInformation {
 	}
 }
 
+function Get-CompletionStatus {
+	param(
+		[AuditInfo[]] $AuditInfos
+	)
+
+	$totalCount = $AuditInfos.Count
+	$status = @{
+		TotalCount = $totalCount
+	}
+	foreach ($value in [auditstatus].GetEnumValues()) {
+		$count = ($AuditInfos | Where-Object { $_.Audit -eq $value }).Count
+		$status[$value] = @{
+			Count = $count
+			Percent = (100 * ($count / $totalCount)).ToString("##.##", [cultureinfo]::InvariantCulture)
+		}
+	}
+
+	return $status
+}
+
+function Extract-AuditInfos {
+	param(
+		[hashtable[]] $Sections
+	)
+
+	[AuditInfo[]]$auditInfos = @()
+
+	foreach ($Section in $Sections) {
+		if ($Section.Keys -contains "AuditInfos") {
+			$auditInfos += $Section.AuditInfos
+		}
+		if ($Section.Keys -contains "SubSections") {
+			$auditInfos += Extract-AuditInfos -Sections $Section.SubSections
+		}
+	}
+
+	return $auditInfos
+}
+
 function Get-ATAPHtmlReport {
 	<#
 	.Synopsis
@@ -262,6 +301,8 @@ function Get-ATAPHtmlReport {
 	$cssPath = $scriptRoot | Join-path -ChildPath $cssDocument
 	$css = Get-Content $cssPath
 
+	$completionStatus = Get-CompletionStatus -AuditInfos (Extract-AuditInfos -Sections $Sections)
+
 	# HTML <head> markup
 	$head = "<meta charset=`"UTF-8`">"
 	$head += "<meta name=`"viewport`" content=`"width=device-width, initial-scale=1.0`">"
@@ -279,6 +320,7 @@ function Get-ATAPHtmlReport {
 	$body += "</div>"
 	# Main section
 	$body += "<p>This report was generated at $((Get-Date)) on $($HostInformation.Hostname).</p>"
+	# Host information
 	$body += "<table>"
 	$body += "<tbody>"
 	foreach ($Key in $HostInformation.Keys) {
@@ -288,6 +330,19 @@ function Get-ATAPHtmlReport {
 	}
 	$body += "</tbody>"
 	$body += "</table>"
+	# Summary
+	$body += "<h1>Summary</h1>"
+	# $body += "<p>"
+	$body += "<p>A total of {0} tests have been run. {1} resulted in false. {2} resulted in warning.</p>" -f `
+		$completionStatus.TotalCount, $completionStatus[[AuditStatus]::False].Count, $completionStatus[[AuditStatus]::Warning].Count
+	$body += "<div class=`"gauge`">"
+	foreach ($value in [auditstatus].GetEnumValues()) {
+		$htmlClass = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $value
+		$percent = $completionStatus[$value].Percent
+		$body += "<div class=`"gauge-meter {0}`" style=`"width: {1}%`" title=`"{2}`"></div>" -f `
+			$htmlClass, $percent, $completionStatus[$value].Count
+	}
+	$body += "</div>"
 	# Section navigation
 	$body += "<h1>Navigation</h1>"
 	$body += "<p>Click the link(s) below for quick access to a report section.</p>"
@@ -297,5 +352,5 @@ function Get-ATAPHtmlReport {
 
 	$html = "<!DOCTYPE html><html lang=`"en`"><head>$head</head><body>$body</body></html> "
 
-	$html > $Path
+	$html | Out-File $Path
 }
