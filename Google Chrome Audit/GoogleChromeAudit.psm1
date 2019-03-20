@@ -240,6 +240,7 @@ function Convert-ToAuditInfo {
 #region Audit functions
 function Get-RegistryAudit {
 [CmdletBinding()]
+[OutputType([AuditInfo])]
 Param(
 	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 	[string] $Id,
@@ -309,7 +310,7 @@ Param(
 		catch [System.Management.Automation.ItemNotFoundException] {
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 				-Message "$($Id): Could not get key $Name in registry key $path."
-            
+
             if ($DoesNotExist) {
 				return [AuditInfo]@{
 					Id = $Id
