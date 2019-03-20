@@ -107,19 +107,14 @@
 			Path  = "HKLM:\Software\Policies\Google\Chrome\"
 			Name  = "SyncDisabled"
 			Value = 1
-		}<#
+		}
 		@{
 			Id    = "DTBC-0021"
 			Task  = "The URL protocol schema javascript must be disabled."
 			Path  = "HKLM:\Software\Policies\Google\Chrome\URLBlacklist"
-			Name  = "URLBlacklist key"
-			Value = javascript://* under the Policy Value column
-
-Windows method:
-   1. Start regedit
-   2. Navigate to HKLM\Software\Policies\Google\Chrome\URLBlacklist
-   3. If the URLBlacklist key does not exist, or the does not contain entries 1 set to javascript://*,  then this is a finding.
-		}#>
+			Name  = "1"
+			Value = "javascript://*"
+		}
 		@{
 			Id    = "DTBC-0023"
 			Task  = "Cloud print sharing must be disabled."
@@ -161,6 +156,7 @@ Windows method:
 			Path  = "HKLM:\Software\Policies\Google\Chrome\"
 			Name  = "IncognitoModeAvailability"
 			Value = 1
+            DoesNotExist = $true
 		}
 		@{
 			Id    = "DTBC-0037"
@@ -171,7 +167,7 @@ Windows method:
 		}
 		@{
 			Id    = "DTBC-0038"
-			Task  = "Safe Browsing must be enabled,"
+			Task  = "Safe Browsing must be enabled."
 			Path  = "HKLM:\Software\Policies\Google\Chrome\"
 			Name  = "SafeBrowsingEnabled"
 			Value = 1
