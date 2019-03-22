@@ -336,7 +336,6 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\outlook\security"
 			Name  = "AuthenticationService"
 			Value = 16
-            #16  or 10 (hex)
 		}
 		@{
 			Id    = "DTOO283"
