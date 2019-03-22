@@ -5,7 +5,7 @@
 		@{
 			Id    = "DTBI014-IE11"
 			Task  = "Turn off Encryption Support must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings!SecureProtocols."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings"
 			Name  = "SecureProtocols"
 			Value = 2560
 		}
@@ -15,6 +15,13 @@
 			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings"
 			Name  = "WarnOnBadCertRecving"
 			Value = 1
+		}
+        @{
+			Id    = "DTBI018-IE11"
+			Task  = "Check for publishers certificate revocation must be enforced."
+			Path  = "HKCU:\Software\Microsoft\Windows\CurrentVersion\WinTrust\Trust Providers\Software Publishing"
+			Name  = "State"
+			Value = 146432
 		}
 		@{
 			Id    = "DTBI022-IE11"
@@ -75,7 +82,7 @@
 		@{
 			Id    = "DTBI039-IE11"
 			Task  = "Navigating windows and frames across different domains must be disallowed (Internet zone)."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\InternetSettings\Zones\3"
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3"
 			Name  = "1607"
 			Value = 3
 		}
@@ -359,6 +366,41 @@
 			Name  = "2200"
 			Value = 3
 		}
+    	@{
+			Id    = "DTBI425-IE11"
+			Task  = "Java permissions must be disallowed (Local Machine zone)."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\0"
+			Name  = "1C00"
+			Value = 0
+		}
+		@{
+			Id    = "DTBI430-IE11"
+			Task  = "Java permissions must be disallowed (Locked Down Local Machine zone)."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Lockdown_Zones\0"
+			Name  = "1C00"
+			Value = 0
+		}
+		@{
+			Id    = "DTBI435-IE11"
+			Task  = "Java permissions must be disallowed (Locked Down Intranet zone)."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Lockdown_Zones\1"
+			Name  = "1C00"
+			Value = 0
+		}
+		@{
+			Id    = "DTBI440-IE11"
+			Task  = "Java permissions must be disallowed (Locked Down Trusted Sites zone)."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Lockdown_Zones\2"
+			Name  = "1C00"
+			Value = 0
+		}
+        @{
+			Id    = "DTBI450-IE11"
+			Task  = "Java permissions must be disallowed (Locked Down Restricted Sites zone)."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Lockdown_Zones\4"
+			Name  = "1C00"
+			Value = 0
+		}
 		@{
 			Id    = "DTBI455-IE11"
 			Task  = "XAML files must be disallowed (Internet zone)."
@@ -583,12 +625,26 @@
 			Name  = "Use FormSuggest"
 			Value = "no"
 		}
+        @{
+			Id    = "DTBI715-IE11"
+			Task  = "Crash Detection management must be enforced."
+			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\Restrictions"
+			Name  = "NoCrashDetection"
+			Value = 1
+		}
 		@{
 			Id    = "DTBI725-IE11"
 			Task  = "Turn on the auto-complete feature for user names and passwords on forms must be disabled."
 			Path  = "HKCU:\Software\Policies\Microsoft\Internet Explorer\Main"
 			Name  = "FormSuggest PW Ask"
 			Value = "no"
+		}
+        @{
+			Id    = "DTBI740-IE11"
+			Task  = "Managing SmartScreen Filter use must be enforced."
+			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter"
+			Name  = "EnabledV9"
+			Value = 1
 		}
 		@{
 			Id    = "DTBI760-IE11"
@@ -752,6 +808,13 @@
 			Value = 1
 		}
 		@{
+			Id    = "DTBI990-IE11"
+			Task  = "Dragging of content from different domains across windows must be disallowed (Internet zone)."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3"
+			Name  = "2709"
+			Value = 3
+		}
+		@{
 			Id    = "DTBI995-IE11"
 			Task  = "Enhanced Protected Mode functionality must be enforced."
 			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main"
@@ -803,63 +866,63 @@
 		@{
 			Id    = "DTBI1060-IE11"
 			Task  = "Prevent bypassing SmartScreen Filter warnings must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter."
+			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter"
 			Name  = "PreventOverride"
 			Value = 1
 		}
 		@{
 			Id    = "DTBI1065-IE11"
 			Task  = "Prevent bypassing SmartScreen Filter warnings about files that are not commonly downloaded from the internet must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter."
+			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\PhishingFilter"
 			Name  = "PreventOverrideAppRepUnknown"
 			Value = 1
 		}
 		@{
 			Id    = "DTBI1070-IE11"
 			Task  = "Prevent per-user installation of ActiveX controls must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\Security\ActiveX."
+			Path  = "HKLM:\Software\Policies\Microsoft\Internet Explorer\Security\ActiveX"
 			Name  = "BlockNonAdminActiveXInstall"
 			Value = 1
 		}
 		@{
 			Id    = "DTBI1075-IE11"
 			Task  = "Prevent ignoring certificate errors option must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings"
 			Name  = "PreventIgnoreCertErrors"
 			Value = 1
 		}
 		@{
 			Id    = "DTBI1080-IE11"
 			Task  = "Turn on SmartScreen Filter scan option for the Internet Zone must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3"
 			Name  = "2301"
 			Value = 0
 		}
 		@{
 			Id    = "DTBI1085-IE11"
 			Task  = "Turn on SmartScreen Filter scan option for the Restricted Sites Zone must be enabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\4."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\4"
 			Name  = "2301"
 			Value = 0
 		}
 		@{
 			Id    = "DTBI1090-IE11"
 			Task  = "The Initialize and script ActiveX controls not marked as safe must be disallowed (Intranet Zone)."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\1."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\1"
 			Name  = "1201"
 			Value = 3
 		}
 		@{
 			Id    = "DTBI1095-IE11"
 			Task  = "The Initialize and script ActiveX controls not marked as safe must be disallowed (Trusted Sites Zone)."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\2."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\2"
 			Name  = "1201"
 			Value = 3
 		}
 		@{
 			Id    = "DTBI1100-IE11"
 			Task  = "Allow Fallback to SSL 3.0 (Internet Explorer) must be disabled."
-			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings."
+			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings"
 			Name  = "EnableSSL3Fallback"
 			Value = 0
 		}
@@ -894,7 +957,7 @@
 		#This policy setting will only exist on Windows 10 Redstone 2 or later, and is otherwise not applicable.
 		@{
 			Id    = "DTBI1125-IE11"
-			Task  = "VBScript must not be allowed to run in Internet Explorer (Internet zone)."
+			Task  = "VBScript must not be allowed to run in Internet Explorer (Internet zone).(This policy setting will only exist on Windows 10 Redstone 2 or later)"
 			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3"
 			Name  = "140C"
 			Value = 3
@@ -902,7 +965,7 @@
 		#This policy setting will only exist on Windows 10 Redstone 2 or later, and is otherwise not applicable.
 		@{
 			Id    = "DTBI1130-IE11"
-			Task  = "VBScript must not be allowed to run in Internet Explorer (Restricted Sites zone)."
+			Task  = "VBScript must not be allowed to run in Internet Explorer (Restricted Sites zone).(This policy setting will only exist on Windows 10 Redstone 2 or later)"
 			Path  = "HKLM:\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\4"
 			Name  = "140C"
 			Value = 3
