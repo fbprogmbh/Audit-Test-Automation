@@ -339,8 +339,8 @@ function Get-ATAPHtmlReport {
 	foreach ($value in [auditstatus].GetEnumValues()) {
 		$htmlClass = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $value
 		$percent = $completionStatus[$value].Percent
-		$body += "<div class=`"gauge-meter {0}`" style=`"width: {1}%`" title=`"{2}`"></div>" -f `
-			$htmlClass, $percent, $completionStatus[$value].Count
+		$body += "<div class=`"gauge-meter {0}`" style=`"width: {1}%`" title=`"{2}: {3} test(s), {1}%`"></div>" -f `
+			$htmlClass, $percent, $value.ToString(), $completionStatus[$value].Count
 	}
 	$body += "</div>"
 	# Section navigation

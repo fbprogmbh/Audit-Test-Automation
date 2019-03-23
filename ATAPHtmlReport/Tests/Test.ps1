@@ -37,7 +37,7 @@ $args = @{
     Title = "IIS 10 Benchmark Report"
     ModuleName = "IIS10Audit"
     BasedOn = "CIS Microsoft IIS 10 Benchmark v1.0.0 - 03-31-2017"
-    DarkMode = $true
+    # DarkMode = $true
 }
 
 
