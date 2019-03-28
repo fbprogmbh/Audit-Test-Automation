@@ -243,8 +243,10 @@ Param(
     $completionStatus    
 )
     $css = ""
-    if ($completionStatus[[AuditStatus]::True].Percent -gt 50) {
-        $degree = 180 + ((($completionStatus[[AuditStatus]::True].Percent-50)/1) * 3.6)
+    $percent = $completionStatus[[AuditStatus]::True].Percent / 1
+
+    if ($percent -gt 50) {
+        $degree = 180 + ((($percent-50)/1) * 3.6)
         $css += ".donut-chart.chart {width: 200px; height: 200px; background: #e1e1e1;}"
         $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg); background: #33cc33;}"
         $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg); background: #33cc33;}"
@@ -252,7 +254,7 @@ Param(
         $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: #33cc33;}"
     }
     else {
-        $degree = 90 + (($completionStatus[[AuditStatus]::True].Percent/1) * 3.6)
+        $degree = 90 + ($percent * 3.6)
         $css += ".donut-chart.chart {width: 200px; height: 200px; background: #cc0000;}"
         $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg); background: #e1e1e1;}"
         $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg); background: #e1e1e1;}"
@@ -261,7 +263,7 @@ Param(
     }
 
 
-    $css += ".donut-chart.chart .chart-center span:after {content: `"$($completionStatus[[AuditStatus]::True].Percent)%`";}"
+    $css += ".donut-chart.chart .chart-center span:after {content: `"$percent %`";}"
 
     return $css
 }

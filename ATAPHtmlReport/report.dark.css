@@ -142,6 +142,10 @@ a.totop:hover {
 	color: #ff9924;
 }
 
+#host-information {
+	float: left;
+}
+
 /* Overall compliance donut chart */
 
 .card {
