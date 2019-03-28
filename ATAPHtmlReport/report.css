@@ -123,3 +123,36 @@ a.totop:hover {
 	background-color: #dddddd;;
 	color: blue;
 }
+
+#host-information {
+	float: left;
+}
+
+/* Overall compliance donut chart */
+
+.card {
+  float: right;
+  margin: 0 100px 0 0;
+  width: 250px;
+}
+
+.donut-chart {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.donut-chart .slice {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.donut-chart .chart-center {
+  position: absolute;
+  border-radius: 50%;
+}
+.donut-chart .chart-center span {
+  display: block;
+  text-align: center;
+}

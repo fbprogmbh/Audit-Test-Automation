@@ -237,6 +237,35 @@ function Get-CompletionStatus {
 	return $status
 }
 
+function Get-OverallComplianceCSS {
+[CmdletBinding()]
+Param(
+    $completionStatus    
+)
+    $css = ""
+    if ($completionStatus[[AuditStatus]::True].Percent -gt 50) {
+        $degree = 180 + ((($completionStatus[[AuditStatus]::True].Percent-50)/1) * 3.6)
+        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #e1e1e1;}"
+        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg); background: #33cc33;}"
+        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg); background: #33cc33;}"
+        $css += ".donut-chart.chart .chart-center {top: 25px; left: 25px; width: 150px; height: 150px; background: #fff;}"
+        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: #33cc33;}"
+    }
+    else {
+        $degree = 90 + (($completionStatus[[AuditStatus]::True].Percent/1) * 3.6)
+        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #cc0000;}"
+        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg); background: #e1e1e1;}"
+        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg); background: #e1e1e1;}"
+        $css += ".donut-chart.chart .chart-center {top: 25px; left: 25px; width: 150px; height: 150px; background: #fff;}"
+        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: #cc0000;}"
+    }
+
+
+    $css += ".donut-chart.chart .chart-center span:after {content: `"$($completionStatus[[AuditStatus]::True].Percent)%`";}"
+
+    return $css
+}
+
 function Extract-AuditInfos {
 	param(
 		[hashtable[]] $Sections
@@ -287,7 +316,9 @@ function Get-ATAPHtmlReport {
 
 		[hashtable[]] $Sections,
 
-		[switch] $DarkMode
+		[switch] $DarkMode,
+
+        [switch] $complianceStatus
 	)
 
 	$scriptRoot = Split-Path -Parent $PSCommandPath
@@ -308,7 +339,9 @@ function Get-ATAPHtmlReport {
 	$head += "<meta name=`"viewport`" content=`"width=device-width, initial-scale=1.0`">"
 	$head += "<meta http-equiv=`"X-UA-Compatible`" content=`"ie=edge`">"
 	$head += "<title>$Title [$(Get-Date)]</title>"
-	$head += "<style>$css</style>"
+	$head += "<style>$css"
+    $head += Get-OverallComplianceCSS $completionStatus
+    $head += "</style>"
 
 	# HTML <body> markup
 	# Header
@@ -319,6 +352,7 @@ function Get-ATAPHtmlReport {
 	$body += "<p>Based on $($BasedOn -join ", ").</p>"
 	$body += "</div>"
 	# Main section
+    $body += "<div id=`"host-information`">"
 	$body += "<p>This report was generated at $((Get-Date)) on $($HostInformation.Hostname).</p>"
 	# Host information
 	$body += "<table>"
@@ -330,8 +364,21 @@ function Get-ATAPHtmlReport {
 	}
 	$body += "</tbody>"
 	$body += "</table>"
+    $body += "</div>"
+    if ($complianceStatus) {
+        $body += "<div class=`"card`">
+                    <h2>Compliance status</h2>
+                    <div class=`"donut-chart chart`">
+                        <div class=`"slice one`"></div>
+                        <div class=`"slice two`"></div>
+                        <div class=`"chart-center`">
+                            <span></span>
+                        </div>
+                    </div>
+                  </div>"
+    }
 	# Summary
-	$body += "<h1>Summary</h1>"
+	$body += "<h1 style=`"clear:both; padding-top: 50px;`">Summary</h1>"
 	# $body += "<p>"
 	$body += "<p>A total of {0} tests have been run. {1} resulted in false. {2} resulted in warning.</p>" -f `
 		$completionStatus.TotalCount, $completionStatus[[AuditStatus]::False].Count, $completionStatus[[AuditStatus]::Warning].Count
