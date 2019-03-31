@@ -1216,14 +1216,15 @@
 			Name  = "EnableTranscripting"
 			Value = 0
 		}
-		@{
-			Id    = "18.9.97.2.2"
-			Task  = "Ensure 'Allow remote server management through WinRM' is set to 'Disabled'"
+		# breaks PowerShell DSC
+		# @{
+		# 	Id    = "18.9.97.2.2"
+		# 	Task  = "Ensure 'Allow remote server management through WinRM' is set to 'Disabled'"
 		
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service"
-			Name  = "AllowAutoConfig"
-			Value = 0
-		}
+		# 	Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service"
+		# 	Name  = "AllowAutoConfig"
+		# 	Value = 0
+		# }
 		@{
 			Id    = "18.9.98.1"
 			Task  = "Ensure 'Allow Remote Shell Access' is set to 'Disabled'"
