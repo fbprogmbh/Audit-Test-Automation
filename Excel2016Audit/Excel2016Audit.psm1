@@ -38,7 +38,7 @@ using namespace System.Security.AccessControl
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
 #region Import tests configuration settings
-$DisaRequirements = Import-LocalizedData -FileName "MS_Excel_2016_DISA_STIG_V1R1.psd1"
+$DisaRequirements = Import-LocalizedData -FileName "MS_Excel_2016_DISA_STIG_V1R2.psd1"
 #endregion
 
 
