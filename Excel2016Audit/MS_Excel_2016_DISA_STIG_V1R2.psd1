@@ -4,6 +4,13 @@
 @{
 	RegistrySettings = @(
 		@{
+			Id    = "DTOO104"
+			Task  = "Disabling of user name and password syntax from being used in URLs must be enforced."
+			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_HTTP_USERNAME_PASSWORD_DISABLE"
+			Name  = "excel.exe"
+			Value = 1
+		}
+		@{
 			Id    = "DTOO105"
 			Task  = "Open/Save actions for Excel 4 macrosheets and add-in files must be blocked."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\excel\security\fileblock"
