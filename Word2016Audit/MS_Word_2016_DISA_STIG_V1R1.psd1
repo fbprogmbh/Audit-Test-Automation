@@ -4,6 +4,13 @@
 @{
 	RegistrySettings = @(
 		@{
+			Id    = "DTOO104"
+			Task  = "Disabling of user name and password syntax from being used in URLs must be enforced."
+			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_HTTP_USERNAME_PASSWORD_DISABLE"
+			Name  = "winword.exe"
+			Value = 1
+		}
+		@{
 			Id    = "DTOO110"
 			Task  = "Blocking as default file block opening behavior must be enforced."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\word\security\fileblock"
@@ -159,6 +166,13 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\Word\security\filevalidation"
 			Name  = "DisableEditFromPV"
 			Value = 1  
+		}
+		@{
+			Id    = "DTOO293"
+			Task  = "Attachments opened from Outlook must be in Protected View."
+			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\word\security\protectedview"
+			Name  = "DisableAttachmentsInPV"
+			Value = 0
 		}
 		@{
 			Id    = "DTOO302"
