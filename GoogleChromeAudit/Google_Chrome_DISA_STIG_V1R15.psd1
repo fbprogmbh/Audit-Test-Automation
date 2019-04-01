@@ -156,7 +156,7 @@
 			Path  = "HKLM:\Software\Policies\Google\Chrome\"
 			Name  = "IncognitoModeAvailability"
 			Value = 1
-            DoesNotExist = $true
+            # DoesNotExist = $true
 		}
 		@{
 			Id    = "DTBC-0037"
