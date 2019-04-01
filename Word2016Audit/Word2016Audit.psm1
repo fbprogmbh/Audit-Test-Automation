@@ -1,6 +1,4 @@
-﻿#Requires -RunAsAdministrator
-
-<#
+﻿<#
 BSD 3-Clause License
 
 Copyright (c) 2019, FB Pro GmbH
@@ -217,22 +215,6 @@ Param(
 		$InputObject.ExpectedValue = $value
 		$InputObject.Predicate     = { param([string] $x) $value -eq $x }.GetNewClosure()
 		return $InputObject
-	}
-}
-
-function Convert-ToAuditInfo {
-	param (
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[Psobject] $auditObject
-	)
-
-	process {
-		return [AuditInfo]@{
-			Id      = $auditObject.Name
-			Task    = $auditObject.Task
-			Message = $auditObject.Status
-			Audit   = $auditObject.Passed
-		}
 	}
 }
 #endregion
