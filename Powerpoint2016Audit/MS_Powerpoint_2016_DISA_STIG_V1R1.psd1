@@ -4,6 +4,13 @@
 @{
 	RegistrySettings = @(
 		@{
+			Id    = "DTOO104"
+			Task  = "Disabling of user name and password syntax from being used in URLs must be enforced in PowerPoint."
+			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_HTTP_USERNAME_PASSWORD_DISABLE"
+			Name  = "powerpnt.exe"
+			Value = 1
+		}
+		@{
 			Id    = "DTOO110"
 			Task  = "Blocking as default file block opening behavior must be enforced."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\fileblock"
@@ -93,7 +100,7 @@
 			Task  = "The Save commands default file format must be configured."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\options"
 			Name  = "DefaultFormat"
-			Value = 27
+			Value = 27 # or 1b hex
 		}
 		@{
 			Id    = "DTOO142"
@@ -146,6 +153,13 @@
 			Name  = "VBAWarnings"
 			Value = 2
             #TODO Values of REG_DWORD = 3 or 4 are also acceptable values.
+		}
+		@{
+			Id    = "DTOO501"
+			Task  = "Disabling of user name and password syntax from being used in URLs must be enforced in PowerPoint Viewer. "
+			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_HTTP_USERNAME_PASSWORD_DISABLE"
+			Name  = "pptview.exe"
+			Value = 1
 		}
 		@{
 			Id    = "DTOO502"
