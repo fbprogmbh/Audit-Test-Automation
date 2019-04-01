@@ -1,6 +1,4 @@
-﻿#Requires -RunAsAdministrator
-
-<#
+﻿<#
 BSD 3-Clause License
 
 Copyright (c) 2019, FB Pro GmbH
@@ -40,7 +38,7 @@ using namespace System.Security.AccessControl
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
 #region Import tests configuration settings
-$DisaRequirements = Import-LocalizedData -FileName "MS_Outlook_2016_DISA_STIG_V1R1.psd1"
+$DisaRequirements = Import-LocalizedData -FileName "MS_Outlook_2016_DISA_STIG_V1R2.psd1"
 #endregion
 
 #region Logging functions
@@ -216,22 +214,6 @@ Param(
 		$InputObject.ExpectedValue = $value
 		$InputObject.Predicate     = { param([string] $x) $value -eq $x }.GetNewClosure()
 		return $InputObject
-	}
-}
-
-function Convert-ToAuditInfo {
-	param (
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[Psobject] $auditObject
-	)
-
-	process {
-		return [AuditInfo]@{
-			Id      = $auditObject.Name
-			Task    = $auditObject.Task
-			Message = $auditObject.Status
-			Audit   = $auditObject.Passed
-		}
 	}
 }
 #endregion
@@ -413,58 +395,8 @@ function Get-HtmlReport {
 						Title = "Registry Settings/Group Policies"
 						AuditInfos = Get-DisaAudit -RegistrySettings | Sort-Object -Property Id
 					}
-					<#@{
-						Title = "User Rights Assignment"
-						AuditInfos = Get-DisaAudit -UserRights | Sort-Object -Property Id
-					},
-					@{
-						Title = "Account Policies"
-						AuditInfos = Get-DisaAudit -AccountPolicies | Sort-Object -Property Id
-					},
-					@{
-						Title = "Windows Features"
-						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
-					},
-					@{
-						Title = "File System Permissions"
-						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
-					},
-					@{
-						Title = "Registry Permissions"
-						AuditInfos = Get-DisaAudit -RegistryPermissions | Sort-Object -Property Id
-					},
-					@{
-						Title = "Other"
-						AuditInfos = Get-DisaAudit -OtherAudits -PerformanceOptimized:$PerformanceOptimized | Sort-Object -Property Id
-					}#>
 				)
 			}
-			<#@{
-				Title = "CIS Benchmarks"
-				Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-				SubSections = @(
-					@{
-						Title = "Registry Settings/Group Policies"
-						AuditInfos = Get-CisAudit -RegistrySettings # | Sort-Object -Property Id
-					}
-					@{
-						Title = "User Rights Assignment"
-						AuditInfos = Get-CisAudit -UserRights | Sort-Object -Property Id
-					}
-					@{
-						Title = "Account Policies"
-						AuditInfos = Get-CisAudit -AccountPolicies | Sort-Object -Property Id
-					}
-					@{
-						Title = "Windows Firewall with Advanced Security"
-						AuditInfos = Get-CisAudit -FirewallProfiles | Sort-Object -Property Id
-					}
-					@{
-						Title = " Advanced Audit Policy Configuration"
-						AuditInfos = Get-CisAudit -AuditPolicies | Sort-Object -Property Id
-					}
-				)
-			}#>
 		)
 
 		Get-ATAPHtmlReport `
