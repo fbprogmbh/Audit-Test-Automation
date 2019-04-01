@@ -4,6 +4,13 @@
 @{
 	RegistrySettings = @(
 		@{
+			Id    = "DTOO104"
+			Task  = "Disabling of user name and password syntax from being used in URLs must be enforced."
+			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_HTTP_USERNAME_PASSWORD_DISABLE"
+			Name  = "outlook.exe"
+			Value = 1
+		}
+		@{
 			Id    = "DTOO111"
 			Task  = "Enabling IE Bind to Object functionality must be present."
 			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_SAFE_BINDTOOBJECT"
@@ -85,7 +92,7 @@
 			Task  = "Level of calendar details that a user can publish must be restricted."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\outlook\options\pubcal"
 			Name  = "PublishCalendarDetailsPolicy"
-			Value = 16384
+			Value = 16384 # or 4000
 		}
 		@{
 			Id    = "DTOO219"
@@ -335,7 +342,7 @@
 			Task  = "Outlook must be configured to force authentication when connecting to an Exchange server."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\outlook\security"
 			Name  = "AuthenticationService"
-			Value = 16
+			Value = 16 # or 10
 		}
 		@{
 			Id    = "DTOO283"
