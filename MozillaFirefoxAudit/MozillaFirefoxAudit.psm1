@@ -148,11 +148,11 @@ class LockPrefSetting {
 #region Helper functions
 
 function PreprocessSpecialValueSetting {
-[CmdletBinding()]
-Param(
-	[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-	[hashtable] $InputObject
-)
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable] $InputObject
+	)
 
 	Process {
 		if ($InputObject.Keys -contains "SpecialValue") {
@@ -224,6 +224,21 @@ Param(
 	}
 }
 
+function PreprocessLockPrefSetting {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable] $InputObject,
+
+		[LockPrefSetting[]] $CurrentLockPrefs = (Get-FirefoxLockPrefs)
+	)
+
+	process {
+		$InputObject.CurrentLockPrefs = $CurrentLockPrefs
+		return $InputObject
+	}
+}
+
 function Get-FirefoxInstallDirectory {
 	$firefoxPath = "HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\"
 	if (-not (Test-Path $firefoxPath)) {
@@ -260,6 +275,10 @@ function Get-FirefoxMozillaCfgFile {
 }
 
 function Get-FirefoxLockPrefs {
+	if (-not (Test-Path (Get-FirefoxMozillaCfgFile))) {
+		return $null
+	}
+
 	$regex = "^lockPref\s*\(\s*`"([\w.-]+)`"\s*,\s*({0}|{1}|{2})\s*\);" -f @(
 		"(?<bool>true|false)"
 		"(?<number>\d+)"
@@ -513,11 +532,13 @@ function Get-LockPrefSettingAudit {
 		[string] $Task,
 	
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[LockPrefSetting[]] $LockPrefs
+		[LockPrefSetting[]] $LockPrefs,
+
+		[LockPrefSetting[]] $CurrentLockPrefs = (Get-FirefoxLockPrefs)
 	)
 	
 	process {
-		if (-not (Test-Path (Get-FirefoxMozillaCfgFile))) {
+		if ($null -eq $CurrentLockPrefs) {
 			return [AuditInfo]@{
 				Id = $Id
 				Task = $Task
@@ -526,14 +547,11 @@ function Get-LockPrefSettingAudit {
 			}
 		}
 
-		# convert lockPrefs to hashtables
-		$currentLockPrefs = Get-FirefoxLockPrefs
-
 		$missingLockPrefs = $LockPrefs | Where-Object {
 			$LockPref = $_
 			# LockPref not in currentLockPrefs
 			($currentLockPrefs | Where-Object {
-				($_.Name -eq $LockPref.Name) -and ($_.Value -eq $LockPref.Value)
+				($_.Name -eq $LockPref.Name) -and ($_.Value -is $LockPref.Value.GetType()) -and ($_.Value -eq $LockPref.Value)
 			}).Count -eq 0
 		}
 
@@ -602,8 +620,9 @@ function Get-CisAudit {
 	}
 	# cis FirefoxLockPrefSettings
 	if ($FirefoxLockPrefSettings) {
+		$currentLockPrefs = (Get-FirefoxLockPrefs)
 		$pipline = New-AuditPipeline ${Function:Get-LockPrefSettingAudit}
-		$CisBenchmarks.FirefoxLockPrefSettings | &$pipline -Verbose:$VerbosePreference
+		$CisBenchmarks.FirefoxLockPrefSettings | PreprocessLockPrefSetting -CurrentLockPrefs $currentLockPrefs | &$pipline -Verbose:$VerbosePreference
 	}
 }
 
@@ -614,8 +633,9 @@ function Get-DisaAudit {
 	)
 	# disa FirefoxLockPrefSettings
 	if ($FirefoxLockPrefSettings) {
+		$currentLockPrefs = (Get-FirefoxLockPrefs)
 		$pipline = New-AuditPipeline ${Function:Get-LockPrefSettingAudit}
-		$DisaRequirements.FirefoxLockPrefSettings | &$pipline -Verbose:$VerbosePreference
+		$DisaRequirements.FirefoxLockPrefSettings | PreprocessLockPrefSetting -CurrentLockPrefs $currentLockPrefs | &$pipline -Verbose:$VerbosePreference
 	}
 }
 
