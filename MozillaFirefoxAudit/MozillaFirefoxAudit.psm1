@@ -138,6 +138,13 @@ function Get-FullPath {
 }
 #endregion
 
+#region helper classes
+class LockPrefSetting {
+	[string] $Name
+	$Value
+}
+#endregion
+
 #region Helper functions
 
 function PreprocessSpecialValueSetting {
@@ -218,7 +225,10 @@ Param(
 }
 
 function Get-FirefoxInstallDirectory {
-	$firefoxPath = "HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\"
+	$firefoxPath = "HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\"
+	if (-not (Test-Path $firefoxPath)) {
+		$firefoxPath = "HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\"
+	}
 	$currentFirefox = Get-ChildItem -Path $firefoxPath | Select-Object -Last 1
 	$installDir = $currentFirefox | Get-ChildItem | Where-Object PSChildName -EQ "Main"
 	return $installDir | Get-ItemProperty | Select-Object -ExpandProperty "Install Directory"
@@ -229,112 +239,84 @@ function Get-FirefoxLocalSettingsFile {
 }
 
 function Get-FirefoxMozillaCfgFileName {
-	$content = Get-Content (Get-FirefoxLocalSettingsFile)
-	return $content | ForEach-Object {
-		if ($_ -match "pref\(`"general\.config\.filename`",\s?`"([\w\-. ]+\.cfg)`"\);") {
+	$localSettingsFilePath = Get-FirefoxLocalSettingsFile
+	$content = if (Test-Path $localSettingsFilePath) { Get-Content $localSettingsFilePath } else { $null }
+	$filename = $content | ForEach-Object {
+		if ($_ -match "^pref\(`"general\.config\.filename`",\s?`"([\w\-. ]+\.cfg)`"\);") {
 			return $Matches[1]
 		}
 		return $null
 	} | Where-Object { $null -ne $_ } | Select-Object -Last 1
+
+	if ($null -eq $filename) {
+		return "mozilla.cfg"
+	}
+
+	return $filename
 }
 
 function Get-FirefoxMozillaCfgFile {
 	return "{0}\{1}" -f (Get-FirefoxInstallDirectory), (Get-FirefoxMozillaCfgFileName)
 }
 
-function SequenceEqual {
-	[OutputType([bool])]
-	param (
-		[Parameter(Mandatory = $true)]
-		$Left,
-
-		[Parameter(Mandatory = $true)]
-		$Right,
-
-		[ScriptBlock]$Compare = { param($x, $y) $x -eq $y }.GetNewClosure()
+function Get-FirefoxLockPrefs {
+	$regex = "^lockPref\s*\(\s*`"([\w.-]+)`"\s*,\s*({0}|{1}|{2})\s*\);" -f @(
+		"(?<bool>true|false)"
+		"(?<number>\d+)"
+		"`"(?<string>(\\.|[^`"\\])*)`""
 	)
 
-	if ($Left.Count -ne $Right.Count) {
-		return $false
-	}
+	$currentLockPrefs = Get-Content (Get-FirefoxMozillaCfgFile) | ForEach-Object {
+		if ($_ -match $regex) {
+			$value = $null
+			if ($Matches.Keys -contains "bool") {
+				$value = [bool]::Parse($Matches["bool"])
+			}
+			elseif ($Matches.Keys -contains "number") {
+				$value = [int]::Parse($Matches["number"])
+			}
+			elseif ($Matches.Keys -contains "string") {
+				$value = $Matches["string"]
+			}
 
-	return AllTrue (0..($Left.Count -1) | ForEach-Object {
-		&$Compare $Left[$_] $Right[$_]
-	})
-}
+			[LockPrefSetting]@{ Name = $Matches[1]; Value = $value }
+		}
+	} | Where-Object { $null -ne $_ }
 
-function HashtableEqual {
-	[OutputType([bool])]
-	param (
-		[Parameter(Mandatory = $true)]
-		[Hashtable]$Left,
-
-		[Parameter(Mandatory = $true)]
-		[Hashtable]$Right,
-
-		[ScriptBlock]$Compare = { param($x, $y) $x -eq $y }.GetNewClosure()
-	)
-
-	if (-not (SequenceEqual $Left.Keys $Right.Keys $Compare)) {
-		return $false
-	}
-
-	return AllTrue ($Left.Keys | ForEach-Object {
-		&$Compare $Left[$_] $Right[$_]
-	})
-}
-
-function AllTrue {
-	[OutputType([bool])]
-	param (
-		[Parameter(Mandatory = $true)]
-		$Collection
-	)
-
-	return $comparison -notcontains $false
-}
-
-function AnyTrue {
-	[OutputType([bool])]
-	param (
-		[Parameter(Mandatory = $true)]
-		$Collection
-	)
-
-	return $comparison -contains $true
+	return $currentLockPrefs
 }
 #endregion
 
 #region Audit functions
 function Get-RegistryAudit {
-[CmdletBinding()]
-[OutputType([AuditInfo])]
-Param(
-	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-	[string] $Id,
+	[CmdletBinding()]
+	[OutputType([AuditInfo])]
+	Param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Id,
 
-	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-	[string] $Task,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Task,
 
-	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-	[string] $Path,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Path,
 
-	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-	[string] $Name,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string] $Name,
 
-	[Parameter(ValueFromPipelineByPropertyName = $true)]
-	[AllowEmptyString()]
-	[object[]] $Value,
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[AllowEmptyString()]
+		[object[]] $Value,
 
-	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-	[ScriptBlock] $Predicate,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[ScriptBlock] $Predicate,
 
-	[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-	[String] $ExpectedValue,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[String] $ExpectedValue,
 
-	[Parameter(ValueFromPipelineByPropertyName = $true)]
-	[bool] $DoesNotExist = $false
-)
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[bool] $DoesNotExist = $false
+	)
 
 	process {
 		try {
@@ -418,15 +400,28 @@ function Get-FirefoxLocalSettingsFileAudit {
 		}
 	}
 
-	$lines = Get-Content (Get-FirefoxLocalSettingsFile) | Where-Object {
-		$_ -match "pref\(`"general\.config\.filename`",\s?`"([\w\-. ]+\.cfg)`"\);"
+	$generalConfigFilename = Get-Content (Get-FirefoxLocalSettingsFile) | Where-Object {
+		$_ -match "^pref\s*\(\s*`"general\.config\.filename`"\s*,\s*`"([\w\-. ]+\.cfg)`"\s*\);"
 	}
 	
-	if ($lines.Count -eq 0) {
+	if ($generalConfigFilename.Count -eq 0) {
 		return [AuditInfo]@{
 			Id      = $Id
 			Task    = $Task
 			Message = "File does not set 'general.config.filename'"
+			Audit   = [AuditStatus]::False
+		}
+	}
+
+	$generalConfigObscure = Get-Content (Get-FirefoxLocalSettingsFile) | Where-Object {
+		$_ -match "^pref\s*\(\s*`"general\.config\.obscure_value`"\s*,\s*0\s*\);"
+	}
+	
+	if ($generalConfigObscure.Count -eq 0) {
+		return [AuditInfo]@{
+			Id      = $Id
+			Task    = $Task
+			Message = "File does not set 'general.config.obscure' = 0"
 			Audit   = [AuditStatus]::False
 		}
 	}
@@ -518,32 +513,37 @@ function Get-LockPrefSettingAudit {
 		[string] $Task,
 	
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[hashtable[]] $LockPrefs
+		[LockPrefSetting[]] $LockPrefs
 	)
 	
 	process {
-		# convert lockPrefs to hashtables
-		$currentLockPrefs = Get-Content (Get-FirefoxMozillaCfgFile) | ForEach-Object {
-			if ($_ -match "lockPref\s*\(\s*`"([\w.-]+)`"\s*,\s*((true|false)|\d+|`"[\w. ]+`")\s*\);") {
-				@{ Name = $Matches[1]; Value = $Matches[2] }
+		if (-not (Test-Path (Get-FirefoxMozillaCfgFile))) {
+			return [AuditInfo]@{
+				Id = $Id
+				Task = $Task
+				Message = "general config does not exist."
+				Audit = [AuditStatus]::None
 			}
-		} | Where-Object { $null -ne $_ }
+		}
+
+		# convert lockPrefs to hashtables
+		$currentLockPrefs = Get-FirefoxLockPrefs
 
 		$missingLockPrefs = $LockPrefs | Where-Object {
 			$LockPref = $_
 			# LockPref not in currentLockPrefs
-			return -not (AnyTrue ($currentLockPrefs | Where-Object {
-				HashtableEqual $_ $LockPref
-			}))
+			($currentLockPrefs | Where-Object {
+				($_.Name -eq $LockPref.Name) -and ($_.Value -eq $LockPref.Value)
+			}).Count -eq 0
 		}
 
 		if ($missingLockPrefs.Count -gt 0) {
-			#TODO: Format output
+			$msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
 
 			return [AuditInfo]@{
 				Id = $Id
 				Task = $Task
-				Message = "Missing lockprefs."
+				Message = "Missing lockprefs: $msg."
 				Audit = [AuditStatus]::False
 			}
 		}
@@ -560,11 +560,11 @@ function Get-LockPrefSettingAudit {
 
 
 function New-AuditPipeline {
-[CmdletBinding()]
-param(
-	[Parameter(Mandatory = $true, Position = 0)]
-	[scriptblock[]] $AuditFunctions
-)
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true, Position = 0)]
+		[scriptblock[]] $AuditFunctions
+	)
 
 	return {
 		param(
@@ -589,8 +589,17 @@ param(
 function Get-CisAudit {
 [CmdletBinding()]
 	Param(
+		[switch] $FileConfig,
 		[switch] $FirefoxLockPrefSettings
 	)
+	# cis FirefoxLockPrefSettings
+	if ($FileConfig) {
+		Get-FirefoxLocalSettingsFileAudit
+		# missing 1.2
+		Get-FirefoxMozillaCfgFileAudit
+		# missing 1.4
+		# missing 1.5
+	}
 	# cis FirefoxLockPrefSettings
 	if ($FirefoxLockPrefSettings) {
 		$pipline = New-AuditPipeline ${Function:Get-LockPrefSettingAudit}
@@ -632,8 +641,12 @@ function Get-HtmlReport {
 				Description = "This section contains all CIS benchmarks"
 				SubSections = @(
 					@{
+						Title = "Configure Locked Preferences"
+						AuditInfos = Get-CisAudit -FileConfig | Sort-Object -Property Id
+					}
+					@{
 						Title = "Preference Settings"
-						AuditInfos = Get-CisAudit -Get-LockPrefSettingAudit | Sort-Object -Property Id
+						AuditInfos = Get-CisAudit -FirefoxLockPrefSettings | Sort-Object -Property Id
 					}
 				)
 			}
@@ -644,7 +657,7 @@ function Get-HtmlReport {
 				SubSections = @(
 					@{
 						Title = "Preference Settings"
-						AuditInfos = Get-DisaAudit -Get-LockPrefSettingAudit | Sort-Object -Property Id
+						AuditInfos = Get-DisaAudit -FirefoxLockPrefSettings | Sort-Object -Property Id
 					}
 				)
 			}
@@ -663,5 +676,5 @@ function Get-HtmlReport {
 	}
 }
 
-Set-Alias -Name Get-GoogleChromeHtmlReport -Value Get-HtmlReport
+Set-Alias -Name Get-MozillaFirefoxHtmlReport -Value Get-HtmlReport
 #endregion

@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'GoogleChromeAudit.psm1'
+RootModule = 'MozillaFirefoxAudit.psm1'
 
 # Version number of this module.
 ModuleVersion = '0.1'

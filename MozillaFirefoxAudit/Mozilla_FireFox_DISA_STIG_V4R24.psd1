@@ -108,9 +108,9 @@
 			Id   = "DTBF190"
 			Task = "Background submission of information to Mozilla must be disabled."
 			LockPrefs = @(
-				@{ Name  = "datareporting.policy.dataSubmissionEnabled"; Value = $true }
-				@{ Name  = "datareporting.healthreport.service.enabled"; Value = $true }
-				@{ Name  = "datareporting.healthreport.uploadEnabled"; Value = $true }
+				@{ Name  = "datareporting.policy.dataSubmissionEnabled"; Value = $false }
+				@{ Name  = "datareporting.healthreport.service.enabled"; Value = $false }
+				@{ Name  = "datareporting.healthreport.uploadEnabled"; Value = $false }
 			)
 		}
 	)
