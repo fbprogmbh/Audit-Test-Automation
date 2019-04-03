@@ -379,9 +379,7 @@ function Get-HtmlReport {
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
-		[switch] $DarkMode,
-
-		[switch] $PerformanceOptimized
+		[switch] $DarkMode
 	)
 
 	$parent = Split-Path $Path
