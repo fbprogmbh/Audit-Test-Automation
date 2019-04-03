@@ -24,7 +24,7 @@ Import-Module -Name .\Audit-Test-Automation\IE11Audit -Verbose
 ```
 3. Generate a report with `Get-MsIE11HtmlReport` For example:
 ```PowerShell
-Get-MsIE11HtmlReport -Path "MyReport.html"
+Get-MsIE11HtmlReport -Path "reports/report.html"
 ```
 
 ## Sample report
