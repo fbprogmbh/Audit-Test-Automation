@@ -32,7 +32,7 @@ Import-Module -Name .\Audit-Test-Automation\IIS10Audit -Verbose
 ```
 3. Generate a report with `Get-IIS10HtmlReport` For example:
 ```PowerShell
-Get-IIS10HtmlReport -Path "MyReport.html"
+Get-IIS10HtmlReport -Path "reports/report.html"
 ```
 
 ## Sample report
