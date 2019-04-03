@@ -121,7 +121,7 @@ PrivateData = @{
 	PSData = @{
 
 		# Tags applied to this module. These help with module discovery in online galleries.
-		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'google chrome', 'cis', 'disa')
+		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'mozilla firefox', 'cis', 'disa')
 
 		# A URL to the license for this module.
 		LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
