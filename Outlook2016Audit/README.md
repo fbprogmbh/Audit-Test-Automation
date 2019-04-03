@@ -1,7 +1,7 @@
 # Outlook 2016 Audit
 
 based on
-* _DISA Microsoft Outlook 2016 Security Technical Implementation Guide V1R1 2016-11-14_
+* _DISA Microsoft Outlook 2016 Security Technical Implementation Guide V1R2 2017-07-28_
 
 ## Overview
 
