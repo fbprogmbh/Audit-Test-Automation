@@ -377,6 +377,18 @@ Param(
 	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
 #>
 
+<#
+.Synopsis
+	Generates an audit report in an html file.
+.Description
+	The `Get-GoogleChromeHtmlReport` cmdlet tests Google Chrome settings and stores an html report at the path you specify.
+.Parameter Path
+	Specifies the relative path to the file where the report will be stored.
+.Parameter DarkMode
+	The report will use a darker color scheme with light text on a dark background.
+.Example
+	C:\PS> Get-GoogleChromeHtmlReport -Path "reports/report1.html"
+#>
 function Get-HtmlReport {
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",

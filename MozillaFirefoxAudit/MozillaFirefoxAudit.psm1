@@ -648,7 +648,7 @@ function Get-DisaAudit {
 .Synopsis
 	Generates an audit report in an html file.
 .Description
-	The `Get-MozillaFirefoxHtmlReport` cmdlet tests your current the preferences of Firefox installation and stores an html report at the path you specify.
+	The `Get-MozillaFirefoxHtmlReport` cmdlet tests the preferences of the Firefox installation and stores an html report at the path you specify.
 .Parameter Path
 	Specifies the relative path to the file where the report will be stored.
 .Parameter DarkMode
