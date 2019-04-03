@@ -644,13 +644,23 @@ function Get-DisaAudit {
 	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
 #>
 
+<#
+.Synopsis
+	Generates an audit report in an html file.
+.Description
+	The `Get-MozillaFirefoxHtmlReport` cmdlet tests your current the preferences of Firefox installation and stores an html report at the path you specify.
+.Parameter Path
+	Specifies the relative path to the file where the report will be stored.
+.Parameter DarkMode
+	The report will use a darker color scheme with light text on a dark background.
+.Example
+	C:\PS> Get-MozillaFirefoxHtmlReport -Path "reports/report1.html"
+#>
 function Get-HtmlReport {
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
-		[switch] $DarkMode,
-
-		[switch] $PerformanceOptimized
+		[switch] $DarkMode
 	)
 
 	$parent = Split-Path $Path
@@ -685,9 +695,12 @@ function Get-HtmlReport {
 
 		Get-ATAPHtmlReport `
 			-Path $Path `
-			-Title "Google Chrome Audit Report" `
-			-ModuleName "GoogleChromeAudit" `
-			-BasedOn "DISA Google Chrome Security Technical Implementation Guide V1R15 2019-01-25" `
+			-Title "Mozilla Firefox Audit Report" `
+			-ModuleName "MozillaFirefoxAudit" `
+			-BasedOn @(
+				"CIS Mozilla Firefox 38 ESR Benchmark v1.0.0 - 2015-12-31"
+				"DISA Mozilla FireFox Security Technical Implementation Guide V4R24 2019-01-25"
+			) `
 			-Sections $sections `
 			-DarkMode:$DarkMode
 	}
