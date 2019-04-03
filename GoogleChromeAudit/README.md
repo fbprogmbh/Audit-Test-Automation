@@ -24,7 +24,7 @@ Import-Module -Name .\Audit-Test-Automation\GoogleChromeAudit -Verbose
 ```
 3. Generate a report with `Get-GoogleChromeHtmlReport` For example:
 ```PowerShell
-Get-GoogleChromeHtmlReport -Path "MyReport.html"
+Get-GoogleChromeHtmlReport -Path "reports/report.html"
 ```
 
 ## Sample report
