@@ -5,7 +5,7 @@ based on
 
 ## Overview
 
-The `Excel2016Audit`-Module benchmarks the current Micorosft Excel 2016 settings with current hardening standards from DISA.
+The `Excel2016Audit`-Module benchmarks the current Microsoft Excel 2016 settings with current hardening standards from DISA.
 
 ## Requirements
 

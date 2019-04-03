@@ -5,7 +5,7 @@ based on
 
 ## Overview
 
-The `Word2016Audit`-Module benchmarks the current Micorosft Word 2016 settings with current hardening standards from DISA.
+The `Word2016Audit`-Module benchmarks the current Microsoft Word 2016 settings with current hardening standards from DISA.
 
 ## Requirements
 

@@ -5,7 +5,7 @@ based on
 
 ## Overview
 
-The `Outlook2016Audit`-Module benchmarks the current Micorosft Outlook 2016 settings with current hardening standards from DISA.
+The `Outlook2016Audit`-Module benchmarks the current Microsoft Outlook 2016 settings with current hardening standards from DISA.
 
 ## Requirements
 

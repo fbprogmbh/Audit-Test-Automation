@@ -5,7 +5,7 @@ based on
 
 ## Overview
 
-The `Skype4Business2016Audit`-Module benchmarks the current Micorosft Skype for Business 2016 settings with current hardening standards from DISA.
+The `Skype4Business2016Audit`-Module benchmarks the current Microsoft Skype for Business 2016 settings with current hardening standards from DISA.
 
 ## Requirements
 

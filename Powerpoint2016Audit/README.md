@@ -5,7 +5,7 @@ based on
 
 ## Overview
 
-The `Powerpoint2016Audit`-Module benchmarks the current Micorosft PowerPoint 2016 settings with current hardening standards from DISA.
+The `Powerpoint2016Audit`-Module benchmarks the current Microsoft PowerPoint 2016 settings with current hardening standards from DISA.
 
 ## Requirements
 
