@@ -401,5 +401,5 @@ function Get-ATAPHtmlReport {
 
 	$html = "<!DOCTYPE html><html lang=`"en`"><head>$head</head><body>$body</body></html> "
 
-	$html | Out-File $Path
+	$html | Out-File $Path -Encoding utf8
 }
