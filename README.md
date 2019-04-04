@@ -11,8 +11,22 @@ The package consists of the following Modules:
 * [ATAPHtmlReport](ATAPHtmlReport)
 * [IIS8Audit](IIS8Audit)
 * [IIS10Audit](IIS10Audit)
-* [WindowsServer2016Audit](WindowsServer2016Audit)
 * [SQL2016Benchmarks](SQL2016Benchmarks)
+* [WindowsServer2016Audit](WindowsServer2016Audit)
+
+Microsoft Office 2016 Audit Modules:
+
+* [Word2016Audit](Word2016Audit)
+* [Excel2016Audit](Excel2016Audit)
+* [Outlook2016Audit](Outlook2016Audit)
+* [Powerpoint2016Audit](Powerpoint2016Audit)
+* [Skype4Business2016Audit](Skype4Business2016Audit)
+
+Browser Audit Modules:
+
+* [MozillaFirefoxAudit](MozillaFirefoxAudit)
+* [GoogleChromeAudit](GoogleChromeAudit)
+* [MicrosoftIE11Audit](MicrosoftIE11Audit)
 
 Read the the READMEs of each module to get specific information about a module.
 
