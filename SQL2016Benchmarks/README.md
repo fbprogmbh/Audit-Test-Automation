@@ -31,6 +31,10 @@ Get-SQL2016Report -Path "MyReport.html"
 Get-SQL2016Report -Path "MyReport.html" -SQLInstance "MyNamedInstance"
 ```
 
+### Audit script error reporting
+
+The audit script will use the PowerShell error stream to output errors raised during the runtime of the script. Furthermore, it will log errors in a log file. Standard path for the log file is \\AppData\\Local\\Temp\\ in the user's home directory. You can adjust the path in the settings section inside the script itself.
+
 ## Sample report
 
 You can find a sample report in the [Sample](Sample) folder.
