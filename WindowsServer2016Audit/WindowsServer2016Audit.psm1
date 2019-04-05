@@ -1131,9 +1131,9 @@ function Get-FirewallProfileAudit {
 		Write-Verbose -Message "Profile: $Profile, Setting: $Setting, Value: $Value"
 
 		$firewallProfileArgs = @{ Name = $Profile }
-		if ($Setting -like "AllowLocal*Rules") {
-			$firewallProfileArgs.PolicyStore = "localhost"
-		}
+		# if ($Setting -like "AllowLocal*Rules") {
+		# 	$firewallProfileArgs.PolicyStore = "localhost"
+		# }
 
 		$profileSettings = Get-NetFirewallProfile @firewallProfileArgs
 		$currentValue = $profileSettings | Select-Object -ExpandProperty $Setting

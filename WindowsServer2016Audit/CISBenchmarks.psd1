@@ -1586,22 +1586,22 @@
 			Value = "False"
 		}
 		# Run Get-NetFirewallProfile -Name Public -PolicyStore localhost
-		@{ # Problems
-			Id = "9.3.5"
-			Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
+		# @{ # Problems
+		# 	Id = "9.3.5"
+		# 	Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
 
-			Profile = "Public"
-			Setting = "AllowLocalFirewallRules"
-			Value = "False"
-		}
-		@{ # Problems
-			Id = "9.3.6"
-			Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
+		# 	Profile = "Public"
+		# 	Setting = "AllowLocalFirewallRules"
+		# 	Value = "False"
+		# }
+		# @{ # Problems
+		# 	Id = "9.3.6"
+		# 	Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
 
-			Profile = "Public"
-			Setting = "AllowLocalIPsecRules"
-			Value = "False"
-		}
+		# 	Profile = "Public"
+		# 	Setting = "AllowLocalIPsecRules"
+		# 	Value = "False"
+		# }
 		@{
 			Id = "9.3.7"
 			Task = "Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log'"
