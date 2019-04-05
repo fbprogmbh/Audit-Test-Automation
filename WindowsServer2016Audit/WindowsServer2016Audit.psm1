@@ -821,10 +821,10 @@ function Get-AuditPolicyAudit {
 				Audit   = [AuditStatus]::False
 			}
 		}
-
+		
 		$setting = $Matches[0]
-
-		if ($setting -ne $AuditFlag) {
+		
+		if ($setting -ne $AuditFlag -and -not (($line -eq "Success and Failure" -and ($AuditFlag -in "Success", "Failure")))) {
 			return [AuditInfo]@{
 				Id      = $Id
 				Task    = $Task
