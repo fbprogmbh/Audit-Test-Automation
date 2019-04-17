@@ -1,7 +1,7 @@
 # DISA Requirements MS Windows 10 DISA STIG V1R16 
 
 @{
-	RegistrySettings = @(
+	RegistrySettings         = @(
 		@{
 			Id    = "WN10-CC-000310"#450
 			Task  = "Users must be prevented from changing installation options."
@@ -850,8 +850,7 @@
 			Value = Please check data
 		}#>
 	)
-
-	UserRights       = @(
+	UserRights               = @(
 		@{
 			Id       = 'WN10-UR-000005'
 			Task     = "The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts."
@@ -1054,7 +1053,7 @@
 		}
 
 	)
-	AccountPolicies  = @(
+	AccountPolicies          = @(
 		@{
 			Id = "WN10-AC-000005"
 			Task = "Windows 10 account lockout duration must be configured to 15 minutes or greater."
@@ -1151,6 +1150,112 @@
 			Task   = "Anonymous SID/Name translation must not be allowed."
 			Policy = "LSAAnonymousNameLookup"
 			Value  = 0
+		}
+	)
+	WindowsOptionalFeatures  = @(
+		@{
+			Id      = 'WN10-00-000100'
+			Task    = 'Internet Information System (IIS) or its subcomponents must not be installed on a workstation.'
+			
+			Feature = "IIS-WebServer"
+		}
+		# @{ ???
+		# 	Id      = 'WN10-00-000105'
+		# 	Task    = 'Simple Network Management Protocol (SNMP) must not be installed on the system.'
+			
+		# 	Feature = ""
+		# }
+		@{
+			Id      = 'WN10-00-000110'
+			Task    = 'Simple TCP/IP Services must not be installed on the system.'
+			
+			Feature = "SimpleTCP"
+		}
+		@{
+			Id      = 'WN10-00-000115'
+			Task    = 'The Telnet Client must not be installed on the system.'
+			
+			Feature = "TelnetClient"
+		}
+		@{
+			Id      = 'WN10-00-000120'
+			Task    = 'The TFTP Client must not be installed on the system.'
+			
+			Feature = "TFTP"
+		}
+	
+	)
+	FileSystemPermissions    = @(
+		@{
+			Id = "WN10-AU-000515"
+			Task = "Permissions for the Application event log must prevent access by non-privileged accounts."
+
+			Target = "%SystemRoot%\System32\winevt\Logs\Application.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\EventLog"    = "FullControl"
+				"NT AUTHORITY\SYSTEM"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+			}
+		}
+		@{
+			Id = "WN10-AU-000520"
+			Task = "Permissions for the Security event log must prevent access by non-privileged accounts."
+
+			Target = "%SystemRoot%\System32\winevt\Logs\Security.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\EventLog"    = "FullControl"
+				"NT AUTHORITY\SYSTEM"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+			}
+		}
+		@{
+			Id = "WN10-AU-000525"
+			Task = "Permissions for the System event log must prevent access by non-privileged accounts."
+
+			Target = "%SystemRoot%\System32\winevt\Logs\System.evtx"
+			PrincipalRights = @{
+				"NT SERVICE\EventLog"    = "FullControl"
+				"NT AUTHORITY\SYSTEM"    = "FullControl"
+				"BUILTIN\Administrators" = "FullControl"
+			}
+		}
+	)
+	RegistryPermissions     = @(
+		@{
+			Id = "WN10-RG-000005 A"
+			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
+
+			Target = "HKLM:\SECURITY"
+			PrincipalRights = @{
+				"NT Authority\System"                                               = "FullControl"
+				# "BUILTIN\Administrators"                                            = "Special"
+			}
+		}
+		@{
+			Id = "WN10-RG-000005 B"
+			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
+
+			Target = "HKLM:\SOFTWARE"
+			PrincipalRights = @{
+				"BUILTIN\Users"                                                     = "ReadKey"
+				"BUILTIN\Administrators"                                            = "FullControl"
+				"NT Authority\System"                                               = "FullControl"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadKey"
+			}
+		}
+		@{
+			Id = "WN10-RG-000005 C"
+			Task = "Default permissions for the HKEY_LOCAL_MACHINE registry hive must be maintained."
+
+			Target = "HKLM:\SYSTEM"
+			PrincipalRights = @{
+				"BUILTIN\Users"                                                     = "ReadKey"
+				"BUILTIN\Administrators"                                            = "FullControl"
+				"NT Authority\System"                                               = "FullControl"
+				"CREATOR OWNER"                                                     = "FullControl"
+				"APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES"            = "ReadKey"
+			}
 		}
 	)
 }
