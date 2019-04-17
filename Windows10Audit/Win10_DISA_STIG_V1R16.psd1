@@ -1056,13 +1056,46 @@
 	)
 	AccountPolicies  = @(
 		@{
+			Id = "WN10-AC-000005"
+			Task = "Windows 10 account lockout duration must be configured to 15 minutes or greater."
+
+			Policy = "LockoutDuration"
+			Value = 15
+			SpecialValue = @{
+				Type = "Range"
+				Value = "15 minutes or greater"
+			}
+		}
+		
+		@{
+			Id = "WN10-AC-000010"
+			Task = "The number of allowed bad logon attempts must be configured to 3 or less."
+
+			Policy = "LockoutBadCount"
+			Value = 3
+			SpecialValue = @{
+				Type = "Range"
+				Value = "3 or less, but not 0"
+			}
+		}
+		@{
+			Id = "WN10-AC-000015"
+			Task = "The period of time before the bad logon counter is reset must be configured to 15 minutes."
+
+			Policy = "ResetLockoutCount"
+			Value = 15
+			SpecialValue = @{
+				Type = "Range"
+				Value = "15 minutes or greater"
+			}
+		}
+		@{
 			Id = 'WN10-AC-000020'
 			Task = "The password history must be configured to 24 passwords remembered."
 			Policy = "PasswordHistorySize"
 			Value = 24
 			SpecialValue = @{
 				Type = "Range"
-				# Old audit: only 24 is allowed
 				Value = "24 or greater"
 			}
 		}
@@ -1072,16 +1105,46 @@
 			Policy = "MaximumPasswordAge"
 			Value = 60
 			SpecialValue = @{
-				Type = "Range"
+				Type  = "Range"
 				Value = "60 days or less"
 			}
 		}
-		#...
+		
 		@{
-			Id     = 'WN10-AC-000045'
-			Task   = "Reversible password encryption must be disabled."
+			Id = "WN10-AC-000030"
+			Task = "The minimum password age must be configured to at least 1 day."
+
+			Policy = "MinimumPasswordAge"
+			Value = 1
+			SpecialValue = @{
+				Type = "Range"
+				Value = "1 day or greater"
+			}
+		}
+		@{
+			Id = "WN10-AC-000035"
+			Task = "Passwords must, at a minimum, be 14 characters."
+
+			Policy = "MinimumPasswordLength"
+			Value = 14
+			SpecialValue = @{
+				Type = "Range"
+				Value = "14 characters or greater"
+			}
+		}
+		@{
+			Id = "WN10-AC-000040"
+			Task = "The built-in Microsoft password complexity filter must be enabled."
+
+			Policy = "PasswordComplexity"
+			Value = 1
+		}
+		@{
+			Id = "WN10-AC-000045"
+			Task = "Reversible password encryption must be disabled."
+
 			Policy = "ClearTextPassword"
-			Value  = 0
+			Value = 0
 		}
 		@{
 			Id     = 'WN10-SO-000140'
