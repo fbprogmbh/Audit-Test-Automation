@@ -3,84 +3,84 @@
 @{
 	RegistrySettings = @(
 		@{
-			Id    = "WN10-CC-000310"
+			Id    = "WN10-CC-000310"#450
 			Task  = "Users must be prevented from changing installation options."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\"
 			Name  = "EnableUserControl"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000315"
+			Id    = "WN10-CC-000315"#460
 			Task  = "The Windows Installer Always install with elevated privileges must be disabled."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\"
 			Name  = "AlwaysInstallElevated"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000320"
+			Id    = "WN10-CC-000320"#470
 			Task  = "Users must be notified if a web-based program attempts to install software."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer\"
 			Name  = "SafeForScripting"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000325"
+			Id    = "WN10-CC-000325"#480
 			Task  = "Automatically signing in the last interactive user after a system-initiated restart must be disabled."
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\"
 			Name  = "DisableAutomaticRestartSignOn"
 			Value = 1
 		}
 		@{
-			Id    = "WN10-CC-000330"
+			Id    = "WN10-CC-000330"#500
 			Task  = "The Windows Remote Management (WinRM) client must not use Basic authentication."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\"
 			Name  = "AllowBasic"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000335"
+			Id    = "WN10-CC-000335"#510
 			Task  = "The Windows Remote Management (WinRM) client must not allow unencrypted traffic."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\"
 			Name  = "AllowUnencryptedTraffic"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000340"
+			Id    = "WN10-CC-000340"#520
 			Task  = "The Windows Remote Management (WinRM) client must not use Digest authentication."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\"
 			Name  = "AllowDigest"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000345"
+			Id    = "WN10-CC-000345"#530
 			Task  = "The Windows Remote Management (WinRM) service must not use Basic authentication."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\"
 			Name  = "AllowBasic"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000350"
+			Id    = "WN10-CC-000350"#540
 			Task  = "The Windows Remote Management (WinRM) service must not allow unencrypted traffic."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\"
 			Name  = "AllowUnencryptedTraffic"
 			Value = 0
 		}
 		@{
-			Id    = "WN10-CC-000355"
+			Id    = "WN10-CC-000355"#550
 			Task  = "The Windows Remote Management (WinRM) service must not store RunAs credentials."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\"
 			Name  = "DisableRunAs"
 			Value = 1
 		}
 		@{
-			Id    = "WN10-AU-000500"
+			Id    = "WN10-AU-000500"#CC-300
 			Task  = "The Application event log size must be configured to 32768 KB or greater."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\"
 			Name  = "MaxSize"
 			Value = 32768
 		}
 		@{
-			Id    = "WN10-AU-000505"
+			Id    = "WN10-AU-000505"#CC
 			Task  = "The Security event log size must be configured to 1024000 KB or greater."
 			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security\"
 			Name  = "MaxSize"
@@ -849,5 +849,203 @@
 			Name  = "Organization's Tenant GUID"
 			Value = Please check data
 		}#>
+	)
+
+	UserRights       = @(
+		@{ # check values
+			Id = 'WN10-UR-000005'
+			Task = "The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts."
+			Policy = "SeTrustedCredManAccessPrivilege"
+			Identity = @()
+		}
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000010'
+		# 	Task = 'The Access this computer from the network user right must only be assigned to the Administrators and Remote Desktop Users groups.'
+		# }
+		@{
+			Id       = 'WN10-UR-000015'
+			Task     = "The Act as part of the operating system user right must not be assigned to any groups or accounts."
+			Policy   = "SeTcbPrivilege"
+			Identity = @()
+		}
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000025'
+		# 	Task = 'The Allow log on locally user right must only be assigned to the Administrators and Users groups.'
+		# }
+		@{
+			Id       = 'WN10-UR-000030'
+			Task     = "The Back up files and directories user right must only be assigned to the Administrators group."
+			Policy   = "SeBackupPrivilege"
+			Identity = "Administrators"
+		}
+		# @{ #TODO:
+		# 	Id   = 'WN10-UR-000035'
+		# 	Task = 'The Change the system time user right must only be assigned to Administrators and Local Service.'
+		# }
+		@{
+			Id       = 'WN10-UR-000040'
+			Task     = "The Create a pagefile user right must only be assigned to the Administrators group."
+			Policy   = "SeCreatePagefilePrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000045'
+			Task     = "The Create a token object user right must not be assigned to any groups or accounts."
+			Policy   = "SeCreateTokenPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000050'
+			Task     = "The Create global objects user right must only be assigned to Administrators, Service, Local Service, and Network Service."
+			Policy   = "SeCreateGlobalPrivilege"
+			Identity = "Administrators", "Service", "Local Service", "Network Service"
+		}
+		@{
+			Id       = 'WN10-UR-000055'
+			Task     = "The Create permanent shared objects user right must not be assigned to any groups or accounts."
+			Policy   = "SeCreatePermanentPrivilege"
+			Identity = @()
+		}
+		@{
+			Id       = 'WN10-UR-000060'
+			Task     = "The Create symbolic links user right must only be assigned to the Administrators group."
+			Policy   = "SeCreateSymbolicLinkPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000065'
+			Task     = "The Debug programs user right must only be assigned to the Administrators group."
+			Policy   = "SeDebugPrivilege"
+			Identity = "Administrators"
+		}
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000070'
+		# 	Task = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+		# }
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000075'
+		# 	Task = 'The Deny log on as a batch job user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
+		# }
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000080'
+		# 	Task = 'The Deny log on as a service user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
+		# }
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000085'
+		# 	Task = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
+		# }
+		# @{ #TODO:
+		# 	Id = 'WN10-UR-000090'
+		# 	Task = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+		# }
+		@{
+			Id       = 'WN10-UR-000100'
+			Task     = "The Force shutdown from a remote system user right must only be assigned to the Administrators group."
+			Policy   = "SeRemoteShutdownPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000105'
+			Task     = "The Generate security audits user right must only be assigned to Local Service and Network Service."
+			Policy   = "SeAuditPrivilege"
+			Identity = "Local Service", "Network Service"
+		}
+		@{
+			Id       = 'WN10-UR-000110'
+			Task     = "The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service."
+			Policy   = "SeImpersonatePrivilege"
+			Identity = "Administrators", "Service", "Local Service", "Network Service"
+		}
+		@{
+			Id       = 'WN10-UR-000115'
+			Task     = "The Increase scheduling priority user right must only be assigned to the Administrators group."
+			Policy   = "SeIncreaseBasePriorityPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000120'
+			Task     = "The Load and unload device drivers user right must only be assigned to the Administrators group."
+			Policy   = "SeLoadDriverPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000125'
+			Task     = "The Lock pages in memory user right must not be assigned to any groups or accounts."
+			Policy   = "SeLockMemoryPrivilege"
+			Identity = @()
+		}
+		@{
+			Id       = 'WN10-UR-000130'
+			Task     = "The Manage auditing and security log user right must only be assigned to the Administrators group."
+			Policy   = "SeSecurityPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000140'
+			Task     = "The Modify firmware environment values user right must only be assigned to the Administrators group."
+			Policy   = "SeSystemEnvironmentPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000145'
+			Task     = "The Perform volume maintenance tasks user right must only be assigned to the Administrators group."
+			Policy   = "SeManageVolumePrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000150'
+			Task     = "The Profile single process user right must only be assigned to the Administrators group."
+			Policy   = "SeProfileSingleProcessPrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000160'
+			Task     = "The Restore files and directories user right must only be assigned to the Administrators group."
+			Policy   = "SeRestorePrivilege"
+			Identity = "Administrators"
+		}
+		@{
+			Id       = 'WN10-UR-000165'
+			Task     = "The Take ownership of files or other objects user right must only be assigned to the Administrators group."
+			Policy   = "SeTakeOwnershipPrivilege"
+			Identity = "Administrators"
+		}
+
+	)
+	AccountPolicies  = @(
+		@{
+			Id = 'WN10-AC-000020'
+			Task = "The password history must be configured to 24 passwords remembered."
+			Policy = "PasswordHistorySize"
+			Value = 24
+			SpecialValue = @{
+				Type = "Range"
+				# Old audit: only 24 is allowed
+				Value = "24 or greater"
+			}
+		}
+		@{
+			Id = 'WN10-AC-000025'
+			Task = "The maximum password age must be configured to 60 days or less."
+			Policy = "MaximumPasswordAge"
+			Value = 60
+			SpecialValue = @{
+				Type = "Range"
+				Value = "60 days or less"
+			}
+		}
+		#...
+		@{
+			Id     = 'WN10-AC-000045'
+			Task   = "Reversible password encryption must be disabled."
+			Policy = "ClearTextPassword"
+			Value  = 0
+		}
+		@{
+			Id     = 'WN10-SO-000140'
+			Task   = "Anonymous SID/Name translation must not be allowed."
+			Policy = "LSAAnonymousNameLookup"
+			Value  = 0
+		}
 	)
 }
