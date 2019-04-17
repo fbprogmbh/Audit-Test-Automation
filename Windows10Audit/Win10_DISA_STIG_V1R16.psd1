@@ -852,36 +852,42 @@
 	)
 
 	UserRights       = @(
-		@{ # check values
-			Id = 'WN10-UR-000005'
-			Task = "The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts."
-			Policy = "SeTrustedCredManAccessPrivilege"
+		@{
+			Id       = 'WN10-UR-000005'
+			Task     = "The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts."
+			Policy   = "SeTrustedCredManAccessPrivilege"
 			Identity = @()
 		}
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000010'
-		# 	Task = 'The Access this computer from the network user right must only be assigned to the Administrators and Remote Desktop Users groups.'
-		# }
+		@{
+			Id       = 'WN10-UR-000010'
+			Task     = 'The Access this computer from the network user right must only be assigned to the Administrators and Remote Desktop Users groups.'
+			Policy   = "SeNetworkLogonRight"
+			Identity = "Administrators", "Remote Desktop Users"
+		}
 		@{
 			Id       = 'WN10-UR-000015'
 			Task     = "The Act as part of the operating system user right must not be assigned to any groups or accounts."
 			Policy   = "SeTcbPrivilege"
 			Identity = @()
 		}
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000025'
-		# 	Task = 'The Allow log on locally user right must only be assigned to the Administrators and Users groups.'
-		# }
+		@{
+			Id       = 'WN10-UR-000025'
+			Task     = 'The Allow log on locally user right must only be assigned to the Administrators and Users groups.'
+			Policy   = "SeInteractiveLogonRight"
+			Identity = "Administrators", "Users"
+		}
 		@{
 			Id       = 'WN10-UR-000030'
 			Task     = "The Back up files and directories user right must only be assigned to the Administrators group."
 			Policy   = "SeBackupPrivilege"
 			Identity = "Administrators"
 		}
-		# @{ #TODO:
-		# 	Id   = 'WN10-UR-000035'
-		# 	Task = 'The Change the system time user right must only be assigned to Administrators and Local Service.'
-		# }
+		@{
+			Id       = 'WN10-UR-000035'
+			Task     = 'The Change the system time user right must only be assigned to Administrators and Local Service.'
+			Policy   = "SeSystemtimePrivilege"
+			Identity = "Administrators", "Local Service"
+		}
 		@{
 			Id       = 'WN10-UR-000040'
 			Task     = "The Create a pagefile user right must only be assigned to the Administrators group."
@@ -892,7 +898,7 @@
 			Id       = 'WN10-UR-000045'
 			Task     = "The Create a token object user right must not be assigned to any groups or accounts."
 			Policy   = "SeCreateTokenPrivilege"
-			Identity = "Administrators"
+			Identity = @()
 		}
 		@{
 			Id       = 'WN10-UR-000050'
@@ -918,26 +924,62 @@
 			Policy   = "SeDebugPrivilege"
 			Identity = "Administrators"
 		}
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000070'
-		# 	Task = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
-		# }
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000075'
-		# 	Task = 'The Deny log on as a batch job user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
-		# }
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000080'
-		# 	Task = 'The Deny log on as a service user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
-		# }
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000085'
-		# 	Task = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
-		# }
-		# @{ #TODO:
-		# 	Id = 'WN10-UR-000090'
-		# 	Task = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
-		# }
+		@{
+			Id       = 'WN10-UR-000070 MW'
+			Task     = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Role     = "MemberWorkstation"
+			Policy   = "SeDenyNetworkLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins", "Local account", "Guests"
+		}
+		@{
+			Id       = 'WN10-UR-000070 SW'
+			Task     = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Role     = "StandaloneWorkstation"
+			Policy   = "SeDenyNetworkLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id       = 'WN10-UR-000075 MW'
+			Role     = "MemberWorkstation"
+			Task     = 'The Deny log on as a batch job user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
+			Policy   = "SeDenyBatchLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins"
+		}
+		@{
+			Id       = 'WN10-UR-000080'
+			Role     = "MemberWorkstation"
+			Task     = 'The Deny log on as a service user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
+			Policy   = "SeDenyServiceLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins"
+		}
+		@{
+			Id       = 'WN10-UR-000085 MW'
+			Role     = "MemberWorkstation"
+			Task     = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
+			Policy   = "SeDenyInteractiveLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins", "Guests"
+		}
+		@{
+			Id       = 'WN10-UR-000085 SW'
+			Role     = "StandaloneWorkstation"
+			Task     = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
+			Policy   = "SeDenyInteractiveLogonRight"
+			Identity = "Guests"
+		}
+		@{
+			Id       = 'WN10-UR-000090 MW'
+			Role     = "MemberWorkstation"
+			Task     = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Policy   = "SeDenyRemoteInteractiveLogonRight"
+			Identity = "Enterprise Admins", "Domain Admins", "Local account", "Guests"
+		}
+		@{
+			Id       = 'WN10-UR-000090 SW'
+			Role     = "StandaloneWorkstation"
+			Task     = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Policy   = "SeDenyRemoteInteractiveLogonRight"
+			Identity = "Guests"
+		}
 		@{
 			Id       = 'WN10-UR-000100'
 			Task     = "The Force shutdown from a remote system user right must only be assigned to the Administrators group."
