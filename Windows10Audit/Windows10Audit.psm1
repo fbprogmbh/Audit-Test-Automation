@@ -1,4 +1,4 @@
-﻿#Requires -RunAsAdministrator
+﻿# Requires -RunAsAdministrator
 
 <#
 BSD 3-Clause License
@@ -45,99 +45,59 @@ $DisaRequirements = Import-LocalizedData -FileName "Win10_DISA_STIG_V1R16.psd1"
 
 
 #region Logging functions
-function Set-LogFile {
+function New-LogFile {
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 	Param(
 		[Parameter(Mandatory = $true)]
-		[Alias('LogPath')]
-		[string]$Path,
-		[Parameter(Mandatory = $true)]
-		[Alias('Logname')]
-		[string]$Name
+		[Alias('LogPath','Path','Logname')]
+		[string]
+		$LogFilePath
 	)
-
-	$FullPath = Get-FullPath $Path $Name
 
 	# Create file if it does not already exists
-	if (!(Test-Path -Path $FullPath)) {
+	if (-not (Test-Path -Path $LogFilePath)) {
 
 		# Create file and start logging
-		New-Item -Path $FullPath -ItemType File -Force | Out-Null
+		New-Item -Path $LogFilePath -ItemType File -Force | Out-Null
 
-		Add-Content -Path $FullPath -Value "***************************************************************************************************"
-		Add-Content -Path $FullPath -Value " Logfile created at [$([DateTime]::Now)]"
-		Add-Content -Path $FullPath -Value "***************************************************************************************************"
-		Add-Content -Path $FullPath -Value ""
-		Add-Content -Path $FullPath -Value ""
+		$output = @()
+		$output += "********************************************************************************"
+		$output += " Logfile created at [$([DateTime]::Now)]"
+		$output += "********************************************************************************"
+		$output += ""
+		$output += ""
+
+		$output | Out-File -Append $LogFilePath -Width 80
 	}
 }
-
 function Write-LogFile {
-	[CmdletBinding()]
-	Param(
-		[Parameter(Mandatory = $true)]
-		[Alias('LogMessage')]
-		[string]$Message,
+	param
+	(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[System.Management.Automation.VerboseRecord
+		$Record,
 
-		[Parameter(Mandatory = $true)]
-		[Alias('LogPath')]
-		[string]$Path,
-
-		[Parameter(Mandatory = $true)]
-		[Alias('Logname')]
-		[string]$Name,
-
-		[ValidateSet("Error", "Warning", "Info")]
-		[string]$Level = "Info"
+		[Parameter(Mandatory = $false)]
+		[string]
+		$LogFilePath = $Settings.LogFilePath
 	)
 
-
-	Set-LogFile $Path $Name
-	$FullPath = Get-FullPath $Path $Name
-
-	# Format date for log file
-	$FormattedDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-
-	switch ($Level) {
-		'Error' {
-			# Write-Error $Message
-			$LevelText = '[ERROR]:'
-		}
-		'Warning' {
-			# Write-Warning $Message
-			$LevelText = '[WARNING]:'
-		}
-		'Info' {
-			# Write-Verbose $Message
-			$LevelText = '[INFO]:'
-		}
-	}
-	Add-Content $FullPath "$FormattedDate $LevelText"
-	Add-Content $FullPath "$Message"
-	Add-Content $FullPath "--------------------------"
-	Add-Content $FullPath ""
-}
-
-function Get-FullPath {
-	[CmdletBinding()]
-	Param(
-		[Parameter(Mandatory = $true)]
-		[string]$Path,
-		[Parameter(Mandatory = $true)]
-		[string]$File
-	)
-
-	$FullPath = ""
-	if ($Path.Length -gt 0) {
-		if ($Path[$Path.Length - 1] -ne "\") {
-			$FullPath = $Path + "\" + $File
-		}
-		else {
-			$FullPath = $Path + $File
-		}
+	begin {
+		New-LogFile -LogFilePath $LogFilePath
 	}
 
-	return $FullPath
+	process {
+		$output = @()
+		$formattedDate = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+		$levelText = '[WARNING]:'
+
+		$output += "$formattedDate $levelText"
+		$output += $Record.Message
+		$output += "--------------------------------------------------------------------------------"
+		$output += ""
+	
+		$output | Out-File -Append $LogFilePath -Width 80
+	}
 }
 #endregion
 
@@ -484,10 +444,8 @@ function Get-RegistryAudit {
 			}
 
 			if (-not (& $Predicate $regValues)) {
-				Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-					-Message "$($Id): Registry value $Name in registry key $Path is not correct."
-
-					$regValue = $regValues -join ", "
+				Write-Verbose "$($Id): Registry value $Name in registry key $Path is not correct."
+				$regValue = $regValues -join ", "
 
 				return [AuditInfo]@{
 					Id = $Id
@@ -498,8 +456,7 @@ function Get-RegistryAudit {
 			}
 		}
 		catch [System.Management.Automation.PSArgumentException] {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-				-Message "$($Id): Could not get value $Name in registry key $path."
+			Write-Verbose "$($Id): Could not get value $Name in registry key $path."
 
 			if ($DoesNotExist) {
 				return [AuditInfo]@{
@@ -518,8 +475,7 @@ function Get-RegistryAudit {
 			}
 		}
 		catch [System.Management.Automation.ItemNotFoundException] {
-			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
-				-Message "$($Id): Could not get key $Name in registry key $path."
+			Write-Verbose "$($Id): Could not get key $Name in registry key $path."
 
 			return [AuditInfo]@{
 				Id = $Id
@@ -982,12 +938,6 @@ function Get-FileSystemPermissionsAudit {
 			}
 
 		if (($prinicpalsWithTooManyRights.Count -gt 0) -or ($principalsWithWrongRights.Count -gt 0)) {
-			$logOptions = @{
-				Path = $Settings.LogFilePath
-				Name = $Settings.LogFileName
-				Level = "Error"
-			}
-
 			$messages = @()
 			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
 				$mappedRights = Convert-FileSystemRight -OriginalRights $_.FileSystemRights
@@ -998,7 +948,7 @@ function Get-FileSystemPermissionsAudit {
 				$mappedRights = Convert-FileSystemRight -OriginalRights $_.FileSystemRights
 				"Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
 			}.GetNewClosure()
-			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
+			$messages | ForEach-Object { Write-Verbose "$($Id): $_" }
 
 			return [AuditInfo]@{
 				Id = $Id
@@ -1078,12 +1028,6 @@ function Get-RegistryPermissionsAudit {
 			}
 
 		if (($prinicpalsWithTooManyRights.Count -gt 0) -or ($principalsWithWrongRights.Count -gt 0)) {
-			$logOptions = @{
-				Path = $Settings.LogFilePath
-				Name = $Settings.LogFileName
-				Level = "Error"
-			}
-
 			$messages = @()
 			$messages += $prinicpalsWithTooManyRights | ForEach-Object {
 				$mappedRights = Convert-RegistryRight -OriginalRights $_.RegistryRights
@@ -1094,7 +1038,7 @@ function Get-RegistryPermissionsAudit {
 				$mappedRights = Convert-RegistryRight -OriginalRights $_.RegistryRights
 				"Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
 			}.GetNewClosure()
-			$messages | ForEach-Object { Write-LogFile @logOptions -Message "$($Id): $_" }
+			$messages | ForEach-Object { Write-Verbose -Message "$($Id): $_" }
 
 			return [AuditInfo]@{
 				Id = $Id

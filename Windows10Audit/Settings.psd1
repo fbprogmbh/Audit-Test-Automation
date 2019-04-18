@@ -42,10 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	}
 
 	# Path to logfiles
-	LogFilePath = "C:\Logs"
-
-	# Standard logfile name, used if no other name is passed as parameter
-	LogFileName = "auditreport.log"
+	LogFilePath = "C:\Logs\auditreport.log"
 
 	LegalNoticeTitle = "MyCompanyName"
 	LegalNoticeText = "Be sure to comply with the guidelines for administrators."
