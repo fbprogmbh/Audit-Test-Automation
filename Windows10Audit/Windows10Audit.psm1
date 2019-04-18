@@ -74,7 +74,7 @@ function Write-LogFile {
 	param
 	(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[System.Management.Automation.VerboseRecord
+		[System.Management.Automation.VerboseRecord]
 		$Record,
 
 		[Parameter(Mandatory = $false)]
