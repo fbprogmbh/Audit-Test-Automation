@@ -121,8 +121,14 @@ class ConfigMetadata
 	[string] $Task
 	$Config
 
-	[AuditResult] Test() {
-		return $this.Config.Test()
+	[ConfigAudit] Test() {
+		$testResult = $this.Config.Test()
+		return [ConfigAudit]@{
+			Id = $this.Id
+			Task = $this.Task
+			Status = $testResult.Status
+			Message = $testResult.Message
+		}
 	}
 }
 
@@ -181,6 +187,8 @@ class ComplexConfig
 					return $result
 				}
 			}
+
+			# check for other types
 			return [AuditResult]@{
 				Status = [AuditResultStatus]::True
 				Message = "Compliant"
@@ -196,6 +204,8 @@ class ComplexConfig
 						Message = "Compliant"
 					}
 				}
+
+				# check for other types
 				$messages += $result.Message
 			}
 			return [AuditResult]@{
@@ -271,7 +281,7 @@ class UserRightConfig
 	[AuditResult] Test() {
 		return [AuditResult]@{
 			Message = "Not implemented"
-			Status = [AuditResultStatus]::False
+			Status = [AuditResultStatus]::None
 		}
 	}
 }
@@ -288,7 +298,7 @@ class PasswordPolicyConfig
 	[AuditResult] Test() {
 		return [AuditResult]@{
 			Message = "Not implemented"
-			Status = [AuditResultStatus]::False
+			Status = [AuditResultStatus]::None
 		}
 	}
 }
@@ -303,7 +313,7 @@ class LockoutPolicyConfig
 	[AuditResult] Test() {
 		return [AuditResult]@{
 			Message = "Not implemented"
-			Status = [AuditResultStatus]::False
+			Status = [AuditResultStatus]::None
 		}
 	}
 }
@@ -316,7 +326,7 @@ class AuditPolicyConfig
 	[AuditResult] Test() {
 		return [AuditResult]@{
 			Message = "Not implemented"
-			Status = [AuditResultStatus]::False
+			Status = [AuditResultStatus]::None
 		}
 	}
 }
@@ -664,7 +674,7 @@ function Get-RoleAudit {
 		[string] $Task,
 
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[string[]] $Role = @("MemberServer","StandaloneServer")
+		[string[]] $Role = @("MemberWorkstation","StandaloneWorkstation")
 	)
 
 	process {
@@ -1083,7 +1093,7 @@ function Get-AuditPolicyAudit {
 	}
 }
 
-function Get-WindowsFeatureAudit {
+function Get-WindowsOptionalFeatureAudit {
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1096,13 +1106,13 @@ function Get-WindowsFeatureAudit {
 	)
 
 	process {
-		$installState = (Get-WindowsFeature | Where-Object Name -eq $Feature).InstallState
+		$installState = (Get-WindowsOptionalFeature -Online -FeatureName $Feature).State
 
-		if ($installState -eq "Installed") {
+		if ($installState -ne "Disabled") {
 			return [AuditInfo]@{
 				Id = $Id
 				Task = $Task
-				Message = "The feature is installed."
+				Message = "The feature is not disabled."
 				Audit = [AuditStatus]::False
 			}
 		}
@@ -1454,8 +1464,8 @@ function Get-DisaAudit {
 	}
 	# disa windows features
 	if ($WindowsFeatures) {
-		$pipline = New-AuditPipeline ${Function:Get-WindowsFeatureAudit}
-		$DisaRequirements.WindowsFeatures | &$pipline -Verbose:$VerbosePreference
+		$pipline = New-AuditPipeline ${Function:Get-WindowsOptionalFeatureAudit}
+		$DisaRequirements.WindowsOptionalFeatures | &$pipline -Verbose:$VerbosePreference
 	}
 	# disa file system permissions
 	if ($FileSystemPermissions) {
@@ -1474,21 +1484,20 @@ function Get-DisaAudit {
 }
 
 #region Audits
-
 class CisAudit
 {
-	[ConfigAudit[]] $RegistrySettings
-	[ConfigAudit[]] $UserRights
-	[ConfigAudit[]] $PasswordPolicyConfig
-	[ConfigAudit[]] $LockoutPolicyConfig
-	[ConfigAudit[]] $AuditPolicies
+	[ConfigMetadata[]] $RegistrySettings
+	[ConfigMetadata[]] $UserRights
+	[PasswordPolicyConfig] $PasswordPolicyConfig
+	[LockoutPolicyConfig] $LockoutPolicyConfig
+	[ConfigMetadata[]] $AuditPolicies
 
 	CisAudit([hashtable] $Cis) {
-		$this.RegistrySettings = $Cis | Get-ConfigMetadata
-		$this.UserRights = $Cis | Get-ConfigMetadata
-		$this.PasswordPolicyConfig = $Cis | Get-Config
-		$this.LockoutPolicyConfig = $Cis | Get-Config
-		$this.AuditPolicies = $Cis | Get-ConfigMetadata
+		$this.RegistrySettings = $Cis.RegistrySettings | Get-ConfigMetadata
+		$this.UserRights = $Cis.UserRights | Get-ConfigMetadata
+		$this.PasswordPolicyConfig = $Cis.PasswordPolicyConfig | Get-Config
+		$this.LockoutPolicyConfig = $Cis.LockoutPolicyConfig | Get-Config
+		$this.AuditPolicies = $Cis.AuditPolicies | Get-ConfigMetadata
 	}
 
 	hidden [AuditInfo] _getAuditInfo([ConfigAudit] $configAudit)
@@ -1505,28 +1514,32 @@ class CisAudit
 		return @(
 			@{
 				Title = "Registry Settings/Group Policies"
-				AuditInfos = $this.RegistrySettings | Foreach-Object { $this._getAuditInfo() }
+				AuditInfos = $this.RegistrySettings | Foreach-Object { $this._getAuditInfo($_.Test()) }
 			}
 			@{
 				Title = "User Rights Assignment"
-				AuditInfos = $this.UserRights | Foreach-Object { $this._getAuditInfo() }
+				AuditInfos = $this.UserRights | Foreach-Object { $this._getAuditInfo($_.Test()) }
 			}
-			@{
-				Title = "Password Policies"
-				AuditInfos = $this.PasswordPolicyConfig | Foreach-Object { $this._getAuditInfo() }
-			}
-			@{
-				Title = "Lockout Policies"
-				AuditInfos = $this.LockoutPolicyConfig | Foreach-Object { $this._getAuditInfo() }
-			}
+			# @{
+			# 	Title = "Password Policies"
+			# 	AuditInfos = $this._getAuditInfo($this.PasswordPolicyConfig.Test())
+			# }
+			# @{
+			# 	Title = "Lockout Policies"
+			# 	AuditInfos = $this._getAuditInfo($this.LockoutPolicyConfig.Test())
+			# }
 			@{
 				Title = " Advanced Audit Policy Configuration"
-				AuditInfos = $this.AuditPolicies | Foreach-Object { $this._getAuditInfo() }
+				AuditInfos = $this.AuditPolicies | Foreach-Object { $this._getAuditInfo($_.Test()) }
 			}
 		)
 	}
 }
 #endregion
+
+function Get-CisTest {
+	return [CisAudit]::new($CisBenchmarks)
+}
 
 #region Report-Generation
 <#
@@ -1575,11 +1588,11 @@ function Get-HtmlReport {
 					}
 				)
 			}
-			# @{
-			# 	Title = "CIS Benchmarks"
-			# 	Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-			# 	SubSections = [CisAudit]::new($CisBenchmarks)
-			# }
+			@{
+				Title = "CIS Benchmarks"
+				Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
+				SubSections = ([CisAudit]::new($CisBenchmarks)).GetReportSection()
+			}
 		)
 
 		Get-ATAPHtmlReport `
