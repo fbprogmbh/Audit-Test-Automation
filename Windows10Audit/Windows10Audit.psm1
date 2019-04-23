@@ -101,8 +101,204 @@ function Write-LogFile {
 }
 #endregion
 
-#region Helper functions
+#region Helper classes
+enum AuditResultStatus {
+	True
+	False
+	Warning
+	None
+}
 
+enum Existence {
+	None
+	Yes
+}
+
+class ConfigMetadata
+{
+	[string] $Id
+	[string] $Task
+	$Config
+
+	[AuditResult] Test() {
+		return $this.Config.Test()
+	}
+}
+
+class AuditResult
+{
+	[AuditResultStatus] $Status
+	[string] $Message
+}
+
+class ValueRange
+{
+	[string] $Operation
+	$Value
+
+	[bool] Test($value) {
+		if ($this.Operation -eq "equals") {
+			return $value -eq $this.Value
+		}
+		elseif ($this.Operation -eq "greater than") {
+			return $value -gt $this.Value
+		}
+		elseif ($this.Operation -eq "less than") {
+			return $value -lt $this.Value
+		}
+		elseif ($this.Operation -eq "greater than or equal") {
+			return $value -ge $this.Value
+		}
+		elseif ($this.Operation -eq "less than or equal") {
+			return $value -ge $this.Value
+		}
+		elseif ($this.Operation -eq "pattern match") {
+			return $value -match $this.Value
+		}
+		return $False
+	}
+}
+
+#region Configs
+class ComplexConfig
+{
+	[string] $Operation
+	$Configs
+
+	[AuditResult] Test() {
+		if ($this.Operation -eq "AND") {
+			foreach ($config in $this.Configs) {
+				$result = $config.Test()
+				if ($result.Status -eq [AuditResultStatus]::False) {
+					return $result
+				}
+			}
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::True
+				Message = "Compliant"
+			}
+		}
+		elseif ($this.Operation -eq "OR") {
+			$messages = @()
+			foreach ($config in $this.Configs) {
+				$result = $config.Test()
+				if ($result.Status -eq [AuditResultStatus]::True) {
+					return [AuditResult]@{
+						Status = [AuditResultStatus]::True
+						Message = "Compliant"
+					}
+				}
+				$messages += $result.Message
+			}
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::False
+				Message = $messages -join "`n"
+			}
+		}
+		return $False
+	}
+}
+
+class RegistryConfig
+{
+	[Existence] $Existence
+	[string] $Key
+	[string] $ValueName
+	[ValueRange] $ValueData
+	[string] $ValueType
+
+	[AuditResult] Test() {
+		try {
+			$regValues = Get-ItemProperty -ErrorAction Stop -Path $this.Key -Name $this.ValueName `
+				| Select-Object -ExpandProperty $this.ValueName
+
+			if ($this.Existence -eq [Existence]::None) {
+				return [AuditResult]@{
+					Message = "Registry value found."
+					Status = [AuditResultStatus]::False
+				}
+			}
+
+			if (-not ($this.ValueData.Test($regValues))) {
+				$regValue = $regValues -join ", "
+				return [AuditResult]@{
+					Message = "Registry value is '$regValue'."
+					Status = [AuditResultStatus]::False
+				}
+			}
+		}
+		catch [System.Management.Automation.PSArgumentException] {
+			if ($this.EnsureExistence -eq [Existence]::None) {
+				return [AuditResult]@{
+					Message = "Compliant. Registry value not found."
+					Status = [AuditResultStatus]::True
+				}
+			}
+
+			return [AuditResult]@{
+				Message = "Registry value not found."
+				Status = [AuditResultStatus]::False
+			}
+		}
+		catch [System.Management.Automation.ItemNotFoundException] {
+			return [AuditResult]@{
+				Message = "Registry key not found."
+				Status = [AuditResultStatus]::False
+			}
+		}
+
+		return [AuditResult]@{
+			Message = "Compliant"
+			Status = [AuditResultStatus]::True
+		}
+	}
+}
+
+#endregion
+
+function Get-ConfigMetadata {
+	[CmdletBinding()]
+	[OutputType([ConfigMetadata])]
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable]
+		$ConfigMetadata
+	)
+	
+	process {
+		return [ConfigMetadata]@{
+			Id = $ConfigMetadata.Id
+			Task = $ConfigMetadata.Task
+			Config = (Get-Config -Config $ConfigMetadata.Config)
+		}
+	}
+}
+function Get-Config {
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable]
+		$Config
+	)
+
+	process {
+		# remove side effects on input
+		$Config = $Config.Clone()
+
+		if ($Config.Type -eq "ComplexConfig") {
+			$Config.Remove("Type")
+			$Config.Configs = $Config.Configs | Get-Config
+			return New-Object -TypeName "ComplexConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "RegistryConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "RegistryConfig" -Property $Config
+		}
+	}
+}
+#endregion
+
+#region Helper functions
 function PreprocessSpecialValueSetting {
 [CmdletBinding()]
 Param(
