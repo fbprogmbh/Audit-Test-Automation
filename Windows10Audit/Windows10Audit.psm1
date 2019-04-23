@@ -254,6 +254,32 @@ class RegistryConfig
 	}
 }
 
+class UserRightConfig
+{
+	[Existence] $Existence
+	[string] $UserRight
+	[ValueRange] $Trustees
+
+	[AuditResult] Test() {
+		return [AuditResult]@{
+			Message = "Not implemented"
+			Status = [AuditResultStatus]::False
+		}
+	}
+}
+
+class AuditPolicyConfig
+{
+	[string] $Subcategory
+	[string] $AuditFlag
+	
+	[AuditResult] Test() {
+		return [AuditResult]@{
+			Message = "Not implemented"
+			Status = [AuditResultStatus]::False
+		}
+	}
+}
 #endregion
 
 function Get-ConfigMetadata {
@@ -293,6 +319,14 @@ function Get-Config {
 		elseif ($Config.Type -eq "RegistryConfig") {
 			$Config.Remove("Type")
 			return New-Object -TypeName "RegistryConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "UserRightConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "UserRightConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "AuditPolicyConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "AuditPolicyConfig" -Property $Config
 		}
 	}
 }

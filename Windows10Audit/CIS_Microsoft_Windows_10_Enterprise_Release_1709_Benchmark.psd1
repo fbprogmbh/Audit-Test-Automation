@@ -7070,7 +7070,7 @@
 			Task = "(L1) Ensure 'Access Credential Manager as a trusted caller' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_TRUSTED_CREDMAN_ACCESS_NAME"
 				Trustees = $Null
 			}
@@ -7080,7 +7080,7 @@
 			Task = "(L1) Ensure 'Access this computer from the network' is set to 'Administrators, Remote Desktop Users'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_NETWORK_LOGON_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7093,7 +7093,7 @@
 			Task = "(L1) Ensure 'Act as part of the operating system' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_TCB_NAME"
 				Trustees = $Null
 			}
@@ -7103,7 +7103,7 @@
 			Task = "(L1) Ensure 'Adjust memory quotas for a process' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_INCREASE_QUOTA_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7116,7 +7116,7 @@
 			Task = "(L1) Ensure 'Allow log on locally' is set to 'Administrators, Users'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_INTERACTIVE_LOGON_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7129,7 +7129,7 @@
 			Task = "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_REMOTE_INTERACTIVE_LOGON_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7142,7 +7142,7 @@
 			Task = "(L1) Ensure 'Back up files and directories' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_BACKUP_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7155,7 +7155,7 @@
 			Task = "(L1) Ensure 'Change the system time' is set to 'Administrators, LOCAL SERVICE'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_SYSTEMTIME_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7168,7 +7168,7 @@
 			Task = "(L1) Ensure 'Change the time zone' is set to 'Administrators, LOCAL SERVICE, Users'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_TIME_ZONE_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7181,7 +7181,7 @@
 			Task = "(L1) Ensure 'Create a pagefile' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_CREATE_PAGEFILE_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7194,7 +7194,7 @@
 			Task = "(L1) Ensure 'Create a token object' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_CREATE_TOKEN_NAME"
 				Trustees = $Null
 			}
@@ -7204,7 +7204,7 @@
 			Task = "(L1) Ensure 'Create global objects' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_CREATE_GLOBAL_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7217,7 +7217,7 @@
 			Task = "(L1) Ensure 'Create permanent shared objects' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_CREATE_PERMANENT_NAME"
 				Trustees = $Null
 			}
@@ -7227,7 +7227,7 @@
 			Task = "(L1) Configure 'Create symbolic links'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_CREATE_SYMBOLIC_LINK_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7240,7 +7240,7 @@
 			Task = "(L1) Ensure 'Debug programs' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_DEBUG_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7257,7 +7257,7 @@
 				Configs = @(
 					@{
 						Type = "UserRightConfig"
-						Ensure = "AllExist"
+						Existence = "Yes"
 						UserRight = "SE_DENY_NETWORK_LOGON_NAME"
 						Trustees = @{
 							Operation = "equals"
@@ -7266,7 +7266,7 @@
 					}
 					@{
 						Type = "UserRightConfig"
-						Ensure = "AllExist"
+						Existence = "Yes"
 						UserRight = "SE_DENY_NETWORK_LOGON_NAME"
 						Trustees = @{
 							Operation = "equals"
@@ -7281,7 +7281,7 @@
 			Task = "(L1) Ensure 'Deny log on as a batch job' to include 'Guests'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_DENY_BATCH_LOGON_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7294,7 +7294,7 @@
 			Task = "(L1) Ensure 'Deny log on as a service' to include 'Guests'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_DENY_SERVICE_LOGON_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7307,7 +7307,7 @@
 			Task = "(L1) Ensure 'Deny log on locally' to include 'Guests'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_DENY_INTERACTIVE_LOGON_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7324,7 +7324,7 @@
 				Configs = @(
 					@{
 						Type = "UserRightConfig"
-						Ensure = "AllExist"
+						Existence = "Yes"
 						UserRight = "SE_DENY_REMOTE_INTERACTIVE_LOGON_NAME"
 						Trustees = @{
 							Operation = "equals"
@@ -7333,7 +7333,7 @@
 					}
 					@{
 						Type = "UserRightConfig"
-						Ensure = "AllExist"
+						Existence = "Yes"
 						UserRight = "SE_DENY_REMOTE_INTERACTIVE_LOGON_NAME"
 						Trustees = @{
 							Operation = "equals"
@@ -7348,7 +7348,7 @@
 			Task = "(L1) Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_ENABLE_DELEGATION_NAME"
 				Trustees = $Null
 			}
@@ -7358,7 +7358,7 @@
 			Task = "(L1) Ensure 'Force shutdown from a remote system' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_REMOTE_SHUTDOWN_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7371,7 +7371,7 @@
 			Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_AUDIT_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7384,7 +7384,7 @@
 			Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_IMPERSONATE_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7397,7 +7397,7 @@
 			Task = "(L1) Ensure 'Increase scheduling priority' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_INC_BASE_PRIORITY_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7410,7 +7410,7 @@
 			Task = "(L1) Ensure 'Load and unload device drivers' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_LOAD_DRIVER_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7423,7 +7423,7 @@
 			Task = "(L1) Ensure 'Lock pages in memory' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_LOCK_MEMORY_NAME"
 				Trustees = $Null
 			}
@@ -7433,7 +7433,7 @@
 			Task = "(L2) Ensure 'Log on as a batch job' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_BATCH_LOGON_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7446,7 +7446,7 @@
 			Task = "(L2) Ensure 'Log on as a service' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_SERVICE_LOGON_NAME"
 				Trustees = $Null
 			}
@@ -7456,7 +7456,7 @@
 			Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_SECURITY_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7469,7 +7469,7 @@
 			Task = "(L1) Ensure 'Modify an object label' is set to 'No One'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "NoneExist"
+				Existence = "None"
 				UserRight = "SE_RELABEL_NAME"
 				Trustees = $Null
 			}
@@ -7479,7 +7479,7 @@
 			Task = "(L1) Ensure 'Modify firmware environment values' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_SYSTEM_ENVIRONMENT_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7492,7 +7492,7 @@
 			Task = "(L1) Ensure 'Perform volume maintenance tasks' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_MANAGE_VOLUME_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7505,7 +7505,7 @@
 			Task = "(L1) Ensure 'Profile single process' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_PROF_SINGLE_PROCESS_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7518,7 +7518,7 @@
 			Task = "(L1) Ensure 'Profile system performance' is set to 'Administrators, NT SERVICE\WdiServiceHost'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_SYSTEM_PROFILE_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7531,7 +7531,7 @@
 			Task = "(L1) Ensure 'Replace a process level token' is set to 'LOCAL SERVICE, NETWORK SERVICE'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_ASSIGNPRIMARYTOKEN_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7544,7 +7544,7 @@
 			Task = "(L1) Ensure 'Restore files and directories' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_RESTORE_NAME"
 				Trustees = @{
 					Operation = "equals"
@@ -7557,7 +7557,7 @@
 			Task = "(L1) Ensure 'Shut down the system' is set to 'Administrators, Users'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_SHUTDOWN_NAME"
 				Trustees = @{
 					Operation = "pattern match"
@@ -7570,7 +7570,7 @@
 			Task = "(L1) Ensure 'Take ownership of files or other objects' is set to 'Administrators'"
 			Config = @{
 				Type = "UserRightConfig"
-				Ensure = "AllExist"
+				Existence = "Yes"
 				UserRight = "SE_TAKE_OWNERSHIP_NAME"
 				Trustees = @{
 					Operation = "equals"
