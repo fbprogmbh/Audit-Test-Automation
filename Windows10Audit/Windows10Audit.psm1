@@ -41,6 +41,7 @@ $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
 #region Import tests configuration settings
 $DisaRequirements = Import-LocalizedData -FileName "Win10_DISA_STIG_V1R16.psd1"
+$CisBenchmarks = Import-LocalizedData -FileName "CIS_Microsoft_Windows_10_Enterprise_Release_1709_Benchmark.psd1"
 #endregion
 
 
@@ -127,6 +128,13 @@ class ConfigMetadata
 
 class AuditResult
 {
+	[AuditResultStatus] $Status
+	[string] $Message
+}
+
+class ConfigAudit {
+	[string] $Id
+	[string] $Task
 	[AuditResultStatus] $Status
 	[string] $Message
 }
@@ -313,6 +321,7 @@ class AuditPolicyConfig
 	}
 }
 #endregion
+
 
 function Get-ConfigMetadata {
 	[CmdletBinding()]
@@ -1428,10 +1437,6 @@ function Get-DisaAudit {
 		[switch] $OtherAudits
 	)
 
-	# if ($PerformanceOptimized) {
-	# 	$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule",
-	# }
-
 	# disa registry settings
 	if ($RegistrySettings) {
 		$pipline = New-AuditPipeline ${Function:Get-RegistryAudit}
@@ -1444,22 +1449,22 @@ function Get-DisaAudit {
 	}
 	# disa account policy
 	if ($AccountPolicies) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
+		$pipline = New-AuditPipeline ${Function:Get-AccountPolicyAudit}
 		$DisaRequirements.AccountPolicies | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
 	}
 	# disa windows features
 	if ($WindowsFeatures) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-WindowsFeatureAudit}
+		$pipline = New-AuditPipeline ${Function:Get-WindowsFeatureAudit}
 		$DisaRequirements.WindowsFeatures | &$pipline -Verbose:$VerbosePreference
 	}
 	# disa file system permissions
 	if ($FileSystemPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-FileSystemPermissionsAudit}
+		$pipline = New-AuditPipeline ${Function:Get-FileSystemPermissionsAudit}
 		$DisaRequirements.FileSystemPermissions | &$pipline -Verbose:$VerbosePreference
 	}
 	# disa registry permissions
 	if ($RegistryPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryPermissionsAudit}
+		$pipline = New-AuditPipeline ${Function:Get-RegistryPermissionsAudit}
 		$DisaRequirements.RegistryPermissions | &$pipline -Verbose:$VerbosePreference
 	}
 
@@ -1468,49 +1473,60 @@ function Get-DisaAudit {
 	}
 }
 
-function Get-CisAudit {
-	[CmdletBinding()]
-	Param(
-		[switch] $PerformanceOptimized,
+#region Audits
 
-		# [string[]] $Exclude
+class CisAudit
+{
+	[ConfigAudit[]] $RegistrySettings
+	[ConfigAudit[]] $UserRights
+	[ConfigAudit[]] $PasswordPolicyConfig
+	[ConfigAudit[]] $LockoutPolicyConfig
+	[ConfigAudit[]] $AuditPolicies
 
-		[switch] $RegistrySettings,
-
-		[switch] $UserRights,
-
-		[switch] $AccountPolicies,
-
-		[switch] $FirewallProfiles,
-
-		[switch] $AuditPolicies
-	)
-	# cis registry settings
-	if ($RegistrySettings) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryAudit}
-		$CisBenchmarks.RegistrySettings | PreprocessSpecialValueSetting | &$pipline -Verbose:$VerbosePreference
+	CisAudit([hashtable] $Cis) {
+		$this.RegistrySettings = $Cis | Get-ConfigMetadata
+		$this.UserRights = $Cis | Get-ConfigMetadata
+		$this.PasswordPolicyConfig = $Cis | Get-Config
+		$this.LockoutPolicyConfig = $Cis | Get-Config
+		$this.AuditPolicies = $Cis | Get-ConfigMetadata
 	}
-	# cis user rights
-	if ($UserRights) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
-		$CisBenchmarks.UserRights | &$pipline -Verbose:$VerbosePreference
+
+	hidden [AuditInfo] _getAuditInfo([ConfigAudit] $configAudit)
+	{
+		return [AuditInfo]@{
+			Id      = $configAudit.Id
+			Task    = $configAudit.Task
+			Message = $configAudit.Message
+			Audit   = $configAudit.Status
+		}
 	}
-	# cis account policies
-	if ($AccountPolicies) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AccountPolicyAudit}
-		$CisBenchmarks.AccountPolicies | PreprocessSpecialValueSetting | &$pipline -Verbose:$VerbosePreference
-	}
-	# cis firewall profiles
-	if ($FirewallProfiles) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-FirewallProfileAudit}
-		$CisBenchmarks.FirewallProfileSettings | &$pipline -Verbose:$VerbosePreference
-	}
-	# cis audit policies
-	if ($AuditPolicies) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-AuditPolicyAudit}
-		$CisBenchmarks.AuditPolicies | &$pipline -Verbose:$VerbosePreference
+
+	[hashtable[]] GetReportSection() {
+		return @(
+			@{
+				Title = "Registry Settings/Group Policies"
+				AuditInfos = $this.RegistrySettings | Foreach-Object { $this._getAuditInfo() }
+			}
+			@{
+				Title = "User Rights Assignment"
+				AuditInfos = $this.UserRights | Foreach-Object { $this._getAuditInfo() }
+			}
+			@{
+				Title = "Password Policies"
+				AuditInfos = $this.PasswordPolicyConfig | Foreach-Object { $this._getAuditInfo() }
+			}
+			@{
+				Title = "Lockout Policies"
+				AuditInfos = $this.LockoutPolicyConfig | Foreach-Object { $this._getAuditInfo() }
+			}
+			@{
+				Title = " Advanced Audit Policy Configuration"
+				AuditInfos = $this.AuditPolicies | Foreach-Object { $this._getAuditInfo() }
+			}
+		)
 	}
 }
+#endregion
 
 #region Report-Generation
 <#
@@ -1537,58 +1553,33 @@ function Get-HtmlReport {
 						Title = "Registry Settings/Group Policies"
 						AuditInfos = Get-DisaAudit -RegistrySettings | Sort-Object -Property Id
 					}
-					<#@{
+					@{
 						Title = "User Rights Assignment"
 						AuditInfos = Get-DisaAudit -UserRights | Sort-Object -Property Id
-					},
+					}
 					@{
 						Title = "Account Policies"
 						AuditInfos = Get-DisaAudit -AccountPolicies | Sort-Object -Property Id
-					},
+					}
 					@{
 						Title = "Windows Features"
 						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
-					},
+					}
 					@{
 						Title = "File System Permissions"
 						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
-					},
+					}
 					@{
 						Title = "Registry Permissions"
 						AuditInfos = Get-DisaAudit -RegistryPermissions | Sort-Object -Property Id
-					},
-					@{
-						Title = "Other"
-						AuditInfos = Get-DisaAudit -OtherAudits -PerformanceOptimized:$PerformanceOptimized | Sort-Object -Property Id
-					}#>
+					}
 				)
 			}
-			<#@{
-				Title = "CIS Benchmarks"
-				Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-				SubSections = @(
-					@{
-						Title = "Registry Settings/Group Policies"
-						AuditInfos = Get-CisAudit -RegistrySettings # | Sort-Object -Property Id
-					}
-					@{
-						Title = "User Rights Assignment"
-						AuditInfos = Get-CisAudit -UserRights | Sort-Object -Property Id
-					}
-					@{
-						Title = "Account Policies"
-						AuditInfos = Get-CisAudit -AccountPolicies | Sort-Object -Property Id
-					}
-					@{
-						Title = "Windows Firewall with Advanced Security"
-						AuditInfos = Get-CisAudit -FirewallProfiles | Sort-Object -Property Id
-					}
-					@{
-						Title = " Advanced Audit Policy Configuration"
-						AuditInfos = Get-CisAudit -AuditPolicies | Sort-Object -Property Id
-					}
-				)
-			}#>
+			# @{
+			# 	Title = "CIS Benchmarks"
+			# 	Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
+			# 	SubSections = [CisAudit]::new($CisBenchmarks)
+			# }
 		)
 
 		Get-ATAPHtmlReport `
