@@ -268,6 +268,38 @@ class UserRightConfig
 	}
 }
 
+class PasswordPolicyConfig
+{
+	[string] $MaxPasswordAge
+	[string] $MinPasswordAge
+	[string] $MinPasswordLength
+	[string] $PasswordHistLength
+	[string] $PasswordComplexity
+	[string] $ReversibleEncryption
+
+	[AuditResult] Test() {
+		return [AuditResult]@{
+			Message = "Not implemented"
+			Status = [AuditResultStatus]::False
+		}
+	}
+}
+
+class LockoutPolicyConfig
+{
+	[ValueRange[]] $ForceLogoff
+	[ValueRange[]] $LockDuration
+	[ValueRange[]] $LockoutObserverationWindow
+	[ValueRange[]] $LockoutThreshold
+
+	[AuditResult] Test() {
+		return [AuditResult]@{
+			Message = "Not implemented"
+			Status = [AuditResultStatus]::False
+		}
+	}
+}
+
 class AuditPolicyConfig
 {
 	[string] $Subcategory
@@ -299,6 +331,7 @@ function Get-ConfigMetadata {
 		}
 	}
 }
+
 function Get-Config {
 	[CmdletBinding()]
 	param (
@@ -323,6 +356,14 @@ function Get-Config {
 		elseif ($Config.Type -eq "UserRightConfig") {
 			$Config.Remove("Type")
 			return New-Object -TypeName "UserRightConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "PasswordPolicyConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "PasswordPolicyConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "LockoutPolicyConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "LockoutPolicyConfig" -Property $Config
 		}
 		elseif ($Config.Type -eq "AuditPolicyConfig") {
 			$Config.Remove("Type")
