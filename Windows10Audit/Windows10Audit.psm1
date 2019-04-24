@@ -279,9 +279,45 @@ class UserRightConfig
 	[ValueRange] $Trustees
 
 	[AuditResult] Test() {
+		$securityPolicy = Get-SecurityPolicy
+		$currentUserRights = $securityPolicy["Privilege Rights"][$this.UserRight]
+
+		if ($this.Existence -eq [Existence]::None) {
+			if ($currentUserRights.Count -gt 0) {
+				return [AuditResult]@{
+					Status = [AuditResultStatus]::False
+					Message = ""
+				}
+			}
+			else {
+				return [AuditResult]@{
+					Status = [AuditResultStatus]::True
+					Message = ""
+				}
+			}
+		}
+
+		$usersWithTooManyRights = @()
+		foreach ($user in $currentUserRights) {
+			$sid = $user.Translate([System.Security.Principal.SecurityIdentifier]).Value
+			if (-not ($this.Trustees.Test($sid))){
+				$usersWithTooManyRights += $user
+			}
+		}
+
+		if ($usersWithTooManyRights.Count -gt 0) {
+			$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
+			Write-Verbose -Message $message
+
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::False
+				Message = $message
+			}
+		}
+
 		return [AuditResult]@{
-			Message = "Not implemented"
-			Status = [AuditResultStatus]::None
+			Status = [AuditResultStatus]::True
+			Message = "Compliant"
 		}
 	}
 }
@@ -488,6 +524,9 @@ function ConvertTo-NTAccountUser {
 }
 
 function Get-SecurityPolicy {
+	[CmdletBinding()]
+	param ()
+
 	# get a temporary file to save and process the secedit settings
 	Write-Verbose -Message "Get temporary file"
 	$securityPolicyPath = Join-Path -Path $env:TEMP -ChildPath 'SecurityPolicy.inf'

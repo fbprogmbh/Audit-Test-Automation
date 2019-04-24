@@ -7071,7 +7071,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_TRUSTED_CREDMAN_ACCESS_NAME"
+				UserRight = "SeTrustedCredManAccessPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7081,7 +7081,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_NETWORK_LOGON_NAME"
+				UserRight = "SeNetworkLogonRight"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-32-(544|555)"
@@ -7094,7 +7094,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_TCB_NAME"
+				UserRight = "SeTcbPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7104,7 +7104,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_INCREASE_QUOTA_NAME"
+				UserRight = "SeIncreaseQuotaPrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|19|20)"
@@ -7117,7 +7117,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_INTERACTIVE_LOGON_NAME"
+				UserRight = "SeInteractiveLogonRight"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-32-(544|545)"
@@ -7130,7 +7130,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_REMOTE_INTERACTIVE_LOGON_NAME"
+				UserRight = "SeRemoteInteractiveLogonRight"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-32-(544|555)"
@@ -7143,7 +7143,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_BACKUP_NAME"
+				UserRight = "SeBackupPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7156,7 +7156,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_SYSTEMTIME_NAME"
+				UserRight = "SeSystemtimePrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|19)"
@@ -7169,7 +7169,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_TIME_ZONE_NAME"
+				UserRight = "SeTimeZonePrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|19|32-545)"
@@ -7182,7 +7182,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_CREATE_PAGEFILE_NAME"
+				UserRight = "SeCreatePagefilePrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7195,7 +7195,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_CREATE_TOKEN_NAME"
+				UserRight = "SeCreateTokenPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7205,7 +7205,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_CREATE_GLOBAL_NAME"
+				UserRight = "SeCreateGlobalPrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|19|20|6)"
@@ -7218,7 +7218,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_CREATE_PERMANENT_NAME"
+				UserRight = "SeCreatePermanentPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7228,7 +7228,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_CREATE_SYMBOLIC_LINK_NAME"
+				UserRight = "SeCreateSymbolicLinkPrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|83-0)"
@@ -7241,7 +7241,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_DEBUG_NAME"
+				UserRight = "SeDebugPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7258,7 +7258,7 @@
 					@{
 						Type = "UserRightConfig"
 						Existence = "Yes"
-						UserRight = "SE_DENY_NETWORK_LOGON_NAME"
+						UserRight = "SeDenyNetworkLogonRight"
 						Trustees = @{
 							Operation = "equals"
 							Value = "S-1-5-32-546"
@@ -7267,7 +7267,7 @@
 					@{
 						Type = "UserRightConfig"
 						Existence = "Yes"
-						UserRight = "SE_DENY_NETWORK_LOGON_NAME"
+						UserRight = "SeDenyNetworkLogonRight"
 						Trustees = @{
 							Operation = "equals"
 							Value = "S-1-5-113"
@@ -7282,7 +7282,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_DENY_BATCH_LOGON_NAME"
+				UserRight = "SeDenyBatchLogonRight"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-546"
@@ -7295,7 +7295,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_DENY_SERVICE_LOGON_NAME"
+				UserRight = "SeDenyServiceLogonRight"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-546"
@@ -7308,7 +7308,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_DENY_INTERACTIVE_LOGON_NAME"
+				UserRight = "SeDenyInteractiveLogonRight"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-546"
@@ -7325,7 +7325,7 @@
 					@{
 						Type = "UserRightConfig"
 						Existence = "Yes"
-						UserRight = "SE_DENY_REMOTE_INTERACTIVE_LOGON_NAME"
+						UserRight = "SeDenyRemoteInteractiveLogonRight"
 						Trustees = @{
 							Operation = "equals"
 							Value = "S-1-5-32-546"
@@ -7334,7 +7334,7 @@
 					@{
 						Type = "UserRightConfig"
 						Existence = "Yes"
-						UserRight = "SE_DENY_REMOTE_INTERACTIVE_LOGON_NAME"
+						UserRight = "SeDenyRemoteInteractiveLogonRight"
 						Trustees = @{
 							Operation = "equals"
 							Value = "S-1-5-113"
@@ -7349,7 +7349,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_ENABLE_DELEGATION_NAME"
+				UserRight = "SeEnableDelegationPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7359,7 +7359,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_REMOTE_SHUTDOWN_NAME"
+				UserRight = "SeRemoteShutdownPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7372,7 +7372,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_AUDIT_NAME"
+				UserRight = "SeAuditPrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(19|20)"
@@ -7385,7 +7385,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_IMPERSONATE_NAME"
+				UserRight = "SeImpersonatePrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|19|20|6)"
@@ -7398,7 +7398,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_INC_BASE_PRIORITY_NAME"
+				UserRight = "SeIncreaseBasePriorityPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7411,7 +7411,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_LOAD_DRIVER_NAME"
+				UserRight = "SeLoadDriverPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7424,7 +7424,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_LOCK_MEMORY_NAME"
+				UserRight = "SeLockMemoryPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7434,7 +7434,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_BATCH_LOGON_NAME"
+				UserRight = "SeBatchLogonRight"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7447,7 +7447,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_SERVICE_LOGON_NAME"
+				UserRight = "SeServiceLogonRight"
 				Trustees = $Null
 			}
 		}
@@ -7457,7 +7457,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_SECURITY_NAME"
+				UserRight = "SeSecurityPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7470,7 +7470,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "None"
-				UserRight = "SE_RELABEL_NAME"
+				UserRight = "SeRelabelPrivilege"
 				Trustees = $Null
 			}
 		}
@@ -7480,7 +7480,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_SYSTEM_ENVIRONMENT_NAME"
+				UserRight = "SeSystemEnvironmentPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7493,7 +7493,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_MANAGE_VOLUME_NAME"
+				UserRight = "SeManageVolumePrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7506,7 +7506,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_PROF_SINGLE_PROCESS_NAME"
+				UserRight = "SeProfileSingleProcessPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7519,7 +7519,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_SYSTEM_PROFILE_NAME"
+				UserRight = "SeSystemProfilePrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(32-544|80(-\d{9,10}){1,5})"
@@ -7532,7 +7532,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_ASSIGNPRIMARYTOKEN_NAME"
+				UserRight = "SeAssignPrimaryTokenPrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-(19|20)"
@@ -7545,7 +7545,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_RESTORE_NAME"
+				UserRight = "SeRestorePrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
@@ -7558,7 +7558,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_SHUTDOWN_NAME"
+				UserRight = "SeShutdownPrivilege"
 				Trustees = @{
 					Operation = "pattern match"
 					Value = "S-1-5-32-(544|545)"
@@ -7571,7 +7571,7 @@
 			Config = @{
 				Type = "UserRightConfig"
 				Existence = "Yes"
-				UserRight = "SE_TAKE_OWNERSHIP_NAME"
+				UserRight = "SeTakeOwnershipPrivilege"
 				Trustees = @{
 					Operation = "equals"
 					Value = "S-1-5-32-544"
