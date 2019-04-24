@@ -7604,7 +7604,7 @@
 						Policy = "MaximumPasswordAge"
 						Value = @{
 							Operation = "less than or equal"
-							Value = "5184000"
+							Value = "60"
 						}
 					}
 					@{
@@ -7626,7 +7626,7 @@
 				Policy = "MinimumPasswordAge"
 				Value = @{
 					Operation = "greater than or equal"
-					Value = "86400"
+					Value = "1"
 				}
 			}
 		}
@@ -7674,7 +7674,7 @@
 				Policy = "LockoutDuration"
 				Value = @{
 					Operation = "greater than or equal"
-					Value = "900"
+					Value = "15"
 				}
 			}
 		}
@@ -7712,7 +7712,7 @@
 				Policy = "ResetLockoutCount"
 				Value = @{
 					Operation = "greater than or equal"
-					Value = "900"
+					Value = "15"
 				}
 			}
 		}
