@@ -352,75 +352,6 @@ class AccountPolicyConfig
 	}
 }
 
-class PasswordPolicyConfig
-{
-	[ValueRange[]] $MaxPasswordAge
-	[ValueRange[]] $MinPasswordAge
-	[ValueRange[]] $MinPasswordLength
-	[ValueRange[]] $PasswordHistLength
-	[ValueRange[]] $PasswordComplexity
-	[ValueRange[]] $ReversibleEncryption
-
-	[AuditResult] Test() {
-		$securityPolicy = Get-SecurityPolicy
-		$currentAccountPolicy = $securityPolicy["System Access"]
-
-		if ($null -eq $currentAccountPolicy) {
-			return [AuditResult]@{
-				Status = [AuditResultStatus]::False
-				Message = "Currently not set."
-			}
-		}
-
-		$messages = @()
-		if (-not $this.MaxPasswordAge.Test($currentAccountPolicy.MaximumPasswordAge)) {
-			$messages += "MaximumPasswordAge is set to: $($currentAccountPolicy.MaximumPasswordAge). Should be $($this.MaxPasswordAge.Operation): $($this.MaxPasswordAge.Value)."
-		}
-		if (-not $this.MinPasswordAge.Test($currentAccountPolicy.MinimumPasswordAge)) {
-			$messages += "MinimumPasswordAge is set to: $($currentAccountPolicy.MinimumPasswordAge). Should be $($this.MinPasswordAge.Operation): $($this.MinPasswordAge.Value)."
-		}
-		if (-not $this.MinPasswordLength.Test($currentAccountPolicy.MinimumPasswordLength)) {
-			$messages += "MinimumPasswordLength is set to: $($currentAccountPolicy.MinimumPasswordLength). Should be $($this.MinPasswordLength.Operation): $($this.MinPasswordLength.Value)."
-		}
-		if (-not $this.PasswordHistLength.Test($currentAccountPolicy.PasswordHistorySize)) {
-			$messages += "PasswordHistorySize is set to: $($currentAccountPolicy.PasswordHistorySize). Should be $($this.PasswordHistLength.Operation): $($this.PasswordHistLength.Value)."
-		}
-		if (-not $this.PasswordComplexity.Test($currentAccountPolicy.PasswordComplexity)) {
-			$messages += "PasswordComplexity is set to: $($currentAccountPolicy.PasswordComplexity). Should be $($this.PasswordComplexity.Operation): $($this.PasswordComplexity.Value)."
-		}
-		if (-not $this.ReversibleEncryption.Test($currentAccountPolicy.ClearTextPassword)) {
-			$messages += "ClearTextPassword is set to: $($currentAccountPolicy.ClearTextPassword). Should be $($this.ReversibleEncryption.Operation): $($this.ReversibleEncryption.Value)."
-		}
-
-		if ($messages.Length -gt 0) {
-			return [AuditResult]@{
-				Status = [AuditResultStatus]::False
-				Message = $messages -join "`n"
-			}
-		}
-
-		return [AuditResult]@{
-			Status = [AuditResultStatus]::True
-			Message = "Compliant"
-		}
-	}
-}
-
-class LockoutPolicyConfig
-{
-	[ValueRange[]] $ForceLogoff
-	[ValueRange[]] $LockDuration
-	[ValueRange[]] $LockoutObserverationWindow
-	[ValueRange[]] $LockoutThreshold
-
-	[AuditResult] Test() {
-		return [AuditResult]@{
-			Message = "Not implemented"
-			Status = [AuditResultStatus]::None
-		}
-	}
-}
-
 class AuditPolicyConfig
 {
 	[string] $Subcategory
@@ -521,14 +452,6 @@ function Get-Config {
 		elseif ($Config.Type -eq "AccountPolicyConfig") {
 			$Config.Remove("Type")
 			return New-Object -TypeName "AccountPolicyConfig" -Property $Config
-		}
-		elseif ($Config.Type -eq "PasswordPolicyConfig") {
-			$Config.Remove("Type")
-			return New-Object -TypeName "PasswordPolicyConfig" -Property $Config
-		}
-		elseif ($Config.Type -eq "LockoutPolicyConfig") {
-			$Config.Remove("Type")
-			return New-Object -TypeName "LockoutPolicyConfig" -Property $Config
 		}
 		elseif ($Config.Type -eq "AuditPolicyConfig") {
 			$Config.Remove("Type")
@@ -1645,16 +1568,12 @@ class CisAudit
 	[ConfigMetadata[]] $RegistrySettings
 	[ConfigMetadata[]] $UserRights
 	[ConfigMetadata[]] $AccountPolicies
-	# [PasswordPolicyConfig] $PasswordPolicyConfig
-	# [LockoutPolicyConfig] $LockoutPolicyConfig
 	[ConfigMetadata[]] $AuditPolicies
 
 	CisAudit([hashtable] $Cis) {
 		$this.RegistrySettings = $Cis.RegistrySettings | Get-ConfigMetadata
 		$this.UserRights = $Cis.UserRights | Get-ConfigMetadata
 		$this.AccountPolicies = $Cis.AccountPolicies | Get-ConfigMetadata
-		# $this.PasswordPolicyConfig = $Cis.PasswordPolicyConfig | Get-Config
-		# $this.LockoutPolicyConfig = $Cis.LockoutPolicyConfig | Get-Config
 		$this.AuditPolicies = $Cis.AuditPolicies | Get-ConfigMetadata
 	}
 
@@ -1669,8 +1588,6 @@ class CisAudit
 	}
 
 	[hashtable[]] GetReportSection() {
-		# $passwordPolicyAudit = $this.PasswordPolicyConfig.Test()
-
 		return @(
 			@{
 				Title = "Registry Settings/Group Policies"
@@ -1684,19 +1601,6 @@ class CisAudit
 				Title = "Account Policies"
 				AuditInfos = $this.AccountPolicies | Foreach-Object { $this._getAuditInfo($_.Test()) }
 			}
-			# @{
-			# 	Title = "Password Policies"
-			# 	AuditInfos = [AuditInfo]@{
-			# 		Id = "1.1.X"
-			# 		Task = "Ensure Password Settings are set correctly"
-			# 		Message = $passwordPolicyAudit.Message
-			# 		Audit = $passwordPolicyAudit.Status
-			# 	}
-			# }
-			# @{
-			# 	Title = "Lockout Policies"
-			# 	AuditInfos = $this._getAuditInfo($this.LockoutPolicyConfig.Test())
-			# }
 			@{
 				Title = " Advanced Audit Policy Configuration"
 				AuditInfos = $this.AuditPolicies | Foreach-Object { $this._getAuditInfo($_.Test()) }
@@ -1705,10 +1609,6 @@ class CisAudit
 	}
 }
 #endregion
-
-function Get-CisTest {
-	return [CisAudit]::new($CisBenchmarks)
-}
 
 #region Report-Generation
 <#
