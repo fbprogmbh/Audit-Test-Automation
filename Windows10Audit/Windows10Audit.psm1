@@ -360,9 +360,48 @@ class AuditPolicyConfig
 	[string] $AuditFlag
 	
 	[AuditResult] Test() {
+		# Get the audit policy for the subcategory $subcategory
+		$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $this.Subcategory
+		$auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+
+		# auditpol does not throw exceptions, so test the results and throw if needed
+		if ($LASTEXITCODE -ne 0) {
+			$errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+			throw [System.ArgumentException] $errorString
+			Write-Error -Message $errorString
+		}
+
+		if ($null -eq $auditPolicyString) {
+			return [AuditResult]@{
+				Status   = [AuditResultStatus]::False
+				Message = "Couldn't get setting. Auditpol returned nothing."
+			}
+		}
+
+		# Remove empty lines and headers
+		$line = $auditPolicyString `
+			| Where-Object { $_ } `
+			| Select-Object -Skip 3
+
+		if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+			return [AuditResult]@{
+				Status   = [AuditResultStatus]::False
+				Message = "Couldn't get setting."
+			}
+		}
+
+		$setting = $Matches[0]
+
+		if ($setting -ne $this.AuditFlag) {
+			return [AuditResult]@{
+				Status   = [AuditResultStatus]::False
+				Message = "Set to: $setting"
+			}
+		}
+
 		return [AuditResult]@{
-			Message = "Not implemented"
-			Status = [AuditResultStatus]::None
+			Status   = [AuditResultStatus]::True
+			Message = "Compliant"
 		}
 	}
 }

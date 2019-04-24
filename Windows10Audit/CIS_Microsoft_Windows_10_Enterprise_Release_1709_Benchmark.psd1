@@ -7680,12 +7680,12 @@
 				Configs = @(
 					@{
 						Type = "AuditPolicyConfig"
-						Subcategory = "Pnp Activity"
+						Subcategory = "Plug and Play Events"
 						AuditFlag = "Success"
 					}
 					@{
 						Type = "AuditPolicyConfig"
-						Subcategory = "Pnp Activity"
+						Subcategory = "Plug and Play Events"
 						AuditFlag = "Success and Failure"
 					}
 				)
