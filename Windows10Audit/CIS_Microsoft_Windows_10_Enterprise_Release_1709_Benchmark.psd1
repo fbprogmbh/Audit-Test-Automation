@@ -7581,12 +7581,46 @@
 	)
 	PasswordPolicyConfig = @{
 		Type = "PasswordPolicyConfig"
-		MaxPasswordAge = "0"
-		MinPasswordAge = "86400"
-		MinPasswordLength = "14"
-		PasswordHistLength = "24"
-		PasswordComplexity = "1"
-		ReversibleEncryption = "0"
+		MaxPasswordAge = @(
+			@{
+				Operation = "less than or equal"
+				Value = "5184000"
+			}
+			@{
+				Operation = "greater than"
+				Value = "0"
+			}
+		)
+		MinPasswordAge = @(
+			@{
+				Operation = "greater than or equal"
+				Value = "86400"
+			}
+		)
+		MinPasswordLength = @(
+			@{
+				Operation = "greater than or equal"
+				Value = "14"
+			}
+		)
+		PasswordHistLength = @(
+			@{
+				Operation = "greater than or equal"
+				Value = "24"
+			}
+		)
+		PasswordComplexity = @(
+			@{
+				Operation = "equals"
+				Value = "1"
+			}
+		)
+		ReversibleEncryption = @(
+			@{
+				Operation = "equals"
+				Value = "0"
+			}
+		)
 	}
 	LockoutPolicyConfig = @{
 		Type = "LockoutPolicyConfig"
