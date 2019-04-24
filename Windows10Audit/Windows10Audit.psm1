@@ -1616,6 +1616,7 @@ class CisAudit
 #>
 
 function Get-HtmlReport {
+	[CmdletBinding()]
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
