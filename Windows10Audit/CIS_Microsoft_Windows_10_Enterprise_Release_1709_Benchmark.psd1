@@ -7579,77 +7579,144 @@
 			}
 		}
 	)
-	PasswordPolicyConfig = @{
-		Type = "PasswordPolicyConfig"
-		MaxPasswordAge = @(
-			@{
-				Operation = "less than or equal"
-				Value = "5184000"
+	AccountPolicies = @(
+		@{
+			Id = "1.1.1"
+			Task = "(L1) Ensure 'Enforce password history' is set to '24 or more password(s)'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "PasswordHistorySize"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "24"
+				}
 			}
-			@{
-				Operation = "greater than"
-				Value = "0"
+		}
+		@{
+			Id = "1.1.2"
+			Task = "(L1) Ensure 'Maximum password age' is set to '60 or fewer days, but not 0'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "AND"
+				Configs = @(
+					@{
+						Type = "AccountPolicyConfig"
+						Policy = "MaximumPasswordAge"
+						Value = @{
+							Operation = "less than or equal"
+							Value = "5184000"
+						}
+					}
+					@{
+						Type = "AccountPolicyConfig"
+						Policy = "MaximumPasswordAge"
+						Value = @{
+							Operation = "greater than"
+							Value = "0"
+						}
+					}
+				)
 			}
-		)
-		MinPasswordAge = @(
-			@{
-				Operation = "greater than or equal"
-				Value = "86400"
+		}
+		@{
+			Id = "1.1.3"
+			Task = "(L1) Ensure 'Minimum password age' is set to '1 or more day(s)'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "MinimumPasswordAge"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "86400"
+				}
 			}
-		)
-		MinPasswordLength = @(
-			@{
-				Operation = "greater than or equal"
-				Value = "14"
+		}
+		@{
+			Id = "1.1.4"
+			Task = "(L1) Ensure 'Minimum password length' is set to '14 or more character(s)'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "MinimumPasswordLength"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "14"
+				}
 			}
-		)
-		PasswordHistLength = @(
-			@{
-				Operation = "greater than or equal"
-				Value = "24"
+		}
+		@{
+			Id = "1.1.5"
+			Task = "(L1) Ensure 'Password must meet complexity requirements' is set to 'Enabled'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "PasswordComplexity"
+				Value = @{
+					Operation = "equals"
+					Value = "1"
+				}
 			}
-		)
-		PasswordComplexity = @(
-			@{
-				Operation = "equals"
-				Value = "1"
+		}
+		@{
+			Id = "1.1.6"
+			Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "ClearTextPassword"
+				Value = @{
+					Operation = "equals"
+					Value = "0"
+				}
 			}
-		)
-		ReversibleEncryption = @(
-			@{
-				Operation = "equals"
-				Value = "0"
+		}
+		@{
+			Id = "1.2.1"
+			Task = "(L1) Ensure 'Account lockout duration' is set to '15 or more minute(s)'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "LockoutDuration"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "900"
+				}
 			}
-		)
-	}
-	LockoutPolicyConfig = @{
-		Type = "LockoutPolicyConfig"
-		ForceLogoff = @(
-		
-		)
-		LockDuration = @(
-			@{
-				Operation = "greater than or equal"
-				Value = "900"
+		}
+		@{
+			Id = "1.2.2"
+			Task = "(L1) Ensure 'Account lockout threshold' is set to '10 or fewer invalid logon attempt(s), but not 0'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "AND"
+				Configs = @(
+					@{
+						Type = "AccountPolicyConfig"
+						Policy = "LockoutBadCount"
+						Value = @{
+							Operation = "less than or equal"
+							Value = "10"
+						}
+					}
+					@{
+						Type = "AccountPolicyConfig"
+						Policy = "LockoutBadCount"
+						Value = @{
+							Operation = "greater than"
+							Value = "0"
+						}
+					}
+				)
 			}
-		)
-		LockoutObserverationWindow = @(
-			@{
-				Operation = "greater than or equal"
-				Value = "900"
+		}
+		@{
+			Id = "1.2.3"
+			Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
+			Config = @{
+				Type = "AccountPolicyConfig"
+				Policy = "ResetLockoutCount"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "900"
+				}
 			}
-		)
-		LockoutThreshold = @(
-			@{
-				Operation = "less than or equal"
-				Value = "10"
-			}
-			@{
-				Operation = "greater than"
-				Value = "0"
-			}
-		)
-	}
+		}
+	)
 	AuditPolicies = @(
 		@{
 			Id = "17.1.1"

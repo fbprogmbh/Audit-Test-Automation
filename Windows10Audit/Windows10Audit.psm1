@@ -1,4 +1,4 @@
-# Requires -RunAsAdministrator
+﻿# Requires -RunAsAdministrator
 
 <#
 BSD 3-Clause License
@@ -164,7 +164,7 @@ class ValueRange
 			return $value -ge $this.Value
 		}
 		elseif ($this.Operation -eq "less than or equal") {
-			return $value -ge $this.Value
+			return $value -le $this.Value
 		}
 		elseif ($this.Operation -eq "pattern match") {
 			return $value -match $this.Value
@@ -322,6 +322,36 @@ class UserRightConfig
 	}
 }
 
+class AccountPolicyConfig
+{
+	[string] $Policy
+	[ValueRange] $Value
+
+	[AuditResult] Test() {
+		$securityPolicy = Get-SecurityPolicy
+		$currentAccountPolicy = $securityPolicy["System Access"][$this.Policy]
+		
+		if ($null -eq $currentAccountPolicy) {
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::False
+				Message = "Currently not set."
+			}
+		}
+
+		if (-not $this.Value.Test($currentAccountPolicy)) {
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::False
+				Message = "Currently set to: $currentAccountPolicy. Expected: $($this.Value.Operation) $($this.Value.Value)"
+			}
+		}
+
+		return [AuditResult]@{
+			Status = [AuditResultStatus]::True
+			Message = "Compliant"
+		}
+	}
+}
+
 class PasswordPolicyConfig
 {
 	[ValueRange[]] $MaxPasswordAge
@@ -336,7 +366,7 @@ class PasswordPolicyConfig
 		$currentAccountPolicy = $securityPolicy["System Access"]
 
 		if ($null -eq $currentAccountPolicy) {
-		return [AuditResult]@{
+			return [AuditResult]@{
 				Status = [AuditResultStatus]::False
 				Message = "Currently not set."
 			}
@@ -487,6 +517,10 @@ function Get-Config {
 		elseif ($Config.Type -eq "UserRightConfig") {
 			$Config.Remove("Type")
 			return New-Object -TypeName "UserRightConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "AccountPolicyConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "AccountPolicyConfig" -Property $Config
 		}
 		elseif ($Config.Type -eq "PasswordPolicyConfig") {
 			$Config.Remove("Type")
@@ -1610,15 +1644,17 @@ class CisAudit
 {
 	[ConfigMetadata[]] $RegistrySettings
 	[ConfigMetadata[]] $UserRights
-	[PasswordPolicyConfig] $PasswordPolicyConfig
-	[LockoutPolicyConfig] $LockoutPolicyConfig
+	[ConfigMetadata[]] $AccountPolicies
+	# [PasswordPolicyConfig] $PasswordPolicyConfig
+	# [LockoutPolicyConfig] $LockoutPolicyConfig
 	[ConfigMetadata[]] $AuditPolicies
 
 	CisAudit([hashtable] $Cis) {
 		$this.RegistrySettings = $Cis.RegistrySettings | Get-ConfigMetadata
 		$this.UserRights = $Cis.UserRights | Get-ConfigMetadata
-		$this.PasswordPolicyConfig = $Cis.PasswordPolicyConfig | Get-Config
-		$this.LockoutPolicyConfig = $Cis.LockoutPolicyConfig | Get-Config
+		$this.AccountPolicies = $Cis.AccountPolicies | Get-ConfigMetadata
+		# $this.PasswordPolicyConfig = $Cis.PasswordPolicyConfig | Get-Config
+		# $this.LockoutPolicyConfig = $Cis.LockoutPolicyConfig | Get-Config
 		$this.AuditPolicies = $Cis.AuditPolicies | Get-ConfigMetadata
 	}
 
@@ -1633,7 +1669,7 @@ class CisAudit
 	}
 
 	[hashtable[]] GetReportSection() {
-		$passwordPolicyAudit = $this.PasswordPolicyConfig.Test()
+		# $passwordPolicyAudit = $this.PasswordPolicyConfig.Test()
 
 		return @(
 			@{
@@ -1643,6 +1679,10 @@ class CisAudit
 			@{
 				Title = "User Rights Assignment"
 				AuditInfos = $this.UserRights | Foreach-Object { $this._getAuditInfo($_.Test()) }
+			}
+			@{
+				Title = "Account Policies"
+				AuditInfos = $this.AccountPolicies | Foreach-Object { $this._getAuditInfo($_.Test()) }
 			}
 			# @{
 			# 	Title = "Password Policies"
