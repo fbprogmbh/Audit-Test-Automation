@@ -166,7 +166,7 @@
 		@{
 			Id    = "WN10-CC-000037"
 			Task  = "Local administrator accounts must have their privileged token filtered to prevent elevated privileges from being used over the network on domain systems."
-			Path  = "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\"
+			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\"
 			Name  = "LocalAccountTokenFilterPolicy"
 			Value = 0
 		}
@@ -796,7 +796,7 @@
 		@{
 			Id    = "WN10-CC-000228"
 			Task  = "Windows 10 must be configured to prevent Microsoft Edge browser data from being cleared on exit."
-			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\ Privacy\"
+			Path  = "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Privacy\"
 			Name  = "ClearBrowsingHistoryOnExit"
 			Value = 0
 		}
