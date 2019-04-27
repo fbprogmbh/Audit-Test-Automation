@@ -540,12 +540,14 @@ Param(
 }
 
 function ConvertTo-NTAccountUser {
+	[CmdletBinding()]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[string] $Name
 	)
-
+	
 	process {
+		Write-Verbose "[ConvertTo-NTAccountUser] Converting identity '$Name' to NTAccount"
 		if ($_ -match "^(S-[0-9-]{3,})") {
 			$sidAccount = [System.Security.Principal.SecurityIdentifier]$Name
 		}
@@ -561,12 +563,10 @@ function Get-SecurityPolicy {
 	param ()
 
 	# get a temporary file to save and process the secedit settings
-	Write-Verbose -Message "Get temporary file"
 	$securityPolicyPath = Join-Path -Path $env:TEMP -ChildPath 'SecurityPolicy.inf'
-	Write-Verbose -Message "Tempory file: $tmp"
 
 	# export the secedit settings to this temporary file
-	Write-Verbose "Export current Local Security Policy"
+	Write-Verbose "[Get-SecurityPolicy] Exporting local security policies from secedit into tempory file: $securityPolicyPath"
 	secedit.exe /export /cfg $securityPolicyPath | Out-Null
 
 	$config = @{}
@@ -582,10 +582,11 @@ function Get-SecurityPolicy {
 		}
 	}
 
+	Write-Verbose "[Get-SecurityPolicy] Converting identities in 'Privilege Rights' section"
 	$privilegeRights = @{}
 	foreach ($key in $config["Privilege Rights"].Keys) {
 		# Make all accounts SIDs
-		$accounts = $($config["Privilege Rights"][$key] -split ",").Trim() | ConvertTo-NTAccountUser
+		$accounts = $($config["Privilege Rights"][$key] -split ",").Trim() | ConvertTo-NTAccountUser -Verbose:$VerbosePreference
 		$privilegeRights[$key] = $accounts
 	}
 	$config["Privilege Rights"] = $privilegeRights
