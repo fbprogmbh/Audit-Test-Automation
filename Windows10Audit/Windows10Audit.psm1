@@ -123,23 +123,11 @@ class ConfigMetadata
 
 	[ConfigAudit] Test() {
 		$testResult = $this.Config.Test()
-
-		try {
-			return [ConfigAudit]@{
-				Id = $this.Id
-				Task = $this.Task
-				Status = $testResult.Status
-				Message = $testResult.Message
-			}
-		}
-		catch {
-			Write-Outout [ConfigAudit]@{
-				Id = $this.Id
-				Task = $this.Task
-				Status = [AuditResultStatus]::False
-				Message = "An error occured!"
-			}
-			throw
+		return [ConfigAudit]@{
+			Id = $this.Id
+			Task = $this.Task
+			Status = $testResult.Status
+			Message = $testResult.Message
 		}
 	}
 }
@@ -1580,49 +1568,106 @@ function Get-DisaAudit {
 }
 
 #region Audits
-class CisAudit
+
+class BenchmarkSection
 {
-	[ConfigMetadata[]] $RegistrySettings
-	[ConfigMetadata[]] $UserRights
-	[ConfigMetadata[]] $AccountPolicies
-	[ConfigMetadata[]] $AuditPolicies
+	[string] $Name
+	[ConfigMetadata[]] $Configs
+}
 
-	CisAudit([hashtable] $Cis) {
-		$this.RegistrySettings = $Cis.RegistrySettings | Get-ConfigMetadata
-		$this.UserRights = $Cis.UserRights | Get-ConfigMetadata
-		$this.AccountPolicies = $Cis.AccountPolicies | Get-ConfigMetadata
-		$this.AuditPolicies = $Cis.AuditPolicies | Get-ConfigMetadata
-	}
+class Benchmark
+{
+	[string] $Name
+	[string] $Description
+	[BenchmarkSection[]] $Sections
 
-	hidden [AuditInfo] _getAuditInfo([ConfigAudit] $configAudit)
-	{
-		return [AuditInfo]@{
-			Id      = $configAudit.Id
-			Task    = $configAudit.Task
-			Message = $configAudit.Message
-			Audit   = $configAudit.Status
-		}
-	}
+	# Benchmark([hashtable] $benchmark) {
+	# 	foreach ($key in $benchmark.Keys) {
+	# 		$this.Sections += [BenchmarkSection]@{
+	# 			Name = $benchmark[$key].Name
+	# 			Configs = $benchmark[$key].Configs
+	# 		}
+	# 	}
+	# }
+}
 
-	[hashtable[]] GetReportSection() {
-		return @(
-			@{
-				Title = "Registry Settings/Group Policies"
-				AuditInfos = $this.RegistrySettings | Foreach-Object { $this._getAuditInfo($_.Test()) }
+function Get-CisBenchmark {
+	return [Benchmark]@{
+		Name = "CIS Benchmarks"
+		Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
+		Sections = @(
+			[BenchmarkSection]@{
+				Name = "Registry Settings/Group Policies"
+				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata
 			}
-			@{
-				Title = "User Rights Assignment"
-				AuditInfos = $this.UserRights | Foreach-Object { $this._getAuditInfo($_.Test()) }
+			[BenchmarkSection]@{
+				Name = "User Rights Assignment"
+				Configs = $CisBenchmarks.UserRights | Get-ConfigMetadata
 			}
-			@{
-				Title = "Account Policies"
-				AuditInfos = $this.AccountPolicies | Foreach-Object { $this._getAuditInfo($_.Test()) }
+			[BenchmarkSection]@{
+				Name = "Account Policies"
+				Configs = $CisBenchmarks.AccountPolicies | Get-ConfigMetadata
 			}
-			@{
-				Title = " Advanced Audit Policy Configuration"
-				AuditInfos = $this.AuditPolicies | Foreach-Object { $this._getAuditInfo($_.Test()) }
+			[BenchmarkSection]@{
+				Name = "Advanced Audit Policy Configuration"
+				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
 			}
 		)
+	}
+}
+
+function Get-BenchmarkSectionReportSection {
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true)]
+		[BenchmarkSection]
+		$Section
+	)
+
+	$audits = @()
+	foreach ($config in $Section.Configs) {
+		try {
+			$audit = $config.Test()
+			$audits += [AuditInfo]@{
+				Id      = $audit.Id
+				Task    = $audit.Task
+				Message = $audit.Message
+				Audit   = $audit.Status
+			}
+		}
+		catch {
+			Write-Error @_
+			$audits += [AuditInfo]@{
+				Id      = $audit.Id
+				Task    = $audit.Task
+				Message = "An error occured!"
+				Audit   = [AuditStatus]::None
+			}
+		}
+	}
+	return @{
+		Title = $Section.Name
+		AuditInfos = $audits
+	}
+}
+
+function Get-BenchmarkReportSection {
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true)]
+		[Benchmark]
+		$Benchmark
+	)
+
+	$subSections = @()
+	foreach	($section in $benchmark.Sections) {
+		$subSections += Get-BenchmarkSectionReportSection -Section $section
+	}
+
+	return @{
+		Title = $Benchmark.Name
+		Description = $Benchmark.Description
+		SubSections = $subSections
 	}
 }
 #endregion
@@ -1675,11 +1720,7 @@ function Get-HtmlReport {
 					}
 				)
 			}
-			@{
-				Title = "CIS Benchmarks"
-				Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-				SubSections = ([CisAudit]::new($CisBenchmarks)).GetReportSection()
-			}
+			(Get-BenchmarkReportSection -Benchmark (Get-CisBenchmark))
 		)
 
 		Get-ATAPHtmlReport `
