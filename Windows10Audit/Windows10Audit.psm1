@@ -123,11 +123,23 @@ class ConfigMetadata
 
 	[ConfigAudit] Test() {
 		$testResult = $this.Config.Test()
-		return [ConfigAudit]@{
-			Id = $this.Id
-			Task = $this.Task
-			Status = $testResult.Status
-			Message = $testResult.Message
+
+		try {
+			return [ConfigAudit]@{
+				Id = $this.Id
+				Task = $this.Task
+				Status = $testResult.Status
+				Message = $testResult.Message
+			}
+		}
+		catch {
+			Write-Outout [ConfigAudit]@{
+				Id = $this.Id
+				Task = $this.Task
+				Status = [AuditResultStatus]::False
+				Message = "An error occured!"
+			}
+			throw
 		}
 	}
 }
@@ -286,22 +298,23 @@ class UserRightConfig
 			if ($currentUserRights.Count -gt 0) {
 				return [AuditResult]@{
 					Status = [AuditResultStatus]::False
-					Message = ""
+					Message = "Found users while expecting none."
 				}
 			}
 			else {
 				return [AuditResult]@{
 					Status = [AuditResultStatus]::True
-					Message = ""
+					Message = "Compliant"
 				}
 			}
 		}
 
+		Write-Verbose "[UserRightConfig.Test()] Checking users"
 		$usersWithTooManyRights = @()
 		foreach ($user in $currentUserRights) {
-			$sid = $user.Translate([System.Security.Principal.SecurityIdentifier]).Value
+			$sid = $user.Sid
 			if (-not ($this.Trustees.Test($sid))){
-				$usersWithTooManyRights += $user
+				$usersWithTooManyRights += $user.Account
 			}
 		}
 
@@ -554,7 +567,10 @@ function ConvertTo-NTAccountUser {
 		else {
 			$sidAccount = ([System.Security.Principal.NTAccount]$Name).Translate([System.Security.Principal.SecurityIdentifier])
 		}
-		return $sidAccount.Translate([System.Security.Principal.NTAccount])
+		return @{
+			Account = $sidAccount.Translate([System.Security.Principal.NTAccount])
+			Sid =  $sidAccount.Value
+		}
 	}
 }
 
@@ -931,8 +947,8 @@ function Get-UserRightPolicyAudit {
 
 		$identityAccounts = $Identity | ConvertTo-NTAccountUser
 
-		$usersWithTooManyRights = $currentUserRights | Where-Object { $_ -notin $identityAccounts }
-		$usersWithoutRights = $identityAccounts | Where-Object { $_ -notin $currentUserRights }
+		$usersWithTooManyRights = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+		$usersWithoutRights = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
 
 		if ($usersWithTooManyRights.Count -gt 0) {
 			$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
@@ -947,7 +963,7 @@ function Get-UserRightPolicyAudit {
 		}
 
 		if ($usersWithoutRights.Count -gt 0) {
-			$message = "The following users have don't have the rights: " + ($usersWithoutRights -join ", ")
+			$message = "The following users have don't have the rights: " + ($usersWithoutRights.Account -join ", ")
 			Write-Verbose -Message $message
 
 			return [AuditInfo]@{
