@@ -96,7 +96,7 @@ function Write-LogFile {
 		$output += $Record.Message
 		$output += "--------------------------------------------------------------------------------"
 		$output += ""
-	
+
 		$output | Out-File -Append $LogFilePath -Width 80
 	}
 }
@@ -331,7 +331,7 @@ class AccountPolicyConfig
 	[AuditResult] Test() {
 		$securityPolicy = Get-SecurityPolicy
 		$currentAccountPolicy = $securityPolicy["System Access"][$this.Policy]
-		
+
 		if ($null -eq $currentAccountPolicy) {
 			return [AuditResult]@{
 				Status = [AuditResultStatus]::False
@@ -357,7 +357,7 @@ class AuditPolicyConfig
 {
 	[string] $Subcategory
 	[string] $AuditFlag
-	
+
 	[AuditResult] Test() {
 		# Get the audit policy for the subcategory $subcategory
 		$subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory $this.Subcategory
@@ -404,6 +404,38 @@ class AuditPolicyConfig
 		}
 	}
 }
+
+
+class FirewallProfileConfig
+{
+	[string] $Profile
+	[string] $Setting
+	[ValueRange] $Value
+
+	[AuditResult] Test() {
+		Write-Verbose -Message "Profile: $($this.Profile), Setting: $($this.Setting), Value: $($this.Value)"
+
+		$firewallProfileArgs = @{ Name = $this.Profile }
+		if ($this.Setting -like "AllowLocal*Rules") {
+			$this.firewallProfileArgs.PolicyStore = "localhost"
+		}
+
+		$profileSettings = Get-NetFirewallProfile @firewallProfileArgs
+		$currentValue = $profileSettings | Select-Object -ExpandProperty $this.Setting
+
+		if (-not $this.Value.Test($currentValue)) {
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::False
+				Message = "Profile setting '$this.Setting' is currently set to '$currentValue'. Expected value is '$this.Value'."
+			}
+		}
+
+		return [AuditResult]@{
+			Status = [AuditResultStatus]::True
+			Message = "Compliant"
+		}
+	}
+}
 #endregion
 
 
@@ -415,7 +447,7 @@ function Get-ConfigMetadata {
 		[hashtable]
 		$ConfigMetadata
 	)
-	
+
 	process {
 		return [ConfigMetadata]@{
 			Id = $ConfigMetadata.Id
@@ -457,6 +489,10 @@ function Get-Config {
 		elseif ($Config.Type -eq "AuditPolicyConfig") {
 			$Config.Remove("Type")
 			return New-Object -TypeName "AuditPolicyConfig" -Property $Config
+		}
+		elseif ($Config.Type -eq "FirewallProfileConfig") {
+			$Config.Remove("Type")
+			return New-Object -TypeName "FirewallProfileConfig" -Property $Config
 		}
 	}
 }
@@ -546,7 +582,7 @@ function ConvertTo-NTAccountUser {
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[string] $Name
 	)
-	
+
 	process {
 		Write-Verbose "[ConvertTo-NTAccountUser] Converting identity '$Name' to NTAccount"
 		if ($_ -match "^(S-[0-9-]{3,})") {
@@ -1607,6 +1643,10 @@ function Get-CisBenchmark {
 			[BenchmarkSection]@{
 				Name = "Account Policies"
 				Configs = $CisBenchmarks.AccountPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Windows Firewall with Advanced Security"
+				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
 			}
 			[BenchmarkSection]@{
 				Name = "Advanced Audit Policy Configuration"

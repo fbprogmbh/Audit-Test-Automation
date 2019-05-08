@@ -1876,396 +1876,396 @@
 				ValueType = "reg_dword"
 			}
 		}
-		@{
-			Id = "9.1.1"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-				ValueName = "EnableFirewall"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.1.2"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-				ValueName = "DefaultInboundAction"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.1.3"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-				ValueName = "DefaultOutboundAction"
-				ValueData = @{
-					Operation = "equals"
-					Value = "0"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.1.4"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-				ValueName = "DisableNotifications"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.1.5"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
-				ValueName = "LogFilePath"
-				ValueData = @{
-					Operation = "equals"
-					Value = "%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log"
-				}
-				ValueType = "reg_sz"
-			}
-		}
-		@{
-			Id = "9.1.6"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
-				ValueName = "LogFileSize"
-				ValueData = @{
-					Operation = "greater than or equal"
-					Value = "16384"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.1.7"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
-				ValueName = "LogDroppedPackets"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.1.8"
-			Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
-				ValueName = "LogSuccessfulConnections"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.1"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
-				ValueName = "EnableFirewall"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.2"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
-				ValueName = "DefaultInboundAction"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.3"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
-				ValueName = "DefaultOutboundAction"
-				ValueData = @{
-					Operation = "equals"
-					Value = "0"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.4"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
-				ValueName = "DisableNotifications"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.5"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
-				ValueName = "LogFilePath"
-				ValueData = @{
-					Operation = "equals"
-					Value = "%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log"
-				}
-				ValueType = "reg_sz"
-			}
-		}
-		@{
-			Id = "9.2.6"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
-				ValueName = "LogFileSize"
-				ValueData = @{
-					Operation = "greater than or equal"
-					Value = "16384"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.7"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
-				ValueName = "LogDroppedPackets"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.2.8"
-			Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
-				ValueName = "LogSuccessfulConnections"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.1"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-				ValueName = "EnableFirewall"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.2"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-				ValueName = "DefaultInboundAction"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.3"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-				ValueName = "DefaultOutboundAction"
-				ValueData = @{
-					Operation = "equals"
-					Value = "0"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.4"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-				ValueName = "DisableNotifications"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.5"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-				ValueName = "AllowLocalPolicyMerge"
-				ValueData = @{
-					Operation = "equals"
-					Value = "0"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.6"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-				ValueName = "AllowLocalIPsecPolicyMerge"
-				ValueData = @{
-					Operation = "equals"
-					Value = "0"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.7"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
-				ValueName = "LogFilePath"
-				ValueData = @{
-					Operation = "equals"
-					Value = "%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log"
-				}
-				ValueType = "reg_sz"
-			}
-		}
-		@{
-			Id = "9.3.8"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
-				ValueName = "LogFileSize"
-				ValueData = @{
-					Operation = "greater than or equal"
-					Value = "16384"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.9"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
-				ValueName = "LogDroppedPackets"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "9.3.10"
-			Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
-				ValueName = "LogSuccessfulConnections"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
+		# @{
+		# 	Id = "9.1.1"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+		# 		ValueName = "EnableFirewall"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.2"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+		# 		ValueName = "DefaultInboundAction"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.3"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+		# 		ValueName = "DefaultOutboundAction"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "0"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.4"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+		# 		ValueName = "DisableNotifications"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.5"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+		# 		ValueName = "LogFilePath"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log"
+		# 		}
+		# 		ValueType = "reg_sz"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.6"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+		# 		ValueName = "LogFileSize"
+		# 		ValueData = @{
+		# 			Operation = "greater than or equal"
+		# 			Value = "16384"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.7"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+		# 		ValueName = "LogDroppedPackets"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.1.8"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+		# 		ValueName = "LogSuccessfulConnections"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.1"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+		# 		ValueName = "EnableFirewall"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.2"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+		# 		ValueName = "DefaultInboundAction"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.3"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+		# 		ValueName = "DefaultOutboundAction"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "0"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.4"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+		# 		ValueName = "DisableNotifications"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.5"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+		# 		ValueName = "LogFilePath"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log"
+		# 		}
+		# 		ValueType = "reg_sz"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.6"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+		# 		ValueName = "LogFileSize"
+		# 		ValueData = @{
+		# 			Operation = "greater than or equal"
+		# 			Value = "16384"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.7"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+		# 		ValueName = "LogDroppedPackets"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.2.8"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+		# 		ValueName = "LogSuccessfulConnections"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.1"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+		# 		ValueName = "EnableFirewall"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.2"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+		# 		ValueName = "DefaultInboundAction"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.3"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+		# 		ValueName = "DefaultOutboundAction"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "0"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.4"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+		# 		ValueName = "DisableNotifications"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.5"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+		# 		ValueName = "AllowLocalPolicyMerge"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "0"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.6"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+		# 		ValueName = "AllowLocalIPsecPolicyMerge"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "0"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.7"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+		# 		ValueName = "LogFilePath"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log"
+		# 		}
+		# 		ValueType = "reg_sz"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.8"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+		# 		ValueName = "LogFileSize"
+		# 		ValueData = @{
+		# 			Operation = "greater than or equal"
+		# 			Value = "16384"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.9"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+		# 		ValueName = "LogDroppedPackets"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "9.3.10"
+		# 	Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+		# 		ValueName = "LogSuccessfulConnections"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
 		@{
 			Id = "18.1.1.1"
 			Task = "(L1) Ensure 'Prevent enabling lock screen camera' is set to 'Enabled'"
@@ -8045,207 +8045,344 @@
 		@{
 			Id = "9.1.1"
 			Task = "Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
-			Profile = "Domain"
-			Setting = "Enabled"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "Enabled"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 		@{
 			Id = "9.1.2"
 			Task = "Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
-			Profile = "Domain"
-			Setting = "DefaultInboundAction"
-			Value = "Block"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "DefaultInboundAction"
+				Value = @{
+					Operation = "Equals"
+					Value = "Block"
+				}
+			}
 		}
 		@{
 			Id = "9.1.3"
 			Task = "Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
-			Profile = "Domain"
-			Setting = "DefaultOutboundAction"
-			Value = "Allow"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "DefaultOutboundAction"
+				Value = @{
+					Operation = "Equals"
+					Value = "Allow"
+				}
+			}
 		}
 		@{
 			Id = "9.1.4"
 			Task = "Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
-			Profile = "Domain"
-			Setting = "NotifyOnListen"
-			Value = "False"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "NotifyOnListen"
+				Value = @{
+					Operation = "Equals"
+					Value = "False"
+				}
+			}
 		}
 		@{
 			Id = "9.1.5"
 			Task = "Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log'"
-			Profile = "Domain"
-			Setting = "LogFileName"
-			Value = "%systemroot%\system32\LogFiles\Firewall\domainfw.log"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "LogFileName"
+				Value = @{
+					Operation = "Equals"
+					Value = "%systemroot%\system32\LogFiles\Firewall\domainfw.log"
+				}
+			}
 		}
 		@{
 			Id = "9.1.6"
 			Task = "Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
-			Profile = "Domain"
-			Setting = "LogMaxSizeKilobytes"
-			Value = @{
-				Operation = "greater than or equal"
-				Value = "16384"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "LogMaxSizeKilobytes"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "16384"
+				}
 			}
 		}
 		@{
 			Id = "9.1.7"
 			Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
-			Profile = "Domain"
-			Setting = "LogBlocked"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "LogBlocked"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 		@{
 			Id = "9.1.8"
 			Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
-			Profile = "Domain"
-			Setting = "LogAllowed"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Domain"
+				Setting = "LogAllowed"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 
 		@{
 			Id = "9.2.1"
 			Task = "Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
-			Profile = "Private"
-			Setting = "Enabled"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "Enabled"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 		@{
 			Id = "9.2.2"
 			Task = "Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
-			Profile = "Private"
-			Setting = "DefaultInboundAction"
-			Value = "Block"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "DefaultInboundAction"
+				Value = @{
+					Operation = "Equals"
+					Value = "Block"
+				}
+			}
 		}
 		@{
 			Id = "9.2.3"
 			Task = "Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
-			Profile = "Private"
-			Setting = "DefaultOutboundAction"
-			Value = "Allow"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "DefaultOutboundAction"
+				Value = @{
+					Operation = "Equals"
+					Value = "Allow"
+				}
+			}
 		}
 		@{
 			Id = "9.2.4"
 			Task = "Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
-			Profile = "Private"
-			Setting = "NotifyOnListen"
-			Value = "False"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "NotifyOnListen"
+				Value = @{
+					Operation = "Equals"
+					Value = "False"
+				}
+			}
 		}
 		@{
 			Id = "9.2.5"
 			Task = "Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log'"
-			Profile = "Private"
-			Setting = "LogFileName"
-			Value = "%systemroot%\system32\LogFiles\Firewall\privatefw.log"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "LogFileName"
+				Value = @{
+					Operation = "Equals"
+					Value = "%systemroot%\system32\LogFiles\Firewall\privatefw.log"
+				}
+			}
 		}
 		@{
 			Id = "9.2.6"
 			Task = "Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
-			Profile = "Private"
-			Setting = "LogMaxSizeKilobytes"
-			Value = @{
-				Operation = "greater than or equal"
-				Value = "16384"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "LogMaxSizeKilobytes"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "16384"
+				}
 			}
 		}
 		@{
 			Id = "9.2.7"
 			Task = "Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
-			Profile = "Private"
-			Setting = "LogBlocked"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "LogBlocked"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 		@{
 			Id = "9.2.8"
 			Task = "Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
-			Profile = "Private"
-			Setting = "LogAllowed"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Private"
+				Setting = "LogAllowed"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 
 
 		@{
 			Id = "9.3.1"
 			Task = "Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
-
-			Profile = "Public"
-			Setting = "Enabled"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "Enabled"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 		@{
 			Id = "9.3.2"
 			Task = "Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
-
-			Profile = "Public"
-			Setting = "DefaultInboundAction"
-			Value = "Block"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "DefaultInboundAction"
+				Value = @{
+					Operation = "Equals"
+					Value = "Block"
+				}
+			}
 		}
 		@{
 			Id = "9.3.3"
 			Task = "Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
-
-			Profile = "Public"
-			Setting = "DefaultOutboundAction"
-			Value = "Allow"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "DefaultOutboundAction"
+				Value = @{
+					Operation = "Equals"
+					Value = "Allow"
+				}
+			}
 		}
 		@{
 			Id = "9.3.4"
 			Task = "Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
-
-			Profile = "Public"
-			Setting = "NotifyOnListen"
-			Value = "False"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "NotifyOnListen"
+				Value = @{
+					Operation = "Equals"
+					Value = "False"
+				}
+			}
 		}
 		# Run Get-NetFirewallProfile -Name Public -PolicyStore localhost
 		# @{ # Problems
 		# 	Id = "9.3.5"
 		# 	Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
-
-		# 	Profile = "Public"
-		# 	Setting = "AllowLocalFirewallRules"
-		# 	Value = "False"
+		# 	Config = @{
+		# 		Type = "FirewallProfileConfig"
+		# 		Profile = "Public"
+		# 		Setting = "AllowLocalFirewallRules"
+		# 		Value = @{
+		# 			Operation = "equals"
+		# 			Value = "False"
+		# 		}
+		# 	}
 		# }
 		# @{ # Problems
 		# 	Id = "9.3.6"
 		# 	Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
-
-		# 	Profile = "Public"
-		# 	Setting = "AllowLocalIPsecRules"
-		# 	Value = "False"
+		# 	Config = @{
+		# 		Type = "FirewallProfileConfig"
+		# 		Profile = "Public"
+		# 		Setting = "AllowLocalIPsecRules"
+		# 		Value = @{
+		# 			Operation = "equals"
+		# 			Value = "False"
+		# 		}
+		# 	}
 		# }
 		@{
 			Id = "9.3.7"
 			Task = "Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log'"
-
-			Profile = "Public"
-			Setting = "LogFileName"
-			Value = "%systemroot%\system32\LogFiles\Firewall\publicfw.log"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "LogFileName"
+				Value = @{
+					Operation = "Equals"
+					Value = "%systemroot%\system32\LogFiles\Firewall\publicfw.log"
+				}
+			}
 		}
 		@{
 			Id = "9.3.8"
 			Task = "Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
-
-			Profile = "Public"
-			Setting = "LogMaxSizeKilobytes"
-			Value = @{
-				Operation = "greater than or equal"
-				Value = "16384"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "LogMaxSizeKilobytes"
+				Value = @{
+					Operation = "greater than or equal"
+					Value = "16384"
+				}
 			}
 		}
 		@{
 			Id = "9.3.9"
 			Task = "Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
-
-			Profile = "Public"
-			Setting = "LogBlocked"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "LogBlocked"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 		@{
 			Id = "9.3.10"
 			Task = "Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
-
-			Profile = "Public"
-			Setting = "LogAllowed"
-			Value = "True"
+			Config = @{
+				Type = "FirewallProfileConfig"
+				Profile = "Public"
+				Setting = "LogAllowed"
+				Value = @{
+					Operation = "Equals"
+					Value = "True"
+				}
+			}
 		}
 	)
 }
