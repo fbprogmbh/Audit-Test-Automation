@@ -8041,4 +8041,211 @@
 			}
 		}
 	)
+	FirewallProfileSettings = @(
+		@{
+			Id = "9.1.1"
+			Task = "Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
+			Profile = "Domain"
+			Setting = "Enabled"
+			Value = "True"
+		}
+		@{
+			Id = "9.1.2"
+			Task = "Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
+			Profile = "Domain"
+			Setting = "DefaultInboundAction"
+			Value = "Block"
+		}
+		@{
+			Id = "9.1.3"
+			Task = "Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
+			Profile = "Domain"
+			Setting = "DefaultOutboundAction"
+			Value = "Allow"
+		}
+		@{
+			Id = "9.1.4"
+			Task = "Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
+			Profile = "Domain"
+			Setting = "NotifyOnListen"
+			Value = "False"
+		}
+		@{
+			Id = "9.1.5"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log'"
+			Profile = "Domain"
+			Setting = "LogFileName"
+			Value = "%systemroot%\system32\LogFiles\Firewall\domainfw.log"
+		}
+		@{
+			Id = "9.1.6"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+			Profile = "Domain"
+			Setting = "LogMaxSizeKilobytes"
+			Value = @{
+				Operation = "greater than or equal"
+				Value = "16384"
+			}
+		}
+		@{
+			Id = "9.1.7"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+			Profile = "Domain"
+			Setting = "LogBlocked"
+			Value = "True"
+		}
+		@{
+			Id = "9.1.8"
+			Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+			Profile = "Domain"
+			Setting = "LogAllowed"
+			Value = "True"
+		}
+
+		@{
+			Id = "9.2.1"
+			Task = "Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
+			Profile = "Private"
+			Setting = "Enabled"
+			Value = "True"
+		}
+		@{
+			Id = "9.2.2"
+			Task = "Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
+			Profile = "Private"
+			Setting = "DefaultInboundAction"
+			Value = "Block"
+		}
+		@{
+			Id = "9.2.3"
+			Task = "Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
+			Profile = "Private"
+			Setting = "DefaultOutboundAction"
+			Value = "Allow"
+		}
+		@{
+			Id = "9.2.4"
+			Task = "Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
+			Profile = "Private"
+			Setting = "NotifyOnListen"
+			Value = "False"
+		}
+		@{
+			Id = "9.2.5"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\privatefw.log'"
+			Profile = "Private"
+			Setting = "LogFileName"
+			Value = "%systemroot%\system32\LogFiles\Firewall\privatefw.log"
+		}
+		@{
+			Id = "9.2.6"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+			Profile = "Private"
+			Setting = "LogMaxSizeKilobytes"
+			Value = @{
+				Operation = "greater than or equal"
+				Value = "16384"
+			}
+		}
+		@{
+			Id = "9.2.7"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
+			Profile = "Private"
+			Setting = "LogBlocked"
+			Value = "True"
+		}
+		@{
+			Id = "9.2.8"
+			Task = "Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
+			Profile = "Private"
+			Setting = "LogAllowed"
+			Value = "True"
+		}
+
+
+		@{
+			Id = "9.3.1"
+			Task = "Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
+
+			Profile = "Public"
+			Setting = "Enabled"
+			Value = "True"
+		}
+		@{
+			Id = "9.3.2"
+			Task = "Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
+
+			Profile = "Public"
+			Setting = "DefaultInboundAction"
+			Value = "Block"
+		}
+		@{
+			Id = "9.3.3"
+			Task = "Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
+
+			Profile = "Public"
+			Setting = "DefaultOutboundAction"
+			Value = "Allow"
+		}
+		@{
+			Id = "9.3.4"
+			Task = "Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
+
+			Profile = "Public"
+			Setting = "NotifyOnListen"
+			Value = "False"
+		}
+		# Run Get-NetFirewallProfile -Name Public -PolicyStore localhost
+		# @{ # Problems
+		# 	Id = "9.3.5"
+		# 	Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
+
+		# 	Profile = "Public"
+		# 	Setting = "AllowLocalFirewallRules"
+		# 	Value = "False"
+		# }
+		# @{ # Problems
+		# 	Id = "9.3.6"
+		# 	Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
+
+		# 	Profile = "Public"
+		# 	Setting = "AllowLocalIPsecRules"
+		# 	Value = "False"
+		# }
+		@{
+			Id = "9.3.7"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\publicfw.log'"
+
+			Profile = "Public"
+			Setting = "LogFileName"
+			Value = "%systemroot%\system32\LogFiles\Firewall\publicfw.log"
+		}
+		@{
+			Id = "9.3.8"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+
+			Profile = "Public"
+			Setting = "LogMaxSizeKilobytes"
+			Value = @{
+				Operation = "greater than or equal"
+				Value = "16384"
+			}
+		}
+		@{
+			Id = "9.3.9"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
+
+			Profile = "Public"
+			Setting = "LogBlocked"
+			Value = "True"
+		}
+		@{
+			Id = "9.3.10"
+			Task = "Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
+
+			Profile = "Public"
+			Setting = "LogAllowed"
+			Value = "True"
+		}
+	)
 }
