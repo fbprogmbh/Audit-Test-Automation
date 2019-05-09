@@ -40,8 +40,8 @@ using namespace System.Security.AccessControl
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
 #region Import tests configuration settings
-$DisaRequirements = Import-LocalizedData -FileName "Win10_DISA_STIG_V1R16.psd1"
-$CisBenchmarks = Import-LocalizedData -FileName "CIS_Microsoft_Windows_10_Enterprise_Release_1709_Benchmark.psd1"
+$DisaRequirements = Import-LocalizedData -BaseDirectory "HardeningData" -FileName "Win10_DISA_V1R16.psd1"
+$CisBenchmarks = Import-LocalizedData -BaseDirectory "HardeningData" -FileName "Win10_CIS_V1.4.0.psd1"
 #endregion
 
 
