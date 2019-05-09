@@ -7299,7 +7299,7 @@
 				)
 			}
 		}
-		@{
+		@{ # BUGS
 			Id = "2.2.20"
 			Task = "(L1) Ensure 'Deny log on through Remote Desktop Services' to include 'Guests, Local account'"
 			Config = @{

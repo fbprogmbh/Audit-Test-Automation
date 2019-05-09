@@ -41,8 +41,8 @@ $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
 #region Import tests configuration settings
 
-$DisaRequirements = Import-LocalizedData -BaseDirectory "HardeningData" -FileName "Win10_DISA_V1R16.psd1"
-$CisBenchmarks = Import-LocalizedData -BaseDirectory"HardeningData" -FileName "Win10_CIS_V1.4.0.psd1"
+$DisaRequirements = Import-LocalizedData -FileName "Win10_DISA_V1R16.psd1"
+$CisBenchmarks = Import-LocalizedData -FileName "Win10_CIS_V1.4.0.psd1"
 #endregion
 
 
@@ -283,7 +283,7 @@ class UserRightConfig
 		$securityPolicy = Get-SecurityPolicy
 		$currentUserRights = $securityPolicy["Privilege Rights"][$this.UserRight]
 
-		$identityAccounts = $this.Identity | ConvertTo-NTAccountUser
+		$identityAccounts = $this.Identity | ConvertTo-NTAccountUser | Where-Object { $_ -ne $null }
 
 		$usersWithTooManyRights = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
 		$usersWithoutRights = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
@@ -576,8 +576,14 @@ function ConvertTo-NTAccountUser {
 	)
 
 	process {
+		# Identity doesn't exist on when Hyper-V isn't installed
+		if ($Name -eq "NT VIRTUAL MACHINE\Virtual Machines" -and
+			(Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State -ne "Enabled") {
+			return $null
+		}
+
 		Write-Verbose "[ConvertTo-NTAccountUser] Converting identity '$Name' to NTAccount"
-		if ($_ -match "^(S-[0-9-]{3,})") {
+		if ($Name -match "^(S-[0-9-]{3,})") {
 			$sidAccount = [System.Security.Principal.SecurityIdentifier]$Name
 		}
 		else {
@@ -618,7 +624,7 @@ function Get-SecurityPolicy {
 	$privilegeRights = @{}
 	foreach ($key in $config["Privilege Rights"].Keys) {
 		# Make all accounts SIDs
-		$accounts = $($config["Privilege Rights"][$key] -split ",").Trim() | ConvertTo-NTAccountUser -Verbose:$VerbosePreference
+		$accounts = $($config["Privilege Rights"][$key] -split ",").Trim() | ConvertTo-NTAccountUser -Verbose:$VerbosePreference | Where-Object { $_ -ne $null }
 		$privilegeRights[$key] = $accounts
 	}
 	$config["Privilege Rights"] = $privilegeRights
@@ -961,7 +967,7 @@ function Get-UserRightPolicyAudit {
 		$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
 		$currentUserRights = $securityPolicy["Privilege Rights"][$Policy]
 
-		$identityAccounts = $Identity | ConvertTo-NTAccountUser
+		$identityAccounts = $Identity | ConvertTo-NTAccountUser | Where-Object { $_ -ne $null }
 
 		$usersWithTooManyRights = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
 		$usersWithoutRights = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
