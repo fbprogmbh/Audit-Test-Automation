@@ -3283,7 +3283,7 @@
 				ValueType = "reg_dword"
 			}
 		}
-		@{
+		@{ # BUGS
 			Id = "18.8.7.1.5"
 			Task = "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes: Prevent installation of devices using drivers for these device setup' is set to 'IEEE 1394 device setup classes'"
 			Config = @{
@@ -7717,330 +7717,6 @@
 			}
 		}
 	)
-	AuditPolicies = @(
-		@{
-			Id = "17.1.1"
-			Task = "(L1) Ensure 'Audit Credential Validation' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Credential Validation"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.2.1"
-			Task = "(L1) Ensure 'Audit Application Group Management' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Application Group Management"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.2.2"
-			Task = "(L1) Ensure 'Audit Computer Account Management' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Computer Account Management"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.2.3"
-			Task = "(L1) Ensure 'Audit Other Account Management Events' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Other Account Management Events"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.2.4"
-			Task = "(L1) Ensure 'Audit Security Group Management' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Security Group Management"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.2.5"
-			Task = "(L1) Ensure 'Audit User Account Management' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "User Account Management"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.3.1"
-			Task = "(L1) Ensure 'Audit PNP Activity' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Plug and Play Events"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Plug and Play Events"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.3.2"
-			Task = "(L1) Ensure 'Audit Process Creation' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Process Creation"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Process Creation"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.5.1"
-			Task = "(L1) Ensure 'Audit Account Lockout' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Account Lockout"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.5.2"
-			Task = "(L1) Ensure 'Audit Group Membership' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Group Membership"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Group Membership"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.5.3"
-			Task = "(L1) Ensure 'Audit Logoff' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Logoff"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Logoff"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.5.4"
-			Task = "(L1) Ensure 'Audit Logon' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Logon"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.5.5"
-			Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Other Logon/Logoff Events"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.5.6"
-			Task = "(L1) Ensure 'Audit Special Logon' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Special Logon"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Special Logon"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.6.1"
-			Task = "(L1) Ensure 'Audit File Share' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "File Share"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.6.2"
-			Task = "(L1) Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Other Object Access Events"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.6.3"
-			Task = "(L1) Ensure 'Audit Removable Storage' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Removable Storage"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.7.1"
-			Task = "(L1) Ensure 'Audit Audit Policy Change' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Audit Policy Change"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.7.2"
-			Task = "(L1) Ensure 'Audit Authentication Policy Change' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Authentication Policy Change"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Authentication Policy Change"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.7.3"
-			Task = "(L1) Ensure 'Audit Authorization Policy Change' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Authorization Policy Change"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Authorization Policy Change"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.8.1"
-			Task = "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Sensitive Privilege Use"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.9.1"
-			Task = "(L1) Ensure 'Audit IPsec Driver' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Ipsec Driver"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.9.2"
-			Task = "(L1) Ensure 'Audit Other System Events' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Other System Events"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.9.3"
-			Task = "(L1) Ensure 'Audit Security State Change' is set to 'Success'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "OR"
-				Configs = @(
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Security State Change"
-						AuditFlag = "Success"
-					}
-					@{
-						Type = "AuditPolicyConfig"
-						Subcategory = "Security State Change"
-						AuditFlag = "Success and Failure"
-					}
-				)
-			}
-		}
-		@{
-			Id = "17.9.4"
-			Task = "(L1) Ensure 'Audit Security System Extension' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "Security System Extension"
-				AuditFlag = "Success and Failure"
-			}
-		}
-		@{
-			Id = "17.9.5"
-			Task = "(L1) Ensure 'Audit System Integrity' is set to 'Success and Failure'"
-			Config = @{
-				Type = "AuditPolicyConfig"
-				Subcategory = "System Integrity"
-				AuditFlag = "Success and Failure"
-			}
-		}
-	)
 	FirewallProfileSettings = @(
 		@{
 			Id = "9.1.1"
@@ -8382,6 +8058,330 @@
 					Operation = "Equals"
 					Value = "True"
 				}
+			}
+		}
+	)
+	AuditPolicies = @(
+		@{
+			Id = "17.1.1"
+			Task = "(L1) Ensure 'Audit Credential Validation' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Credential Validation"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.2.1"
+			Task = "(L1) Ensure 'Audit Application Group Management' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Application Group Management"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.2.2"
+			Task = "(L1) Ensure 'Audit Computer Account Management' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Computer Account Management"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.2.3"
+			Task = "(L1) Ensure 'Audit Other Account Management Events' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Other Account Management Events"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.2.4"
+			Task = "(L1) Ensure 'Audit Security Group Management' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Security Group Management"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.2.5"
+			Task = "(L1) Ensure 'Audit User Account Management' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "User Account Management"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.3.1"
+			Task = "(L1) Ensure 'Audit PNP Activity' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Plug and Play Events"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Plug and Play Events"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.3.2"
+			Task = "(L1) Ensure 'Audit Process Creation' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Process Creation"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Process Creation"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.5.1"
+			Task = "(L1) Ensure 'Audit Account Lockout' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Account Lockout"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.5.2"
+			Task = "(L1) Ensure 'Audit Group Membership' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Group Membership"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Group Membership"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.5.3"
+			Task = "(L1) Ensure 'Audit Logoff' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Logoff"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Logoff"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.5.4"
+			Task = "(L1) Ensure 'Audit Logon' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Logon"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.5.5"
+			Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Other Logon/Logoff Events"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.5.6"
+			Task = "(L1) Ensure 'Audit Special Logon' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Special Logon"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Special Logon"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.6.1"
+			Task = "(L1) Ensure 'Audit File Share' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "File Share"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.6.2"
+			Task = "(L1) Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Other Object Access Events"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.6.3"
+			Task = "(L1) Ensure 'Audit Removable Storage' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Removable Storage"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.7.1"
+			Task = "(L1) Ensure 'Audit Audit Policy Change' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Audit Policy Change"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.7.2"
+			Task = "(L1) Ensure 'Audit Authentication Policy Change' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Authentication Policy Change"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Authentication Policy Change"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.7.3"
+			Task = "(L1) Ensure 'Audit Authorization Policy Change' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Authorization Policy Change"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Authorization Policy Change"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.8.1"
+			Task = "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Sensitive Privilege Use"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.9.1"
+			Task = "(L1) Ensure 'Audit IPsec Driver' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Ipsec Driver"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.9.2"
+			Task = "(L1) Ensure 'Audit Other System Events' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Other System Events"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.9.3"
+			Task = "(L1) Ensure 'Audit Security State Change' is set to 'Success'"
+			Config = @{
+				Type = "ComplexConfig"
+				Operation = "OR"
+				Configs = @(
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Security State Change"
+						AuditFlag = "Success"
+					}
+					@{
+						Type = "AuditPolicyConfig"
+						Subcategory = "Security State Change"
+						AuditFlag = "Success and Failure"
+					}
+				)
+			}
+		}
+		@{
+			Id = "17.9.4"
+			Task = "(L1) Ensure 'Audit Security System Extension' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "Security System Extension"
+				AuditFlag = "Success and Failure"
+			}
+		}
+		@{
+			Id = "17.9.5"
+			Task = "(L1) Ensure 'Audit System Integrity' is set to 'Success and Failure'"
+			Config = @{
+				Type = "AuditPolicyConfig"
+				Subcategory = "System Integrity"
+				AuditFlag = "Success and Failure"
 			}
 		}
 	)
