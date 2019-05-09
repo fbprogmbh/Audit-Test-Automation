@@ -1,4 +1,4 @@
-# DISA Requirements MS Windows 10 DISA STIG V1R16 
+# DISA Requirements MS Windows 10 DISA STIG V1R16
 
 @{
 	RegistrySettings         = @(
@@ -357,7 +357,7 @@
 			Task  = "The required legal notice must be configured to display before console logon."
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\"
 			Name  = "LegalNoticeText"
-			Value = 
+			Value =
 		}#>
 		@{
 			Id    = "WN10-CC-000195"
@@ -420,7 +420,7 @@
 			Task  = "The Smart Card removal option must be configured to Force Logoff or Lock Workstation."
 			Path  = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\"
 			Name  = "SCRemoveOption"
-			Value = 1
+			Value = "1"
 		}
 		@{
 			Id    = "WN10-CC-000230"
@@ -644,14 +644,14 @@
 			Task  = "The system must be configured to meet the minimum session security requirement for NTLM SSP based clients."
 			Path  = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\"
 			Name  = "NTLMMinClientSec"
-			Value = 53739520
+			Value = 537395200
 		}
 		@{
 			Id    = "WN10-SO-000220"
 			Task  = "The system must be configured to meet the minimum session security requirement for NTLM SSP based servers."
 			Path  = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\"
 			Name  = "NTLMMinServerSec"
-			Value = 53739520
+			Value = 537395200
 		}
 		@{
 			Id    = "WN10-SO-000230"
@@ -911,12 +911,12 @@
 			Policy   = "SeCreatePermanentPrivilege"
 			Identity = @()
 		}
-		@{
-			Id       = 'WN10-UR-000060'
-			Task     = "The Create symbolic links user right must only be assigned to the Administrators group."
-			Policy   = "SeCreateSymbolicLinkPrivilege"
-			Identity = "Administrators"
-		}
+		# @{
+		# 	Id       = 'WN10-UR-000060'
+		# 	Task     = "The Create symbolic links user right must only be assigned to the Administrators group."
+		# 	Policy   = "SeCreateSymbolicLinkPrivilege"
+		# 	Identity = "Administrators"
+		# }
 		@{
 			Id       = 'WN10-UR-000065'
 			Task     = "The Debug programs user right must only be assigned to the Administrators group."
@@ -945,7 +945,7 @@
 			Identity = "Enterprise Admins", "Domain Admins"
 		}
 		@{
-			Id       = 'WN10-UR-000080'
+			Id       = 'WN10-UR-000080 MW'
 			Role     = "MemberWorkstation"
 			Task     = 'The Deny log on as a service user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
 			Policy   = "SeDenyServiceLogonRight"
@@ -1065,7 +1065,7 @@
 				Value = "15 minutes or greater"
 			}
 		}
-		
+
 		@{
 			Id = "WN10-AC-000010"
 			Task = "The number of allowed bad logon attempts must be configured to 3 or less."
@@ -1108,7 +1108,7 @@
 				Value = "60 days or less"
 			}
 		}
-		
+
 		@{
 			Id = "WN10-AC-000030"
 			Task = "The minimum password age must be configured to at least 1 day."
@@ -1156,34 +1156,34 @@
 		@{
 			Id      = 'WN10-00-000100'
 			Task    = 'Internet Information System (IIS) or its subcomponents must not be installed on a workstation.'
-			
+
 			Feature = "IIS-WebServer"
 		}
 		# @{ ???
 		# 	Id      = 'WN10-00-000105'
 		# 	Task    = 'Simple Network Management Protocol (SNMP) must not be installed on the system.'
-			
+
 		# 	Feature = ""
 		# }
 		@{
 			Id      = 'WN10-00-000110'
 			Task    = 'Simple TCP/IP Services must not be installed on the system.'
-			
+
 			Feature = "SimpleTCP"
 		}
 		@{
 			Id      = 'WN10-00-000115'
 			Task    = 'The Telnet Client must not be installed on the system.'
-			
+
 			Feature = "TelnetClient"
 		}
 		@{
 			Id      = 'WN10-00-000120'
 			Task    = 'The TFTP Client must not be installed on the system.'
-			
+
 			Feature = "TFTP"
 		}
-	
+
 	)
 	FileSystemPermissions    = @(
 		@{
