@@ -6837,248 +6837,248 @@
 				ValueType = "reg_dword"
 			}
 		}
-		@{
-			Id = "19.1.3.1"
-			Task = "(L1) Ensure 'Enable screen saver' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "ScreenSaveActive"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_sz"
-			}
-		}
-		@{
-			Id = "19.1.3.2"
-			Task = "(L1) Ensure 'Force specific screen saver: Screen saver executable name' is set to 'Enabled: scrnsave.scr'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "SCRNSAVE.EXE"
-				ValueData = @{
-					Operation = "equals"
-					Value = "scrnsave.scr"
-				}
-				ValueType = "reg_sz"
-			}
-		}
-		@{
-			Id = "19.1.3.3"
-			Task = "(L1) Ensure 'Password protect the screen saver' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "ScreenSaverIsSecure"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_sz"
-			}
-		}
-		@{
-			Id = "19.1.3.4"
-			Task = "(L1) Ensure 'Screen saver timeout' is set to 'Enabled: 900 seconds or fewer, but not 0'"
-			Config = @{
-				Type = "ComplexConfig"
-				Operation = "AND"
-				Configs = @(
-					@{
-						Type = "RegistryConfig"
-						Existence = "Yes"
-						Key = "HKEY_USERS\"
-						ValueName = "ScreenSaveTimeOut"
-						ValueData = @{
-							Operation = "less than or equal"
-							Value = "900"
-						}
-						ValueType = "reg_sz"
-					}
-					@{
-						Type = "RegistryConfig"
-						Existence = "Yes"
-						Key = "HKEY_USERS\"
-						ValueName = "ScreenSaveTimeOut"
-						ValueData = @{
-							Operation = "not equal"
-							Value = "0"
-						}
-						ValueType = "reg_sz"
-					}
-				)
-			}
-		}
-		@{
-			Id = "19.5.1.1"
-			Task = "(L1) Ensure 'Turn off toast notifications on the lock screen' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "NoToastApplicationNotificationOnLockScreen"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.6.5.1.1"
-			Task = "(L2) Ensure 'Turn off Help Experience Improvement Program' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "NoImplicitFeedback"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.4.1"
-			Task = "(L1) Ensure 'Do not preserve zone information in file attachments' is set to 'Disabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "SaveZoneInformation"
-				ValueData = @{
-					Operation = "equals"
-					Value = "2"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.4.2"
-			Task = "(L1) Ensure 'Notify antivirus programs when opening attachments' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "ScanWithAntiVirus"
-				ValueData = @{
-					Operation = "equals"
-					Value = "3"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.7.1"
-			Task = "(L1) Ensure 'Configure Windows spotlight on lock screen' is set to Disabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "ConfigureWindowsSpotlight"
-				ValueData = @{
-					Operation = "equals"
-					Value = "2"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.7.2"
-			Task = "(L1) Ensure 'Do not suggest third-party content in Windows spotlight' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "DisableThirdPartySuggestions"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.7.3"
-			Task = "(L2) Ensure 'Do not use diagnostic data for tailored experiences' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "DisableTailoredExperiencesWithDiagnosticData"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.7.4"
-			Task = "(L2) Ensure 'Turn off all Windows spotlight features' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "DisableWindowsSpotlightFeatures"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.26.1"
-			Task = "(L1) Ensure 'Prevent users from sharing files within their profile.' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "NoInplaceSharing"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.40.1"
-			Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "AlwaysInstallElevated"
-				ValueData = @{
-					Operation = "equals"
-					Value = "0"
-				}
-				ValueType = "reg_dword"
-			}
-		}
-		@{
-			Id = "19.7.44.2.1"
-			Task = "(L2) Ensure 'Prevent Codec Download' is set to 'Enabled'"
-			Config = @{
-				Type = "RegistryConfig"
-				Existence = "Yes"
-				Key = "HKEY_USERS\"
-				ValueName = "PreventCodecDownload"
-				ValueData = @{
-					Operation = "equals"
-					Value = "1"
-				}
-				ValueType = "reg_dword"
-			}
-		}
+		# @{
+		# 	Id = "19.1.3.1"
+		# 	Task = "(L1) Ensure 'Enable screen saver' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\Control Panel\Desktop"
+		# 		ValueName = "ScreenSaveActive"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_sz"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.1.3.2"
+		# 	Task = "(L1) Ensure 'Force specific screen saver: Screen saver executable name' is set to 'Enabled: scrnsave.scr'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\Control Panel\Desktop"
+		# 		ValueName = "SCRNSAVE.EXE"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "scrnsave.scr"
+		# 		}
+		# 		ValueType = "reg_sz"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.1.3.3"
+		# 	Task = "(L1) Ensure 'Password protect the screen saver' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\Control Panel\Desktop"
+		# 		ValueName = "ScreenSaverIsSecure"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_sz"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.1.3.4"
+		# 	Task = "(L1) Ensure 'Screen saver timeout' is set to 'Enabled: 900 seconds or fewer, but not 0'"
+		# 	Config = @{
+		# 		Type = "ComplexConfig"
+		# 		Operation = "AND"
+		# 		Configs = @(
+		# 			@{
+		# 				Type = "RegistryConfig"
+		# 				Existence = "Yes"
+		# 				Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\Control Panel\Desktop"
+		# 				ValueName = "ScreenSaveTimeOut"
+		# 				ValueData = @{
+		# 					Operation = "less than or equal"
+		# 					Value = "900"
+		# 				}
+		# 				ValueType = "reg_sz"
+		# 			}
+		# 			@{
+		# 				Type = "RegistryConfig"
+		# 				Existence = "Yes"
+		# 				Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\Control Panel\Desktop"
+		# 				ValueName = "ScreenSaveTimeOut"
+		# 				ValueData = @{
+		# 					Operation = "not equal"
+		# 					Value = "0"
+		# 				}
+		# 				ValueType = "reg_sz"
+		# 			}
+		# 		)
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.5.1.1"
+		# 	Task = "(L1) Ensure 'Turn off toast notifications on the lock screen' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications"
+		# 		ValueName = "NoToastApplicationNotificationOnLockScreen"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.6.5.1.1"
+		# 	Task = "(L2) Ensure 'Turn off Help Experience Improvement Program' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Assistance\Client\1.0"
+		# 		ValueName = "NoImplicitFeedback"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.4.1"
+		# 	Task = "(L1) Ensure 'Do not preserve zone information in file attachments' is set to 'Disabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments"
+		# 		ValueName = "SaveZoneInformation"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "2"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.4.2"
+		# 	Task = "(L1) Ensure 'Notify antivirus programs when opening attachments' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments"
+		# 		ValueName = "ScanWithAntiVirus"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "3"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.7.1"
+		# 	Task = "(L1) Ensure 'Configure Windows spotlight on lock screen' is set to Disabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\CloudContent"
+		# 		ValueName = "ConfigureWindowsSpotlight"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "2"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.7.2"
+		# 	Task = "(L1) Ensure 'Do not suggest third-party content in Windows spotlight' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\CloudContent"
+		# 		ValueName = "DisableThirdPartySuggestions"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.7.3"
+		# 	Task = "(L2) Ensure 'Do not use diagnostic data for tailored experiences' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\CloudContent"
+		# 		ValueName = "DisableTailoredExperiencesWithDiagnosticData"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.7.4"
+		# 	Task = "(L2) Ensure 'Turn off all Windows spotlight features' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\CloudContent"
+		# 		ValueName = "DisableWindowsSpotlightFeatures"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.26.1"
+		# 	Task = "(L1) Ensure 'Prevent users from sharing files within their profile.' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+		# 		ValueName = "NoInplaceSharing"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.40.1"
+		# 	Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\Windows\Installer"
+		# 		ValueName = "AlwaysInstallElevated"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "0"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
+		# @{
+		# 	Id = "19.7.44.2.1"
+		# 	Task = "(L2) Ensure 'Prevent Codec Download' is set to 'Enabled'"
+		# 	Config = @{
+		# 		Type = "RegistryConfig"
+		# 		Existence = "Yes"
+		# 		Key = "HKEY_USERS\\Software\Policies\Microsoft\WindowsMediaPlayer"
+		# 		ValueName = "PreventCodecDownload"
+		# 		ValueData = @{
+		# 			Operation = "equals"
+		# 			Value = "1"
+		# 		}
+		# 		ValueType = "reg_dword"
+		# 	}
+		# }
 	)
 	UserRights = @(
 		@{
