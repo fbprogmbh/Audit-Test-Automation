@@ -153,7 +153,17 @@ class ValueRange
 
 	[bool] Test($value) {
 		if ($this.Operation -eq "equals") {
-			return $value -eq $this.Value
+			if ($value.Count -ne $this.Value.Count) {
+				return $false
+			}
+			[array]$tvalue = $value
+			[array]$tthisvalue = $this.Value
+			for ($i = 0; $i -lt $tthisvalue.Count; $i++) {
+				if ($tvalue[$i] -ne $tthisvalue[$i]) {
+					return $false
+				}
+			}
+			return $true
 		}
 		elseif ($this.Operation -eq "greater than") {
 			return $value -gt $this.Value
@@ -170,7 +180,9 @@ class ValueRange
 		elseif ($this.Operation -eq "pattern match") {
 			return $value -match $this.Value
 		}
-		return $False
+		else {
+			return $False
+		}
 	}
 }
 
@@ -247,7 +259,7 @@ class RegistryConfig
 			}
 		}
 		catch [System.Management.Automation.PSArgumentException] {
-			if ($this.EnsureExistence -eq [Existence]::None) {
+			if ($this.Existence -eq [Existence]::None) {
 				return [AuditResult]@{
 					Message = "Compliant. Registry value not found."
 					Status = [AuditResultStatus]::True
@@ -260,6 +272,13 @@ class RegistryConfig
 			}
 		}
 		catch [System.Management.Automation.ItemNotFoundException] {
+			if ($this.Existence -eq [Existence]::None) {
+				return [AuditResult]@{
+					Message = "Compliant. Registry key not found."
+					Status = [AuditResultStatus]::True
+				}
+			}
+
 			return [AuditResult]@{
 				Message = "Registry key not found."
 				Status = [AuditResultStatus]::False

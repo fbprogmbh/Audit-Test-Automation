@@ -591,7 +591,7 @@
 				ValueName = "NullSessionPipes"
 				ValueData = @{
 					Operation = "equals"
-					Value = ".+"
+					Value = @()
 				}
 				ValueType = "reg_multi_sz"
 			}
@@ -606,7 +606,11 @@
 				ValueName = "Machine"
 				ValueData = @{
 					Operation = "equals"
-					Value = "^((System\\CurrentControlSet\\Control\\ProductOptions)|(System\\CurrentControlSet\\Control\\Server Applications)|(Software\\Microsoft\\Windows NT\\CurrentVersion))$"
+					Value = @(
+						"System\CurrentControlSet\Control\ProductOptions"
+						"System\CurrentControlSet\Control\Server Applications"
+						"Software\Microsoft\Windows NT\CurrentVersion"
+					)
 				}
 				ValueType = "reg_multi_sz"
 			}
@@ -621,7 +625,19 @@
 				ValueName = "Machine"
 				ValueData = @{
 					Operation = "equals"
-					Value = "^((System\\CurrentControlSet\\Control\\Print\\Printers)|(System\\CurrentControlSet\\Services\\Eventlog)|(Software\\Microsoft\\OLAP Server)|(Software\\Microsoft\\Windows NT\\CurrentVersion\\Print)|(Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows)|(System\\CurrentControlSet\\Control\\ContentIndex)|(System\\CurrentControlSet\\Control\\Terminal Server)|(System\\CurrentControlSet\\Control\\Terminal Server\\UserConfig)|(System\\CurrentControlSet\\Control\\Terminal Server\\DefaultUserConfiguration)|(Software\\Microsoft\\Windows NT\\CurrentVersion\\Perflib)|(System\\CurrentControlSet\\Services\\SysmonLog))$"
+					Value = @(
+						"System\CurrentControlSet\Control\Print\Printers"
+						"System\CurrentControlSet\Services\Eventlog"
+						"Software\Microsoft\OLAP Server"
+						"Software\Microsoft\Windows NT\CurrentVersion\Print"
+						"Software\Microsoft\Windows NT\CurrentVersion\Windows"
+						"System\CurrentControlSet\Control\ContentIndex"
+						"System\CurrentControlSet\Control\Terminal Server"
+						"System\CurrentControlSet\Control\Terminal Server\UserConfig"
+						"System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration"
+						"Software\Microsoft\Windows NT\CurrentVersion\Perflib"
+						"System\CurrentControlSet\Services\SysmonLog"
+					)
 				}
 				ValueType = "reg_multi_sz"
 			}
@@ -7242,7 +7258,7 @@
 				)
 			}
 		}
-		@{
+		@{ # BUGS
 			Id = "2.2.16"
 			Task = "(L1) Ensure 'Deny access to this computer from the network' to include 'Guests, Local account'"
 			Config = @{
@@ -7266,7 +7282,7 @@
 				)
 			}
 		}
-		@{
+		@{ # maybe harden
 			Id = "2.2.17"
 			Task = "(L1) Ensure 'Deny log on as a batch job' to include 'Guests'"
 			Config = @{
@@ -7277,7 +7293,7 @@
 				)
 			}
 		}
-		@{
+		@{ # maybe harden
 			Id = "2.2.18"
 			Task = "(L1) Ensure 'Deny log on as a service' to include 'Guests'"
 			Config = @{
