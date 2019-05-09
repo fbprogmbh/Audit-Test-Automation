@@ -40,8 +40,9 @@ using namespace System.Security.AccessControl
 $Settings = Import-LocalizedData -FileName "Settings.psd1"
 
 #region Import tests configuration settings
+
 $DisaRequirements = Import-LocalizedData -BaseDirectory "HardeningData" -FileName "Win10_DISA_V1R16.psd1"
-$CisBenchmarks = Import-LocalizedData -BaseDirectory "HardeningData" -FileName "Win10_CIS_V1.4.0.psd1"
+$CisBenchmarks = Import-LocalizedData -BaseDirectory"HardeningData" -FileName "Win10_CIS_V1.4.0.psd1"
 #endregion
 
 
@@ -276,38 +277,29 @@ class UserRightConfig
 {
 	[Existence] $Existence
 	[string] $UserRight
-	[ValueRange] $Trustees
+	[string[]] $Identity
 
 	[AuditResult] Test() {
 		$securityPolicy = Get-SecurityPolicy
 		$currentUserRights = $securityPolicy["Privilege Rights"][$this.UserRight]
 
-		if ($this.Existence -eq [Existence]::None) {
-			if ($currentUserRights.Count -gt 0) {
-				return [AuditResult]@{
-					Status = [AuditResultStatus]::False
-					Message = "Found users while expecting none."
-				}
-			}
-			else {
-				return [AuditResult]@{
-					Status = [AuditResultStatus]::True
-					Message = "Compliant"
-				}
-			}
-		}
+		$identityAccounts = $this.Identity | ConvertTo-NTAccountUser
 
-		Write-Verbose "[UserRightConfig.Test()] Checking users"
-		$usersWithTooManyRights = @()
-		foreach ($user in $currentUserRights) {
-			$sid = $user.Sid
-			if (-not ($this.Trustees.Test($sid))){
-				$usersWithTooManyRights += $user.Account
-			}
-		}
+		$usersWithTooManyRights = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+		$usersWithoutRights = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
 
 		if ($usersWithTooManyRights.Count -gt 0) {
 			$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
+			Write-Verbose -Message $message
+
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::False
+				Message = $message
+			}
+		}
+
+		if ($usersWithoutRights.Count -gt 0) {
+			$message = "The following users have don't have the rights: " + ($usersWithoutRights.Account -join ", ")
 			Write-Verbose -Message $message
 
 			return [AuditResult]@{
