@@ -54,6 +54,35 @@ class AuditInfo {
     [AuditStatus] $Audit
 }
 
+function New-ATAPAuditInfo {
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Id,
+
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Task,
+
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Message,
+
+		[Parameter(Mandatory = $true)]
+		[ValidateSet(
+			"True",
+			"False",
+			"Warning",
+			"None"
+		)]
+		[string]
+		$Audit
+	)
+
+	New-Object -TypeName AuditInfo -Property $PSBoundParameters
+}
+
 function Get-ATAPCombinedAuditStatus {
 	param(
 		[Parameter(Mandatory = $true)]
