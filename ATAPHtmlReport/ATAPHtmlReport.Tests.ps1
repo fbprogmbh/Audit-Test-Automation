@@ -30,7 +30,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 
-Import-Module "./ATAPHtmlReport"
+Import-Module "./ATAPHtmlReport" -Force
 
 Describe "ATAPHtmlReport" {
     InModuleScope ATAPHtmlReport {
@@ -40,7 +40,7 @@ Describe "ATAPHtmlReport" {
             Title = "My Benchmark Report"
             ModuleName = "MyAudit"
             BasedOn = "My Benchmark v1.0.0 - 10-05-2017"
-            # DarkMode = $true
+            DarkMode = $true
         }
         Get-ATAPHtmlReport @args -Sections @(
             @{

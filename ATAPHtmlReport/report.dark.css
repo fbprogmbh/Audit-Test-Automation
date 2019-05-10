@@ -1,10 +1,13 @@
 body {
 	font-family: Cambria, Georgia, serif;
 	margin: 0;
-	padding: 20px 20px;
 
 	color: #dddddd;
 	background-color: #14141d;
+}
+
+.content {
+	padding: 30px 40px;
 }
 
 a {
@@ -17,12 +20,29 @@ a:visited {
 
 .header {
 	background-color: #2a2a3d;
+}
 
-	padding: 35px 20px;
+.header svg {
+	margin-left: 3px;
+	opacity: 0.8;
+}
+
+
+.header svg g path:nth-child(1), /*F*/
+.header svg g path:nth-child(2), /*B*/
+.header svg g path:nth-child(6), /*G*/
+.header svg g path:nth-child(7), /*m*/
+.header svg g path:nth-child(8), /*b*/
+.header svg g path:nth-child(9)  /*H*/{
+	fill: white;
 }
 
 .header h1 {
 	margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Calibri', 'Segoe UI', sans-serif;
 }
 
 li a {
@@ -42,7 +62,23 @@ li a:hover {
 
 .gauge .gauge-meter {
 	height: 100%;
-	display: inline-block;
+	float: left;
+}
+
+.gauge-info {
+	margin: 0;
+	padding: 20px 0;
+}
+
+.gauge-info .gauge-info-item {
+	display: table-cell;
+	width: 1%;
+	text-align: center;
+	line-height: 30px;
+}
+
+.gauge-info .gauge-info-item span.auditstatus {
+	display: inline;
 }
 
 table {
@@ -50,8 +86,7 @@ table {
 	font-family: Arial, sans-serif;
 }
 
-th,
-td {
+th, td {
 	padding: 5px 10px;
 	text-align: left;
 	vertical-align: top;
@@ -74,44 +109,33 @@ table.audit-info tr:nth-child(even) {
 }
 
 /* First column in an audit-info table */
-table.audit-info th:nth-child(1),
-table.audit-info td:nth-child(1) {
+table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
 	text-align: left;
 	white-space: nowrap;
 	width: 40px;
 }
 
 /* Last column in an audit-info table */
-table.audit-info th:last-child,
-table.audit-info td:last-child {
+table.audit-info th:last-child, table.audit-info td:last-child {
 	text-align: center;
 	width: 70px;
 }
 
-.passed,
-.green {
-	background-color: #33cc33;
+.passed, .green {
+	background-color: #33cca6;
 }
 
-.failed,
-.red {
+.failed, .red {
 	background-color: #cc0000;
 }
 
-.warning,
-.orange {
+.warning, .orange {
 	background-color: #ff9933;
 }
 
-h1 span.passed,
-h1 span.failed,
-h1 span.warning,
-h2 span.passed,
-h2 span.failed,
-h2 span.warning,
-h3 span.passed,
-h3 span.failed,
-h3 span.warning {
+h1 span.passed, h1 span.failed, h1 span.warning,
+h2 span.passed, h2 span.failed, h2 span.warning,
+h3 span.passed, h3 span.failed, h3 span.warning {
 	padding: 5px 10px;
 	border-radius: 8px;
 }
@@ -131,10 +155,10 @@ a.totop {
 	text-align: center;
 	text-decoration: none;
 	margin: 0 15px;
+	color: #dddddd;
 	background-color: #212130;
 	border-radius: 8px;
 	font-weight: bold;
-	color: #dddddd;
 }
 
 a.totop:hover {

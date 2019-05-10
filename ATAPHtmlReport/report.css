@@ -1,17 +1,27 @@
 body {
 	font-family: Cambria, Georgia, serif;
 	margin: 0;
-	padding: 20px 20px;
+}
+
+.content {
+	padding: 30px 40px;
 }
 
 .header {
-	background-color: #9e9e9e;
-	padding: 35px 20px;
-	color: #ffffff;
+	background-color: #c6c9cc;
+}
+
+.header svg {
+	margin-left: 3px;
+	opacity: 0.8;
 }
 
 .header h1 {
 	margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Calibri', 'Segoe UI', sans-serif;
 }
 
 li a {
@@ -23,26 +33,42 @@ li a:hover {
 }
 
 .gauge {
-	height: 25px;
+	height: 10px;
 	background: #a7a7a7;
-	border-radius: 8px;
+	border-radius: 5px;
 	overflow: hidden;
 }
 
 .gauge .gauge-meter {
 	height: 100%;
-	display: inline-block;
+	float: left;
+}
+
+.gauge-info {
+	margin: 0;
+	padding: 20px 0;
+}
+
+.gauge-info .gauge-info-item {
+	display: table-cell;
+	width: 1%;
+	text-align: center;
+	line-height: 30px;
+}
+
+.gauge-info .gauge-info-item span.auditstatus {
+	display: inline;
 }
 
 table {
 	border-collapse: collapse;
-    font-family: Arial, sans-serif;
+	font-family: Arial, sans-serif;
 }
 
 th, td {
 	padding: 5px 10px;
 	text-align: left;
-    vertical-align: top;
+	vertical-align: top;
 }
 
 /* audit-info table */
@@ -66,13 +92,13 @@ table.audit-info tr:nth-child(even) {
 table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
 	text-align: left;
 	white-space: nowrap;
-    width: 40px;
+	width: 40px;
 }
 
 /* Last column in an audit-info table */
 table.audit-info th:last-child, table.audit-info td:last-child {
 	text-align: center;
-    width: 70px;
+	width: 70px;
 }
 
 .passed, .green, .failed, .red, .green, .red, .orange {
@@ -80,7 +106,7 @@ table.audit-info th:last-child, table.audit-info td:last-child {
 }
 
 .passed, .green {
-	background-color: #33cc33;
+	background-color: #33cca6;
 }
 
 .failed, .red {
@@ -131,28 +157,28 @@ a.totop:hover {
 /* Overall compliance donut chart */
 
 .card {
-  float: right;
-  margin: 0 100px 0 0;
-  width: 250px;
+	float: right;
+	margin: 0 100px 0 0;
+	width: 250px;
 }
 
 .donut-chart {
-  position: relative;
-  border-radius: 50%;
-  overflow: hidden;
+	position: relative;
+	border-radius: 50%;
+	overflow: hidden;
 }
 .donut-chart .slice {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 .donut-chart .chart-center {
-  position: absolute;
-  border-radius: 50%;
+	position: absolute;
+	border-radius: 50%;
 }
 .donut-chart .chart-center span {
-  display: block;
-  text-align: center;
+	display: block;
+	text-align: center;
 }
