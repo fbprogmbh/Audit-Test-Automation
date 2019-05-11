@@ -276,19 +276,19 @@ Param(
 
     if ($percent -gt 50) {
         $degree = 180 + ((($percent-50)/1) * 3.6)
-        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #e1e1e1;}"
-        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg); background: #33cc33;}"
-        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg); background: #33cc33;}"
+        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #939393a1;}"
+        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg);}"
+        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
         $css += ".donut-chart.chart .chart-center {top: 25px; left: 25px; width: 150px; height: 150px; background: #fff;}"
-        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: #33cc33;}"
+        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: black;}"
     }
     else {
         $degree = 90 + ($percent * 3.6)
-        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #cc0000;}"
-        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg); background: #e1e1e1;}"
-        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg); background: #e1e1e1;}"
+        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #939393a1;}"
+        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
+        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg);}"
         $css += ".donut-chart.chart .chart-center {top: 25px; left: 25px; width: 150px; height: 150px; background: #fff;}"
-        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: #cc0000;}"
+        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: black;}"
     }
 
 
@@ -349,7 +349,7 @@ function Get-ATAPHtmlReport {
 
 		[switch] $DarkMode,
 
-        [switch] $complianceStatus
+        [switch] $ComplianceStatus
 	)
 
 	$scriptRoot = Split-Path -Parent $PSCommandPath
@@ -398,17 +398,16 @@ function Get-ATAPHtmlReport {
 	$body += "</tbody>"
 	$body += "</table>"
     $body += "</div>"
-    if ($complianceStatus) {
-        $body += "<div class=`"card`">
-                    <h2>Compliance status</h2>
-                    <div class=`"donut-chart chart`">
-                        <div class=`"slice one`"></div>
-                        <div class=`"slice two`"></div>
-                        <div class=`"chart-center`">
-                            <span></span>
-                        </div>
-                    </div>
-                  </div>"
+    if ($ComplianceStatus) {
+		$sliceColorClass = Convert-ATAPAuditStatusToHtmlClass 'True'
+        $body += '<div class="card">'
+		$body += '<h2>Compliance status</h2>'
+		$body += '<div class="donut-chart chart">'
+		$body += '<div class="slice one {0}"></div>' -f $sliceColorClass
+		$body += '<div class="slice two {0}"></div>' -f $sliceColorClass
+		$body += '<div class="chart-center"><span></span></div>'
+		$body += '</div>'
+		$body += '</div>'
     }
 	# Summary
 	$body += "<h1 style=`"clear:both; padding-top: 50px;`">Summary</h1>"
