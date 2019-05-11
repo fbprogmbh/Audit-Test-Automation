@@ -40,8 +40,8 @@ Describe "ATAPHtmlReport" {
             Title = "My Benchmark Report"
             ModuleName = "MyAudit"
             BasedOn = "My Benchmark v1.0.0 - 10-05-2017"
-            DarkMode = $true
-            ComplianceStatus = $true
+            # DarkMode = $true
+            # ComplianceStatus = $true
         }
         Get-ATAPHtmlReport @args -Sections @(
             @{
