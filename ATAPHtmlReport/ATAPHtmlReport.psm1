@@ -276,19 +276,13 @@ Param(
 
     if ($percent -gt 50) {
         $degree = 180 + ((($percent-50)/1) * 3.6)
-        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #939393a1;}"
         $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg);}"
         $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
-        $css += ".donut-chart.chart .chart-center {top: 25px; left: 25px; width: 150px; height: 150px; background: #fff;}"
-        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: black;}"
     }
     else {
         $degree = 90 + ($percent * 3.6)
-        $css += ".donut-chart.chart {width: 200px; height: 200px; background: #939393a1;}"
         $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
         $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg);}"
-        $css += ".donut-chart.chart .chart-center {top: 25px; left: 25px; width: 150px; height: 150px; background: #fff;}"
-        $css += ".donut-chart.chart .chart-center span {font-size: 40px; line-height: 150px; color: black;}"
     }
 
 

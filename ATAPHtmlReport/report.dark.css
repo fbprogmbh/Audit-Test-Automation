@@ -187,28 +187,45 @@ a.totop:hover {
 /* Overall compliance donut chart */
 
 .card {
-  float: right;
-  margin: 0 100px 0 0;
-  width: 250px;
+	float: right;
+	margin: 0 100px 0 0;
+	width: 250px;
 }
 
 .donut-chart {
-  position: relative;
-  border-radius: 50%;
-  overflow: hidden;
+	position: relative;
+	border-radius: 50%;
+	overflow: hidden;
 }
+
+.donut-chart.chart {
+	width: 200px; 
+	height: 200px;
+	background: #424252;
+}
+
 .donut-chart .slice {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
+
 .donut-chart .chart-center {
-  position: absolute;
-  border-radius: 50%;
+	position: absolute;
+	border-radius: 50%;
+	top: 25px;
+	left: 25px;
+	width: 150px;
+	height: 150px;
+	background: #14141d;
 }
+
 .donut-chart .chart-center span {
-  display: block;
-  text-align: center;
+	display: block;
+	text-align: center;
+	font-size: 40px;
+	line-height: 150px;
+	color: #f3f3f3;
 }
