@@ -2,7 +2,7 @@ body {
 	font-family: Cambria, Georgia, serif;
 	margin: 0;
 
-	color: #dddddd;
+	color: #f3f3f3;
 	background-color: #14141d;
 }
 
@@ -26,7 +26,6 @@ a:visited {
 	margin-left: 3px;
 	opacity: 0.8;
 }
-
 
 .header svg g path:nth-child(1), /*F*/
 .header svg g path:nth-child(2), /*B*/
@@ -95,17 +94,18 @@ th, td {
 /* audit-info table */
 table.audit-info {
 	width: 100%;
-	border: 1px solid #2d2d3f;
+}
+
+table.audit-info th, table.audit-info td {
+	border: 1px solid #55555f;
 }
 
 table.audit-info th {
-	background-color: #212130;
-	text-transform: uppercase;
-	border-bottom: 1px solid #2d2d3f;
+	border-bottom-width: 2px;
 }
 
 table.audit-info tr:nth-child(even) {
-	background-color: #2a2a3d;
+	background-color: #272733;
 }
 
 /* First column in an audit-info table */
@@ -115,10 +115,24 @@ table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
 	width: 40px;
 }
 
+/* First column in an audit-info table */
+table.audit-info th:nth-child(2), table.audit-info td:nth-child(2) {
+	text-align: left;
+	width: 30%;
+}
+
 /* Last column in an audit-info table */
 table.audit-info th:last-child, table.audit-info td:last-child {
 	text-align: center;
 	width: 70px;
+}
+
+.passed, .green, .failed, .red {
+	color: #fff;
+}
+
+.warning, .orange  {
+	color: #000;
 }
 
 .passed, .green {

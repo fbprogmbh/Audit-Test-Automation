@@ -40,11 +40,11 @@ Describe "ATAPHtmlReport" {
             Title = "My Benchmark Report"
             ModuleName = "MyAudit"
             BasedOn = "My Benchmark v1.0.0 - 10-05-2017"
-            DarkMode = $true
+            # DarkMode = $true
         }
         Get-ATAPHtmlReport @args -Sections @(
             @{
-                Title = "1"
+                Title = "Section 1"
                 AuditInfos = @(
                     (New-ATAPAuditInfo -Id "1.1" -Task "Ensure something" -Message "All Good" -Audit True)
                     (New-ATAPAuditInfo -Id "1.2" -Task "Ensure something" -Message "All Good" -Audit True)
@@ -53,20 +53,20 @@ Describe "ATAPHtmlReport" {
                 )
             },
             @{
-                Title = "2"
+                Title = "Section 2"
                 SubSections = @(
                     @{
-                        Title = "/2.1"
+                        Title = " Section 2.1"
                         AuditInfos = @(
                             (New-ATAPAuditInfo -Id "2.1.1" -Task "Ensure something else" -Message "All Good" -Audit Warning)
                             (New-ATAPAuditInfo -Id "2.1.2" -Task "Ensure something entirely different" -Message "All good" -Audit True)
                         )
                     },
                     @{
-                        Title = "/2.2"
+                        Title = "Section 2.2"
                         AuditInfos = @(
                             (New-ATAPAuditInfo -Id "2.2.1" -Task "Ensure something entirely different" -Message "Something went wrong" -Audit False)
-                            (New-ATAPAuditInfo -Id "2.2.2" -Task "Ensure something entirely different" -Message "All Good" -Audit True)
+                            (New-ATAPAuditInfo -Id "2.2.2" -Task "Text overflow can only happen on block or inline-block level elements, because the element needs to have a width in order to be overflow-ed. The overflow happens in the direction as determined by the direction property or related attributes." -Message "All Good" -Audit True)
                             (New-ATAPAuditInfo -Id "2.1.2" -Task "Ensure something entirely different" -Message "Not quite good" -Audit Warning)
                         )
                     }
