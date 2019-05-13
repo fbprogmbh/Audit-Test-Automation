@@ -1566,63 +1566,6 @@ function New-AuditPipeline {
 	}.GetNewClosure()
 }
 
-function Get-DisaAudit {
-	[CmdletBinding()]
-	Param(
-		[switch] $PerformanceOptimized,
-
-		# [string[]] $Exclude
-
-		[switch] $RegistrySettings,
-
-		[switch] $UserRights,
-
-		[switch] $AccountPolicies,
-
-		[switch] $WindowsFeatures,
-
-		[switch] $FileSystemPermissions,
-
-		[switch] $RegistryPermissions,
-
-		[switch] $OtherAudits
-	)
-
-	# disa registry settings
-	if ($RegistrySettings) {
-		$pipline = New-AuditPipeline ${Function:Get-RegistryAudit}
-		$DisaRequirements.RegistrySettings | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
-	}
-	# disa user rights
-	if ($UserRights) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
-		$DisaRequirements.UserRights | &$pipline -Verbose:$VerbosePreference
-	}
-	# disa account policy
-	if ($AccountPolicies) {
-		$pipline = New-AuditPipeline ${Function:Get-AccountPolicyAudit}
-		$DisaRequirements.AccountPolicies | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
-	}
-	# disa windows features
-	if ($WindowsFeatures) {
-		$pipline = New-AuditPipeline ${Function:Get-WindowsOptionalFeatureAudit}
-		$DisaRequirements.WindowsOptionalFeatures | &$pipline -Verbose:$VerbosePreference
-	}
-	# disa file system permissions
-	if ($FileSystemPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-FileSystemPermissionsAudit}
-		$DisaRequirements.FileSystemPermissions | &$pipline -Verbose:$VerbosePreference
-	}
-	# disa registry permissions
-	if ($RegistryPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-RegistryPermissionsAudit}
-		$DisaRequirements.RegistryPermissions | &$pipline -Verbose:$VerbosePreference
-	}
-
-	if ($OtherAudits) {
-		### TODO
-	}
-}
 
 #region Audits
 
@@ -1646,35 +1589,6 @@ class Benchmark
 	# 		}
 	# 	}
 	# }
-}
-
-function Get-CisBenchmark {
-	return [Benchmark]@{
-		Name = "CIS Benchmarks"
-		Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-		Sections = @(
-			[BenchmarkSection]@{
-				Name = "Registry Settings/Group Policies"
-				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "User Rights Assignment"
-				Configs = $CisBenchmarks.UserRights | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "Account Policies"
-				Configs = $CisBenchmarks.AccountPolicies | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "Windows Firewall with Advanced Security"
-				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "Advanced Audit Policy Configuration"
-				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
-			}
-		)
-	}
 }
 
 function Get-BenchmarkSectionReportSection {
@@ -1733,6 +1647,132 @@ function Get-BenchmarkReportSection {
 }
 #endregion
 
+class AdapterConfig {
+	$Data
+	[scriptblock] $Pipeline
+	[bool] $ShouldPreprocessSpecialValue
+
+	[AuditResult] Test() {
+		$vals = $this.Data
+		if ($this.ShouldPreprocessSpecialValue) {
+			$vals = $vals | PreprocessSpecialValueSetting
+		}
+		$ret = $vals | &$this.Pipeline
+		return [AuditResult]@{
+			Status = [AuditResultStatus]$ret
+			Message = $ret.Message
+		}
+	}
+}
+
+function Get-AdapterConfigMetadata {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable]
+		$Config,
+
+		[Parameter(Mandatory = $true)]
+		[scriptblock]
+		$Pipeline,
+
+		[switch]
+		$ShouldPreprocessSpecialValue = $false
+	)
+
+	return [ConfigMetadata]@{
+		Id = $Config.Id
+		Task = $Config.Task
+		Config = [AdapterConfig]@{
+			Data = $Config
+			Pipeline = $Pipeline
+			ShouldPreprocessSpecialValue = $ShouldPreprocessSpecialValue
+		}
+	}
+}
+
+function Get-CisBenchmark {
+	[CmdletBinding()]
+	param()
+
+	return [Benchmark]@{
+		Name = "CIS Benchmarks"
+		Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
+		Sections = @(
+			[BenchmarkSection]@{
+				Name = "Registry Settings/Group Policies"
+				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata Get-AdapterConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "User Rights Assignment"
+				Configs = $CisBenchmarks.UserRights | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Account Policies"
+				Configs = $CisBenchmarks.AccountPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Windows Firewall with Advanced Security"
+				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Advanced Audit Policy Configuration"
+				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
+			}
+		)
+	}
+}
+
+function Get-DisaBenchmark {
+	[CmdletBinding()]
+	param()
+
+	return [Benchmark]@{
+		Name = "DISA Recommendations"
+		Description = "TThis section contains all DISA recommendations"
+		Sections = @(
+			[BenchmarkSection]@{
+				Name = "Registry Settings/Group Policies"
+				Configs = $DisaRequirements.RegistrySettings `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-RegistryAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "User Rights Assignment"
+				Configs = $DisaRequirements.UserRights `
+				| Get-AdapterConfigMetadata `
+					-Pipeline (New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}) `
+					-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "Account Policies"
+				Configs = $DisaRequirements.AccountPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Windows Features"
+				Configs = $DisaRequirements.WindowsOptionalFeatures `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-WindowsOptionalFeatureAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "File System Permissions"
+				Configs = $DisaRequirements.FileSystemPermissions `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-FileSystemPermissionsAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "Registry Permissions"
+				Configs = $DisaRequirements.RegistryPermissions `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-RegistryPermissionsAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+		)
+	}
+}
+
 #region Report-Generation
 <#
 	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
@@ -1742,45 +1782,13 @@ function Get-HtmlReport {
 	[CmdletBinding()]
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
-
-		[switch] $DarkMode,
-
-		[switch] $PerformanceOptimized
+		[switch] $DarkMode
 	)
 
 	$parent = Split-Path $Path
 	if (Test-Path $parent) {
 		[hashtable[]]$sections = @(
-			@{
-				Title = "DISA Recommendations"
-				Description = "This section contains all DISA recommendations"
-				SubSections = @(
-					@{
-						Title = "Registry Settings/Group Policies"
-						AuditInfos = Get-DisaAudit -RegistrySettings | Sort-Object -Property Id
-					}
-					@{
-						Title = "User Rights Assignment"
-						AuditInfos = Get-DisaAudit -UserRights | Sort-Object -Property Id
-					}
-					@{
-						Title = "Account Policies"
-						AuditInfos = Get-DisaAudit -AccountPolicies | Sort-Object -Property Id
-					}
-					@{
-						Title = "Windows Features"
-						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
-					}
-					@{
-						Title = "File System Permissions"
-						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
-					}
-					@{
-						Title = "Registry Permissions"
-						AuditInfos = Get-DisaAudit -RegistryPermissions | Sort-Object -Property Id
-					}
-				)
-			}
+			(Get-BenchmarkReportSection -Benchmark (Get-DisaBenchmark))
 			(Get-BenchmarkReportSection -Benchmark (Get-CisBenchmark))
 		)
 
