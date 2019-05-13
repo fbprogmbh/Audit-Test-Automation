@@ -152,18 +152,22 @@ class ValueRange
 	$Value
 
 	[bool] Test($value) {
-		if ($this.Operation -eq "equals") {
+		if (($this.Operation -eq "equals") -or ($this.Operation -eq "not equal")) {
+			$negation = $false
+			if ($this.Operation -eq "not equal") {
+				$negation = $true
+			}
 			if ($value.Count -ne $this.Value.Count) {
-				return $false
+				return $negation
 			}
 			[array]$tvalue = $value
 			[array]$tthisvalue = $this.Value
 			for ($i = 0; $i -lt $tthisvalue.Count; $i++) {
 				if ($tvalue[$i] -ne $tthisvalue[$i]) {
-					return $false
+					return $negation
 				}
 			}
-			return $true
+			return -not ($negation)
 		}
 		elseif ($this.Operation -eq "greater than") {
 			return $value -gt $this.Value
