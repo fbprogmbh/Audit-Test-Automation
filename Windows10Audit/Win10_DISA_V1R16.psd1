@@ -852,204 +852,316 @@
 	)
 	UserRights               = @(
 		@{
-			Id       = 'WN10-UR-000005'
-			Task     = "The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts."
-			Policy   = "SeTrustedCredManAccessPrivilege"
-			Identity = @()
+			Id = 'WN10-UR-000005'
+			Task = "The Access Credential Manager as a trusted caller user right must not be assigned to any groups or accounts."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeTrustedCredManAccessPrivilege"
+				Identity = @()
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000010'
-			Task     = 'The Access this computer from the network user right must only be assigned to the Administrators and Remote Desktop Users groups.'
-			Policy   = "SeNetworkLogonRight"
-			Identity = "Administrators", "Remote Desktop Users"
+			Id = 'WN10-UR-000010'
+			Task = 'The Access this computer from the network user right must only be assigned to the Administrators and Remote Desktop Users groups.'
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeNetworkLogonRight"
+				Identity = "Administrators", "Remote Desktop Users"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000015'
-			Task     = "The Act as part of the operating system user right must not be assigned to any groups or accounts."
-			Policy   = "SeTcbPrivilege"
-			Identity = @()
+			Id = 'WN10-UR-000015'
+			Task = "The Act as part of the operating system user right must not be assigned to any groups or accounts."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeTcbPrivilege"
+				Identity = @()
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000025'
-			Task     = 'The Allow log on locally user right must only be assigned to the Administrators and Users groups.'
-			Policy   = "SeInteractiveLogonRight"
-			Identity = "Administrators", "Users"
+			Id = 'WN10-UR-000025'
+			Task = 'The Allow log on locally user right must only be assigned to the Administrators and Users groups.'
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeInteractiveLogonRight"
+				Identity = "Administrators", "Users"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000030'
-			Task     = "The Back up files and directories user right must only be assigned to the Administrators group."
-			Policy   = "SeBackupPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000030'
+			Task = "The Back up files and directories user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeBackupPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000035'
-			Task     = 'The Change the system time user right must only be assigned to Administrators and Local Service.'
-			Policy   = "SeSystemtimePrivilege"
-			Identity = "Administrators", "Local Service"
+			Id = 'WN10-UR-000035'
+			Task = 'The Change the system time user right must only be assigned to Administrators and Local Service.'
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeSystemtimePrivilege"
+				Identity = "Administrators", "Local Service"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000040'
-			Task     = "The Create a pagefile user right must only be assigned to the Administrators group."
-			Policy   = "SeCreatePagefilePrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000040'
+			Task = "The Create a pagefile user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeCreatePagefilePrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000045'
-			Task     = "The Create a token object user right must not be assigned to any groups or accounts."
-			Policy   = "SeCreateTokenPrivilege"
-			Identity = @()
+			Id = 'WN10-UR-000045'
+			Task = "The Create a token object user right must not be assigned to any groups or accounts."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeCreateTokenPrivilege"
+				Identity = @()
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000050'
-			Task     = "The Create global objects user right must only be assigned to Administrators, Service, Local Service, and Network Service."
-			Policy   = "SeCreateGlobalPrivilege"
-			Identity = "Administrators", "Service", "Local Service", "Network Service"
+			Id = 'WN10-UR-000050'
+			Task = "The Create global objects user right must only be assigned to Administrators, Service, Local Service, and Network Service."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeCreateGlobalPrivilege"
+				Identity = "Administrators", "Service", "Local Service", "Network Service"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000055'
-			Task     = "The Create permanent shared objects user right must not be assigned to any groups or accounts."
-			Policy   = "SeCreatePermanentPrivilege"
-			Identity = @()
+			Id = 'WN10-UR-000055'
+			Task = "The Create permanent shared objects user right must not be assigned to any groups or accounts."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeCreatePermanentPrivilege"
+				Identity = @()
+			}
 		}
 		# @{
-		# 	Id       = 'WN10-UR-000060'
-		# 	Task     = "The Create symbolic links user right must only be assigned to the Administrators group."
-		# 	Policy   = "SeCreateSymbolicLinkPrivilege"
-		# 	Identity = "Administrators"
+		# 	Id = 'WN10-UR-000060'
+		# 	Task = "The Create symbolic links user right must only be assigned to the Administrators group."
+		# 	Config = @{
+		# 		Type = "UserRightConfig"
+		# 		UserRight = "SeCreateSymbolicLinkPrivilege"
+		# 		Identity = "Administrators"
+		# 	}
 		# }
 		@{
-			Id       = 'WN10-UR-000065'
-			Task     = "The Debug programs user right must only be assigned to the Administrators group."
-			Policy   = "SeDebugPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000065'
+			Task = "The Debug programs user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDebugPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000070 MW'
-			Task     = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
-			Role     = "MemberWorkstation"
-			Policy   = "SeDenyNetworkLogonRight"
-			Identity = "Enterprise Admins", "Domain Admins", "Local account", "Guests"
+			Id = 'WN10-UR-000070 MW'
+			Task = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Metadata = @{
+				DomainRole = "MemberWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyNetworkLogonRight"
+				Identity = "Enterprise Admins", "Domain Admins", "Local account", "Guests"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000070 SW'
-			Task     = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
-			Role     = "StandaloneWorkstation"
-			Policy   = "SeDenyNetworkLogonRight"
-			Identity = "Guests"
+			Id = 'WN10-UR-000070 SW'
+			Task = 'The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Metadata = @{
+				DomainRole = "StandaloneWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyNetworkLogonRight"
+				Identity = "Guests"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000075 MW'
-			Role     = "MemberWorkstation"
-			Task     = 'The Deny log on as a batch job user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
-			Policy   = "SeDenyBatchLogonRight"
-			Identity = "Enterprise Admins", "Domain Admins"
+			Id = 'WN10-UR-000075 MW'
+			Task = 'The Deny log on as a batch job user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
+			Metadata = @{
+				DomainRole = "MemberWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyBatchLogonRight"
+				Identity = "Enterprise Admins", "Domain Admins"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000080 MW'
-			Role     = "MemberWorkstation"
+			Id = 'WN10-UR-000080 MW'
+			Metadata = @{
+				DomainRole = "MemberWorkstation"
+			}
 			Task     = 'The Deny log on as a service user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts.'
-			Policy   = "SeDenyServiceLogonRight"
-			Identity = "Enterprise Admins", "Domain Admins"
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyServiceLogonRight"
+				Identity = "Enterprise Admins", "Domain Admins"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000085 MW'
-			Role     = "MemberWorkstation"
-			Task     = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
-			Policy   = "SeDenyInteractiveLogonRight"
-			Identity = "Enterprise Admins", "Domain Admins", "Guests"
+			Id = 'WN10-UR-000085 MW'
+			Task = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
+			Metadata = @{
+				DomainRole = "MemberWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyInteractiveLogonRight"
+				Identity = "Enterprise Admins", "Domain Admins", "Guests"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000085 SW'
-			Role     = "StandaloneWorkstation"
-			Task     = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
-			Policy   = "SeDenyInteractiveLogonRight"
-			Identity = "Guests"
+			Id = 'WN10-UR-000085 SW'
+			Task = 'The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems.'
+			Metadata = @{
+				DomainRole = "StandaloneWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyInteractiveLogonRight"
+				Identity = "Guests"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000090 MW'
-			Role     = "MemberWorkstation"
-			Task     = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
-			Policy   = "SeDenyRemoteInteractiveLogonRight"
-			Identity = "Enterprise Admins", "Domain Admins", "Local account", "Guests"
+			Id = 'WN10-UR-000090 MW'
+			Task = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Metadata = @{
+				DomainRole = "MemberWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyRemoteInteractiveLogonRight"
+				Identity = "Enterprise Admins", "Domain Admins", "Local account", "Guests"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000090 SW'
-			Role     = "StandaloneWorkstation"
-			Task     = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
-			Policy   = "SeDenyRemoteInteractiveLogonRight"
-			Identity = "Guests"
+			Id = 'WN10-UR-000090 SW'
+			Task = 'The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems.'
+			Metadata = @{
+				DomainRole = "StandaloneWorkstation"
+			}
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeDenyRemoteInteractiveLogonRight"
+				Identity = "Guests"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000100'
-			Task     = "The Force shutdown from a remote system user right must only be assigned to the Administrators group."
-			Policy   = "SeRemoteShutdownPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000100'
+			Task = "The Force shutdown from a remote system user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeRemoteShutdownPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000105'
-			Task     = "The Generate security audits user right must only be assigned to Local Service and Network Service."
-			Policy   = "SeAuditPrivilege"
-			Identity = "Local Service", "Network Service"
+			Id = 'WN10-UR-000105'
+			Task = "The Generate security audits user right must only be assigned to Local Service and Network Service."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeAuditPrivilege"
+				Identity = "Local Service", "Network Service"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000110'
-			Task     = "The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service."
-			Policy   = "SeImpersonatePrivilege"
-			Identity = "Administrators", "Service", "Local Service", "Network Service"
+			Id = 'WN10-UR-000110'
+			Task = "The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeImpersonatePrivilege"
+				Identity = "Administrators", "Service", "Local Service", "Network Service"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000115'
-			Task     = "The Increase scheduling priority user right must only be assigned to the Administrators group."
-			Policy   = "SeIncreaseBasePriorityPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000115'
+			Task = "The Increase scheduling priority user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeIncreaseBasePriorityPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000120'
-			Task     = "The Load and unload device drivers user right must only be assigned to the Administrators group."
-			Policy   = "SeLoadDriverPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000120'
+			Task = "The Load and unload device drivers user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeLoadDriverPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000125'
-			Task     = "The Lock pages in memory user right must not be assigned to any groups or accounts."
-			Policy   = "SeLockMemoryPrivilege"
-			Identity = @()
+			Id = 'WN10-UR-000125'
+			Task = "The Lock pages in memory user right must not be assigned to any groups or accounts."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeLockMemoryPrivilege"
+				Identity = @()
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000130'
-			Task     = "The Manage auditing and security log user right must only be assigned to the Administrators group."
-			Policy   = "SeSecurityPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000130'
+			Task = "The Manage auditing and security log user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeSecurityPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000140'
-			Task     = "The Modify firmware environment values user right must only be assigned to the Administrators group."
-			Policy   = "SeSystemEnvironmentPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000140'
+			Task = "The Modify firmware environment values user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeSystemEnvironmentPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000145'
-			Task     = "The Perform volume maintenance tasks user right must only be assigned to the Administrators group."
-			Policy   = "SeManageVolumePrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000145'
+			Task = "The Perform volume maintenance tasks user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeManageVolumePrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000150'
-			Task     = "The Profile single process user right must only be assigned to the Administrators group."
-			Policy   = "SeProfileSingleProcessPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000150'
+			Task = "The Profile single process user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeProfileSingleProcessPrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000160'
-			Task     = "The Restore files and directories user right must only be assigned to the Administrators group."
-			Policy   = "SeRestorePrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000160'
+			Task = "The Restore files and directories user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeRestorePrivilege"
+				Identity = "Administrators"
+			}
 		}
 		@{
-			Id       = 'WN10-UR-000165'
-			Task     = "The Take ownership of files or other objects user right must only be assigned to the Administrators group."
-			Policy   = "SeTakeOwnershipPrivilege"
-			Identity = "Administrators"
+			Id = 'WN10-UR-000165'
+			Task = "The Take ownership of files or other objects user right must only be assigned to the Administrators group."
+			Config = @{
+				Type = "UserRightConfig"
+				UserRight = "SeTakeOwnershipPrivilege"
+				Identity = "Administrators"
+			}
 		}
 
 	)

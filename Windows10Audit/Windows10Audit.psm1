@@ -120,10 +120,17 @@ class ConfigMetadata
 {
 	[string] $Id
 	[string] $Task
+	[hashtable] $Metadata
 	$Config
 
 	[ConfigAudit] Test() {
-		$testResult = $this.Config.Test()
+		$testResult = $null
+		if ($null -ne $this.Metadata) {
+			$testResult = Test-Metadata -Metadata $this.Metadata
+		}
+		if ($null -eq $testResult) {
+			$testResult = $this.Config.Test()
+		}
 		return [ConfigAudit]@{
 			Id = $this.Id
 			Task = $this.Task
@@ -420,7 +427,6 @@ class AuditPolicyConfig
 	}
 }
 
-
 class FirewallProfileConfig
 {
 	[string] $Profile
@@ -453,7 +459,6 @@ class FirewallProfileConfig
 }
 #endregion
 
-
 function Get-ConfigMetadata {
 	[CmdletBinding()]
 	[OutputType([ConfigMetadata])]
@@ -464,11 +469,15 @@ function Get-ConfigMetadata {
 	)
 
 	process {
-		return [ConfigMetadata]@{
+		$obj = [ConfigMetadata]@{
 			Id = $ConfigMetadata.Id
 			Task = $ConfigMetadata.Task
-			Config = (Get-Config -Config $ConfigMetadata.Config)
+			Config = Get-Config -Config $ConfigMetadata.Config
 		}
+		if ($ConfigMetadata.ContainsKey("Metadata")) {
+			$obj.Metadata = $ConfigMetadata.Metadata
+		}
+		return $obj
 	}
 }
 
@@ -509,6 +518,32 @@ function Get-Config {
 			$Config.Remove("Type")
 			return New-Object -TypeName "FirewallProfileConfig" -Property $Config
 		}
+	}
+}
+
+function Test-Metadata {
+	[OutputType([AuditResult])]
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[hashtable]
+		$Metadata
+	)
+
+	if ($Metadata.ContainsKey('DomainRole')) {
+		$domainRoles = $Metadata.DomainRole | ForEach-Object { [DomainRole]$_ }
+		if ((Get-DomainRole) -notin $domainRoles) {
+			return [AuditResult]@{
+				Status = [AuditResultStatus]::None
+				Message = "Not applicable. This audit applies to " + ($Metadata.DomainRole -join " and ") + "."
+			}
+		}
+		else {
+			return $null
+		}
+	}
+	else {
+		return $null
 	}
 }
 #endregion
@@ -1015,76 +1050,6 @@ function Get-UserRightPolicyAudit {
 				Id = $Id
 				Task = $Task
 				Message = $message
-				Audit = [AuditStatus]::False
-			}
-		}
-
-		return [AuditInfo]@{
-			Id = $Id
-			Task = $Task
-			Message = "Compliant"
-			Audit = [AuditStatus]::True
-		}
-	}
-}
-
-function Get-AccountPolicyAudit {
-	Param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Id,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Task,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[ValidateSet(
-			'MinimumPasswordAge',
-			'MaximumPasswordAge',
-			'MinimumPasswordLength',
-			'PasswordComplexity',
-			'PasswordHistorySize',
-			'LockoutBadCount',
-			'ResetLockoutCount',
-			'LockoutDuration',
-			'RequireLogonToChangePassword',
-			'ForceLogoffWhenHourExpire',
-			'NewAdministratorName',
-			'NewGuestName',
-			'ClearTextPassword',
-			'LSAAnonymousNameLookup',
-			'EnableAdminAccount',
-			'EnableGuestAccount'
-		)]
-		[string] $Policy,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[object] $Value,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[ScriptBlock] $Predicate
-	)
-
-	process {
-		$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
-		$currentAccountPolicy = $securityPolicy["System Access"][$Policy]
-
-		if ($null -eq $currentAccountPolicy) {
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Currently not set."
-				Audit = [AuditStatus]::False
-			}
-		}
-
-		# Sanitize input
-		$currentAccountPolicy = $currentAccountPolicy.Trim()
-
-		if (-not (& $Predicate $currentAccountPolicy)) {
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Currently set to: $currentAccountPolicy. Differs from expected value: $ExpectedValue"
 				Audit = [AuditStatus]::False
 			}
 		}
@@ -1742,10 +1707,7 @@ function Get-DisaBenchmark {
 			}
 			[BenchmarkSection]@{
 				Name = "User Rights Assignment"
-				Configs = $DisaRequirements.UserRights `
-				| Get-AdapterConfigMetadata `
-					-Pipeline (New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}) `
-					-ShouldPreprocessSpecialValue
+				Configs = $DisaRequirements.UserRights | Get-ConfigMetadata
 			}
 			[BenchmarkSection]@{
 				Name = "Account Policies"
