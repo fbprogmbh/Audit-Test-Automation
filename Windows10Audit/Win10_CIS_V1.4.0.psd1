@@ -3310,7 +3310,7 @@
 						Type = "RegistryConfig"
 						Existence = "Yes"
 						Key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
-						ValueName = "\d+"
+						ValueName = "1"
 						ValueData = @{
 							Operation = "equals"
 							Value = "{d48179be-ec20-11d1-b6b8-00c04fa372a7}"
@@ -3321,10 +3321,10 @@
 						Type = "RegistryConfig"
 						Existence = "Yes"
 						Key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
-						ValueName = "\d+"
+						ValueName = "2"
 						ValueData = @{
 							Operation = "equals"
-							Value = "{6bdd1fc1-810f-11d0-bec7-08002be2092f}"
+							Value = "{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}"
 						}
 						ValueType = "reg_sz"
 					}
@@ -3332,7 +3332,7 @@
 						Type = "RegistryConfig"
 						Existence = "Yes"
 						Key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
-						ValueName = "\d+"
+						ValueName = "3"
 						ValueData = @{
 							Operation = "equals"
 							Value = "{c06ff265-ae09-48f0-812c-16753d7cba83}"
@@ -3343,10 +3343,10 @@
 						Type = "RegistryConfig"
 						Existence = "Yes"
 						Key = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
-						ValueName = "\d+"
+						ValueName = "4"
 						ValueData = @{
 							Operation = "equals"
-							Value = "{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}"
+							Value = "{6bdd1fc1-810f-11d0-bec7-08002be2092f}"
 						}
 						ValueType = "reg_sz"
 					}
