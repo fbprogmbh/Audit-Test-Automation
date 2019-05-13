@@ -1057,7 +1057,6 @@
 		@{
 			Id = "WN10-AC-000005"
 			Task = "Windows 10 account lockout duration must be configured to 15 minutes or greater."
-
 			Config = @{
 				Type = "AccountPolicyConfig"
 				Policy = "LockoutDuration"
@@ -1067,11 +1066,9 @@
 				}
 			}
 		}
-
 		@{
 			Id = "WN10-AC-000010"
 			Task = "The number of allowed bad logon attempts must be configured to 3 or less."
-
 			Config = @{
 				Type = "ComplexConfig"
 				Operation = "AND"
@@ -1098,8 +1095,8 @@
 		@{
 			Id = "WN10-AC-000015"
 			Task = "The period of time before the bad logon counter is reset must be configured to 15 minutes."
-
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "ResetLockoutCount"
 				Value = @{
 					Operation = "greater than or equal"
@@ -1111,6 +1108,7 @@
 			Id = 'WN10-AC-000020'
 			Task = "The password history must be configured to 24 passwords remembered."
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "PasswordHistorySize"
 				Value = @{
 					Operation = "greater than or equal"
@@ -1122,6 +1120,7 @@
 			Id = 'WN10-AC-000025'
 			Task = "The maximum password age must be configured to 60 days or less."
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "MaximumPasswordAge"
 				Value = @{
 					Operation = "less than or equal"
@@ -1129,12 +1128,11 @@
 				}
 			}
 		}
-
 		@{
 			Id = "WN10-AC-000030"
 			Task = "The minimum password age must be configured to at least 1 day."
-
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "MinimumPasswordAge"
 				Value = @{
 					Operation = "greater than or equal"
@@ -1145,8 +1143,8 @@
 		@{
 			Id = "WN10-AC-000035"
 			Task = "Passwords must, at a minimum, be 14 characters."
-
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "MinimumPasswordLength"
 				Value = @{
 					Operation = "greater than or equal"
@@ -1157,8 +1155,8 @@
 		@{
 			Id = "WN10-AC-000040"
 			Task = "The built-in Microsoft password complexity filter must be enabled."
-
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "PasswordComplexity"
 				Value = @{
 					Operation = "equals"
@@ -1169,8 +1167,8 @@
 		@{
 			Id = "WN10-AC-000045"
 			Task = "Reversible password encryption must be disabled."
-
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "ClearTextPassword"
 				Value = @{
 					Operation = "equals"
@@ -1182,6 +1180,7 @@
 			Id     = 'WN10-SO-000140'
 			Task   = "Anonymous SID/Name translation must not be allowed."
 			Config = @{
+				Type = "AccountPolicyConfig"
 				Policy = "LSAAnonymousNameLookup"
 				Value  = @{
 					Operation = "equals"

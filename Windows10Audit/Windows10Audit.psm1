@@ -257,7 +257,7 @@ class RegistryConfig
 			if (-not ($this.ValueData.Test($regValues))) {
 				$regValue = $regValues -join ", "
 				return [AuditResult]@{
-					Message = "Registry value is '$regValue'."
+					Message = "Registry value is '$regValue'. Expected: $($this.ValueData.Operation) $($this.ValueData.Value)"
 					Status = [AuditResultStatus]::False
 				}
 			}
@@ -1658,8 +1658,9 @@ class AdapterConfig {
 			$vals = $vals | PreprocessSpecialValueSetting
 		}
 		$ret = $vals | &$this.Pipeline
+
 		return [AuditResult]@{
-			Status = [AuditResultStatus]$ret
+			Status = [AuditResultStatus]($ret.Audit)
 			Message = $ret.Message
 		}
 	}
@@ -1679,13 +1680,15 @@ function Get-AdapterConfigMetadata {
 		$ShouldPreprocessSpecialValue = $false
 	)
 
-	return [ConfigMetadata]@{
-		Id = $Config.Id
-		Task = $Config.Task
-		Config = [AdapterConfig]@{
-			Data = $Config
-			Pipeline = $Pipeline
-			ShouldPreprocessSpecialValue = $ShouldPreprocessSpecialValue
+	process {
+		return [ConfigMetadata]@{
+			Id = $Config.Id
+			Task = $Config.Task
+			Config = [AdapterConfig]@{
+				Data = $Config
+				Pipeline = $Pipeline
+				ShouldPreprocessSpecialValue = $ShouldPreprocessSpecialValue
+			}
 		}
 	}
 }
@@ -1700,7 +1703,7 @@ function Get-CisBenchmark {
 		Sections = @(
 			[BenchmarkSection]@{
 				Name = "Registry Settings/Group Policies"
-				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata Get-AdapterConfigMetadata
+				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata
 			}
 			[BenchmarkSection]@{
 				Name = "User Rights Assignment"
