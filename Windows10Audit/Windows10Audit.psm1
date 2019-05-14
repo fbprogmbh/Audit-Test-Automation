@@ -1561,7 +1561,7 @@ class Benchmark
 	# }
 }
 
-function Get-BenchmarkSectionReportSection {
+function Get-BenchmarkSectionReport {
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]
@@ -1596,17 +1596,17 @@ function Get-BenchmarkSectionReportSection {
 	}
 }
 
-function Get-BenchmarkReportSection {
+function Get-BenchmarkReport {
 	[CmdletBinding()]
 	param (
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Benchmark]
 		$Benchmark
 	)
 
 	$subSections = @()
 	foreach	($section in $benchmark.Sections) {
-		$subSections += Get-BenchmarkSectionReportSection -Section $section
+		$subSections += Get-BenchmarkSectionReport -Section $section
 	}
 
 	return @{
@@ -1744,36 +1744,61 @@ function Get-DisaBenchmark {
 }
 
 #region Report-Generation
+
+function Get-Windows10Report {
+	[CmdletBinding()]
+	param()
+
+	return @{
+		Title = "Windows 10 Report"
+		ModuleName = "Windows10Audit"
+		BasedOn = "Windows 10 Security Technical Implementation Guide V1R16 2019-01-25"
+		Sections = @(
+			(Get-DisaBenchmark | Get-BenchmarkReport)
+			(Get-CisBenchmark | Get-BenchmarkReport)
+		)
+	}
+}
+
+function Save-Windows10Report {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Path,
+
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$Force,
+
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$NoClobber
+	)
+
+	Get-Windows10Report | Export-Clixml -Path $Path -Force:$Force -NoClobber:$NoClobber
+}
+
 <#
 	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
 #>
-
-function Get-HtmlReport {
+function Save-Windows10HtmlReport {
 	[CmdletBinding()]
-	param (
+	param(
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 		[switch] $DarkMode
 	)
 
 	$parent = Split-Path $Path
-	if (Test-Path $parent) {
-		[hashtable[]]$sections = @(
-			(Get-BenchmarkReportSection -Benchmark (Get-DisaBenchmark))
-			(Get-BenchmarkReportSection -Benchmark (Get-CisBenchmark))
-		)
-
-		Get-ATAPHtmlReport `
-			-Path $Path `
-			-Title "Windows 10 Report" `
-			-ModuleName "Windows10Audit" `
-			-BasedOn "Windows 10 Security Technical Implementation Guide V1R16 2019-01-25" `
-			-Sections $sections `
-			-DarkMode:$DarkMode
-	}
-	else {
+	if (-not (Test-Path $parent)) {
 		Write-Error "The path doesn't not exist!"
 	}
+
+	$report = Get-Windows10Report
+	Get-ATAPHtmlReport @report -Path $Path -DarkMode:$DarkMode
 }
 
-Set-Alias -Name Get-Windows10HtmlReport -Value Get-HtmlReport
+Set-Alias -Name Save-HtmlReport -Value Save-Windows10HtmlReport
+Set-Alias -Name Get-HtmlReport -Value Save-Windows10HtmlReport
+Set-Alias -Name shr -Value Save-Windows10HtmlReport
 #endregion
