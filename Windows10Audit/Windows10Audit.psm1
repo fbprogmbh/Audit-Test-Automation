@@ -124,19 +124,33 @@ class ConfigMetadata
 	$Config
 
 	[ConfigAudit] Test() {
-		$testResult = $null
-		if ($null -ne $this.Metadata) {
-			$testResult = Test-Metadata -Metadata $this.Metadata
-		}
-		if ($null -eq $testResult) {
-			$testResult = $this.Config.Test()
-		}
+		$testResult = $this.Config.Test()
 		return [ConfigAudit]@{
 			Id = $this.Id
 			Task = $this.Task
 			Status = $testResult.Status
 			Message = $testResult.Message
 		}
+	}
+}
+
+class DomainRoleConfigMetadata : ConfigMetadata
+{
+	[string[]] $DomainRole = @()
+
+	[ConfigAudit] Test() {
+		if ($this.DomainRole.Count -gt 0) {
+			$domainRoles = $this.DomainRole | ForEach-Object { [DomainRole]$_ }
+			if ((Get-DomainRole) -notin $domainRoles) {
+				return [ConfigAudit]@{
+					Id = $this.Id
+					Task = $this.Task
+					Status = [AuditResultStatus]::None
+					Message = 'Not applicable. This audit applies only to {0}.' -f ($this.DomainRole -join ' and ')
+				}
+			}
+		}
+		return ([ConfigMetadata]$this).Test()
 	}
 }
 
@@ -459,6 +473,28 @@ class FirewallProfileConfig
 }
 #endregion
 
+function Get-DomainRoleConfigMetadata {
+	[CmdletBinding()]
+	[OutputType([ConfigMetadata])]
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable]
+		$ConfigMetadata
+	)
+
+	process {
+		$obj = [DomainRoleConfigMetadata]@{
+			Id = $ConfigMetadata.Id
+			Task = $ConfigMetadata.Task
+			Config = Get-Config -Config $ConfigMetadata.Config
+		}
+		if ($ConfigMetadata.ContainsKey("DomainRole")) {
+			$obj.DomainRole = $ConfigMetadata.DomainRole
+		}
+		return $obj
+	}
+}
+
 function Get-ConfigMetadata {
 	[CmdletBinding()]
 	[OutputType([ConfigMetadata])]
@@ -469,15 +505,11 @@ function Get-ConfigMetadata {
 	)
 
 	process {
-		$obj = [ConfigMetadata]@{
+		return [ConfigMetadata]@{
 			Id = $ConfigMetadata.Id
 			Task = $ConfigMetadata.Task
 			Config = Get-Config -Config $ConfigMetadata.Config
 		}
-		if ($ConfigMetadata.ContainsKey("Metadata")) {
-			$obj.Metadata = $ConfigMetadata.Metadata
-		}
-		return $obj
 	}
 }
 
@@ -518,32 +550,6 @@ function Get-Config {
 			$Config.Remove("Type")
 			return New-Object -TypeName "FirewallProfileConfig" -Property $Config
 		}
-	}
-}
-
-function Test-Metadata {
-	[OutputType([AuditResult])]
-	[CmdletBinding()]
-	param(
-		[Parameter(Mandatory = $true)]
-		[hashtable]
-		$Metadata
-	)
-
-	if ($Metadata.ContainsKey('DomainRole')) {
-		$domainRoles = $Metadata.DomainRole | ForEach-Object { [DomainRole]$_ }
-		if ((Get-DomainRole) -notin $domainRoles) {
-			return [AuditResult]@{
-				Status = [AuditResultStatus]::None
-				Message = "Not applicable. This audit applies to " + ($Metadata.DomainRole -join " and ") + "."
-			}
-		}
-		else {
-			return $null
-		}
-	}
-	else {
-		return $null
 	}
 }
 #endregion
@@ -1707,7 +1713,7 @@ function Get-DisaBenchmark {
 			}
 			[BenchmarkSection]@{
 				Name = "User Rights Assignment"
-				Configs = $DisaRequirements.UserRights | Get-ConfigMetadata
+				Configs = $DisaRequirements.UserRights | Get-DomainRoleConfigMetadata
 			}
 			[BenchmarkSection]@{
 				Name = "Account Policies"
