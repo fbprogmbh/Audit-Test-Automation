@@ -120,7 +120,6 @@ class ConfigMetadata
 {
 	[string] $Id
 	[string] $Task
-	[hashtable] $Metadata
 	$Config
 
 	[ConfigAudit] Test() {
