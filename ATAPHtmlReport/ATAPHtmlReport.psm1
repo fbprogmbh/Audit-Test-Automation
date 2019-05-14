@@ -259,7 +259,7 @@ function Get-CompletionStatus {
 		$count = ($AuditInfos | Where-Object { $_.Audit -eq $value }).Count
 		$status[$value] = @{
 			Count = $count
-			Percent = (100 * ($count / $totalCount)).ToString("##.##", [cultureinfo]::InvariantCulture)
+			Percent = (100 * ($count / $totalCount)).ToString("0.00", [cultureinfo]::InvariantCulture)
 		}
 	}
 
@@ -419,6 +419,7 @@ function Get-ATAPHtmlReport {
 	$body += "<ol class=`"gauge-info`">"
 	foreach ($value in [auditstatus].GetEnumValues()) {
 		$htmlClass = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $value
+		$percent = $completionStatus[$value].Percent
 		$body += "<li class=`"gauge-info-item`"><span class=`"auditstatus {0}`">{2}</span> {3} test(s) &#x2259; {1}%</li>" -f `
 			$htmlClass, $percent, $value.ToString(), $completionStatus[$value].Count
 	}
