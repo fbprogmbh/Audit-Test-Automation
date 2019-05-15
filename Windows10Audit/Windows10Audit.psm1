@@ -133,6 +133,26 @@ class ConfigMetadata
 	}
 }
 
+class DomainRoleConfigMetadata : ConfigMetadata
+{
+	[string[]] $DomainRole = @()
+
+	[ConfigAudit] Test() {
+		if ($this.DomainRole.Count -gt 0) {
+			$domainRoles = $this.DomainRole | ForEach-Object { [DomainRole]$_ }
+			if ((Get-DomainRole) -notin $domainRoles) {
+				return [ConfigAudit]@{
+					Id = $this.Id
+					Task = $this.Task
+					Status = [AuditResultStatus]::None
+					Message = 'Not applicable. This audit applies only to {0}.' -f ($this.DomainRole -join ' and ')
+				}
+			}
+		}
+		return ([ConfigMetadata]$this).Test()
+	}
+}
+
 class AuditResult
 {
 	[AuditResultStatus] $Status
@@ -152,18 +172,22 @@ class ValueRange
 	$Value
 
 	[bool] Test($value) {
-		if ($this.Operation -eq "equals") {
+		if (($this.Operation -eq "equals") -or ($this.Operation -eq "not equal")) {
+			$negation = $false
+			if ($this.Operation -eq "not equal") {
+				$negation = $true
+			}
 			if ($value.Count -ne $this.Value.Count) {
-				return $false
+				return $negation
 			}
 			[array]$tvalue = $value
 			[array]$tthisvalue = $this.Value
 			for ($i = 0; $i -lt $tthisvalue.Count; $i++) {
 				if ($tvalue[$i] -ne $tthisvalue[$i]) {
-					return $false
+					return $negation
 				}
 			}
-			return $true
+			return -not ($negation)
 		}
 		elseif ($this.Operation -eq "greater than") {
 			return $value -gt $this.Value
@@ -253,7 +277,7 @@ class RegistryConfig
 			if (-not ($this.ValueData.Test($regValues))) {
 				$regValue = $regValues -join ", "
 				return [AuditResult]@{
-					Message = "Registry value is '$regValue'."
+					Message = "Registry value is '$regValue'. Expected: $($this.ValueData.Operation) $($this.ValueData.Value)"
 					Status = [AuditResultStatus]::False
 				}
 			}
@@ -416,7 +440,6 @@ class AuditPolicyConfig
 	}
 }
 
-
 class FirewallProfileConfig
 {
 	[string] $Profile
@@ -449,6 +472,27 @@ class FirewallProfileConfig
 }
 #endregion
 
+function Get-DomainRoleConfigMetadata {
+	[CmdletBinding()]
+	[OutputType([ConfigMetadata])]
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable]
+		$ConfigMetadata
+	)
+
+	process {
+		$obj = [DomainRoleConfigMetadata]@{
+			Id = $ConfigMetadata.Id
+			Task = $ConfigMetadata.Task
+			Config = Get-Config -Config $ConfigMetadata.Config
+		}
+		if ($ConfigMetadata.ContainsKey("DomainRole")) {
+			$obj.DomainRole = $ConfigMetadata.DomainRole
+		}
+		return $obj
+	}
+}
 
 function Get-ConfigMetadata {
 	[CmdletBinding()]
@@ -463,7 +507,7 @@ function Get-ConfigMetadata {
 		return [ConfigMetadata]@{
 			Id = $ConfigMetadata.Id
 			Task = $ConfigMetadata.Task
-			Config = (Get-Config -Config $ConfigMetadata.Config)
+			Config = Get-Config -Config $ConfigMetadata.Config
 		}
 	}
 }
@@ -1024,76 +1068,6 @@ function Get-UserRightPolicyAudit {
 	}
 }
 
-function Get-AccountPolicyAudit {
-	Param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Id,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string] $Task,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[ValidateSet(
-			'MinimumPasswordAge',
-			'MaximumPasswordAge',
-			'MinimumPasswordLength',
-			'PasswordComplexity',
-			'PasswordHistorySize',
-			'LockoutBadCount',
-			'ResetLockoutCount',
-			'LockoutDuration',
-			'RequireLogonToChangePassword',
-			'ForceLogoffWhenHourExpire',
-			'NewAdministratorName',
-			'NewGuestName',
-			'ClearTextPassword',
-			'LSAAnonymousNameLookup',
-			'EnableAdminAccount',
-			'EnableGuestAccount'
-		)]
-		[string] $Policy,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[object] $Value,
-
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[ScriptBlock] $Predicate
-	)
-
-	process {
-		$securityPolicy = Get-SecurityPolicy -Verbose:$VerbosePreference
-		$currentAccountPolicy = $securityPolicy["System Access"][$Policy]
-
-		if ($null -eq $currentAccountPolicy) {
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Currently not set."
-				Audit = [AuditStatus]::False
-			}
-		}
-
-		# Sanitize input
-		$currentAccountPolicy = $currentAccountPolicy.Trim()
-
-		if (-not (& $Predicate $currentAccountPolicy)) {
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = "Currently set to: $currentAccountPolicy. Differs from expected value: $ExpectedValue"
-				Audit = [AuditStatus]::False
-			}
-		}
-
-		return [AuditInfo]@{
-			Id = $Id
-			Task = $Task
-			Message = "Compliant"
-			Audit = [AuditStatus]::True
-		}
-	}
-}
-
 function Get-AuditPolicyAudit {
 	[CmdletBinding()]
 	Param(
@@ -1562,63 +1536,6 @@ function New-AuditPipeline {
 	}.GetNewClosure()
 }
 
-function Get-DisaAudit {
-	[CmdletBinding()]
-	Param(
-		[switch] $PerformanceOptimized,
-
-		# [string[]] $Exclude
-
-		[switch] $RegistrySettings,
-
-		[switch] $UserRights,
-
-		[switch] $AccountPolicies,
-
-		[switch] $WindowsFeatures,
-
-		[switch] $FileSystemPermissions,
-
-		[switch] $RegistryPermissions,
-
-		[switch] $OtherAudits
-	)
-
-	# disa registry settings
-	if ($RegistrySettings) {
-		$pipline = New-AuditPipeline ${Function:Get-RegistryAudit}
-		$DisaRequirements.RegistrySettings | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
-	}
-	# disa user rights
-	if ($UserRights) {
-		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-UserRightPolicyAudit}
-		$DisaRequirements.UserRights | &$pipline -Verbose:$VerbosePreference
-	}
-	# disa account policy
-	if ($AccountPolicies) {
-		$pipline = New-AuditPipeline ${Function:Get-AccountPolicyAudit}
-		$DisaRequirements.AccountPolicies | PreprocessSpecialValueSetting |  &$pipline -Verbose:$VerbosePreference
-	}
-	# disa windows features
-	if ($WindowsFeatures) {
-		$pipline = New-AuditPipeline ${Function:Get-WindowsOptionalFeatureAudit}
-		$DisaRequirements.WindowsOptionalFeatures | &$pipline -Verbose:$VerbosePreference
-	}
-	# disa file system permissions
-	if ($FileSystemPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-FileSystemPermissionsAudit}
-		$DisaRequirements.FileSystemPermissions | &$pipline -Verbose:$VerbosePreference
-	}
-	# disa registry permissions
-	if ($RegistryPermissions) {
-		$pipline = New-AuditPipeline ${Function:Get-RegistryPermissionsAudit}
-		$DisaRequirements.RegistryPermissions | &$pipline -Verbose:$VerbosePreference
-	}
-
-	if ($OtherAudits) {
-		### TODO
-	}
-}
 
 #region Audits
 
@@ -1644,36 +1561,7 @@ class Benchmark
 	# }
 }
 
-function Get-CisBenchmark {
-	return [Benchmark]@{
-		Name = "CIS Benchmarks"
-		Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
-		Sections = @(
-			[BenchmarkSection]@{
-				Name = "Registry Settings/Group Policies"
-				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "User Rights Assignment"
-				Configs = $CisBenchmarks.UserRights | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "Account Policies"
-				Configs = $CisBenchmarks.AccountPolicies | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "Windows Firewall with Advanced Security"
-				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
-			}
-			[BenchmarkSection]@{
-				Name = "Advanced Audit Policy Configuration"
-				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
-			}
-		)
-	}
-}
-
-function Get-BenchmarkSectionReportSection {
+function Get-BenchmarkSectionReport {
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]
@@ -1708,17 +1596,17 @@ function Get-BenchmarkSectionReportSection {
 	}
 }
 
-function Get-BenchmarkReportSection {
+function Get-BenchmarkReport {
 	[CmdletBinding()]
 	param (
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Benchmark]
 		$Benchmark
 	)
 
 	$subSections = @()
 	foreach	($section in $benchmark.Sections) {
-		$subSections += Get-BenchmarkSectionReportSection -Section $section
+		$subSections += Get-BenchmarkSectionReport -Section $section
 	}
 
 	return @{
@@ -1729,69 +1617,188 @@ function Get-BenchmarkReportSection {
 }
 #endregion
 
-#region Report-Generation
-<#
-	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
-#>
+class AdapterConfig {
+	$Data
+	[scriptblock] $Pipeline
+	[bool] $ShouldPreprocessSpecialValue
 
-function Get-HtmlReport {
-	[CmdletBinding()]
-	param (
-		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
+	[AuditResult] Test() {
+		$vals = $this.Data
+		if ($this.ShouldPreprocessSpecialValue) {
+			$vals = $vals | PreprocessSpecialValueSetting
+		}
+		$ret = $vals | &$this.Pipeline
 
-		[switch] $DarkMode,
-
-		[switch] $PerformanceOptimized
-	)
-
-	$parent = Split-Path $Path
-	if (Test-Path $parent) {
-		[hashtable[]]$sections = @(
-			@{
-				Title = "DISA Recommendations"
-				Description = "This section contains all DISA recommendations"
-				SubSections = @(
-					@{
-						Title = "Registry Settings/Group Policies"
-						AuditInfos = Get-DisaAudit -RegistrySettings | Sort-Object -Property Id
-					}
-					@{
-						Title = "User Rights Assignment"
-						AuditInfos = Get-DisaAudit -UserRights | Sort-Object -Property Id
-					}
-					@{
-						Title = "Account Policies"
-						AuditInfos = Get-DisaAudit -AccountPolicies | Sort-Object -Property Id
-					}
-					@{
-						Title = "Windows Features"
-						AuditInfos = Get-DisaAudit -WindowsFeatures | Sort-Object -Property Id
-					}
-					@{
-						Title = "File System Permissions"
-						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
-					}
-					@{
-						Title = "Registry Permissions"
-						AuditInfos = Get-DisaAudit -RegistryPermissions | Sort-Object -Property Id
-					}
-				)
-			}
-			(Get-BenchmarkReportSection -Benchmark (Get-CisBenchmark))
-		)
-
-		Get-ATAPHtmlReport `
-			-Path $Path `
-			-Title "Windows 10 Report" `
-			-ModuleName "Windows10Audit" `
-			-BasedOn "Windows 10 Security Technical Implementation Guide V1R16 2019-01-25" `
-			-Sections $sections `
-			-DarkMode:$DarkMode
-	}
-	else {
-		Write-Error "The path doesn't not exist!"
+		return [AuditResult]@{
+			Status = [AuditResultStatus]($ret.Audit)
+			Message = $ret.Message
+		}
 	}
 }
 
-Set-Alias -Name Get-Windows10HtmlReport -Value Get-HtmlReport
+function Get-AdapterConfigMetadata {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[hashtable]
+		$Config,
+
+		[Parameter(Mandatory = $true)]
+		[scriptblock]
+		$Pipeline,
+
+		[switch]
+		$ShouldPreprocessSpecialValue = $false
+	)
+
+	process {
+		return [ConfigMetadata]@{
+			Id = $Config.Id
+			Task = $Config.Task
+			Config = [AdapterConfig]@{
+				Data = $Config
+				Pipeline = $Pipeline
+				ShouldPreprocessSpecialValue = $ShouldPreprocessSpecialValue
+			}
+		}
+	}
+}
+
+function Get-CisBenchmark {
+	[CmdletBinding()]
+	param()
+
+	return [Benchmark]@{
+		Name = "CIS Benchmarks"
+		Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
+		Sections = @(
+			[BenchmarkSection]@{
+				Name = "Registry Settings/Group Policies"
+				Configs = $CisBenchmarks.RegistrySettings | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "User Rights Assignment"
+				Configs = $CisBenchmarks.UserRights | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Account Policies"
+				Configs = $CisBenchmarks.AccountPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Windows Firewall with Advanced Security"
+				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Advanced Audit Policy Configuration"
+				Configs = $CisBenchmarks.AuditPolicies | Get-ConfigMetadata
+			}
+		)
+	}
+}
+
+function Get-DisaBenchmark {
+	[CmdletBinding()]
+	param()
+
+	return [Benchmark]@{
+		Name = "DISA Recommendations"
+		Description = "TThis section contains all DISA recommendations"
+		Sections = @(
+			[BenchmarkSection]@{
+				Name = "Registry Settings/Group Policies"
+				Configs = $DisaRequirements.RegistrySettings `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-RegistryAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "User Rights Assignment"
+				Configs = $DisaRequirements.UserRights | Get-DomainRoleConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Account Policies"
+				Configs = $DisaRequirements.AccountPolicies | Get-ConfigMetadata
+			}
+			[BenchmarkSection]@{
+				Name = "Windows Features"
+				Configs = $DisaRequirements.WindowsOptionalFeatures `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-WindowsOptionalFeatureAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "File System Permissions"
+				Configs = $DisaRequirements.FileSystemPermissions `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-FileSystemPermissionsAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+			[BenchmarkSection]@{
+				Name = "Registry Permissions"
+				Configs = $DisaRequirements.RegistryPermissions `
+					| Get-AdapterConfigMetadata `
+						-Pipeline (New-AuditPipeline ${Function:Get-RegistryPermissionsAudit}) `
+						-ShouldPreprocessSpecialValue
+			}
+		)
+	}
+}
+
+#region Report-Generation
+
+function Get-Windows10Report {
+	[CmdletBinding()]
+	param()
+
+	return @{
+		Title = "Windows 10 Report"
+		ModuleName = "Windows10Audit"
+		BasedOn = "Windows 10 Security Technical Implementation Guide V1R16 2019-01-25"
+		Sections = @(
+			(Get-DisaBenchmark | Get-BenchmarkReport)
+			(Get-CisBenchmark | Get-BenchmarkReport)
+		)
+	}
+}
+
+function Save-Windows10Report {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Path,
+
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$Force,
+
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$NoClobber
+	)
+
+	Get-Windows10Report | Export-Clixml -Path $Path -Force:$Force -NoClobber:$NoClobber
+}
+
+<#
+	In this section the HTML report gets build and saved to the desired destination set by parameter saveTo
+#>
+function Save-Windows10HtmlReport {
+	[CmdletBinding()]
+	param(
+		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
+		[switch] $DarkMode
+	)
+
+	$parent = Split-Path $Path
+	if (-not (Test-Path $parent)) {
+		Write-Error "The path doesn't not exist!"
+	}
+
+	$report = Get-Windows10Report
+	Get-ATAPHtmlReport @report -Path $Path -DarkMode:$DarkMode
+}
+
+Set-Alias -Name Save-HtmlReport -Value Save-Windows10HtmlReport
+Set-Alias -Name Get-HtmlReport -Value Save-Windows10HtmlReport
+Set-Alias -Name shr -Value Save-Windows10HtmlReport
 #endregion

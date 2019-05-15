@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 RootModule = 'Windows10Audit.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1'
+ModuleVersion = '0.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -45,7 +45,7 @@ ModuleVersion = '0.1'
 GUID = '8c659a31-d962-462a-88cd-911e06f9701c'
 
 # Author of this module
-Author = 'Dennis Esly'
+Author = 'Benedikt Böhme', 'Dennis Esly'
 
 # Company or vendor of this module
 CompanyName = 'FB Pro GmbH'
