@@ -190,16 +190,16 @@ class ValueRange
 			return -not ($negation)
 		}
 		elseif ($this.Operation -eq "greater than") {
-			return $value -gt $this.Value
+			return [int]$value -gt [int]$this.Value
 		}
 		elseif ($this.Operation -eq "less than") {
-			return $value -lt $this.Value
+			return [int]$value -lt [int]$this.Value
 		}
 		elseif ($this.Operation -eq "greater than or equal") {
-			return $value -ge $this.Value
+			return [int]$value -ge [int]$this.Value
 		}
 		elseif ($this.Operation -eq "less than or equal") {
-			return $value -le $this.Value
+			return [int]$value -le [int]$this.Value
 		}
 		elseif ($this.Operation -eq "pattern match") {
 			return $value -match $this.Value
