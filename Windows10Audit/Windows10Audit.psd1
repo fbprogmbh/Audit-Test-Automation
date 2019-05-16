@@ -1,7 +1,7 @@
 ﻿<#
 BSD 3-Clause License
 
-Copyright (c) 2018, FB Pro GmbH
+Copyright (c) 2019, FB Pro GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,28 +33,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'ATAPHtmlReport.psm1'
+RootModule = 'Windows10Audit.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1'
+ModuleVersion = '0.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
 
 # ID used to uniquely identify this module
-GUID = 'b732e8cd-6500-4da8-ac96-ab60087c739b'
+GUID = '8c659a31-d962-462a-88cd-911e06f9701c'
 
 # Author of this module
-Author = 'Benedikt Böhme'
+Author = 'Benedikt Böhme', 'Dennis Esly'
 
 # Company or vendor of this module
 CompanyName = 'FB Pro GmbH'
 
 # Copyright statement for this module
-Copyright = '(c) 2018 FB Pro GmbH. All rights reserved.'
+Copyright = '(c) 2019 FB-Pro GmbH. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A module part of the Audit Test Automation Package that creates html reports with tables and sections for audit reporting'
+Description = "A module that benchmarks your Windows 10 settings with current hardening standards such as the DISA Security Technical Implementation Guide and the CIS Benchmarks."
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '5.0'
@@ -75,7 +75,9 @@ PowerShellVersion = '5.0'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @(
+    'ATAPHtmlReport'
+)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -93,16 +95,16 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Get-ATAPHtmlReport', 'Get-ATAPHostInformation')
+# FunctionsToExport = '*'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @()
+# CmdletsToExport = '*'
 
 # Variables to export from this module
-VariablesToExport = ''
+# VariablesToExport = '*'
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-AliasesToExport = @()
+# AliasesToExport = '*'
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()
@@ -119,7 +121,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html')
+        Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'Windows 10', 'cis', 'disa')
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'

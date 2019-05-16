@@ -34,18 +34,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	Email = @{
 		SMTPServer   = "smtp.example.com"
 		SMTPPort     = 25
-		MailTo       = "mbam@example.com"
-		MailFrom     = "MBAM Error Reporting"
+		MailTo       = "audit@example.com"
+		MailFrom     = "Windows 10 Audit Error Reporting"
 		Encoding     = "UTF8"
-		User         = "mbamtap@example.com"
+		User         = "audit@example.com"
 		PasswordFile = ""
 	}
 
 	# Path to logfiles
-	LogFilePath = "C:\Logs"
-
-	# Standard logfile name, used if no other name is passed as parameter
-	LogFileName = "auditreport.log"
+	LogFilePath = "C:\Logs\auditreport.log"
 
 	LegalNoticeTitle = "MyCompanyName"
 	LegalNoticeText = "Be sure to comply with the guidelines for administrators."

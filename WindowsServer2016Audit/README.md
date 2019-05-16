@@ -1,12 +1,12 @@
 # Windows Server 2016 Audit
 
 based on
-* _Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27_
-* and _CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017_
+* _Windows Server 2016 Security Technical Implementation Guide V1R6 2018-08-26_
+* and _CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.1.0 - 2018-10-31_
 
 ## Overview
 
-The `WindowsServer2016Audit`-Module benchmarks the current systems settings with current hardening standards such as the DISA Security Technical Implementation Guide and the CIS Microsoft IIS Benchmarks. This module is designed for Windows Server 2016.
+The `WindowsServer2016Audit`-Module benchmarks your Windows Server 2016 settings with current hardening standards such as the DISA Security Technical Implementation Guide and the CIS Benchmarks.
 
 ## Requirements
 
@@ -34,5 +34,4 @@ You can find a sample report in the [Sample](Sample) folder.
 
 ## Remarks
 
-At the moment, all negative audit status results are written as an error on the command line. If your system hasn't been hardened yet, the script will therefore write a lot of errors.
-Script runs a while - do not be impatient and expect the HTML report with pleasant anticipation.
+The script runs a while - do not be impatient.
