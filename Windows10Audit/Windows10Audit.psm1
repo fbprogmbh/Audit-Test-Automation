@@ -1669,7 +1669,7 @@ function Get-CisBenchmark {
 
 	return [Benchmark]@{
 		Name = "CIS Benchmarks"
-		Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.0.0 - 03-31-2017. WARNING: Tests in this version haven't been fully tested yet."
+		Description = "This section contains all benchmarks from CIS Microsoft Windows 10 Enterprise Release 1709 Benchmark v1.4.0."
 		Sections = @(
 			[BenchmarkSection]@{
 				Name = "Registry Settings/Group Policies"
@@ -1701,7 +1701,7 @@ function Get-DisaBenchmark {
 
 	return [Benchmark]@{
 		Name = "DISA Recommendations"
-		Description = "TThis section contains all DISA recommendations"
+		Description = "This section contains all DISA Windows 10 Security Technical Implementation Guide V1R16."
 		Sections = @(
 			[BenchmarkSection]@{
 				Name = "Registry Settings/Group Policies"
@@ -1752,7 +1752,10 @@ function Get-Windows10Report {
 	return @{
 		Title = "Windows 10 Report"
 		ModuleName = "Windows10Audit"
-		BasedOn = "Windows 10 Security Technical Implementation Guide V1R16 2019-01-25"
+		BasedOn = @(
+			"Windows 10 Security Technical Implementation Guide V1R16 2019-01-25"
+			"CIS Microsoft Windows 10 Enterprise Release 1709 Benchmark v1.4.0"
+		)
 		Sections = @(
 			(Get-DisaBenchmark | Get-BenchmarkReport)
 			(Get-CisBenchmark | Get-BenchmarkReport)
