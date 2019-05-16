@@ -633,6 +633,7 @@ Param(
 
 function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
+	[OutputType([hashtable])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[string] $Name
@@ -829,6 +830,8 @@ function Get-AuditPolicySubcategoryGUID {
 }
 
 function Convert-ToAuditInfo {
+	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	param (
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Psobject] $auditObject
@@ -847,6 +850,8 @@ function Convert-ToAuditInfo {
 
 #region Audit functions
 function Get-RoleAudit {
+	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -873,6 +878,8 @@ function Get-RoleAudit {
 }
 
 function Get-RegistryAudit {
+	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -966,6 +973,8 @@ function Get-RegistryAudit {
 }
 
 function Get-UserRightPolicyAudit {
+	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1070,6 +1079,7 @@ function Get-UserRightPolicyAudit {
 
 function Get-AuditPolicyAudit {
 	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1205,6 +1215,8 @@ function Get-AuditPolicyAudit {
 }
 
 function Get-WindowsOptionalFeatureAudit {
+	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1301,6 +1313,7 @@ $GAToRRMaping = @{
 
 function Get-FileSystemPermissionsAudit {
 	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1391,6 +1404,7 @@ function Convert-RegistryRight {
 
 function Get-RegistryPermissionsAudit {
 	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1460,6 +1474,7 @@ function Get-RegistryPermissionsAudit {
 
 function Get-FirewallProfileAudit {
 	[CmdletBinding()]
+	[OutputType([AuditInfo])]
 	Param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string] $Id,
@@ -1511,6 +1526,7 @@ function Get-FirewallProfileAudit {
 
 function New-AuditPipeline {
 	[CmdletBinding()]
+	[OutputType([scriptblock])]
 	param(
 		[Parameter(Mandatory = $true, Position = 0)]
 		[scriptblock[]] $AuditFunctions
@@ -1563,6 +1579,7 @@ class Benchmark
 
 function Get-BenchmarkSectionReport {
 	[CmdletBinding()]
+	[OutputType([hashtable])]
 	param (
 		[Parameter(Mandatory = $true)]
 		[BenchmarkSection]
@@ -1598,6 +1615,7 @@ function Get-BenchmarkSectionReport {
 
 function Get-BenchmarkReport {
 	[CmdletBinding()]
+	[OutputType([hashtable])]
 	param (
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		[Benchmark]
@@ -1665,6 +1683,7 @@ function Get-AdapterConfigMetadata {
 
 function Get-CisBenchmark {
 	[CmdletBinding()]
+	[OutputType([Benchmark])]
 	param()
 
 	return [Benchmark]@{
@@ -1697,6 +1716,7 @@ function Get-CisBenchmark {
 
 function Get-DisaBenchmark {
 	[CmdletBinding()]
+	[OutputType([Benchmark])]
 	param()
 
 	return [Benchmark]@{
@@ -1747,6 +1767,7 @@ function Get-DisaBenchmark {
 
 function Get-Windows10Report {
 	[CmdletBinding()]
+	[OutputType([hashtable])]
 	param()
 
 	return @{
