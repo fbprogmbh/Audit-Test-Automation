@@ -318,7 +318,6 @@ class RegistryConfig
 
 class UserRightConfig
 {
-	[Existence] $Existence
 	[string] $UserRight
 	[string[]] $Identity
 
@@ -1591,8 +1590,8 @@ function Get-BenchmarkSectionReport {
 		try {
 			$audit = $config.Test()
 			$audits += [AuditInfo]@{
-				Id      = $audit.Id
-				Task    = $audit.Task
+				Id      = $config.Id
+				Task    = $config.Task
 				Message = $audit.Message
 				Audit   = $audit.Status
 			}
@@ -1600,8 +1599,8 @@ function Get-BenchmarkSectionReport {
 		catch {
 			Write-Error @_
 			$audits += [AuditInfo]@{
-				Id      = $audit.Id
-				Task    = $audit.Task
+				Id      = $config.Id
+				Task    = $config.Task
 				Message = "An error occured!"
 				Audit   = [AuditStatus]::None
 			}
@@ -1822,6 +1821,7 @@ function Save-Windows10HtmlReport {
 	Get-ATAPHtmlReport @report -Path $Path -DarkMode:$DarkMode
 }
 
+Set-Alias -Name Get-Windows10HtmlReport -Value Save-Windows10HtmlReport
 Set-Alias -Name Save-HtmlReport -Value Save-Windows10HtmlReport
 Set-Alias -Name Get-HtmlReport -Value Save-Windows10HtmlReport
 Set-Alias -Name shr -Value Save-Windows10HtmlReport
