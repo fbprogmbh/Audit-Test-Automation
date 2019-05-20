@@ -158,7 +158,7 @@ function PreprocessSpecialValueSetting {
 			$InputObject.Remove("SpecialValue")
 			if ($Type -eq "Range") {
 				$preValue = $preValue.ToLower()
-	
+
 				$predicates = @()
 				if ($preValue -match "([0-9]+)[a-z ]* or less") {
 					$y = [int]$Matches[1]
@@ -172,7 +172,7 @@ function PreprocessSpecialValueSetting {
 					$y = [int]$Matches[1]
 					$predicates += { param($x) $x -ne $y }.GetNewClosure()
 				}
-				
+
 				$InputObject.ExpectedValue = $preValue
 				$InputObject.Predicate     = {
 					param($x)
@@ -183,7 +183,7 @@ function PreprocessSpecialValueSetting {
 			elseif ($Type -eq "Placeholder") {
 				$value = $Settings[$preValue]
 				$InputObject.Value = $value
-	
+
 				if ([string]::IsNullOrEmpty($value)) {
 					$InputObject.ExpectedValue = "Non-empty string."
 					$InputObject.Predicate     = { param($x) -not [string]::IsNullOrEmpty($x) }.GetNewClosure()
@@ -201,11 +201,11 @@ function PreprocessSpecialValueSetting {
 		$InputObject.ExpectedValue = $value -join ", "
 		$InputObject.Predicate     = {
 			param([string[]]$xs)
-			
+
 			if ($xs.Count -ne $value.Count) {
 				return $false
 			}
-			
+
 			$comparisonFunction = [Func[string, string, Boolean]]{ param($a, $b) $a -eq $b }
 			$comparison = [System.Linq.Enumerable]::Zip([string[]]$value, $xs, $comparisonFunction)
 			return $comparison -notcontains $false
@@ -495,7 +495,7 @@ function Get-RegistryAudit {
 		catch [System.Management.Automation.PSArgumentException] {
 			Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Level Error `
 				-Message "$($Id): Could not get value $Name in registry key $path."
-			
+
 			if ($DoesNotExist) {
 				return [AuditInfo]@{
 					Id = $Id
@@ -911,9 +911,9 @@ function Convert-FileSystemRights {
 		[Parameter(Mandatory = $true)]
 		[FileSystemRights] $OriginalRights
 	)
-	
+
 	[FileSystemRights]$MappedRights = [FileSystemRights]::new()
-	
+
 	# map generic access right
 	foreach ($GAR in $GAToFSRMapping.Keys) {
 		if (($OriginalRights.value__ -band $GAR.value__) -eq $GAR.value__) {
@@ -1017,9 +1017,9 @@ function Convert-RegistryRights {
 		[Parameter(Mandatory = $true)]
 		[RegistryRights] $OriginalRights
 	)
-	
+
 	[RegistryRights]$MappedRights = [RegistryRights]::new()
-	
+
 	# map generic access right
 	foreach ($GAR in $GAToRRMaping.Keys) {
 		if (($OriginalRights.value__ -band $GAR.value__) -eq $GAR.value__) {
@@ -1172,26 +1172,14 @@ function Get-FirewallProfileAudit {
 
 #region DISA STIG Audit functions
 
-# Passwords for the built-in Administrator account must be changed at least every 60 days.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000030
-# Group ID (Vulid): V-73223
-# CCI: CCI-000199
-#
-# The longer a password is in use, the greater the opportunity for someone to gain unauthorized
-# knowledge of the password. The built-in Administrator account is not generally used and
-# its password not may be changed as frequently as necessary. Changing the password for the
-# built-in Administrator account on a regular basis will limit its exposure.Organizations
-# that use an automated tool, such Microsofts Local Administrator Password Solution (LAPS),
-# on domain-joined systems can configure this to occur more frequently. LAPS will change the
-# password every 30 days by default.
-function Test-SV-87875r2_rule {
+# Task: Passwords for the built-in Administrator account must be changed at least every 60 days.
+function Test-Stig_WN16_00_000030 {
 	Param(
 		[System.Int32] $days = 60
 	)
 
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87875r2_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000030")
 	$obj | Add-Member NoteProperty Task("Passwords for the built-in Administrator account must be changed at least every $days days.")
 
 	$builtInAdmin = Get-localUser | Where-Object -Property sid -like "S-1-5-*-500"
@@ -1205,25 +1193,13 @@ function Test-SV-87875r2_rule {
 		$obj | Add-Member NoteProperty Status("Compliant")
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
-	Write-Output $obj
+	return $obj
 }
 
-
-# Domain-joined systems must have a Trusted Platform Module (TPM) enabled and ready for use.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000100
-# Group ID (Vulid): V-73237
-# CCI: CCI-000366
-#
-# Credential Guard uses virtualization-based security to protect data that could be used in
-# credential theft attacks if compromised. A number of system requirements must be met in
-# order for Credential Guard to be configured and enabled properly. Without a TPM enabled
-# and ready for use, Credential Guard keys are stored in a less secure method using software.
-#
-function Test-SV-87889r1_rule {
+# Task: Domain-joined systems must have a Trusted Platform Module (TPM) enabled and ready for use.
+function Test-Stig_WN16_00_000100 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87889r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000100")
 	$obj | Add-Member NoteProperty Task("Domain-joined systems must have a Trusted Platform Module (TPM) enabled and ready for use.")
 
 	# If machine is in a domain
@@ -1253,24 +1229,16 @@ function Test-SV-87889r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Systems must be maintained at a supported servicing level.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000110
-# Group ID (Vulid): V-73239
-# CCI: CCI-000366
-#
-# Systems at unsupported servicing levels will not receive security updates for new vulnerabilities,
-# which leave them subject to exploitation. Systems must be maintained at a servicing level
-# supported by the vendor with new security updates.
-function Test-SV-87891r1_rule {
+# Task: Systems must be maintained at a supported servicing level.
+function Test-Stig_WN16_00_000110 {
 	Param(
 		[System.Int32]$version = 14393
 	)
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87891r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000110")
 	$obj | Add-Member NoteProperty Task("Systems must be maintained at a supported servicing level.")
 
 	$acutalVersion = ([System.Environment]::OSVersion.Version).Build
@@ -1284,23 +1252,13 @@ function Test-SV-87891r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-
-
-# Local volumes must use a format that supports NTFS attributes.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000150
-# Group ID (Vulid): V-73247
-# CCI: CCI-000213
-#
-# The ability to set access permissions and auditing is critical to maintaining the security
-# and proper access controls of a system. To support this, volumes must be formatted using
-# a file system that supports NTFS attributes.
-function Test-SV-87899r1_rule {
+# Task: Local volumes must use a format that supports NTFS attributes.
+function Test-Stig_WN16_00_000150 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87899r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000150")
 	$obj | Add-Member NoteProperty Task("Local volumes must use a format that supports NTFS attributes.")
 
 	$volumes = Get-Volume `
@@ -1316,22 +1274,13 @@ function Test-SV-87899r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Non-administrative accounts or groups must only have print permissions on printer shares.
-#
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000200
-# Group ID (Vulid): V-73257
-# CCI: CCI-000213
-#
-# Windows shares are a means by which files, folders, printers, and other resources can be
-# published for network users to access. Improper configuration can permit access to devices
-# and data beyond a users need.
-function Test-SV-87909r1_rule {
+# Task: Non-administrative accounts or groups must only have print permissions on printer shares.
+function Test-Stig_WN16_00_000200 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87909r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000200")
 	$obj | Add-Member NoteProperty Task("Non-administrative accounts or groups must only have print permissions on printer shares.")
 
 	$printers = Get-Printer
@@ -1353,25 +1302,17 @@ function Test-SV-87909r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Outdated or unused accounts must be removed from the system or disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000210
-# Group ID (Vulid): V-73259
-# CCI: CCI-000764 CCI-000795
-#
-# Outdated or unused accounts provide penetration points that may go undetected. Inactive accounts
-# must be deleted if no longer necessary or, if still required, disabled until needed.Satisfies:
-# SRG-OS-000104-GPOS-00051, SRG-OS-000118-GPOS-00060
-function Test-SV-87911r2_rule {
+# Task: Outdated or unused accounts must be removed from the system or disabled.
+function Test-Stig_WN16_00_000210 {
 	[CmdletBinding()]
 	Param(
 		[System.Int32]$days = 35
 	)
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87911r2_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000210")
 	$obj | Add-Member NoteProperty Task("Outdated or unused accounts must be removed from the system or disabled.")
 
 	$accounts = ([ADSI]('WinNT://{0}' -f $env:COMPUTERNAME)).Children | Where-Object { $_.SchemaClassName -eq 'user' }
@@ -1398,21 +1339,13 @@ function Test-SV-87911r2_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Accounts must require passwords.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000220
-# Group ID (Vulid): V-73261
-# CCI: CCI-000764
-#
-# The lack of password protection enables anyone to gain access to the information system,
-# which opens a backdoor opportunity for intruders to compromise the system as well as other
-# resources. Accounts on a system must require passwords.
-function Test-SV-87913r2_rule {
+# Task: Accounts must require passwords.
+function Test-Stig_WN16_00_000220 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87913r2_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000220")
 	$obj | Add-Member NoteProperty Task("Accounts must require passwords.")
 
 	$accounts = Get-CimInstance -Class Win32_Useraccount -Filter "PasswordRequired=False and LocalAccount=True" | Select-Object Name, PasswordRequired, Disabled
@@ -1438,20 +1371,13 @@ function Test-SV-87913r2_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Passwords must be configured to expire.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000230
-# Group ID (Vulid): V-73263
-# CCI: CCI-000199
-#
-# Passwords that do not expire or are reused increase the exposure of a password with greater
-# probability of being discovered or cracked.
-function Test-SV-87915r2_rule {
+# Task: Passwords must be configured to expire.
+function Test-Stig_WN16_00_000230 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87915r2_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000230")
 	$obj | Add-Member NoteProperty Task("Passwords must be configured to expire.")
 
 	$accounts = Get-CimInstance -Class Win32_Useraccount -Filter "PasswordExpires=False and LocalAccount=True" | Select-Object Name, PasswordExpires, Disabled
@@ -1477,26 +1403,17 @@ function Test-SV-87915r2_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::True)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-
-# Non-system-created file shares on a system must limit access to groups that require it.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000250
-# Group ID (Vulid): V-73267
-# CCI: CCI-001090
-#
-# Shares on a system provide network access. To prevent exposing sensitive information, where
-# shares are necessary, permissions must be reconfigured to give the minimum access to accounts
-# that require it.
-function Test-SV-87919r1_rule {
+# Task: Non-system-created file shares on a system must limit access to groups that require it.
+function Test-Stig_WN16_00_000250 {
 	[CmdletBinding()]
 	Param(
 		[String[]]$reference = @("ADMIN$", "C$", "IPC$")
 	)
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87919r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000250")
 	$obj | Add-Member NoteProperty Task("Non-system-created file shares on a system must limit access to groups that require it.")
 
 	try {
@@ -1520,20 +1437,13 @@ function Test-SV-87919r1_rule {
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000250: $($error[0])" -Level Error
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Software certificate installation files must be removed from Windows Server 2016.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000270
-# Group ID (Vulid): V-73271
-# CCI: CCI-000366
-#
-# Use of software certificates and their accompanying installation files for end users to access
-# resources is less secure than the use of hardware-based certificates.
-function Test-SV-87923r1_rule {
+# Task: Software certificate installation files must be removed from Windows Server 2016.
+function Test-Stig_WN16_00_000270 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87923r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000270")
 	$obj | Add-Member NoteProperty Task("Software certificate installation files must be removed from Windows Server 2016.")
 
 	$items = Get-Childitem –Path C:\ -Include *.pfx, *.p12 -File -Recurse -ErrorAction SilentlyContinue
@@ -1548,28 +1458,13 @@ function Test-SV-87923r1_rule {
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000270: Found the following certificates: `n $items"
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# Systems requiring data at rest protections must employ cryptographic mechanisms to prevent
-# unauthorized disclosure and modification of the information at rest.
-# - - - - - - - - - - - - -
-# StigID: WN16-00-000280
-# Group ID (Vulid): V-73273
-# CCI: CCI-001199 CCI-002475 CCI-002476
-#
-# This requirement addresses protection of user-generated data as well as operating system-specific
-# configuration data. Organizations may choose to employ different mechanisms to achieve confidentiality
-# and integrity protections, as appropriate, in accordance with the security category and/or
-# classification of the information.Select-Objection of a cryptographic mechanism is based on the
-# need to protect the integrity of organizational information. The strength of the mechanism
-# is commensurate with the security category and/or classification of the information. Organizations
-# have the flexibility to either encrypt all information on storage devices (i.e., full disk
-# encryption) or encrypt specific data structures (e.g., files, records, or fields).Satisfies:
-# SRG-OS-000185-GPOS-00079, SRG-OS-000404-GPOS-00183, SRG-OS-000405-GPOS-00184
-function Test-SV-87925r1_rule {
+# Task: Systems requiring data at rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.
+function Test-Stig_WN16_00_000280 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-87925r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-00-000280")
 	$obj | Add-Member NoteProperty Task("Systems requiring data at rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.")
 
 	try {
@@ -1598,12 +1493,13 @@ function Test-SV-87925r1_rule {
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-00-000280: BitLocker not found on system" -Level Error
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-function Test-SV-88165r1_rule_3 {
+# Task: Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (VirtualizationBasedSecurityStatus Running).
+function Test-Stig_WN16_CC_000110_C {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88165r1_rule_3")
+	$obj | Add-Member NoteProperty Name("WN16-CC-000110 C")
 	$obj | Add-Member NoteProperty Task("Virtualization-based security must be enabled with the platform security level configured to Secure Boot or Secure Boot with DMA Protection (VirtualizationBasedSecurityStatus Running).")
 
 	$vBSS = Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard `
@@ -1620,14 +1516,13 @@ function Test-SV-88165r1_rule_3 {
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000110: Device Guard not running" -Level Error
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-
-# Credential Guard running
-function Test-SV-88167r1_rule_2 {
+# Task: Credential Guard must be running on domain-joined systems (SecurityServicesRunning).
+function Test-Stig_WN16_CC_000120_B {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88167r1_rule_2")
+	$obj | Add-Member NoteProperty Name("WN16-CC-000120 B")
 	$obj | Add-Member NoteProperty Task("Credential Guard must be running on domain-joined systems (SecurityServicesRunning).")
 
 	try {
@@ -1648,12 +1543,13 @@ function Test-SV-88167r1_rule_2 {
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000120: $($error[0])" -Level Error
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-function Test-SV-88169r1_rule_2 {
+# Task: Virtualization-based protection of code integrity must be enabled on domain-joined systems (SecurityServicesRunning).
+function Test-Stig_WN16_CC_000130_B {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88169r1_rule_2")
+	$obj | Add-Member NoteProperty Name("WN16-CC-000130 B")
 	$obj | Add-Member NoteProperty Task("Virtualization-based protection of code integrity must be enabled on domain-joined systems (SecurityServicesRunning).")
 
 	try {
@@ -1674,21 +1570,13 @@ function Test-SV-88169r1_rule_2 {
 		Write-LogFile -Path $Settings.LogFilePath -Name $Settings.LogFileName -Message "WN16-CC-000130: $($error[0])" -Level Error
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-
-# The built-in administrator account must be renamed.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000030
-# Group ID (Vulid): V-73623
-# CCI: CCI-000366
-#
-# The built-in administrator account is a well-known account subject to attack. Renaming this
-# account to an unidentified name improves the protection of this account and the system.
-function Test-SV-88287r1_rule {
+# Task: The built-in administrator account must be renamed.
+function Test-Stig_WN16_SO_000030 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88287r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-SO-000030")
 	$obj | Add-Member NoteProperty Task("The built-in administrator account must be renamed.")
 
 	try {
@@ -1717,22 +1605,13 @@ function Test-SV-88287r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-# The built-in guest account must be renamed.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000040
-# Group ID (Vulid): V-73625
-# CCI: CCI-000366
-#
-# The built-in guest account is a well-known user account on all Windows systems and, as initially
-# installed, does not require a password. This can allow access to system resources by unauthorized
-# users. Renaming this account to an unidentified name improves the protection of this account
-# and the system.
-function Test-SV-88289r1_rule {
+# Task: The built-in guest account must be renamed.
+function Test-Stig_WN16_SO_000040 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88289r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-SO-000040")
 	$obj | Add-Member NoteProperty Task("The built-in guest account must be renamed.")
 
 	try {
@@ -1754,23 +1633,13 @@ function Test-SV-88289r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
-	Write-Output $obj
+	return $obj
 }
 
-
-# The built-in guest account must be disabled.
-# - - - - - - - - - - - - -
-# StigID: WN16-SO-000010
-# Group ID (Vulid): V-73809
-# CCI: CCI-000804
-#
-# A system faces an increased vulnerability threat if the built-in guest account is not disabled.
-# This is a known account that exists on all Windows systems and cannot be deleted. This account
-# is initialized during the installation of the operating system with no password assigned.
-#
-function Test-SV-88475r1_rule {
+# Task: The built-in guest account must be disabled.
+function Test-Stig_WN16_SO_000010 {
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name("SV-88475r1_rule")
+	$obj | Add-Member NoteProperty Name("WN16-SO-000010")
 	$obj | Add-Member NoteProperty Task("The built-in guest account must be disabled.")
 
 	try {
@@ -1792,9 +1661,8 @@ function Test-SV-88475r1_rule {
 		$obj | Add-Member NoteProperty Passed([AuditStatus]::False)
 	}
 
-	Write-Output $obj
+	return $obj
 }
-
 #endregion
 
 #endregion
@@ -1831,8 +1699,6 @@ function Get-DisaAudit {
 	Param(
 		[switch] $PerformanceOptimized,
 
-		# [string[]] $Exclude
-
 		[switch] $RegistrySettings,
 
 		[switch] $UserRights,
@@ -1847,10 +1713,6 @@ function Get-DisaAudit {
 
 		[switch] $OtherAudits
 	)
-
-	# if ($PerformanceOptimized) {
-	# 	$Exclude += "Test-SV-87923r1_rule","Test-SV-88423r1_rule","Test-SV-88427r1_rule",
-	# }
 
 	# disa registry settings
 	if ($RegistrySettings) {
@@ -1882,29 +1744,29 @@ function Get-DisaAudit {
 		$pipline = New-AuditPipeline ${Function:Get-RoleAudit}, ${Function:Get-RegistryPermissionsAudit}
 		$DisaRequirements.RegistryPermissions | &$pipline -Verbose:$VerbosePreference
 	}
-	
+
 	if ($OtherAudits) {
-		Test-SV-87875r2_rule   | Convert-ToAuditInfo
-		Test-SV-87889r1_rule   | Convert-ToAuditInfo
-		Test-SV-87891r1_rule   | Convert-ToAuditInfo
-		Test-SV-87899r1_rule   | Convert-ToAuditInfo
-		Test-SV-87909r1_rule   | Convert-ToAuditInfo
-		Test-SV-87911r2_rule   | Convert-ToAuditInfo
-		Test-SV-87913r2_rule   | Convert-ToAuditInfo
-		Test-SV-87915r2_rule   | Convert-ToAuditInfo
-		Test-SV-87919r1_rule   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000030   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000100   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000110   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000150   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000200   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000210   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000220   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000230   | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000250   | Convert-ToAuditInfo
 		if (-not ($PerformanceOptimized)) {
-			Test-SV-87923r1_rule | Convert-ToAuditInfo
+			Test-Stig_WN16_00_000270 | Convert-ToAuditInfo
 		}
-		Test-SV-87925r1_rule   | Convert-ToAuditInfo
-		Test-SV-88165r1_rule_3 | Convert-ToAuditInfo
-		Test-SV-88167r1_rule_2 | Convert-ToAuditInfo
+		Test-Stig_WN16_00_000280   | Convert-ToAuditInfo
+		Test-Stig_WN16_CC_000110_C | Convert-ToAuditInfo
+		Test-Stig_WN16_CC_000120_B | Convert-ToAuditInfo
 		if (-not ($PerformanceOptimized)) {
-			Test-SV-88169r1_rule_2 | Convert-ToAuditInfo
+			Test-Stig_WN16_CC_000130_B | Convert-ToAuditInfo
 		}
-		Test-SV-88287r1_rule   | Convert-ToAuditInfo
-		Test-SV-88289r1_rule   | Convert-ToAuditInfo
-		Test-SV-88475r1_rule   | Convert-ToAuditInfo
+		Test-Stig_WN16_SO_000030   | Convert-ToAuditInfo
+		Test-Stig_WN16_SO_000040   | Convert-ToAuditInfo
+		Test-Stig_WN16_SO_000010   | Convert-ToAuditInfo
 	}
 }
 
@@ -1993,7 +1855,6 @@ function Get-HtmlReport {
 						Title = "File System Permissions"
 						AuditInfos = Get-DisaAudit -FileSystemPermissions | Sort-Object -Property Id
 					},
-					
 					@{
 						Title = "Registry Permissions"
 						AuditInfos = Get-DisaAudit -RegistryPermissions | Sort-Object -Property Id
