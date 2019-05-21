@@ -43,8 +43,8 @@
 			Task  = "Files from the Internet zone must be opened in Protected View."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\protectedview"
 			Name  = "DisableInternetFilesInPV "
-			Value = 0 
-            DoesNotExist = $true
+			Value = 0
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO126"
@@ -78,7 +78,7 @@
 			Id    = "DTOO132"
 			Task  = "File Downloads must be configured for proper restrictions in PowerPoint."
 			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_RESTRICT_FILEDOWNLOAD"
-			Name  = "of powerpnt.exe"
+			Name  = "powerpnt.exe"
 			Value = 1
 		}
 		@{
@@ -108,7 +108,7 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\security"
 			Name  = "PowerPointBypassEncryptedMacroScan"
 			Value = 0
-            DoesNotExist = $true
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO146"
@@ -137,7 +137,7 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\security"
 			Name  = "RunPrograms"
 			Value = 0
-            DoesNotExist = $true
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO293"
@@ -243,16 +243,16 @@
 			Task  = "Files in unsafe locations must be opened in Protected View."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\protectedview"
 			Name  = "DisableUnsafeLocationsInPV"
-			Value = 0 
-            DoesNotExist = $true
+			Value = 0
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO292"
 			Task  = "Document behavior if file validation fails must be set."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\filevalidation"
 			Name  = "openinprotectedview "
-			Value = 1  
-            DoesNotExist = $true
+			Value = 1
+			DoesNotExist = $true
             # Depends on: If the value DisableEditFromPV is set to REG_DWORD = 1, this is not a finding. If the value is set to REG_DWORD = 0, this is a finding.
 		}
 		@{
@@ -266,7 +266,7 @@
 			Id    = "DTOO508"
 			Task  = "File Downloads must be configured for proper restrictions in PowerPoint Viewer."
 			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_RESTRICT_FILEDOWNLOAD"
-			Name  = "of pptview.exe"
+			Name  = "pptview.exe"
 			Value = 1
 		}
 	)

@@ -1,4 +1,4 @@
-# Requirements for Microsoft Word 2016 DISA STIG V1R1 
+# Requirements for Microsoft Word 2016 DISA STIG V1R1
 # Created at 03/19/2019 00:22:23
 
 @{
@@ -91,7 +91,7 @@
 			Id    = "DTOO132"
 			Task  = "File Downloads must be configured for proper restrictions."
 			Path  = "HKLM:\Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_RESTRICT_FILEDOWNLOAD"
-			Name  = "of winword.exe"
+			Name  = "winword.exe"
 			Value = 1
 		}
 		@{
@@ -121,7 +121,7 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\word\security"
 			Name  = "WordBypassEncryptedMacroScan"
 			Value = 0
-            DoesNotExist = $true
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO146"
@@ -149,23 +149,23 @@
 			Task  = "Files in unsafe locations must be opened in Protected View."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\word\security\protectedview"
 			Name  = "DisableUnsafeLocationsInPV"
-			Value = 0 
-            DoesNotExist = $true
+			Value = 0
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO292"
 			Task  = "Document behavior if file validation fails must be set."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\Word\security\filevalidation"
 			Name  = "openinprotectedview"
-			Value = 1  
-            DoesNotExist = $true
+			Value = 1
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO292_b"
 			Task  = "Document behavior if file validation fails must be set."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\Word\security\filevalidation"
 			Name  = "DisableEditFromPV"
-			Value = 1  
+			Value = 1
 		}
 		@{
 			Id    = "DTOO293"
@@ -186,7 +186,7 @@
 			Task  = "Warning Bar settings for VBA macros must be configured."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\word\security"
 			Name  = "VBAWarnings"
-			Value = 2    
+			Value = 2
 			# Values of REG_DWORD = 3 or 4 are also acceptable values.
 		}
 		@{

@@ -120,8 +120,8 @@
 			Task  = "Files from the Internet zone must be opened in Protected View."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\excel\security\protectedview"
 			Name  = "DisableInternetFilesInPV "
-			Value = 0  
-            DoesNotExist = $true 
+			Value = 0
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO122"
@@ -206,7 +206,7 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\excel\security"
 			Name  = "ExcelBypassEncryptedMacroScan "
 			Value = 0
-            DoesNotExist = $true
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO145"
@@ -241,23 +241,23 @@
 			Task  = "Files in unsafe locations must be opened in Protected View."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\excel\security\protectedview"
 			Name  = "DisableUnsafeLocationsInPV "
-			Value = 0 
-            DoesNotExist = $true
+			Value = 0
+			DoesNotExist = $true
 		}
 		@{
 			Id    = "DTOO292"
 			Task  = "Document behavior if file validation fails must be set."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\excel\security\filevalidation"
 			Name  = "openinprotectedview "
-			Value = 1  
-            DoesNotExist = $true
+			Value = 1
+			DoesNotExist = $true
 		}
-        @{
+		@{
 			Id    = "DTOO292_b"
 			Task  = "Document behavior if file validation fails must be set."
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\excel\security\filevalidation"
 			Name  = "DisableEditFromPV "
-			Value = 1  
+			Value = 1
 		}
 		@{
 			Id    = "DTOO293"
@@ -271,17 +271,17 @@
 			Task  = "Warning Bar settings for VBA macros must be configured."
 			Path  = "HKCU:\software\policies\Microsoft\office\16.0\excel\security"
 			Name  = "vbawarnings"
-			Value = 2    
-            # Values of REG_DWORD = 3 or 4 are also acceptable values.
+			Value = 2
+			# Values of REG_DWORD = 3 or 4 are also acceptable values.
 		}
 		@{
 			Id    = "DTOO418"
 			Task  = "WEBSERVICE functions must be disabled."
 			Path  = "HKCU:\software\policies\Microsoft\office\16.0\excel\security"
 			Name  = "webservicefunctionwarnings "
-			Value = 1 
-            DoesNotExist = $true
-            # If the value is REG_DWORD = 0 or 2, then this is a finding.
+			Value = 1
+			DoesNotExist = $true
+			# If the value is REG_DWORD = 0 or 2, then this is a finding.
 		}
 		@{
 			Id    = "DTOO419"

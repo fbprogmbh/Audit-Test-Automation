@@ -392,7 +392,7 @@
 			Path  = "HKCU:\Software\Policies\Microsoft\Office\16.0\outlook\security"
 			Name  = "MinEncKey"
 			Value = 168
-            #a8 (hex) or 168
+			#a8 (hex) or 168
 		}
 		@{
 			Id    = "DTOO317"
