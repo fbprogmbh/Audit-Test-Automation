@@ -192,7 +192,7 @@
 		@{
 			Id    = "DTOO328"
 			Task  = "Online translation dictionaries must not be used."
-			Path  = "HKCU\software\policies\Microsoft\office\16.0\common\research\translation"
+			Path  = "HKCU:\software\policies\Microsoft\office\16.0\common\research\translation"
 			Name  = "useonline"
 			Value = 0
 		}
