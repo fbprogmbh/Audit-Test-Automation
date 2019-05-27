@@ -33,60 +33,59 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Import-Module "./ATAPHtmlReport" -Force
 
 Describe "ATAPHtmlReport" {
-    InModuleScope ATAPHtmlReport {
-        $testPath = "$PSScriptRoot\testreport.html"
-        $args = @{
-            Path = $testPath
-            Title = "My Benchmark Report"
-            ModuleName = "MyAudit"
-            BasedOn = "My Benchmark v1.0.0 - 10-05-2017"
-            # DarkMode = $true
-            # ComplianceStatus = $true
-        }
-        Get-ATAPHtmlReport @args -Sections @(
-            @{
-                Title = "Section 1"
-                AuditInfos = @(
-                    (New-ATAPAuditInfo -Id "1.1" -Task "Ensure something" -Message "All Good" -Audit True)
-                    (New-ATAPAuditInfo -Id "1.2" -Task "Ensure something" -Message "All Good" -Audit True)
-                    (New-ATAPAuditInfo -Id "1.3" -Task "Ensure something" -Message "All Good" -Audit True)
-                    (New-ATAPAuditInfo -Id "1.4" -Task "Ensure something" -Message "Not run" -Audit None)
-                )
-            },
-            @{
-                Title = "Section 2"
-                SubSections = @(
-                    @{
-                        Title = " Section 2.1"
-                        AuditInfos = @(
-                            (New-ATAPAuditInfo -Id "2.1.1" -Task "Ensure something else" -Message "All Good" -Audit Warning)
-                            (New-ATAPAuditInfo -Id "2.1.2" -Task "Ensure something entirely different" -Message "All good" -Audit True)
-                        )
-                    },
-                    @{
-                        Title = "Section 2.2"
-                        AuditInfos = @(
-                            (New-ATAPAuditInfo -Id "2.2.1" -Task "Ensure something entirely different" -Message "Something went wrong" -Audit False)
-                            (New-ATAPAuditInfo -Id "2.2.2" -Task "Text overflow can only happen on block or inline-block level elements, because the element needs to have a width in order to be overflow-ed. The overflow happens in the direction as determined by the direction property or related attributes." -Message "All Good" -Audit True)
-                            (New-ATAPAuditInfo -Id "2.1.2" -Task "Ensure something entirely different" -Message "Not quite good" -Audit Warning)
-                        )
-                    }
-                )
-            }
-        )
+	InModuleScope ATAPHtmlReport {
+		$testPath = "$PSScriptRoot\testreport.html"
+		$args = @{
+			Path = $testPath
+			Title = "My Benchmark Report"
+			ModuleName = "MyAudit"
+			BasedOn = "My Benchmark v1.0.0 - 10-05-2017"
+			# DarkMode = $true
+			# ComplianceStatus = $true
+		}
+		Get-ATAPHtmlReport @args -Sections @(
+			@{
+				Title = "Section 1"
+				AuditInfos = @(
+					(New-ATAPAuditInfo -Id "1.1" -Task "Ensure something" -Message "All Good" -Audit True)
+					(New-ATAPAuditInfo -Id "1.2" -Task "Ensure something" -Message "All Good" -Audit True)
+					(New-ATAPAuditInfo -Id "1.3" -Task "Ensure something" -Message "All Good" -Audit True)
+					(New-ATAPAuditInfo -Id "1.4" -Task "Ensure something" -Message "Not run" -Audit None)
+				)
+			},
+			@{
+				Title = "Section 2"
+				SubSections = @(
+					@{
+						Title = " Section 2.1"
+						AuditInfos = @(
+							(New-ATAPAuditInfo -Id "2.1.1" -Task "Ensure something else" -Message "All Good" -Audit Warning)
+							(New-ATAPAuditInfo -Id "2.1.2" -Task "Ensure something entirely different" -Message "All good" -Audit True)
+						)
+					},
+					@{
+						Title = "Section 2.2"
+						AuditInfos = @(
+							(New-ATAPAuditInfo -Id "2.2.1" -Task "Ensure something entirely different" -Message "Something went wrong" -Audit False)
+							(New-ATAPAuditInfo -Id "2.2.2" -Task "Text overflow can only happen on block or inline-block level elements, because the element needs to have a width in order to be overflow-ed. The overflow happens in the direction as determined by the direction property or related attributes." -Message "All Good" -Audit True)
+							(New-ATAPAuditInfo -Id "2.1.2" -Task "Ensure something entirely different" -Message "Not quite good" -Audit Warning)
+						)
+					}
+				)
+			}
+		)
 
-        It "New-ATAPAuditInfo" {
-            $info = New-ATAPAuditInfo -Id "1" -Task "Hello" -Message "Ok" -Audit "True"
-            $members = $info | Get-Member
-            $specificMembers = $members | Where-Object {
-                $_.MemberType -eq "Property" -and $_.Name -in "Id", "Task", "Message", "Audit"
-            } 
-            $specificMembers.Count | Should Be 4
-        }
-    
-        It "Get-ATAPHtmlReport" {
-            Test-Path $testPath | Should Be $true
-        }
-    }
+		It "New-ATAPAuditInfo" {
+			$info = New-ATAPAuditInfo -Id "1" -Task "Hello" -Message "Ok" -Audit "True"
+			$members = $info | Get-Member
+			$specificMembers = $members | Where-Object {
+				$_.MemberType -eq "Property" -and $_.Name -in "Id", "Task", "Message", "Audit"
+			}
+			$specificMembers.Count | Should Be 4
+		}
+
+		It "Get-ATAPHtmlReport" {
+			Test-Path $testPath | Should Be $true
+		}
+	}
 }
-

@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 RootModule = 'ATAPHtmlReport.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1'
+ModuleVersion = '1.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -116,24 +116,24 @@ AliasesToExport = @()
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
 
-    PSData = @{
+	PSData = @{
 
-        # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html')
+		# Tags applied to this module. These help with module discovery in online galleries.
+		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html')
 
-        # A URL to the license for this module.
-        LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
+		# A URL to the license for this module.
+		LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
 
-        # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/fbprogmbh/Audit-Test-Automation'
+		# A URL to the main website for this project.
+		ProjectUri = 'https://github.com/fbprogmbh/Audit-Test-Automation'
 
-        # A URL to an icon representing this module.
-        # IconUri = ''
+		# A URL to an icon representing this module.
+		# IconUri = ''
 
-        # ReleaseNotes of this module
-        # ReleaseNotes = ''
+		# ReleaseNotes of this module
+		# ReleaseNotes = ''
 
-    } # End of PSData hashtable
+	} # End of PSData hashtable
 
 } # End of PrivateData hashtable
 

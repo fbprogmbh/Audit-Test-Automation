@@ -32,30 +32,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <#
 
-    Author(s):        Benedikt Böhme
-    Date:             08/19/2018
-    Version:          1.0
-    Last Change:      08/19/2018
+	Author(s):        Benedikt Böhme
+	Date:             08/19/2018
+	Version:          1.0
+	Last Change:      08/19/2018
 #>
 
 Import-LocalizedData -FileName Settings.ps1 -BindingVariable Settings
 
 enum AuditStatus {
-    True
-    False
-    Warning
-    None
+	True
+	False
+	Warning
+	None
 }
 
 class AuditInfo {
-    [string] $Id
-    [string] $Task
-    [string] $Message
-    [AuditStatus] $Audit
+	[string] $Id
+	[string] $Task
+	[string] $Message
+	[AuditStatus] $Audit
 }
 
 function New-ATAPAuditInfo {
-	[CmdletBinding()]
+	[CmdletBinding(
+		SupportsShouldProcess = $true
+	)]
 	param (
 		[Parameter(Mandatory = $true)]
 		[string]
@@ -80,7 +82,9 @@ function New-ATAPAuditInfo {
 		$Audit
 	)
 
-	New-Object -TypeName AuditInfo -Property $PSBoundParameters
+	if ($PSCmdlet.ShouldProcess("Creating AuditInfo object")) {
+		New-Object -TypeName AuditInfo -Property $PSBoundParameters
+	}
 }
 
 function Get-ATAPCombinedAuditStatus {
@@ -172,7 +176,7 @@ function Convert-ATAPAuditInfoToHtmlTableRow {
 	}
 }
 
-function Get-ATAPHtmlSectionLinks {
+function Get-ATAPHtmlSectionLink {
 	param(
 		[Parameter(Mandatory = $true)]
 		[hashtable[]] $Sections,
@@ -187,7 +191,7 @@ function Get-ATAPHtmlSectionLinks {
 		$html += "<li>"
 		$html += "<a href=`"#$id`">$($Section.Title)</a>"
 		if ($Section.Keys -contains "SubSections") {
-			$html += Get-ATAPHtmlSectionLinks -Sections $Section.SubSections -Prepend ($Prepend + $Section.Title)
+			$html += Get-ATAPHtmlSectionLink -Sections $Section.SubSections -Prepend ($Prepend + $Section.Title)
 		}
 		$html += "</li>"
 	}
@@ -267,31 +271,32 @@ function Get-CompletionStatus {
 }
 
 function Get-OverallComplianceCSS {
-[CmdletBinding()]
-Param(
-    $completionStatus    
-)
-    $css = ""
-    $percent = $completionStatus[[AuditStatus]::True].Percent / 1
+	[CmdletBinding()]
+	[OutputType([string])]
+	param(
+		$completionStatus
+	)
 
-    if ($percent -gt 50) {
-        $degree = 180 + ((($percent-50)/1) * 3.6)
-        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg);}"
-        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
-    }
-    else {
-        $degree = 90 + ($percent * 3.6)
-        $css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
-        $css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg);}"
-    }
+	$css = ""
+	$percent = $completionStatus[[AuditStatus]::True].Percent / 1
 
+	if ($percent -gt 50) {
+		$degree = 180 + ((($percent-50)/1) * 3.6)
+		$css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg);}"
+		$css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
+	}
+	else {
+		$degree = 90 + ($percent * 3.6)
+		$css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
+		$css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate(0deg); transform: rotate(0deg);}"
+	}
 
-    $css += ".donut-chart.chart .chart-center span:after {content: `"$percent %`";}"
+	$css += ".donut-chart.chart .chart-center span:after {content: `"$percent %`";}"
 
-    return $css
+	return $css
 }
 
-function Extract-AuditInfos {
+function Select-AuditInfo {
 	param(
 		[hashtable[]] $Sections
 	)
@@ -303,7 +308,7 @@ function Extract-AuditInfos {
 			$auditInfos += $Section.AuditInfos
 		}
 		if ($Section.Keys -contains "SubSections") {
-			$auditInfos += Extract-AuditInfos -Sections $Section.SubSections
+			$auditInfos += Select-AuditInfo -Sections $Section.SubSections
 		}
 	}
 
@@ -343,7 +348,7 @@ function Get-ATAPHtmlReport {
 
 		[switch] $DarkMode,
 
-        [switch] $ComplianceStatus
+		[switch] $ComplianceStatus
 	)
 
 	$scriptRoot = Split-Path -Parent $PSCommandPath
@@ -357,7 +362,7 @@ function Get-ATAPHtmlReport {
 	$cssPath = $scriptRoot | Join-path -ChildPath $cssDocument
 	$css = Get-Content $cssPath
 
-	$completionStatus = Get-CompletionStatus -AuditInfos (Extract-AuditInfos -Sections $Sections)
+	$completionStatus = Get-CompletionStatus -AuditInfos (Select-AuditInfo -Sections $Sections)
 
 	# HTML <head> markup
 	$head = "<meta charset=`"UTF-8`">"
@@ -365,8 +370,8 @@ function Get-ATAPHtmlReport {
 	$head += "<meta http-equiv=`"X-UA-Compatible`" content=`"ie=edge`">"
 	$head += "<title>$Title [$(Get-Date)]</title>"
 	$head += "<style>$css"
-    $head += Get-OverallComplianceCSS $completionStatus
-    $head += "</style>"
+	$head += Get-OverallComplianceCSS $completionStatus
+	$head += "</style>"
 
 	# HTML <body> markup
 	# Header
@@ -379,7 +384,7 @@ function Get-ATAPHtmlReport {
 	$body += "</div>"
 	# Main section
 	$body += "<div class=`"main content`">"
-    $body += "<div id=`"host-information`">"
+	$body += "<div id=`"host-information`">"
 	$body += "<p>This report was generated at $((Get-Date)) on $($HostInformation.Hostname).</p>"
 	# Host information
 	$body += "<table>"
@@ -391,10 +396,10 @@ function Get-ATAPHtmlReport {
 	}
 	$body += "</tbody>"
 	$body += "</table>"
-    $body += "</div>"
-    if ($ComplianceStatus) {
+	$body += "</div>"
+	if ($ComplianceStatus) {
 		$sliceColorClass = Convert-ATAPAuditStatusToHtmlClass 'True'
-        $body += '<div class="card">'
+		$body += '<div class="card">'
 		$body += '<h2>Compliance status</h2>'
 		$body += '<div class="donut-chart chart">'
 		$body += '<div class="slice one {0}"></div>' -f $sliceColorClass
@@ -402,7 +407,7 @@ function Get-ATAPHtmlReport {
 		$body += '<div class="chart-center"><span></span></div>'
 		$body += '</div>'
 		$body += '</div>'
-    }
+	}
 	# Summary
 	$body += "<h1 style=`"clear:both; padding-top: 50px;`">Summary</h1>"
 	# $body += "<p>"
@@ -427,7 +432,7 @@ function Get-ATAPHtmlReport {
 	# Section navigation
 	$body += "<h1>Navigation</h1>"
 	$body += "<p>Click the link(s) below for quick access to a report section.</p>"
-	$body += Get-ATAPHtmlSectionLinks -Sections $Sections
+	$body += Get-ATAPHtmlSectionLink -Sections $Sections
 	# Sections
 	$body += Get-ATAPHtmlSection -Sections $Sections
 	$body += "</div>"
