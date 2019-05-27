@@ -1,4 +1,4 @@
-﻿# Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 
 <#
 BSD 3-Clause License
@@ -325,25 +325,22 @@ class UserRightConfig
 		$securityPolicy = Get-SecurityPolicy
 		$currentUserRights = $securityPolicy["Privilege Rights"][$this.UserRight]
 
-		$identityAccounts = $this.Identity | ConvertTo-NTAccountUser | Where-Object { $_ -ne $null }
+		$identityAccounts = $this.Identity | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
 
-		$usersWithTooManyRights = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-		$usersWithoutRights = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+		$unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+		$missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
 
-		if ($usersWithTooManyRights.Count -gt 0) {
-			$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
-			Write-Verbose -Message $message
-
-			return [AuditResult]@{
-				Status = [AuditResultStatus]::False
-				Message = $message
+		if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+			$messages = @()
+			if ($unexpectedUsers.Count -gt 0) {
+				$messages += 'The user right setting contains following unexpected users: ' + ($unexpectedUsers -join ", ")
 			}
-		}
+			if ($missingUsers.Count -gt 0) {
+				$messages += 'The user right setting does not contain the following users: ' + ($missingUsers -join ", ")
+			}
+			$message = $messages -join '`n'
 
-		if ($usersWithoutRights.Count -gt 0) {
-			$message = "The following users have don't have the rights: " + ($usersWithoutRights.Account -join ", ")
 			Write-Verbose -Message $message
-
 			return [AuditResult]@{
 				Status = [AuditResultStatus]::False
 				Message = $message
@@ -1040,25 +1037,20 @@ function Get-UserRightPolicyAudit {
 
 		$identityAccounts = $Identity | ConvertTo-NTAccountUser | Where-Object { $_ -ne $null }
 
-		$usersWithTooManyRights = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-		$usersWithoutRights = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+		$unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+		$missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
 
-		if ($usersWithTooManyRights.Count -gt 0) {
-			$message = "The following users have too many rights: " + ($usersWithTooManyRights -join ", ")
-			Write-Verbose -Message $message
-
-			return [AuditInfo]@{
-				Id = $Id
-				Task = $Task
-				Message = $message
-				Audit = [AuditStatus]::False
+		if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+			$messages = @()
+			if ($unexpectedUsers.Count -gt 0) {
+				$messages += 'The user right setting contains following unexpected users: ' + ($unexpectedUsers -join ", ")
 			}
-		}
+			if ($missingUsers.Count -gt 0) {
+				$messages += 'The user right setting does not contain the following users: ' + ($missingUsers -join ", ")
+			}
+			$message = $messages -join '`n'
 
-		if ($usersWithoutRights.Count -gt 0) {
-			$message = "The following users have don't have the rights: " + ($usersWithoutRights.Account -join ", ")
 			Write-Verbose -Message $message
-
 			return [AuditInfo]@{
 				Id = $Id
 				Task = $Task

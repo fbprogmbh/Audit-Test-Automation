@@ -7258,27 +7258,15 @@
 				)
 			}
 		}
-		@{ # BUGS
+		@{
 			Id = "2.2.16"
 			Task = "(L1) Ensure 'Deny access to this computer from the network' to include 'Guests, Local account'"
 			Config = @{
-				Type = "ComplexConfig"
-				Operation = "AND"
-				Configs = @(
-					@{
-						Type = "UserRightConfig"
-						UserRight = "SeDenyNetworkLogonRight"
-						Identity = @(
-							"Guests"
-						)
-					}
-					@{
-						Type = "UserRightConfig"
-						UserRight = "SeDenyNetworkLogonRight"
-						Identity = @(
-							"Local Account"
-						)
-					}
+				Type = "UserRightConfig"
+				UserRight = "SeDenyNetworkLogonRight"
+				Identity = @(
+					"Guests"
+					"Local Account"
 				)
 			}
 		}
@@ -7315,27 +7303,15 @@
 				)
 			}
 		}
-		@{ # BUGS
+		@{
 			Id = "2.2.20"
 			Task = "(L1) Ensure 'Deny log on through Remote Desktop Services' to include 'Guests, Local account'"
 			Config = @{
-				Type = "ComplexConfig"
-				Operation = "AND"
-				Configs = @(
-					@{
-						Type = "UserRightConfig"
-						UserRight = "SeDenyRemoteInteractiveLogonRight"
-						Identity = @(
-							"Guests"
-						)
-					}
-					@{
-						Type = "UserRightConfig"
-						UserRight = "SeDenyRemoteInteractiveLogonRight"
-						Identity = @(
-							"Local Account"
-						)
-					}
+				Type = "UserRightConfig"
+				UserRight = "SeDenyRemoteInteractiveLogonRight"
+				Identity = @(
+					"Guests"
+					"Local Account"
 				)
 			}
 		}
@@ -7505,6 +7481,7 @@
 				UserRight = "SeSystemProfilePrivilege"
 				Identity = @(
 					"Administrators"
+					"NT SERVICE\WdiServiceHost"
 				)
 			}
 		}
