@@ -13,6 +13,7 @@ The package consists of the following Modules:
 * [IIS10Audit](IIS10Audit)
 * [SQL2016Benchmarks](SQL2016Benchmarks)
 * [WindowsServer2016Audit](WindowsServer2016Audit)
+* [Windows10Audit](Windows10Audit)
 
 Microsoft Office 2016 Audit Modules:
 
