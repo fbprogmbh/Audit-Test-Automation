@@ -656,7 +656,7 @@ function Get-DisaAudit {
 .Example
 	C:\PS> Get-MozillaFirefoxHtmlReport -Path "reports/report1.html"
 #>
-function Get-HtmlReport {
+function Save-MozillaFirefoxHtmlReport {
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
@@ -709,5 +709,7 @@ function Get-HtmlReport {
 	}
 }
 
-Set-Alias -Name Get-MozillaFirefoxHtmlReport -Value Get-HtmlReport
+Set-Alias -Name Get-MozillaFirefoxHtmlReport -Value Save-MozillaFirefoxHtmlReport
+Set-Alias -Name Get-FirefoxHtmlReport -Value Save-MozillaFirefoxHtmlReport
+Set-Alias -Name shr -Value Save-MozillaFirefoxHtmlReport
 #endregion

@@ -387,7 +387,7 @@ Param(
 .Example
 	C:\PS> Get-Outlook2016HtmlReport -Path "reports/report1.html"
 #>
-function Get-HtmlReport {
+function Save-Outlook2016HtmlReport {
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
@@ -422,5 +422,7 @@ function Get-HtmlReport {
 	}
 }
 
-Set-Alias -Name Get-Outlook2016HtmlReport -Value Get-HtmlReport
+Set-Alias -Name Get-Outlook2016HtmlReport -Value Save-Outlook2016HtmlReport
+Set-Alias -Name Get-HtmlReport -Value Save-Outlook2016HtmlReport
+Set-Alias -Name shr -Value Save-Outlook2016HtmlReport
 #endregion

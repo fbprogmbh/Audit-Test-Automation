@@ -338,7 +338,7 @@ class UserRightConfig
 			if ($missingUsers.Count -gt 0) {
 				$messages += 'The user right setting does not contain the following users: ' + ($missingUsers -join ", ")
 			}
-			$message = $messages -join '`n'
+			$message = $messages -join [System.Environment]::NewLine
 
 			Write-Verbose -Message $message
 			return [AuditResult]@{
@@ -1048,7 +1048,7 @@ function Get-UserRightPolicyAudit {
 			if ($missingUsers.Count -gt 0) {
 				$messages += 'The user right setting does not contain the following users: ' + ($missingUsers -join ", ")
 			}
-			$message = $messages -join '`n'
+			$message = $messages -join [System.Environment]::NewLine
 
 			Write-Verbose -Message $message
 			return [AuditInfo]@{

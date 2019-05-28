@@ -389,7 +389,7 @@ Param(
 .Example
 	C:\PS> Get-GoogleChromeHtmlReport -Path "reports/report1.html"
 #>
-function Get-HtmlReport {
+function Save-GoogleChromeHtmlReport {
 	param (
 		[string] $Path = [Environment]::GetFolderPath("MyDocuments")+"\"+"$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
@@ -424,5 +424,7 @@ function Get-HtmlReport {
 	}
 }
 
-Set-Alias -Name Get-GoogleChromeHtmlReport -Value Get-HtmlReport
+Set-Alias -Name Get-GoogleChromeHtmlReport -Value Save-GoogleChromeHtmlReport
+Set-Alias -Name Get-HtmlReport -Value Save-GoogleChromeHtmlReport
+Set-Alias -Name shr -Value Save-GoogleChromeHtmlReport
 #endregion
