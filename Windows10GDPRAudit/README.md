@@ -2,7 +2,7 @@
 
 based on
 * _Windows 10 GDPR settings by Microsoft_
-* _Windows 10 GDPR settings by Bundesamt für Sicherheit in der Informationstechnik (BSI)_
+* _Windows 10 telemetry settings by Bundesamt für Sicherheit in der Informationstechnik (BSI)_
 
 ## Overview
 
