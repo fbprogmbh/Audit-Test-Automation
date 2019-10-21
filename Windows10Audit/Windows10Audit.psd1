@@ -51,7 +51,7 @@ Author = 'Benedikt Böhme', 'Dennis Esly'
 CompanyName = 'FB Pro GmbH'
 
 # Copyright statement for this module
-Copyright = '(c) 2019 FB-Pro GmbH. All rights reserved.'
+Copyright = '(c) 2019 FB Pro GmbH. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = "A module that benchmarks your Windows 10 settings with current hardening standards such as the DISA Security Technical Implementation Guide and the CIS Benchmarks."
