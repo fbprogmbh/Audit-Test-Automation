@@ -1,8 +1,8 @@
 ﻿using module ATAPHtmlReport
 
 function Test-Windows10_GDPR_MS_1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_1')
 	$obj | Add-Member NoteProperty Task('Automatic Root Certificates Update | Check value DisableRootAutoUpdate')
@@ -21,8 +21,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_2.1.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_2.1.1')
 	$obj | Add-Member NoteProperty Task('Allow Cortana | Check value AllowCortana')
@@ -41,8 +41,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_2.1.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_2.1.2')
 	$obj | Add-Member NoteProperty Task('Allow search and Cortana to use location | Check value AllowSearchToUseLocation')
@@ -61,8 +61,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_2.1.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_2.1.3')
 	$obj | Add-Member NoteProperty Task('Do not allow web search | Check value DisableWebSearch')
@@ -81,8 +81,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_2.1.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_2.1.4')
 	$obj | Add-Member NoteProperty Task('Dont search the web or display web results in Search | Check value ConnectedSearchUseWeb')
@@ -101,8 +101,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_2.1.5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_2.1.5')
 	$obj | Add-Member NoteProperty Task('Set what information is shared in Search | Check value ConnectedSearchPrivacy')
@@ -121,8 +121,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_3.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_3.1')
 	$obj | Add-Member NoteProperty Task('Prevent Windows from setting the time automatically | Check value Type')
@@ -141,8 +141,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_3.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_3.2')
 	$obj | Add-Member NoteProperty Task('Prevent Windows from setting the time automatically | Check value Enabled')
@@ -161,8 +161,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_4')
 	$obj | Add-Member NoteProperty Task('Prevent Windows from retrieving device metadata from the Internet | Check value PreventDeviceMetadataFromNetwork')
@@ -181,8 +181,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_5')
 	$obj | Add-Member NoteProperty Task('Turn off Find My Device | Check value AllowFindMyDevice')
@@ -201,8 +201,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_6 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_6')
 	$obj | Add-Member NoteProperty Task('Fonts that are included in Windows but that are not stored on the local device can be downloaded on demand | Check value EnableFontProviders')
@@ -221,8 +221,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_7 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_7')
 	$obj | Add-Member NoteProperty Task('Turn off Insider Preview builds for Windows 10 | Check value AllowBuildPreview')
@@ -241,8 +241,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.1')
 	$obj | Add-Member NoteProperty Task('Turn on Suggested Sites | Check value Enabled')
@@ -261,8 +261,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.2')
 	$obj | Add-Member NoteProperty Task('Allow Microsoft services to provide enhanced suggestions as the user types in the Address Bar | Check value AllowServicePoweredQSA')
@@ -281,8 +281,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.3')
 	$obj | Add-Member NoteProperty Task('Turn off the auto-complete feature for web addresses | Check value AutoSuggest')
@@ -301,8 +301,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.4')
 	$obj | Add-Member NoteProperty Task('Turn off browser geolocation | Check value PolicyDisableGeolocation')
@@ -321,8 +321,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.5')
 	$obj | Add-Member NoteProperty Task('Prevent managing SmartScreen filter | Check value EnabledV9')
@@ -341,8 +341,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.6 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.6')
 	$obj | Add-Member NoteProperty Task('Choose whether employees can configure Compatibility View. | Check value DisableSiteListEditing')
@@ -361,8 +361,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.7 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.7')
 	$obj | Add-Member NoteProperty Task('Turn off the flip ahead with page prediction feature | Check value Enabled')
@@ -381,8 +381,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.8 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.8')
 	$obj | Add-Member NoteProperty Task('Turn off background synchronization for feeds and Web Slices | Check value BackgroundSyncStatus')
@@ -401,8 +401,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.9 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.9')
 	$obj | Add-Member NoteProperty Task('Allow Online Tips | Check value AllowOnlineTips')
@@ -421,8 +421,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.10 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.10')
 	$obj | Add-Member NoteProperty Task('To turn off the home page | Check value Start Page')
@@ -441,8 +441,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.11 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.11')
 	$obj | Add-Member NoteProperty Task('To turn off the home page | Check value Panel HomePage')
@@ -461,8 +461,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.12 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.12')
 	$obj | Add-Member NoteProperty Task('To configure the First Run Wizard | Check value DisableFirstRunCustomize')
@@ -481,8 +481,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.0.13 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.0.13')
 	$obj | Add-Member NoteProperty Task('To configure the behavior for a new tab | Check value NewTabPageShow')
@@ -501,8 +501,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_8.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_8.1')
 	$obj | Add-Member NoteProperty Task('ActiveX control blocking periodically downloads a new list of out-of-date ActiveX controls that should be blocked | Check value DownloadVersionList')
@@ -521,8 +521,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_9 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_9')
 	$obj | Add-Member NoteProperty Task('You can turn off License Manager related traffic by setting the following registry entry | Check value Start')
@@ -541,8 +541,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_10 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_10')
 	$obj | Add-Member NoteProperty Task('To turn off Live Tiles | Check value NoCloudApplicationNotification')
@@ -561,8 +561,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_11 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_11')
 	$obj | Add-Member NoteProperty Task('To turn off mail synchronization for Microsoft Accounts that are configured on a device | Check value ManualLaunchAllowed')
@@ -581,8 +581,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_12 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_12')
 	$obj | Add-Member NoteProperty Task('To disable the Microsoft Account Sign-In Assistant | Check value wlidsvc Start')
@@ -601,8 +601,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.1')
 	$obj | Add-Member NoteProperty Task('Allow Address Bar drop-down list suggestions | Check value ShowOneBox')
@@ -621,8 +621,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.2')
 	$obj | Add-Member NoteProperty Task('Allow configuration updates for the Books Library | Check value AllowConfigurationUpdateForBooksLibrary')
@@ -641,8 +641,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.3')
 	$obj | Add-Member NoteProperty Task('Configure Autofill | Check value Use FormSuggest')
@@ -661,8 +661,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.4')
 	$obj | Add-Member NoteProperty Task('Configure Do Not Track | Check value DoNotTrack')
@@ -681,8 +681,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.5')
 	$obj | Add-Member NoteProperty Task('Configure Password Manager | Check value FormSuggest Passwords')
@@ -701,8 +701,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.6 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.6')
 	$obj | Add-Member NoteProperty Task('Configure search suggestions in Address Bar | Check value ShowSearchSuggestionsGlobal')
@@ -721,8 +721,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.7 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.7')
 	$obj | Add-Member NoteProperty Task('Configure Windows Defender SmartScreen Filter (Windows 10, version 1703) | Check value EnabledV9')
@@ -741,8 +741,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.8 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.8')
 	$obj | Add-Member NoteProperty Task('Allow web content on New Tab page | Check value AllowWebContentOnNewTabPage')
@@ -761,8 +761,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.9 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.9')
 	$obj | Add-Member NoteProperty Task('Configure corporate Home pages | Check value ProvisionedHomePages')
@@ -781,8 +781,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.10 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.10')
 	$obj | Add-Member NoteProperty Task('Prevent the First Run webpage from opening on Microsoft Edge | Check value PreventFirstRunPage')
@@ -801,8 +801,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_13.11 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_13.11')
 	$obj | Add-Member NoteProperty Task('Choose whether employees can configure Compatibility View. | Check value MSCompatibilityMode')
@@ -821,8 +821,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_14 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_14')
 	$obj | Add-Member NoteProperty Task('You can turn off NCSI by doing one of the following | Check value NoActiveProbe')
@@ -841,8 +841,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_15.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_15.1')
 	$obj | Add-Member NoteProperty Task('You can turn off the ability to download and update offline maps. | Check value AutoDownloadAndUpdateMapData')
@@ -861,8 +861,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_15.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_15.2')
 	$obj | Add-Member NoteProperty Task('You can turn off the ability to download and update offline maps. | Check value AllowUntriggeredNetworkTrafficOnSettingsPage')
@@ -881,8 +881,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_16.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_16.1')
 	$obj | Add-Member NoteProperty Task('To turn off OneDrive in your organization | Check value DisableFileSyncNGSC')
@@ -901,8 +901,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_16.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_16.2')
 	$obj | Add-Member NoteProperty Task('To turn off OneDrive in your organization | Check value PreventNetworkTrafficPreUserSignIn')
@@ -921,8 +921,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.1.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.1.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps use advertising ID to make ads more interesting to you based on your app usage (turning this off will reset your ID) | Check value Enabled')
@@ -941,8 +941,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.1.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.1.2')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps use advertising ID to make ads more interesting to you based on your app usage (turning this off will reset your ID) | Check value DisabledByGroupPolicy')
@@ -961,8 +961,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.1.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.1.3')
 	$obj | Add-Member NoteProperty Task('To turn off Let websites provide locally relevant content by accessing my language list | Check value HttpAcceptLanguageOptOut')
@@ -981,8 +981,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.1.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.1.4')
 	$obj | Add-Member NoteProperty Task('To turn off Let Windows track app launches to improve Start and search results | Check value Start_TrackProgs')
@@ -1001,8 +1001,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.2.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.2.1')
 	$obj | Add-Member NoteProperty Task('To turn off Location for this device | Check value LetAppsAccessLocation')
@@ -1021,8 +1021,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.2.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.2.2')
 	$obj | Add-Member NoteProperty Task('To turn off Location | Check value DisableLocation')
@@ -1041,8 +1041,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.3.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.3.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps use my camera | Check value LetAppsAccessCamera')
@@ -1061,8 +1061,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.4.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.4.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps use my microphone | Check value LetAppsAccessMicrophone')
@@ -1081,8 +1081,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.5.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.5.1')
 	$obj | Add-Member NoteProperty Task('To turn off notifications network usage | Check value NoCloudApplicationNotification')
@@ -1101,8 +1101,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.5.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.5.2')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps access my notifications | Check value LetAppsAccessNotifications')
@@ -1121,8 +1121,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.6.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.6.1')
 	$obj | Add-Member NoteProperty Task('To turn off dictation of your voice, speaking to Cortana and other apps, and to prevent sending your voice input to Microsoft Speech services | Check value HasAccepted')
@@ -1141,8 +1141,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.6.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.6.2')
 	$obj | Add-Member NoteProperty Task('turn off updates to the speech recognition and speech synthesis models | Check value AllowSpeechModelUpdate')
@@ -1161,8 +1161,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.7.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.7.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps access my name, picture, and other account info | Check value LetAppsAccessAccountInfo')
@@ -1181,8 +1181,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.8 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.8')
 	$obj | Add-Member NoteProperty Task('To turn off Choose apps that can access contacts | Check value LetAppsAccessContacts')
@@ -1201,8 +1201,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.9.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.9.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps access my calendar | Check value LetAppsAccessCalendar')
@@ -1221,8 +1221,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.10 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.10')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps access my call history | Check value LetAppsAccessCallHistory')
@@ -1241,8 +1241,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.11 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.11')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps access and send email | Check value LetAppsAccessEmail')
@@ -1261,8 +1261,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.12.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.12.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps read or send messages (text or MMS) | Check value LetAppsAccessMessaging')
@@ -1281,8 +1281,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.12.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.12.3')
 	$obj | Add-Member NoteProperty Task('To turn off Message Sync | Check value AllowMessageSync')
@@ -1301,8 +1301,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.13.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.13.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps make phone calls | Check value LetAppsAccessPhone')
@@ -1321,8 +1321,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.14.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.14.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps control radios | Check value LetAppsAccessRadios')
@@ -1341,8 +1341,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.15.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.15.1')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps automatically share and sync info with wireless devices that do not explicitly pair with your PC, tablet, or phone | Check value LetAppsSyncWithDevices')
@@ -1361,8 +1361,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.15.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.15.2')
 	$obj | Add-Member NoteProperty Task('To turn off Let your apps use your trusted devices (hardware youve already connected, or comes with your PC, tablet, or phone) | Check value LetAppsAccessTrustedDevices')
@@ -1381,8 +1381,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.16.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.16.1')
 	$obj | Add-Member NoteProperty Task('To change how frequently Windows should ask for my feedback | Check value DoNotShowFeedbackNotifications')
@@ -1401,8 +1401,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.16.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.16.2')
 	$obj | Add-Member NoteProperty Task('To change the level of diagnostic and usage data sent when you Send your device data to Microsoft | Check value AllowTelemetry')
@@ -1421,8 +1421,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.16.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.16.3')
 	$obj | Add-Member NoteProperty Task('To turn off tailored experiences with relevant tips and recommendations by using your diagnostics data | Check value DisableWindowsConsumerFeatures')
@@ -1441,8 +1441,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.16.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.16.4')
 	$obj | Add-Member NoteProperty Task('To turn off tailored experiences with relevant tips and recommendations by using your diagnostics data | Check value DisableTailoredExperiencesWithDiagnosticData')
@@ -1461,8 +1461,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.17 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.17')
 	$obj | Add-Member NoteProperty Task('To turn off Let apps run in the background | Check value LetAppsRunInBackground')
@@ -1481,8 +1481,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.18 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.18')
 	$obj | Add-Member NoteProperty Task('To turn off Let Windows and your apps use your motion data and collect motion history | Check value LetAppsAccessMotion')
@@ -1501,8 +1501,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.19 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.19')
 	$obj | Add-Member NoteProperty Task('In the Tasks area, you can choose which apps have access to your tasks | Check value LetAppsAccessTasks')
@@ -1521,8 +1521,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.20 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.20')
 	$obj | Add-Member NoteProperty Task('In the App diagnostics area, you can choose which apps have access to your diagnostic information | Check value LetAppsGetDiagnosticInfo')
@@ -1541,8 +1541,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.21 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.21')
 	$obj | Add-Member NoteProperty Task('To turn off Inking & Typing data collection | Check value RestrictImplicitTextCollection')
@@ -1561,8 +1561,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.22.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.22.1')
 	$obj | Add-Member NoteProperty Task('In the Activity History area, you can choose turn Off tracking of your Activity History | Check value EnableActivityFeed')
@@ -1581,8 +1581,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.22.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.22.2')
 	$obj | Add-Member NoteProperty Task('In the Activity History area, you can choose turn Off tracking of your Activity History | Check value PublishUserActivities')
@@ -1601,8 +1601,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.22.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.22.3')
 	$obj | Add-Member NoteProperty Task('In the Activity History area, you can choose turn Off tracking of your Activity History | Check value UploadUserActivities')
@@ -1621,8 +1621,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.23.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.23.1')
 	$obj | Add-Member NoteProperty Task('In the Voice activation area, you can choose turn Off apps ability to listen for a Voice keyword. | Check value LetAppsActivateWithVoice')
@@ -1641,8 +1641,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_18.23.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_18.23.2')
 	$obj | Add-Member NoteProperty Task('In the Voice activation area, you can choose turn Off apps ability to listen for a Voice keyword. | Check value PublishUserActivities')
@@ -1661,8 +1661,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_19 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_19')
 	$obj | Add-Member NoteProperty Task('Enterprise customers can manage their Windows activation status with volume licensing using an on-premises Key Management Server. You can opt out of sending KMS client activation data to Microsoft automatically by doing one of the following | Check value NoGenTicket')
@@ -1681,8 +1681,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_20 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_20')
 	$obj | Add-Member NoteProperty Task('Enterprise customers can manage updates to the Disk Failure Prediction Model. | Check value AllowDiskHealthModelUpdates')
@@ -1701,8 +1701,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_21.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_21.1')
 	$obj | Add-Member NoteProperty Task('You can control if your settings are synchronized | Check value DisableSettingSync')
@@ -1721,8 +1721,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_21.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_21.2')
 	$obj | Add-Member NoteProperty Task('You can control if your settings are synchronized | Check value DisableSettingSyncUserOverride')
@@ -1741,8 +1741,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_21.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_21.3')
 	$obj | Add-Member NoteProperty Task('To turn off Messaging cloud sync | Check value CloudServiceSyncEnabled')
@@ -1761,8 +1761,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_22 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_22')
 	$obj | Add-Member NoteProperty Task('You can disable Teredo by using Group Policy or by using the netsh.exe command | Check value Teredo_State')
@@ -1781,8 +1781,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_23 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_23')
 	$obj | Add-Member NoteProperty Task('To turn off Connect to suggested open hotspots and Connect to networks shared by my contacts | Check value AutoConnectAllowedOEM')
@@ -1801,8 +1801,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.1')
 	$obj | Add-Member NoteProperty Task('You can disconnect from the Microsoft Antimalware Protection Service | Check value SpyNetReporting')
@@ -1821,8 +1821,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.2')
 	$obj | Add-Member NoteProperty Task('You can disconnect from the Microsoft Antimalware Protection Service | Check value ')
@@ -1841,8 +1841,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.3')
 	$obj | Add-Member NoteProperty Task('You can stop sending file samples back to Microsoft | Check value SubmitSamplesConsent')
@@ -1861,8 +1861,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.4')
 	$obj | Add-Member NoteProperty Task('You can stop downloading Definition Updates | Check value FallbackOrder')
@@ -1881,8 +1881,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.5')
 	$obj | Add-Member NoteProperty Task('You can stop downloading Definition Updates | Check value DefinitionUpdateFileSharesSources')
@@ -1901,8 +1901,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.6 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.6')
 	$obj | Add-Member NoteProperty Task('You can turn off Malicious Software Reporting Tool diagnostic data | Check value DontReportInfectionInformation')
@@ -1921,8 +1921,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.0.7 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.0.7')
 	$obj | Add-Member NoteProperty Task('You can turn off Enhanced Notifications as follows | Check value DisableEnhancedNotifications')
@@ -1941,8 +1941,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.1.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.1.1')
 	$obj | Add-Member NoteProperty Task('To disable Windows Defender Smartscreen | Check value EnableSmartScreen')
@@ -1961,8 +1961,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.1.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.1.2')
 	$obj | Add-Member NoteProperty Task('To disable Windows Defender Smartscreen | Check value ConfigureAppInstallControlEnabled')
@@ -1981,8 +1981,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_24.1.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_24.1.3')
 	$obj | Add-Member NoteProperty Task('To disable Windows Defender Smartscreen | Check value ConfigureAppInstallControl')
@@ -2001,8 +2001,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_25.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_25.1')
 	$obj | Add-Member NoteProperty Task('Windows Spotlight provides features such as different background images and text on the lock screen, suggested apps, Microsoft account notifications, and Windows tips | Check value DisableWindowsSpotlightFeatures')
@@ -2021,8 +2021,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_25.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_25.2')
 	$obj | Add-Member NoteProperty Task(' | Check value NoLockScreen')
@@ -2041,8 +2041,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_25.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_25.3')
 	$obj | Add-Member NoteProperty Task(' | Check value LockScreenImage')
@@ -2061,8 +2061,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_25.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_25.4')
 	$obj | Add-Member NoteProperty Task(' | Check value LockScreenOverlaysDisabled')
@@ -2081,8 +2081,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_25.5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_25.5')
 	$obj | Add-Member NoteProperty Task(' | Check value DisableSoftLanding')
@@ -2101,8 +2101,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_25.6 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_25.6')
 	$obj | Add-Member NoteProperty Task(' | Check value DisableWindowsConsumerFeatures')
@@ -2121,8 +2121,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_26.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_26.1')
 	$obj | Add-Member NoteProperty Task('You can turn off the ability to launch apps from the Microsoft Store that were preinstalled or downloaded | Check value DisableStoreApps')
@@ -2141,8 +2141,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_26.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_26.2')
 	$obj | Add-Member NoteProperty Task('You can turn off the ability to launch apps from the Microsoft Store that were preinstalled or downloaded | Check value AutoDownload')
@@ -2161,8 +2161,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_27 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_27')
 	$obj | Add-Member NoteProperty Task('You can turn off apps for websites, preventing customers who visit websites that are registered with their associated app from directly launching the app | Check value EnableAppUriHandlers')
@@ -2181,8 +2181,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_28.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_28.3')
 	$obj | Add-Member NoteProperty Task(' | Check value DODownloadMode')
@@ -2201,8 +2201,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_29.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_29.1')
 	$obj | Add-Member NoteProperty Task('You can turn off Windows Update | Check value DoNotConnectToWindowsUpdateInternetLocations')
@@ -2221,8 +2221,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_29.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_29.2')
 	$obj | Add-Member NoteProperty Task('You can turn off Windows Update | Check value DisableWindowsUpdateAccess')
@@ -2241,8 +2241,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_29.3 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_29.3')
 	$obj | Add-Member NoteProperty Task('You can turn off Windows Update | Check value WUServer')
@@ -2261,8 +2261,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_29.4 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_29.4')
 	$obj | Add-Member NoteProperty Task('You can turn off Windows Update | Check value WUStatusServer')
@@ -2281,8 +2281,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_29.5 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_29.5')
 	$obj | Add-Member NoteProperty Task('You can turn off Windows Update | Check value UpdateServiceUrlAlternate')
@@ -2301,8 +2301,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_MS_29.6 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_MS_29.6')
 	$obj | Add-Member NoteProperty Task('You can turn off Windows Update | Check value UseWUServer')
@@ -2321,8 +2321,8 @@ Param()
 }
 
 function Get-MSAuditResult {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 
 	Test-Windows10_GDPR_MS_1
 	Test-Windows10_GDPR_MS_2.1.1
@@ -2442,8 +2442,8 @@ Param()
 	Test-Windows10_GDPR_MS_29.6
 }
 function Test-Windows10_GDPR_BSI_3.1.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_BSI_3.1.1')
 	$obj | Add-Member NoteProperty Task('Configuration of the lowest telemetry-level | Check value AllowTelemetry')
@@ -2462,8 +2462,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_BSI_3.1.2.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_BSI_3.1.2.1')
 	$obj | Add-Member NoteProperty Task('Deactivation of the telemetry-service and etw-sessions | Check value Start')
@@ -2482,8 +2482,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_BSI_3.1.2.2 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_BSI_3.1.2.2')
 	$obj | Add-Member NoteProperty Task('Deactivation of the telemetry-service and etw-sessions | Check value Start')
@@ -2502,8 +2502,8 @@ Param()
 }
 
 function Test-Windows10_GDPR_BSI_3.1.3.1 {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 	$obj = New-Object PSObject
 	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_BSI_3.1.3.1')
 	$obj | Add-Member NoteProperty Task('Deactivation of telemetry according to Microsoft recommendation | Check value Start')
@@ -2522,8 +2522,8 @@ Param()
 }
 
 function Get-BSIAuditResult {
-[CmdletBinding()]
-Param()
+	[CmdletBinding()]
+	Param()
 
 	Test-Windows10_GDPR_BSI_3.1.1
 	Test-Windows10_GDPR_BSI_3.1.2.1
@@ -2532,24 +2532,24 @@ Param()
 }
 
 function Convert-ToAuditInfo {
-    param (
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [Psobject] $auditObject
-    )
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Psobject] $auditObject
+	)
 
-    process {
-        Write-Output (New-Object -TypeName AuditInfo -Property @{
-            Id      = $auditObject.Name
-            Task    = $auditObject.Task
-            Message = $auditObject.Status
-            Audit   = $auditObject.Passed
-        })
-    }
+	process {
+		Write-Output (New-Object -TypeName AuditInfo -Property @{
+				Id = $auditObject.Name
+				Task = $auditObject.Task
+				Message = $auditObject.Status
+				Audit = $auditObject.Passed
+			})
+	}
 }
 
 
 function Get-Windows10_GDPRHtmlReport {
-    <#
+	<#
     .Synopsis
         Generates an audit report in an html file.
     .Description
@@ -2560,27 +2560,27 @@ function Get-Windows10_GDPRHtmlReport {
         C:\PS> Get-Windows10_GDPRHtmlReport -Path "MyReport.html"
     #>
 
-    [CmdletBinding()]
-    param (
-    [string] $Path = "$($env:HOMEPATH)\Documents\$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
+	[CmdletBinding()]
+	param (
+		[string] $Path = "$($env:HOMEPATH)\Documents\$(Get-Date -UFormat %Y%m%d_%H%M)_auditreport.html",
 
-    [switch] $DarkMode,
+		[switch] $DarkMode,
 
-    [switch] $PerformanceOptimized
-)
+		[switch] $PerformanceOptimized
+	)
 
-    [hashtable[]]$sections = @(
+	[hashtable[]]$sections = @(
 
-            @{
-                Title = "GDPR settings by MicroSoft"
-                AuditInfos = Get-MSAuditResult | Convert-ToAuditInfo | Sort-Object -Property Id
-            }
+		@{
+			Title = "GDPR settings by MicroSoft"
+			AuditInfos = Get-MSAuditResult | Convert-ToAuditInfo | Sort-Object -Property Id
+		}
 
-            @{
-                Title = "Bundesamt für Sicherheit in der Informationstechnik (BSI)"
-                AuditInfos = Get-BSIAuditResult | Convert-ToAuditInfo | Sort-Object -Property Id
-            }
-)
+		@{
+			Title = "Bundesamt für Sicherheit in der Informationstechnik (BSI)"
+			AuditInfos = Get-BSIAuditResult | Convert-ToAuditInfo | Sort-Object -Property Id
+		}
+	)
 
-Get-ATAPHtmlReport -Path $Path -Title "Windows10_GDPR Audit Report" -ModuleName "Windows10_GDPRAudit" -BasedOn $sections.Title -Sections $sections -DarkMode: $DarkMode
+	Get-ATAPHtmlReport -Path $Path -Title "Windows10_GDPR Audit Report" -ModuleName "Windows10_GDPRAudit" -BasedOn $sections.Title -Sections $sections -DarkMode: $DarkMode
 }
