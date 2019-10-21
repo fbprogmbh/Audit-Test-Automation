@@ -49,9 +49,7 @@ Copyright = '(c) 2019 FB Pro GmbH. All rights reserved.'
 FunctionsToExport = @(
     'Get-Windows10GDPRHtmlReport'
 )
-CmdletsToExport = @(
-    
-)
+CmdletsToExport = @()
 VariablesToExport = '*'
 AliasesToExport = @()
 # DscResourcesToExport = @()
