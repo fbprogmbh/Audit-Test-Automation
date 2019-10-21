@@ -2478,7 +2478,7 @@ function Test-Windows10_GDPR_BSI_3_1_1 {
 	[CmdletBinding()]
 	Param()
 	$obj = New-Object PSObject
-	$obj | Add-Member NoteProperty Name('Test-Windows10_GDPR_BSI_3_1_1')
+	$obj | Add-Member NoteProperty Name('3.1.1')
 	$obj | Add-Member NoteProperty Task('Configuration of the lowest telemetry-level | Check value AllowTelemetry')
 
 	$regValue = Get-ItemProperty -Path Registry::"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AllowTelemetry -ErrorAction SilentlyContinue
@@ -2605,13 +2605,13 @@ function Get-Windows10GDPRHtmlReport {
 	[hashtable[]]$sections = @(
 
 		@{
-			Title = "GDPR settings by MicroSoft"
-			AuditInfos = Get-MSAuditResult | Convert-ToAuditInfo | Sort-Object -Property Id
+			Title = "GDPR settings by Microsoft"
+			AuditInfos = Get-MSAuditResult | Convert-ToAuditInfo
 		}
 
 		@{
 			Title = "Bundesamt für Sicherheit in der Informationstechnik (BSI)"
-			AuditInfos = Get-BSIAuditResult | Convert-ToAuditInfo | Sort-Object -Property Id
+			AuditInfos = Get-BSIAuditResult | Convert-ToAuditInfo
 		}
 	)
 
