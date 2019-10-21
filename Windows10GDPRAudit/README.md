@@ -6,7 +6,7 @@ based on
 
 ## Overview
 
-The `Windows10_GDPRAudit`-Module benchmarks the current systems settings with current GDPR recommendations from Microsoft and BSI. This module is designed for Windows 10.
+The `Windows10GDPRAudit`-Module benchmarks the current systems settings with current GDPR recommendations from Microsoft and BSI. This module is designed for Windows 10.
 
 ## Requirements
 
@@ -21,9 +21,9 @@ Please make sure that following requirements are fulfilled:
 2. Navigate to the location with PowerShell and import the modules with `Import-Module`. For example:
 ```Powershell
 cd .\Desktop\
-Import-Module -Name .\Audit-Test-Automation\Windows10_GDPRAudit -Verbose
+Import-Module -Name .\Audit-Test-Automation\Windows10GDPRAudit -Verbose
 ```
-3. Generate a report with `Get-Windows10_GDPRHtmlReport` For example:
+3. Generate a report with `Get-Windows10GDPRHtmlReport` For example:
 ```PowerShell
 Get-Windows10_GDPRHtmlReport -Path "MyReport.html"
 ```
