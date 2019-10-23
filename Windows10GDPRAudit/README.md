@@ -25,7 +25,7 @@ Import-Module -Name .\Audit-Test-Automation\Windows10GDPRAudit -Verbose
 ```
 3. Generate a report with `Get-Windows10GDPRHtmlReport` For example:
 ```PowerShell
-Get-Windows10_GDPRHtmlReport -Path "MyReport.html"
+Get-Windows10GDPRHtmlReport -Path "MyReport.html"
 ```
 
 ## Sample report
