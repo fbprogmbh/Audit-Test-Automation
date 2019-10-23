@@ -1,28 +1,33 @@
 ﻿<#
-Copyright (c) 2018, FB Pro GmbH, Germany
+BSD 3-Clause License
+
+Copyright (c) 2019, FB Pro GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the <organization> nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 
 <#
@@ -35,11 +40,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using module ATAPHtmlReport
 
 
-if (get-module -ListAvailable SQLPS) {
+if (get-module -ListAvailable SQLServer) {
+Import-Module SQLServer -Force -ErrorAction SilentlyContinue
+}elseif (get-module -ListAvailable SQLPS) {
     Import-Module SQLPS -Force -ErrorAction SilentlyContinue
-}
-elseif (get-module -ListAvailable SQLServer) {
-    Import-Module SQLServer -Force -ErrorAction SilentlyContinue
 }
 
 
@@ -548,7 +552,7 @@ function Test-SQLTrustworthyDatabaseOff {
             $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
         }
         else {
-            $obj | Add-Member NoteProperty Status("Found $sqlResult.name")
+            $obj | Add-Member NoteProperty Status("Found: " + $sqlResult.name)
             $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
         }
     }
@@ -641,7 +645,7 @@ function Test-SQLUseNonStandardPorts {
 #>
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true, ParameterSetName = "By Instance")]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -1275,8 +1279,8 @@ function Test-SQLAuthenticationDisabled {
 
         if ($databases.Count -eq 0) {
             $obj = New-Object PSObject
-            $obj | Add-Member NoteProperty ID("7.1")
-            $obj | Add-Member NoteProperty Task("Ensure 'Symmetric Key encryption algorithm' is set to 'AES_128' or higher in non-system databases")
+            $obj | Add-Member NoteProperty ID("3.4")
+            $obj | Add-Member NoteProperty Task("Ensure SQL Authentication is not used in contained databases")
             $obj | Add-Member NoteProperty Status("No databases found")
             $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
             Write-Output $obj
@@ -1339,11 +1343,11 @@ function Test-SQLAuthenticationDisabled {
 function Test-SQLServerServiceAccountIsNotAnAdministrator {
     <#
 .Synopsis
-    Ensure the SQL Server’s MSSQL Service Account is Not an Administrator
+    Ensure the SQL Server’s MSSQL Service Account is Not an Administrator.
 .DESCRIPTION
     CIS SQL Server 2016 Benchmark - 3  Authentication and Authorization
 
-    3.5 - Ensure the SQL Server’s MSSQL Service Account is Not an Administrator
+    3.5 - Ensure the SQL Server’s MSSQL Service Account is Not an Administrator.
 
     The service account and/or service SID used by the MSSQLSERVER service for a default instance or MSSQL$<InstanceName> service for a named instance should not be a member of the Windows Administrator group either directly or indirectly (via a group). This also means that the account known as LocalSystem (aka NT AUTHORITY\SYSTEM) should not be used for the MSSQL service as this account has higher privileges than the SQL Server service requires.
 
@@ -1419,11 +1423,11 @@ function Test-SQLServerServiceAccountIsNotAnAdministrator {
 function Test-SQLAgentServiceAccountIsNotAnAdministrator {
     <#
 .Synopsis
-    Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator
+    Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator.
 .DESCRIPTION
     CIS SQL Server 2016 Benchmark - 3  Authentication and Authorization
 
-    3.6 - Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator
+    3.6 - Ensure the SQL Server’s SQLAgent Service Account is Not an Administrator.
 
     The service account and/or service SID used by the SQLSERVERAGENT service for a default instance or SQLAGENT$<InstanceName> service for a named instance should not be a member of the Windows Administrator group either directly or indirectly (via a group). This also means that the account known as LocalSystem (aka NT AUTHORITY\SYSTEM) should not be used for the SQLAGENT service as this account has higher privileges than the SQL Server service requires.
 
@@ -2244,33 +2248,40 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
 
     try {
         if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
-            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+            $sqlResults = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
         }
         else {
-            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+            $sqlResults = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
         }
 
-        $auditSpecifications = @()
+        $auditChangeGroup = "FALSE"
+        $failedLoginGroup = "FALSE"
+        $successfulLoginGroup = "FALSE"
+
         foreach ($sqlResult in $sqlResults) {
             switch ($sqlResult.audit_action_name) {
                 "AUDIT_CHANGE_GROUP" {
-                    $auditSpecifications += ($sqlResult)
+                    if(($sqlResult | Select-Object -ExpandProperty "Audit Enabled") -eq "Y" -and
+                    ($sqlResult | Select-Object -ExpandProperty "Audit Specification Enabled") -eq "Y" -and
+                    ($sqlResult.audited_result -eq "SUCCESS AND FAILURE")) {
+                        $auditChangeGroup = "TRUE"
+                    }
                 }
                 "FAILED_LOGIN_GROUP" {
-                    $auditSpecifications += ($sqlResult)
+                    if(($sqlResult | Select-Object -ExpandProperty "Audit Enabled") -eq "Y" -and
+                    ($sqlResult | Select-Object -ExpandProperty "Audit Specification Enabled") -eq "Y" -and
+                    ($sqlResult.audited_result -eq "SUCCESS AND FAILURE")) {
+                        $failedLoginGroup = "TRUE"
+                    }
                 }
                 "SUCCESSFUL_LOGIN_GROUP" {
-                    $auditSpecifications += ($sqlResult)
+                    if(($sqlResult | Select-Object -ExpandProperty "Audit Enabled") -eq "Y" -and
+                    ($sqlResult | Select-Object -ExpandProperty "Audit Specification Enabled") -eq "Y" -and
+                    ($sqlResult.audited_result -eq "SUCCESS AND FAILURE")) {
+                        $successfulLoginGroup = "TRUE"
+                    }
                 }
                 Default {}
-            }
-        }
-        $foundSpecifications = @()
-        foreach ($auditSpecification in $auditSpecifications) {
-            if ((($auditspecification | Select-Object -ExpandProperty "Audit Enabled") -ne "Y") -or `
-                (($auditspecification | Select-Object -ExpandProperty "Audit Specification Enabled") -ne "Y") -or `
-                ($auditspecification.audited_result -ne "SUCCESS AND FAILURE")) {
-                $foundSPecifications += $auditSpecification.audit_action_name
             }
         }
         if ($null -eq $sqlResults) {
@@ -2278,14 +2289,24 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
             $obj | Add-Member NoteProperty Audit([AuditStatus]::Warning)
         }
         else {
-            if ($foundSpecifications.count -eq 0) {
+            if (($auditChangeGroup -eq "TRUE") -and ($failedLoginGroup -eq "TRUE") -and ($successfulLoginGroup -eq "TRUE")) {
                 $obj | Add-Member NoteProperty Status("All good")
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::True)
             }
             else {
-                [string]$s = $null
-                $s = $foundSpecifications -join ", "
-                $obj | Add-Member NoteProperty Status("Found following specifications: $s")
+                $specifications = @()
+                if ($auditChangeGroup -eq "FALSE") {
+                    $specifications += "AUDIT_CHANGE_GROUP" 
+                }
+                if ($failedLoginGroup -eq "FALSE") {
+                    $specifications += "FAILED_LOGIN_GROUP"
+                }
+                if ($SuccessfulLoginGroup -eq "FALSE") {
+                    $specifications += "SUCCESSFUL_LOGIN_GROUP"
+                }
+                [string]$status = $null
+                $status = $specifications -join ", "
+                $obj | Add-Member NoteProperty Status("Following specifications are not audited: $status")
                 $obj | Add-Member NoteProperty Audit([AuditStatus]::False)
             }
         }
