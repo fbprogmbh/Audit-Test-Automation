@@ -1,5 +1,11 @@
 # Audit Test Automation Package
 
+ATAPHtmlReport:\
+[![atashtmlreportphield](https://img.shields.io/powershellgallery/v/ATAPHtmlReport)](https://www.powershellgallery.com/packages/ATAPHtmlReport)
+
+ATAPAuditor:\
+[![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
+
 ## Overview
 
 The Audit Test Automation Package gives you the ability to get an overview about the compliance
@@ -11,8 +17,8 @@ standards and hardening guides.
 
 The package consists of the following modules:
 
-* [ATAPHtmlReport](ATAPHtmlReport)
-* [ATAPAuditor](ATAPAuditor)
+* ATAPHtmlReport
+* ATAPAuditor
 
 ## Reports
 

@@ -5,7 +5,7 @@ GUID = '1662a599-4e3a-4f72-a844-9582077b589e'
 Author = 'Benedikt Böhme'
 CompanyName = 'FB Pro GmbH'
 Copyright = '(c) 2020 FB Pro GmbH. All rights reserved.'
-Description = ''
+Description = 'Allows you to tests your system with the included reports.'
 PowerShellVersion = '5.0'
 RequiredModules = @(
 	'ATAPHtmlReport'
