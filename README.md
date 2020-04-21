@@ -22,7 +22,12 @@ The package consists of the following modules:
 
 ## Reports
 
-The *ATAPAuditor* contains the following reports based on the following benchmarks
+The *ATAPAuditor* contains the following reports based on the following benchmarks including the version number. 
+How to read the table below:
+* Both columns "DISA STIG" and "CIS benchmark" are filled - great, report directly shows conformity to both standards
+* "Single" references to one specific benchmark
+* "Multiple" directly checks several benchmarks and creates a consolidated report for you
+* "None" says we still have work to do ;-)
 
 Benchmark | DISA STIG | CIS benchmark
 ------------ | ------------- | -------------
@@ -85,32 +90,33 @@ Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
 * Make sure your execution policy is set to at least remoteSigned (the scripts are not digitally signed)
 
 ```powershell
-	Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 ```
 
 * The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
 
 * Some reports are running longer than a few seconds due to hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs ;-)
  
-* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following commands. We provide a full list here - please adopt it to your needs.
+* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
 
-	```Powershell
-	Uninstall-Module -Name ATAPHtmlReport
-	Uninstall-Module -Name Excel2016Audit
-	Uninstall-Module -Name GoogleChromeAudit
-	Uninstall-Module -Name IIS8Audit
-	Uninstall-Module -Name IIS10Audit
-	Uninstall-Module -Name MicrosoftIE11Audit
-	Uninstall-Module -Name MozillaFirefoxAudit
-	Uninstall-Module -Name Outlook2016Audit
-	Uninstall-Module -Name Powerpoint2016Audit
-	Uninstall-Module -Name Skype4Business2016Audit
-	Uninstall-Module -Name SQL2016Benchmarks
-	Uninstall-Module -Name Windows10Audit
-	Uninstall-Module -Name Windows10GDPRAudit
-	Uninstall-Module -Name WindowsServer2016Audit
-	Uninstall-Module -Name Word2016Audit
-	```
+```Powershell
+# Remove all old Audit TAP Reports if available
+$collection = @("ATAPHtmlReport","Excel2016Audit","GoogleChromeAudit","IIS8Audit","IIS10Audit","MicrosoftIE11Audit","MozillaFirefoxAudit","Outlook2016Audit","Powerpoint2016Audit","Skype4Business2016Audit","SQL2016Benchmarks","Windows10Audit","Windows10GDPRAudit","WindowsServer2016Audit","Word2016Audit")
+ForEach ($item in $collection)
+{
+  if (Get-Module -ListAvailable -Name $item)
+  {
+    # Module found, so remove it
+    $installPath = Get-Module -ListAvailable $item | Select-Object -ExpandProperty Path | Split-Path -Parent
+    Remove-Item -Path $installPath -Recurse -Force -Confirm:$false
+  }
+  else
+  {
+    # Module not installed, so do nothing an take next item
+  }
+}
+```
+
 ## Sample reports
 
 You can find several sample reports in the "Samples" folder.
