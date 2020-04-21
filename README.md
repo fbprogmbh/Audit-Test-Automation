@@ -2,91 +2,138 @@
 
 ## Overview
 
-The Audit Test Automation Package gives you the ability to get an overview about the compliance status of several systems. You can easily create HTML-reports and have a transparent overview over compliance and non-compliance of explicit setttings and configurations in comparison to industry standards and hardening guides.
+The Audit Test Automation Package gives you the ability to get an overview about the compliance
+status of several systems. You can easily create HTML-reports and have a transparent overview over
+compliance and non-compliance of explicit setttings and configurations in comparison to industry
+standards and hardening guides. 
 
 ## Modules
 
-The package consists of the following Modules:
+The package consists of the following modules:
 
 * [ATAPHtmlReport](ATAPHtmlReport)
-* [IIS8Audit](IIS8Audit)
-* [IIS10Audit](IIS10Audit)
-* [SQL2016Benchmarks](SQL2016Benchmarks)
-* [WindowsServer2016Audit](WindowsServer2016Audit)
-* [Windows10Audit](Windows10Audit)
-* [Windows10GDPRAudit](Windows10GDPRAudit)
+* [ATAPAuditor](ATAPAuditor)
 
-Microsoft Office 2016 Audit Modules:
+## Reports
 
-* [Word2016Audit](Word2016Audit)
-* [Excel2016Audit](Excel2016Audit)
-* [Outlook2016Audit](Outlook2016Audit)
-* [Powerpoint2016Audit](Powerpoint2016Audit)
-* [Skype4Business2016Audit](Skype4Business2016Audit)
+The *ATAPAuditor* contains the following reports based on the following benchmarks
 
-Browser Audit Modules:
+Benchmark | DISA STIG | CIS benchmark
+------------ | ------------- | -------------
+Google Chrome | Single (Version: V1R15, Date: 2019-01-28) | Single (Version: 2.0.0, Date: 2019-05-17)
+Mozilla Firefox | Single (Version: V4R24, Date: 2019-01-25) | Single (Version: 1.0.0, Date: 2015-12-31)
+Microsoft IE11 | Single (Version: V1R16, Date: 2018-06-08 | Single (Version: 1.0.0, Date: 2014-12-01)
+Microsoft IIS10 | None | Single (Version: 1.1.0, Date: 2018-11-12)
+Microsoft Office 2016 | Multiple (see below) | None
+Microsoft Office 2016 Excel | Single (Version: V1R2, Date: 2017-09-19) | None
+Microsoft Office 2016 Outlook | Single (Version: V1R2, Date: 2017-05-08) | None
+Microsoft Office 2016 PowerPoint | Single (Version: V1R1, Date: 2016-11-02) | None
+Microsoft Office 2016 SkypeForBusiness | Single (Version: V1R1, Date: 2016-11-02) | None
+Microsoft Office 2016 Word | Single (Version: V1R1, Date: 2016-11-02) | None
+Microsoft SQL Server 2016 | None | Single (Version: 1.0.0, Date: 2017-11-08)
+Microsoft Windows 10 | Single (Version: V1R16, Date: 2019-10-25) | Single (Version: 1.8.1, Date: 2020-01-28)
+Microsoft Windows 10 GDPR | None | None
+Microsoft Windows Server 2016 | Single (Version: V1R6, Date: 2018-10-26) | Single (Version: 1.1.0, Date: 2018-10-15)
+Microsoft Windows Server 2019 | Single (Version: V1R2, Date: 2020-01-24) | Single (Version: 1.1.0, Date: 2020-01-10)
 
-* [MozillaFirefoxAudit](MozillaFirefoxAudit)
-* [GoogleChromeAudit](GoogleChromeAudit)
-* [MicrosoftIE11Audit](MicrosoftIE11Audit)
 
-Read the the READMEs of each module to get specific information about a module.
+## Download, installation and usage
 
-## Getting started
+### Install from Github (manual way)
 
-Check out the module folders and check if the desired module can be installed with `Install-Module`. Otherwise:
+1. Download the release zip in version https://github.com/fbprogmbh/Audit-Test-Automation/releases
 
-### General Requirements
+2. Unzip  the release package on your local machines, for example by using the following commands in Powershell or by using your favourite unzipping toolset.
+```Powershell
+Expand-Archive -Path ".\Audit TAP.zip" -DestinationPath "Audit TAP"
+```
 
-* Make sure your execution policy is set to at least remoteSigned (the scripts are not digitally signed yet)
+3. Import the modules "ATAPAuditor" and "ATAPHtmlReport" to any of the paths of `$env:PSModulePath` by using the following code:
+```Powershell
+Import-Module -Name .\ATAPAuditor\ATAPAuditor.psm1 -Verbose
+Import-Module -Name .\ATAPHtmlReport\ATAPHtmlReport.psm1 -verbose
+```
+
+4. Create a new report in the `Documents\ATAPReports` folder. You can create a report for any report named in the above table.
+The force parameter creates the folder if it doesn't exist. For using an alternative Path, see customization.
+
+```Powershell
+Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
+Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
+```
+
+### Install from PS Gallery
+
+1. You need to install both modules:
+```Powershell
+Install-Module -Name ATAPAuditor
+Install-Module -Name ATAPHtmlReport
+```
+2. Create a new report in the `Documents\ATAPReports` folder. The force parameter creates the folder if it doesn't exist. For using an alternative Path, see customization.
+
+```Powershell
+Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
+```
+## Good to know
+
+* Make sure your execution policy is set to at least remoteSigned (the scripts are not digitally signed)
 
 ```powershell
 	Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 ```
 
-### Quick Usage
+* The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
 
-1. Download the release zip and export the modules in a location you can easily access with PowerShell
-2. Navigate to the location with PowerShell and import the modules with `Import-Module`. Be sure not to include any file extension, as this prevents the module manifest from loading. This is important because the manifest tells Powershell about the assemblies and modules that the module requires. For example:
+* Some reports are running longer than a few seconds due to hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs ;-)
+ 
+* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following commands. We provide a full list here - please adopt it to your needs.
+
+	```Powershell
+	Uninstall-Module -Name ATAPHtmlReport
+	Uninstall-Module -Name Excel2016Audit
+	Uninstall-Module -Name GoogleChromeAudit
+	Uninstall-Module -Name IIS8Audit
+	Uninstall-Module -Name IIS10Audit
+	Uninstall-Module -Name MicrosoftIE11Audit
+	Uninstall-Module -Name MozillaFirefoxAudit
+	Uninstall-Module -Name Outlook2016Audit
+	Uninstall-Module -Name Powerpoint2016Audit
+	Uninstall-Module -Name Skype4Business2016Audit
+	Uninstall-Module -Name SQL2016Benchmarks
+	Uninstall-Module -Name Windows10Audit
+	Uninstall-Module -Name Windows10GDPRAudit
+	Uninstall-Module -Name WindowsServer2016Audit
+	Uninstall-Module -Name Word2016Audit
+	```
+## Sample reports
+
+You can find several sample reports in the "Samples" folder.
+
+## Customization
+
+You can change the default folder for `Save-ATAPHtmlReport`, which is `Documents\ATAPReports`, by creating and later editing the environment variable `ATAPReportPath`. 
+Environment variables can bet set for different scopes - please choose the one that fits your needs. The following samples will set the default path to 'C:\ATAPReports'.
+
+Temporary scope: CurrentSession
 ```Powershell
-Import-Module -Name .\IIS10Audit -Verbose
+$env:ATAPReportPath = 'C:\ATAPReports'
 ```
-3. Run the command you require.
 
-## More Information
-
-You can always get more information on a command by using the familiar `Get-Help`-Command on a Module.
-
-For example:
+Permanent scope: CurrentUser
 ```Powershell
-Get-Help Get-IIS10HtmlReport
+[System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::User)
 ```
-Output:
+Permanent scope: Machine
+```Powershell
+[System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::Machine)
 ```
-NAME
-    Get-IISHtmlReport
 
-SYNOPSIS
-    Generates an audit report in an html file.
+ ## Related links
 
+* Github-Link: https://github.com/fbprogmbh/Audit-Test-Automation
+* Our Homepage: https://fb-pro.com/
 
-SYNTAX
-    Get-IISHtmlReport [-Path] <String> [[-SystemAuditInfos] <AuditInfo[]>] [[-SiteAudits] <SiteAudit[]>]
-    [<CommonParameters>]
+ ## Questions, issues or project support
 
-
-DESCRIPTION
-    The `Get-IIS10HtmlReport` cmdlet collects by default data from the current machine to generate an audit report.
-
-    It is also possible to pass your own data to the cmdlet from which it generates the report. To do this, use the
-    parameter `SystemAuditInfos` and `SiteAudits`.
-
-
-RELATED LINKS
-
-REMARKS
-    To see the examples, type: "get-help Get-IIS10HtmlReport -examples".
-    For more information, type: "get-help Get-IIS10HtmlReport -detailed".
-    For technical information, type: "get-help Get-IIS10HtmlReport -full".
-
-```
+*  For questions or issues regarding Audit TAP please use Github issue tracker.
+*  For questions regarding project support please write a short mail to team@fb-pro.com 

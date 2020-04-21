@@ -38,102 +38,104 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	Last Change:      08/19/2018
 #>
 
-Import-LocalizedData -FileName Settings.ps1 -BindingVariable Settings
+#using module .\..\Helpers\Report.psm1
+#using module .\..\Configs\BaseConfig.psm1
 
-enum AuditStatus {
-	True
-	False
-	Warning
-	None
-}
+$ScriptRoot = Split-Path -Parent $PSCommandPath
 
-class AuditInfo {
-	[string] $Id
-	[string] $Task
-	[string] $Message
-	[AuditStatus] $Audit
-}
+$Settings = Import-PowerShellDataFile -Path "$ScriptRoot\Settings.psd1"
+$ModuleVersion = (Import-PowerShellDataFile -Path "$ScriptRoot\ATAPHtmlReport.psd1").ModuleVersion
 
-function New-ATAPAuditInfo {
-	[CmdletBinding(
-		SupportsShouldProcess = $true
-	)]
-	param (
-		[Parameter(Mandatory = $true)]
-		[string]
-		$Id,
+$StatusValues = 'True', 'False', 'Warning', 'None', 'Error'
+$AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, @{ Name = 'Status' }
 
-		[Parameter(Mandatory = $true)]
-		[string]
-		$Task,
-
-		[Parameter(Mandatory = $true)]
-		[string]
-		$Message,
-
-		[Parameter(Mandatory = $true)]
-		[ValidateSet(
-			"True",
-			"False",
-			"Warning",
-			"None"
-		)]
-		[string]
-		$Audit
-	)
-
-	if ($PSCmdlet.ShouldProcess("Creating AuditInfo object")) {
-		New-Object -TypeName AuditInfo -Property $PSBoundParameters
-	}
-}
-
-function Get-ATAPCombinedAuditStatus {
+function Join-ATAPReportStatus {
+	[CmdletBinding()]
+	[OutputType([string])]
 	param(
 		[Parameter(Mandatory = $true)]
-		[AuditStatus[]] $Audits
+		[string[]]
+		$Statuses
 	)
 
-	if ($Audits -contains [AuditStatus]::False) {
-		[AuditStatus]::False
+	if ($Statuses -contains 'False') {
+		return 'False'
 	}
-	elseif ($Audits -contains [AuditStatus]::Warning) {
-		[AuditStatus]::Warning
+	elseif ($Statuses -contains 'Error') {
+		return 'Warning'
 	}
-	elseif ($Audits -contains [AuditStatus]::True) {
-		[AuditStatus]::True
+	elseif ($Statuses -contains 'Warning') {
+		return 'Warning'
+	}
+	elseif ($Statuses -contains 'True') {
+		return 'True'
 	}
 	else {
-		[AuditStatus]::None
+		return 'None'
 	}
 }
 
-function Get-ATAPHtmlSectionStatus {
+function htmlElement {
 	param(
-		[Parameter(Mandatory = $true)]
-		[hashtable] $Section
+		[Parameter(Mandatory = $true, Position = 0)]
+		[string]
+		$ElementName,
+
+		[Parameter(Mandatory = $true, Position = 1)]
+		[hashtable]
+		$Attributes,
+
+		[Parameter(Mandatory = $true, Position = 2)]
+		[scriptblock]
+		$Children
 	)
 
-	$subSectionStatuses = @()
-	if ($Section.Keys -contains "AuditInfos") {
-		$subSectionStatuses += $Section.AuditInfos.Audit
+	$htmlAttributes = @()
+	foreach ($attribute in $Attributes.GetEnumerator()) {
+		$htmlAttributes += '{0}="{1}"' -f $attribute.Name, $attribute.Value
 	}
-	if ($Section.Keys -contains "SubSections") {
-		$subSectionStatuses += $Section.SubSections | Foreach-Object { Get-ATAPHtmlSectionStatus -Section $_ }
-	}
-	return Get-ATAPCombinedAuditStatus -Audits $subSectionStatuses
+
+	[string[]]$htmlChildren = & $Children
+
+	return '<{0} {1}>{2}</{0}>' -f $ElementName, ($htmlAttributes -join ' '), ($htmlChildren -join '')
 }
 
-function Convert-ATAPAuditStatusToHtmlClass {
+function Get-SectionStatus {
 	param(
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[AuditStatus] $AuditStatus
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[Alias('AuditInfos')]
+		[array]
+		$ConfigAudits,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$Subsections
+	)
+
+	$allStatuses = @()
+	if ($null -ne $ConfigAudits) {
+		$allStatuses += $ConfigAudits.Status
+	}
+	if ($null -ne $Subsections) {
+		foreach ($subsection in $Subsections) {
+			$allStatuses += $subsection | Get-SectionStatus
+		}
+	}
+	return Join-ATAPReportStatus $allStatuses
+}
+
+function Get-HtmlClassFromStatus {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Status
 	)
 
 	process {
-		switch ($AuditStatus) {
-			"True" { "passed" }
-			"False" { "failed" }
-			"Warning" { "warning" }
+		switch ($Status) {
+			'True' { 'passed' }
+			'False' { 'failed' }
+			'Warning' { 'warning' }
 			Default { "" }
 		}
 	}
@@ -145,96 +147,126 @@ function Convert-SectionTitleToHtmlId {
 		[string] $Title
 	)
 
-	return ([char[]]$Title | ForEach-Object {
-			switch ($_) {
-				' ' { "-" }
-				'-' { "--" }
-				Default {$_}
-			}
-		}) -join ""
+	$charMap = {
+		switch ($_) {
+			' ' { "-" }
+			'-' { "--" }
+			Default {$_}
+		}
+	}
+
+	return ([char[]]$Title | ForEach-Object $charMap) -join ''
 }
 
-function Convert-ATAPAuditInfoToHtmlTableRow {
+function Get-HtmlTableRow {
 	param(
-		[Parameter(Mandatory = $true)]
-		[AuditInfo] $AuditInfo
+		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		$Audit
 	)
 
 	process {
-		$tableData = foreach ($Property in [AuditInfo].GetProperties()) {
-			$value = $Property.GetValue($AuditInfo, $null)
+		# $properties = $Audit | Get-Member -MemberType Property
+		
+		htmlElement 'tr' @{} {
+			foreach ($property in $AuditProperties) {
+				$value = $Audit | Select-Object -ExpandProperty $property.Name
+				if ($Property.Name -eq 'Status') {
+					$class = Get-HtmlClassFromStatus $Audit.Status
+					$value = htmlElement 'span' @{ class = "auditstatus $class" } { $value }
+				}
+				htmlElement 'td' @{} { $value }
+			}
+		}
+	}
+}
 
-			if ($Property.Name -eq "Audit") {
-				$auditClass = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $value
-				$value = "<span class=`"auditstatus $auditClass`">$value</span>"
+function Get-HtmlToc {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$Subsections,
+
+		[string]
+		$Prefix = ''
+	)
+
+	$id = Convert-SectionTitleToHtmlId -Title ($Prefix + $Title)
+	htmlElement 'li' @{} {
+		htmlElement 'a' @{ href = "#$id" } { $Title }
+		if ($null -ne $Subsections) {
+			htmlElement 'ul' @{} {
+				foreach ($subsection in $Subsections) {
+					$subsection | Get-HtmlToc -Prefix ($Prefix + $Title)
+				}
+			}
+		}
+	}
+}
+
+function Get-HtmlReportSection {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Description,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[alias('AuditInfos')]
+		[array]
+		$ConfigAudits,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[alias('Sections')]
+		[array]
+		$Subsections,
+
+		[Parameter(Mandatory = $false)]
+		[string]
+		$Prefix
+	)
+
+	process {
+		$id = Convert-SectionTitleToHtmlId -Title ($Prefix + $Title)
+		$sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
+		$class = Get-HtmlClassFromStatus $sectionStatus
+
+		htmlElement 'section' @{} {
+			htmlElement 'h1' @{ id = $id } {
+				htmlElement 'span' @{ class = $class } { $Title }
+				htmlElement 'a' @{ href = '#'; class = 'totop'} { '^' }
 			}
 
-			"<td>$value</td>"
+			if ($null -ne $Description) {
+				htmlElement 'p' @{} { $Description }
+			}
+			if ($null -ne $ConfigAudits) {
+				htmlElement 'table' @{ class = 'audit-info' } {
+					htmlElement 'tbody' @{} {
+						htmlElement 'tr' @{} {
+							foreach ($columnName in $AuditProperties.Name) {
+								htmlElement 'th' @{} { $columnName }
+							}
+						}
+						foreach ($configAudit in $ConfigAudits) {
+							$configAudit | Get-HtmlTableRow
+						}
+					}
+				}
+			}
+			if ($null -ne $Subsections) {
+				foreach ($subsection in $Subsections) {
+					$subsection | Get-HtmlReportSection -Prefix ($Prefix + $Title)
+				}
+			}
 		}
-
-		return "<tr>$tableData</tr>"
 	}
-}
-
-function Get-ATAPHtmlSectionLink {
-	param(
-		[Parameter(Mandatory = $true)]
-		[hashtable[]] $Sections,
-
-		[string] $Prepend = ""
-	)
-
-	$html = "<ul>"
-	foreach ($Section in $Sections) {
-		$id = Convert-SectionTitleToHtmlId -Title ($Prepend + $Section.Title)
-
-		$html += "<li>"
-		$html += "<a href=`"#$id`">$($Section.Title)</a>"
-		if ($Section.Keys -contains "SubSections") {
-			$html += Get-ATAPHtmlSectionLink -Sections $Section.SubSections -Prepend ($Prepend + $Section.Title)
-		}
-		$html += "</li>"
-	}
-	$html += "</ul>"
-
-	return $html
-}
-
-function Get-ATAPHtmlSection {
-	param(
-		[Parameter(Mandatory = $true)]
-		[hashtable[]] $Sections,
-
-		[string] $Prepend = ""
-	)
-
-	$html = ""
-	foreach ($Section in $Sections) {
-		$id = Convert-SectionTitleToHtmlId -Title ($Prepend + $Section.Title)
-		$sectionStatus = Get-ATAPHtmlSectionStatus -Section $Section
-		$class = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $sectionStatus
-
-		$html += "<section>"
-		$html += "<h1 id=`"$id`">"
-		$html += "<span class=`"$class`">$($Section.Title)</span>"
-		$html += "<a href=`"#`" class=`"totop`">^</a>"
-		$html += "</h1>"
-
-		if ($Section.Keys -contains "Description") {
-			$html += "<p>$($Section.Description)</p>"
-		}
-		if ($Section.Keys -contains "AuditInfos") {
-			$tableHead = [AuditInfo].GetProperties().Name | ForEach-Object { "<th>$_</th>" }
-			$tableRows = $Section.AuditInfos | Foreach-Object { Convert-ATAPAuditInfoToHtmlTableRow -AuditInfo $_ }
-			$html += "<table class=`"audit-info`"><tbody><tr>$tableHead</tr>$tableRows</tbody></table>"
-		}
-		if ($Section.Keys -contains "SubSections") {
-			$html += Get-ATAPHtmlSection -Sections $Section.SubSections -Prepend ($Prepend + $Section.Title)
-		}
-		$html += "</section>"
-	}
-
-	return $html
 }
 
 function Get-ATAPHostInformation {
@@ -252,15 +284,16 @@ function Get-ATAPHostInformation {
 
 function Get-CompletionStatus {
 	param(
-		[AuditInfo[]] $AuditInfos
+		[string[]]
+		$Statuses
 	)
 
-	$totalCount = $AuditInfos.Count
+	$totalCount = $Statuses.Count
 	$status = @{
 		TotalCount = $totalCount
 	}
-	foreach ($value in [auditstatus].GetEnumValues()) {
-		$count = ($AuditInfos | Where-Object { $_.Audit -eq $value }).Count
+	foreach ($value in $StatusValues) {
+		$count = ($Statuses | Where-Object { $_ -eq $value }).Count
 		$status[$value] = @{
 			Count = $count
 			Percent = (100 * ($count / $totalCount)).ToString("0.00", [cultureinfo]::InvariantCulture)
@@ -278,7 +311,7 @@ function Get-OverallComplianceCSS {
 	)
 
 	$css = ""
-	$percent = $completionStatus[[AuditStatus]::True].Percent / 1
+	$percent = $completionStatus['True'].Percent / 1
 
 	if ($percent -gt 50) {
 		$degree = 180 + ((($percent-50)/1) * 3.6)
@@ -296,23 +329,30 @@ function Get-OverallComplianceCSS {
 	return $css
 }
 
-function Select-AuditInfo {
+function Select-ConfigAudit {
 	param(
-		[hashtable[]] $Sections
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[Alias('AuditInfos')]
+		[array]
+		$ConfigAudits,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$Subsections
 	)
 
-	[AuditInfo[]]$auditInfos = @()
-
-	foreach ($Section in $Sections) {
-		if ($Section.Keys -contains "AuditInfos") {
-			$auditInfos += $Section.AuditInfos
+	process {
+		$results = @()
+		if ($null -ne $ConfigAudits) {
+			$results += $ConfigAudits
 		}
-		if ($Section.Keys -contains "SubSections") {
-			$auditInfos += Select-AuditInfo -Sections $Section.SubSections
+		if ($null -ne $Subsections) {
+			foreach ($subsection in $Subsections) {
+				$results += $subsection | Select-ConfigAudit
+			}
 		}
+		return $results
 	}
-
-	return $auditInfos
 }
 
 function Get-ATAPHtmlReport {
@@ -329,115 +369,140 @@ function Get-ATAPHtmlReport {
 
 	[CmdletBinding()]
 	[OutputType([string])]
-	Param(
+	param(
 		[Parameter(Mandatory = $true)]
-		[string] $Path,
+		[string]
+		$Path,
 
-		[Parameter(Mandatory = $true)]
-		[string] $Title,
+		[Parameter(Mandatory = $false)]
+		[hashtable]
+		$HostInformation = (Get-ATAPHostInformation),
 
-		[Parameter(Mandatory = $true)]
-		[string] $ModuleName,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
 
-		[Parameter(Mandatory = $true)]
-		[string[]] $BasedOn,
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$ModuleName,
 
-		[hashtable] $HostInformation = (Get-ATAPHostInformation),
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]]
+		$BasedOn,
 
-		[hashtable[]] $Sections,
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$Sections,
 
 		[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
 	)
 
-	$scriptRoot = Split-Path -Parent $PSCommandPath
-
-	$cssDocument = if (-not $DarkMode) {
-		"/report.css"
-	}
-	else {
-		"/report.dark.css"
-	}
-	$cssPath = $scriptRoot | Join-path -ChildPath $cssDocument
-	$css = Get-Content $cssPath
-
-	$completionStatus = Get-CompletionStatus -AuditInfos (Select-AuditInfo -Sections $Sections)
+	$allConfigResults = foreach ($section in $Sections) { $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status' }
+	$completionStatus = Get-CompletionStatus $allConfigResults
 
 	# HTML <head> markup
-	$head = "<meta charset=`"UTF-8`">"
-	$head += "<meta name=`"viewport`" content=`"width=device-width, initial-scale=1.0`">"
-	$head += "<meta http-equiv=`"X-UA-Compatible`" content=`"ie=edge`">"
-	$head += "<title>$Title [$(Get-Date)]</title>"
-	$head += "<style>$css"
-	$head += Get-OverallComplianceCSS $completionStatus
-	$head += "</style>"
+	$head = htmlElement 'head' @{} {
+		htmlElement 'meta' @{ charset = 'UTF-8'} { }
+		htmlElement 'meta' @{ name = 'viewport'; content = 'width=device-width, initial-scale=1.0' } { }
+		htmlElement 'meta' @{ 'http-equiv' = 'X-UA-Compatible'; content = 'ie=edge'} { }
+		htmlElement 'title' @{} { "$Title [$(Get-Date)]" }
+		htmlElement 'style' @{} {
+			$cssEnding = ''
+			if ($DarkMode) { $cssEnding = '.dark' }
+			$cssPath = $ScriptRoot | Join-path -ChildPath "/report$($cssEnding).css"
+			Get-Content $cssPath
+			Get-OverallComplianceCSS $completionStatus
+		}
+	}
 
-	# HTML <body> markup
-	# Header
-	$body = "<div class=`"header content`">"
-	# $body += "<img alt=`"FB-Pro GmbH`" src=`"$($Settings.Logo)`">"
-	$body += $Settings.LogoSvg
-	$body += "<h1>$Title</h1>"
-	$body += "<p>Generated by the <i>$ModuleName</i> Module by FB Pro GmbH. Get it in the <a href=`"$($Settings.PackageLink)`">Audit Test Automation Package</a>.</p>"
-	$body += "<p>Based on $($BasedOn -join ", ").</p>"
-	$body += "</div>"
-	# Main section
-	$body += "<div class=`"main content`">"
-	$body += "<div id=`"host-information`">"
-	$body += "<p>This report was generated at $((Get-Date)) on $($HostInformation.Hostname).</p>"
-	# Host information
-	$body += "<table>"
-	$body += "<tbody>"
-	foreach ($Key in $HostInformation.Keys) {
-		$body += "<tr>"
-		$body += "<th scope=`"row`">$Key</th><td>$($HostInformation[$Key])</td>"
-		$body += "</tr>"
-	}
-	$body += "</tbody>"
-	$body += "</table>"
-	$body += "</div>"
-	if ($ComplianceStatus) {
-		$sliceColorClass = Convert-ATAPAuditStatusToHtmlClass 'True'
-		$body += '<div class="card">'
-		$body += '<h2>Compliance status</h2>'
-		$body += '<div class="donut-chart chart">'
-		$body += '<div class="slice one {0}"></div>' -f $sliceColorClass
-		$body += '<div class="slice two {0}"></div>' -f $sliceColorClass
-		$body += '<div class="chart-center"><span></span></div>'
-		$body += '</div>'
-		$body += '</div>'
-	}
-	# Summary
-	$body += "<h1 style=`"clear:both; padding-top: 50px;`">Summary</h1>"
-	# $body += "<p>"
-	$body += "<p>A total of {0} tests have been run. {1} resulted in false. {2} resulted in warning.</p>" -f `
-		$completionStatus.TotalCount, $completionStatus[[AuditStatus]::False].Count, $completionStatus[[AuditStatus]::Warning].Count
-	$body += "<div class=`"gauge`">"
-	foreach ($value in [auditstatus].GetEnumValues()) {
-		$htmlClass = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $value
-		$percent = $completionStatus[$value].Percent
-		$body += "<div class=`"gauge-meter {0}`" style=`"width: {1}%`" title=`"{2} {3} test(s), {1}%`"></div>" -f `
-			$htmlClass, $percent, $value.ToString(), $completionStatus[$value].Count
-	}
-	$body += "</div>"
-	$body += "<ol class=`"gauge-info`">"
-	foreach ($value in [auditstatus].GetEnumValues()) {
-		$htmlClass = Convert-ATAPAuditStatusToHtmlClass -AuditStatus $value
-		$percent = $completionStatus[$value].Percent
-		$body += "<li class=`"gauge-info-item`"><span class=`"auditstatus {0}`">{2}</span> {3} test(s) &#x2259; {1}%</li>" -f `
-			$htmlClass, $percent, $value.ToString(), $completionStatus[$value].Count
-	}
-	$body += "</ol>"
-	# Section navigation
-	$body += "<h1>Navigation</h1>"
-	$body += "<p>Click the link(s) below for quick access to a report section.</p>"
-	$body += Get-ATAPHtmlSectionLink -Sections $Sections
-	# Sections
-	$body += Get-ATAPHtmlSection -Sections $Sections
-	$body += "</div>"
+	$body = htmlElement 'body' @{} {
+		# Header
+		htmlElement 'div' @{ class = 'header content'} {
+			$Settings.LogoSvg
+			htmlElement 'h1' @{} { $Title }
+			htmlElement 'p' @{} {
+				"Generated by the <i>$ModuleName</i> Module by FB Pro GmbH. Get it in the <a href=`"$($Settings.PackageLink)`">Audit Test Automation Package</a>."
+			}
+			htmlElement 'p' @{} { "Based on $($BasedOn -join ", ")." }
+		}
+		# Main section
+		htmlElement 'div' @{ class = 'main content' } {
+			htmlElement 'div' @{ class = 'host-information' } {
+				htmlElement 'p' @{} { "This report was generated at $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
+				# Host information
+				htmlElement 'table' @{} {
+					htmlElement 'tbody' @{} {
+						foreach ($hostDatum in $HostInformation.GetEnumerator()) {
+							htmlElement 'tr' @{} {
+								htmlElement 'th' @{ scope = 'row' } { $hostDatum.Name }
+								htmlElement 'td' @{} { $hostDatum.Value }
+							}
+						}
+					}
+				}
+				# Show compliance status
+				if ($ComplianceStatus) {
+					$sliceColorClass = Get-HtmlClassFromStatus 'True'
+					htmlElement 'div' @{ class = 'card'} {
+						htmlElement 'h2' @{} { 'Compliance status' }
+						htmlElement 'div' @{ class = 'donut-chart chart'} {
+							htmlElement 'div' @{ class = "slice one $sliceColorClass" } { }
+							htmlElement 'div' @{ class = "slice two $sliceColorClass" } { }
+							htmlElement 'div' @{ class = 'chart-center' } { htmlElement 'span' @{} { } }
+						}
+					}
+				}
+				# Summary
+				htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
+				htmlElement 'p' @{} {
+					'A total of {0} tests have been run. {1} resulted in false. {2} resulted in warning.' -f @(
+						$completionStatus.TotalCount
+						$completionStatus['False'].Count
+						$completionStatus['Warning'].Count
+					)
+				}
+				# Status percentage gauge
+				htmlElement 'div' @{ class = 'gauge' } {
+					foreach ($value in $StatusValues) {
+						$count = $completionStatus[$value].Count
+						$htmlClass = Get-HtmlClassFromStatus $value
+						$percent = $completionStatus[$value].Percent
 
-	$html = "<!DOCTYPE html><html lang=`"en`"><head>$head</head><body>$body</body></html> "
+						htmlElement 'div' @{
+							class = "gauge-meter $htmlClass"
+							style = "width: $($percent)%"
+							title = "$value $count test(s), $($percent)%"
+						} { }
+					}
+				}
+				htmlElement 'ol' @{ class = 'gauge-info' } {
+					foreach ($value in $StatusValues) {
+						$count = $completionStatus[$value].Count
+						$htmlClass = Get-HtmlClassFromStatus $value
+						$percent = $completionStatus[$value].Percent
 
+						htmlElement 'li' @{ class = 'gauge-info-item' } {
+							htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
+							" $count test(s) &#x2259; $($percent)%"
+						}
+					}
+
+				}
+				# Table of Contents
+				htmlElement 'h1' @{} { 'Table of Contents' }
+				htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+				htmlElement 'ul' @{} {
+					foreach ($section in $Sections) { $section | Get-HtmlToc  }
+				}
+				# Report Sections Sections
+				foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+			}
+		}
+	}
+
+	$html = "<!DOCTYPE html><html lang=`"en`">$($head)$($body)</body></html> "
+	New-Item $path -type File
 	$html | Out-File $Path -Encoding utf8
 }
