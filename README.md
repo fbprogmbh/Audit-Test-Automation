@@ -52,7 +52,7 @@ Microsoft Windows Server 2019 | Single (Version: V1R2, Date: 2020-01-24) | Singl
 
 ### Install from Github (manual way)
 
-1. Download the release zip in version https://github.com/fbprogmbh/Audit-Test-Automation/releases
+1. Download themost recent release zip  https://github.com/fbprogmbh/Audit-Test-Automation/releases
 
 2. Unzip  the release package on your local machines, for example by using the following commands in Powershell or by using your favourite unzipping toolset.
 ```Powershell
