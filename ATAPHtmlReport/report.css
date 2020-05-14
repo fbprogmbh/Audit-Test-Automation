@@ -53,7 +53,7 @@ li a:hover {
 }
 
 .gauge {
-	height: 10px;
+	height: 25px;
 	background: #a7a7a7;
 	border-radius: 8px;
 	overflow: hidden;
