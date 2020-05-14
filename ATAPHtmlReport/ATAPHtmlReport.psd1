@@ -51,7 +51,7 @@ Author = 'Benedikt Böhme'
 CompanyName = 'FB Pro GmbH'
 
 # Copyright statement for this module
-Copyright = '(c) 2018 FB Pro GmbH. All rights reserved.'
+Copyright = '(c) 2020 FB Pro GmbH. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'A module part of the Audit Test Automation Package that creates html reports with tables and sections for audit reporting'
