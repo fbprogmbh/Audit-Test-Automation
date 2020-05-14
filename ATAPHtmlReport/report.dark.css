@@ -80,6 +80,10 @@ li a:hover {
 	display: inline;
 }
 
+section.collapsed > :not(:first-child) {
+	display: none;
+}
+
 table {
 	border-collapse: collapse;
 	font-family: Arial, sans-serif;
@@ -162,20 +166,20 @@ span.auditstatus {
 	margin: auto;
 }
 
-a.totop {
+.sectionAction {
 	display: inline-block;
-	width: 30px;
-	height: 30px;
 	text-align: center;
 	text-decoration: none;
-	margin: 0 15px;
+	margin: 0 0 0 15px;
+	padding: 0 8px;
 	color: #dddddd;
 	background-color: #212130;
 	border-radius: 8px;
 	font-weight: bold;
+	cursor: pointer;
 }
 
-a.totop:hover {
+.sectionAction:hover {
 	background-color: #43435f;
 	color: #ff9924;
 }

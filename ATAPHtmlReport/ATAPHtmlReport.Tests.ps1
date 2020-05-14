@@ -46,7 +46,11 @@ Describe "ATAPHtmlReport" {
 			Path = $testPath
 			Title = "My Benchmark Report"
 			ModuleName = "MyAudit"
-			BasedOn = "My Benchmark v1.0.0 - 10-05-2017"
+			BasedOn = @(
+				"My Benchmark v1.0.0 - 10-05-2017"
+				"My Benchmark 2 v1.0.0 - 10-05-2017"
+				"My Benchmark 3 v1.0.0 - 10-05-2017"
+			)
 			# DarkMode = $true
 			# ComplianceStatus = $true
 		}
