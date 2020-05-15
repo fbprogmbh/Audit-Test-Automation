@@ -53,9 +53,9 @@ li a:hover {
 }
 
 .gauge {
-	height: 10px;
+	height: 25px;
 	background: #a7a7a7;
-	border-radius: 5px;
+	border-radius: 8px;
 	overflow: hidden;
 }
 
@@ -78,6 +78,10 @@ li a:hover {
 
 .gauge-info .gauge-info-item span.auditstatus {
 	display: inline;
+}
+
+section.collapsed > :not(:first-child) {
+	display: none;
 }
 
 table {
@@ -162,20 +166,20 @@ span.auditstatus {
 	margin: auto;
 }
 
-a.totop {
+.sectionAction {
 	display: inline-block;
-	width: 30px;
-	height: 30px;
 	text-align: center;
 	text-decoration: none;
-	margin: 0 15px;
-	color: #a7a7a7;
-	background-color: #eeeeee;
+	margin: 0 0 0 15px;
+	padding: 0 8px;
+	color: #161616;
+	background-color: #dfdfdf;
 	border-radius: 8px;
 	font-weight: bold;
+	cursor: pointer;
 }
 
-a.totop:hover {
+.sectionAction:hover {
 	background-color: #dddddd;;
 	color: blue;
 }
