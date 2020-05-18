@@ -233,7 +233,7 @@ function Get-HtmlReportSection {
 		htmlElement 'section' @{} {
 			htmlElement 'h1' @{ id = $id } {
 				htmlElement 'span' @{ class = $class } { $Title }
-				htmlElement 'span' @{ class = 'sectionAction collapseButton' } { '+' }
+				htmlElement 'span' @{ class = 'sectionAction collapseButton' } { '-' }
 				htmlElement 'a' @{ href = '#toc'; class = 'sectionAction'} {
 					htmlElement 'span' @{ style = "font-size: 75%;" } { '&uarr;' }
 				}
@@ -510,9 +510,9 @@ function Get-ATAPHtmlReport {
 function collapseHandler(e) {
 	var targetSection = e.target.parentElement.parentElement;
 	if (targetSection.classList.toggle('collapsed')) {
-		e.target.innerText = '-';
-	} else {
 		e.target.innerText = '+';
+	} else {
+		e.target.innerText = '-';
 	}
 }
 
