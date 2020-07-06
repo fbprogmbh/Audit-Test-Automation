@@ -8,6 +8,43 @@ function ConvertTo-NTAccountUser {
 	)
 
 	process {
+		# Convert Domaingroups to german
+		$language = Get-WinSystemLocale
+		if ($language.Name -match "de-DE"){
+			if ($name -eq "Enterprise Admins"){
+				$name = "Organisations-Admins"
+			}
+			elseif ($name -eq "Domain Admins"){
+				$name = "Domänen-Admins"
+			}
+		}
+
+		# Convert friendlynames to SID
+		if ($name -eq "Local account"){
+			$name = "S-1-5-113"
+		}
+		elseif ($name -eq "Administrators"){
+			$name = "S-1-5-32-544"
+		}
+		elseif ($name -eq "NT AUTHORITY\Authenticated Users"){
+			$name = "S-1-5-11"
+		}
+		elseif ($name -eq "Local Service"){
+			$name = "S-1-5-19"
+		}
+		elseif ($name -eq "Network Service"){
+			$name = "S-1-5-20"
+		}
+		elseif ($name -eq "Guests"){
+			$name = "S-1-5-32-546"
+		}
+		elseif ($name -eq "Remote Desktop Users"){
+			$name = "S-1-5-32-555"
+		}
+		elseif ($name -eq "Service"){
+			$name = "S-1-5-6"
+		}
+
 		# Identity doesn't exist on when Hyper-V isn't installed
 		if ($Name -eq "NT VIRTUAL MACHINE\Virtual Machines" -and
 			(Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State -ne "Enabled") {
