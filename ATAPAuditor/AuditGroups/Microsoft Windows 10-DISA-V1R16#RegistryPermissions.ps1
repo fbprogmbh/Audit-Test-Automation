@@ -77,7 +77,7 @@ function Convert-RegistryRights {
                 $idKey = $_.IdentityReference.Value
                 $mappedRights = Convert-RegistryRights -OriginalRights $_.RegistryRights
                 "Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
-            }.GetNewClosure()
+            }
         
             return @{
                 Status = "False"
@@ -130,7 +130,7 @@ function Convert-RegistryRights {
                 $idKey = $_.IdentityReference.Value
                 $mappedRights = Convert-RegistryRights -OriginalRights $_.RegistryRights
                 "Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
-            }.GetNewClosure()
+            }
         
             return @{
                 Status = "False"
@@ -183,7 +183,7 @@ function Convert-RegistryRights {
                 $idKey = $_.IdentityReference.Value
                 $mappedRights = Convert-RegistryRights -OriginalRights $_.RegistryRights
                 "Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
-            }.GetNewClosure()
+            }
         
             return @{
                 Status = "False"
