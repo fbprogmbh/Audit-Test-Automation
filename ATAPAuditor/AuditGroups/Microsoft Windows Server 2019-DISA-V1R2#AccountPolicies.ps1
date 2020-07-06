@@ -232,29 +232,3 @@
         }
     }
 }
-[AuditTest] @{
-    Id = "WN19-SO-000210"
-    Task = "Windows Server 2019 must not allow anonymous SID/Name translation."
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["LSAAnonymousNameLookup"]
-        
-        if ($null -eq $setPolicy) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        if ($setPolicy -ne 0) {
-            return @{
-                Message = "'LSAAnonymousNameLookup' currently set to: $setPolicy. Expected: 0"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
