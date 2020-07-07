@@ -1,4 +1,4 @@
-# Common
+﻿# Common
 function Get-AuditPolicySubcategoryGUID {
 	Param(
         [Parameter(Mandatory = $true)]

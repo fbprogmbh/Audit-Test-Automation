@@ -1,4 +1,4 @@
-# Common
+﻿# Common
 function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
 	[OutputType([hashtable])]
@@ -20,29 +20,20 @@ function ConvertTo-NTAccountUser {
 		}
 
 		# Convert friendlynames to SID
-		if ($name -eq "Local account"){
-			$name = "S-1-5-113"
+		$map = @{
+			"Administrators" = "S-1-5-32-544"
+			"Guests" = "S-1-5-32-546"
+			"Local account" = "S-1-5-113"
+			"Local Service" = "S-1-5-19"
+			"Network Service" = "S-1-5-20"
+			"NT AUTHORITY\Authenticated Users" = "S-1-5-11"
+			"Remote Desktop Users" = "S-1-5-32-555"
+			"Service" = "S-1-5-6"
+			"Users" = "S-1-5-32-545"
 		}
-		elseif ($name -eq "Administrators"){
-			$name = "S-1-5-32-544"
-		}
-		elseif ($name -eq "NT AUTHORITY\Authenticated Users"){
-			$name = "S-1-5-11"
-		}
-		elseif ($name -eq "Local Service"){
-			$name = "S-1-5-19"
-		}
-		elseif ($name -eq "Network Service"){
-			$name = "S-1-5-20"
-		}
-		elseif ($name -eq "Guests"){
-			$name = "S-1-5-32-546"
-		}
-		elseif ($name -eq "Remote Desktop Users"){
-			$name = "S-1-5-32-555"
-		}
-		elseif ($name -eq "Service"){
-			$name = "S-1-5-6"
+
+		if ($map.ContainsKey($name)) {
+			$name = $map[$name]
 		}
 
 		# Identity doesn't exist on when Hyper-V isn't installed

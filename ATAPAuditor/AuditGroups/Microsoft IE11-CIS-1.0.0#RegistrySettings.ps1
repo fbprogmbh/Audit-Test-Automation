@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "1.1"
     Task = "Set 'Turn on Enhanced Protected Mode' to 'Enabled'"
     Test = {

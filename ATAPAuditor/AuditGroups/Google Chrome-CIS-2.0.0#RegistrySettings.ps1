@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "1.1.1"
     Task = "(L1) Ensure 'Enable curtaining of remote access hosts' is set to 'Disabled'"
     Test = {

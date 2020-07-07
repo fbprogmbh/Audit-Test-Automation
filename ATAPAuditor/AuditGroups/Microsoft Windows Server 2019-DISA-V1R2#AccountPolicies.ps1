@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN19-AC-000010"
     Task = "Windows Server 2019 account lockout duration must be configured to 15 minutes or greater."
     Test = {

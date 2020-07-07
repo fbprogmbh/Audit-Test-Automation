@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN10-CC-000310"
     Task = "Users must be prevented from changing installation options."
     Test = {

@@ -1,4 +1,4 @@
-# Common
+﻿# Common
 using namespace System.Security.AccessControl
 
 # [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.PowerShell.Commands.Management')

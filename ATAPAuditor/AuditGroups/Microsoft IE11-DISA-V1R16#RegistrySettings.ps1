@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "DTBI014-IE11"
     Task = "Turn off Encryption Support must be enabled."
     Test = {

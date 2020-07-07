@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN16-CC-000280"
     Task = "Administrator accounts must not be enumerated during elevation."
     Test = {

@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN19-00-000320"
     Task = "Windows Server 2019 must not have the Fax Server role installed."
     Test = {

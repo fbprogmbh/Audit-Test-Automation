@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN10-00-000100"
     Task = "Internet Information System (IIS) or its subcomponents must not be installed on a workstation."
     Test = {

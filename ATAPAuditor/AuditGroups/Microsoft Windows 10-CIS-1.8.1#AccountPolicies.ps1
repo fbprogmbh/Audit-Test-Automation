@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "1.1.1"
     Task = "(L1) Ensure 'Enforce password history' is set to '24 or more password(s)'"
     Test = {

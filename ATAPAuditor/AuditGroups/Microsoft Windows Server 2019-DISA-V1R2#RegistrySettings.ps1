@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN19-CC-000240"
     Task = "Windows Server 2019 administrator accounts must not be enumerated during elevation."
     Test = {

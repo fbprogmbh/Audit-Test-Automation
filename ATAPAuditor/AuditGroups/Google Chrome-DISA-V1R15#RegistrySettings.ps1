@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "DTBC-0001"
     Task = "Firewall traversal from remote host must be disabled."
     Test = {

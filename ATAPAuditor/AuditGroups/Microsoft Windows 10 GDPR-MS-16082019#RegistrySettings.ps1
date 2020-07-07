@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "1"
     Task = "Turn off Automatic Root Certificates Update"
     Test = {

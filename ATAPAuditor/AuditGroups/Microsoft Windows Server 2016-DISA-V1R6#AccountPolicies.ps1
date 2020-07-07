@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN16-AC-000010"
     Task = "Windows 2016 account lockout duration must be configured to 15 minutes or greater."
     Test = {

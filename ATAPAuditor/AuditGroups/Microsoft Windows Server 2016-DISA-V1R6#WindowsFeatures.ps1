@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "WN16-00-000350"
     Task = "The Fax Server role must not be installed."
     Test = {

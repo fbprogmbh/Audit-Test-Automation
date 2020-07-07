@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "3.1.1"
     Task = "Configuration of the lowest telemetry-level"
     Test = {

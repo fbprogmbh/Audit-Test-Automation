@@ -1,4 +1,4 @@
-[AuditTest] @{
+﻿[AuditTest] @{
     Id = "DTOO420"
     Task = "The ability to store user passwords in Skype must be disabled."
     Test = {
