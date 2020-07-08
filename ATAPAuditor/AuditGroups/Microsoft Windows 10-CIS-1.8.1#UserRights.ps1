@@ -9,7 +9,7 @@ function ConvertTo-NTAccountUser {
 
 	process {
 		# Convert Domaingroups to german
-		$language = Get-WinSystemLocale
+		$language = Get-UICulture
 		if ($language.Name -match "de-DE"){
 			if ($name -eq "Enterprise Admins"){
 				$name = "Organisations-Admins"

@@ -272,7 +272,7 @@ function Get-ATAPHostInformation {
 	return [ordered]@{
 		"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
 		"Operating System"          = $infos.Caption
-		"Installation Language"     = (Get-WinSystemLocale).DisplayName
+		"Installation Language"     = ((Get-UICulture).DisplayName)
 		"Build Number"              = $infos.BuildNumber
 		"Free physical memory (GB)" = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
 		"Free disk space(GB)      " = "{0:N1}" -f ($disk.FreeSpace / 1GB)
