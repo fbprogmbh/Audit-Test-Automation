@@ -2631,7 +2631,6 @@ function Get-IIS10ApplicationHostReport {
 	$Configuration | Test-IISHttpErrorsHidden
 	$Configuration | Test-IISAspNetTracingDisabled
 	$Configuration | Test-IISCookielessSessionState
-	$Configuration | Test-IISCookiesHttpOnly
 
 	# Section 4
 	$Configuration | Test-IISMaxAllowedContentLength
