@@ -1907,40 +1907,6 @@ function Test-IISETWLoggingEnabled {
 #
 # This section contains a crucial configuration setting for running file transfer protocol (FTP).
 
-# 6.0
-function Test-IISFtpIsDisabled {
-	<#
-	.Synopsis
-		Ensure FTP is disabled
-	.Description
-
-	#>
-
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-		[Site] $Site
-	)
-
-	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
-
-		[array]$ftpBindings = $Site.Bindings | Where-Object -Property Protocol -eq FTP
-
-		if ($ftpBindings.Count -gt 0 -or (Get-WindowsFeature Web-Ftp-Server).InstallState -eq [InstallState]::Installed) {
-			$message = "FTP is not disabled. FTP is using bindings and/or is at least installed."
-			$audit = "False"
-		}
-
-		@{
-			Id      = "6.0"
-			Task    = "Ensure FTP is disabled"
-			Status  = $audit
-			Message = $message
-		} | Write-Output
-	}
-}
-
 # 6.1
 function Test-IISFtpRequestsEncrypted {
 	<#
