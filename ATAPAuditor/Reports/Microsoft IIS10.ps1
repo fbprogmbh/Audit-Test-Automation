@@ -136,23 +136,29 @@ function Test-IISDirectoryBrowsing {
 		$message = $MESSAGE_ALLGOOD
 		$audit = "True"
 
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup){
 		# Ensure directory browsing is installed
-		if ((Get-WindowsFeature Web-Dir-Browsing).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/directoryBrowse"
-			$section = $Configuration.GetSection($path)
+			if ((Get-WindowsFeature Web-Dir-Browsing).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/directoryBrowse"
+				$section = $Configuration.GetSection($path)
 
-			$Enabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
+				$Enabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
 
-			if ($Enabled -eq $true) {
-				$message = "Directory Browsing is enabled"
-				$audit = "False"
-			}
-			elseif ($null -eq $Enabled) {
-				$message = "Directory Browsing not explicit set to false"
-				$audit = "Warning"
+				if ($Enabled -eq $true) {
+					$message = "Directory Browsing is enabled"
+					$audit = "False"
+				}
+				elseif ($null -eq $Enabled) {
+					$message = "Directory Browsing not explicit set to false"
+					$audit = "Warning"
+				}
 			}
 		}
-
+		else{
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
+		}
 		@{
 			Id      = "1.3"
 			Task    = "Ensure 'directory browsing' is set to disabled"
@@ -264,17 +270,24 @@ function Test-IISAnonymouseUserIdentity {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup){
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.webServer/security/authentication/anonymousAuthentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.webServer/security/authentication/anonymousAuthentication"
+			$section = $Configuration.GetSection($path)
 
-		$username = $section | Get-IISConfigAttributeValue -AttributeName "userName"
+			$username = $section | Get-IISConfigAttributeValue -AttributeName "userName"
 
-		if ($username -ne "") {
-			$message = "Username is set to: $username"
-			$audit = "False"
+			if ($username -ne "") {
+				$message = "Username is set to: $username"
+				$audit = "False"
+			}
+		}
+		else{
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -307,15 +320,17 @@ function Test-IISGlobalAuthorization {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		# Ensure URL Authentication is installed
-		if ((Get-WindowsFeature Web-Url-Auth).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/authorization"
-			$section = $Configuration.GetSection($path)
+			# Ensure URL Authentication is installed
+			if ((Get-WindowsFeature Web-Url-Auth).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/authorization"
+				$section = $Configuration.GetSection($path)
 
-			[array]$elements = $section.GetCollection() `
+				[array]$elements = $section.GetCollection() `
 				| Where-Object {
 					$accessType = $_ | Get-IISConfigAttributeValue -AttributeName "accessType"
 					$users = $_ | Get-IISConfigAttributeValue -AttributeName "users"
@@ -323,13 +338,18 @@ function Test-IISGlobalAuthorization {
 					($accessType -eq "Allow") -and ($users -eq "*" -or $roles -eq "?")
 				}
 
-			if ($elements.Count -ne 0) {
-				$message = "Authorization rule to allow all or anonymous users is set"
-				$audit = "False"
+				if ($elements.Count -ne 0) {
+					$message = "Authorization rule to allow all or anonymous users is set"
+					$audit = "False"
+				}
+			}
+			else {
+				$message = "URL Authorization is not installed"
+				$audit = "Warning"
 			}
 		}
 		else {
-			$message = "URL Authorization is not installed"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
 			$audit = "Warning"
 		}
 
@@ -359,17 +379,24 @@ function Test-IISAuthenticatedPricipals {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/authentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/authentication"
+			$section = $Configuration.GetSection($path)
 
-		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+			$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-		if (($mode -ne "Windows") -and ($mode -ne "Forms")) {
-			$message = "Check authentication principals"
-			$audit = "False"
+			if (($mode -ne "Windows") -and ($mode -ne "Forms")) {
+				$message = "Check authentication principals"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -397,30 +424,37 @@ function Test-IISFormsAuthenticationSSL {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/authentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/authentication"
+			$section = $Configuration.GetSection($path)
 
-		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+			$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-		if ((Get-IISModules) -contains "FormsAuthentication") {
-			# Ensure authentication mode is set to Forms
-			if ($mode -eq "Forms") {
+			if ((Get-IISModules) -contains "FormsAuthentication") {
+				# Ensure authentication mode is set to Forms
+				if ($mode -eq "Forms") {
 
-				$requireSSL = $section `
+					$requireSSL = $section `
 					| Get-IISConfigElement -ChildElementName "forms" `
 					| Get-IISConfigAttributeValue -AttributeName "requireSSL"
 
-				if (-not $requireSSL) {
-					$message = "Forms authentication does not require SSL"
-					$audit = "False"
+					if (-not $requireSSL) {
+						$message = "Forms authentication does not require SSL"
+						$audit = "False"
+					}
 				}
+			}
+			else {
+				$message = "Forms authentication is not installed"
+				$audit = "Warning"
 			}
 		}
 		else {
-			$message = "Forms authentication is not installed"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
 			$audit = "Warning"
 		}
 
@@ -448,27 +482,34 @@ function Test-IISFormsAuthenticationCookies {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/authentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/authentication"
+			$section = $Configuration.GetSection($path)
 
-		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+			$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-		if ((Get-IISModules) -contains "FormsAuthentication") {
-			if ($mode -eq "Forms") {
-				$cookieless = $section | Get-IISConfigElement -ChildElementName "forms" `
+			if ((Get-IISModules) -contains "FormsAuthentication") {
+				if ($mode -eq "Forms") {
+					$cookieless = $section | Get-IISConfigElement -ChildElementName "forms" `
 					| Get-IISConfigAttributeValue -AttributeName "cookieless"
 
-				if ($cookieless -ne "UseCookies") {
-					$message = "Forms authentication is not set to use cookies"
-					$audit = "False"
+					if ($cookieless -ne "UseCookies") {
+						$message = "Forms authentication is not set to use cookies"
+						$audit = "False"
+					}
 				}
+			}
+			else {
+				$message = "Forms authentication is not installed"
+				$audit = "Warning"
 			}
 		}
 		else {
-			$message = "Forms authentication is not installed"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
 			$audit = "Warning"
 		}
 
@@ -498,28 +539,35 @@ function Test-IISFormsAuthenticationProtection {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/authentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/authentication"
+			$section = $Configuration.GetSection($path)
 
-		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+			$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-		if ((Get-IISModules) -contains "FormsAuthentication") {
-			if ($mode -ieq "Forms") {
-				$protection = $section `
+			if ((Get-IISModules) -contains "FormsAuthentication") {
+				if ($mode -ieq "Forms") {
+					$protection = $section `
 					| Get-IISConfigElement -ChildElementName "forms" `
 					| Get-IISConfigAttributeValue -AttributeName "protection"
 
-				if ($protection -ne "All") {
-					$message = "Cookie Protection Mode is not set to ALL"
-					$audit = "False"
+					if ($protection -ne "All") {
+						$message = "Cookie Protection Mode is not set to ALL"
+						$audit = "False"
+					}
 				}
+			}
+			else {
+				$message = "Forms authentication is not installed"
+				$audit = "Warning"
 			}
 		}
 		else {
-			$message = "Forms authentication is not installed"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
 			$audit = "Warning"
 		}
 
@@ -596,22 +644,29 @@ function Test-IISPasswordFormatNotClear {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/authentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/authentication"
+			$section = $Configuration.GetSection($path)
 
-		$passwordFormat = $section `
+			$passwordFormat = $section `
 			| Get-IISConfigElement -ChildElementName "forms" `
 			| Get-IISConfigElement -ChildElementName "credentials" `
 			| Get-IISConfigAttributeValue -AttributeName "passwordFormat"
 
-		if ($passwordFormat -eq "Clear" ) {
-			$message = "Credentials passwordFormat set to 'Clear'"
-			$audit = "False"
+			if ($passwordFormat -eq "Clear" ) {
+				$message = "Credentials passwordFormat set to 'Clear'"
+				$audit = "False"
+			}
 		}
-
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
+		}
+	
 		@{
 			Id      = "2.7"
 			Task    = "Ensure 'passwordFormat' is not set to clear"
@@ -664,21 +719,28 @@ function Test-IISCredentialsNotStored {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/authentication"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/authentication"
+			$section = $Configuration.GetSection($path)
 
-		$credentials = $section `
+			$credentials = $section `
 			| Get-IISConfigElement -ChildElementName "forms" `
 			| Get-IISConfigElement -ChildElementName "credentials"
 
-		if ($credentials.IsLocallyStored) {
-			$message = "'credentials' is stored in configuration"
-			$audit = "False"
+			if ($credentials.IsLocallyStored) {
+				$message = "'credentials' is stored in configuration"
+				$audit = "False"
+			}
 		}
-
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
+		}
+	
 		@{
 			Id      = "2.8"
 			Task    = "Ensure 'credentials' are not stored in configuration files"
@@ -767,17 +829,24 @@ function Test-IISDebugOff {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/compilation"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/compilation"
+			$section = $Configuration.GetSection($path)
 
-		$debug = $section | Get-IISConfigAttributeValue -AttributeName "debug"
+			$debug = $section | Get-IISConfigAttributeValue -AttributeName "debug"
 
-		if ($debug) {
-			$message = "Debug is ON"
-			$audit = "False"
+			if ($debug) {
+				$message = "Debug is ON"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -806,17 +875,24 @@ function Test-IISCustomErrorsNotOff {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/customErrors"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/customErrors"
+			$section = $Configuration.GetSection($path)
 
-		$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
+			$mode = $section | Get-IISConfigAttributeValue -AttributeName "mode"
 
-		if ($mode -eq "Off") {
-			$message = "Custom errors are 'OFF'"
-			$audit = "False"
+			if ($mode -eq "Off") {
+				$message = "Custom errors are 'OFF'"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -843,17 +919,24 @@ function Test-IISHttpErrorsHidden {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.webServer/httpErrors"
-		$section = $Configuration.GetSection($path)
+			$path = "system.webServer/httpErrors"
+			$section = $Configuration.GetSection($path)
 
-		$errorMode = $section | Get-IISConfigAttributeValue -AttributeName "errorMode"
+			$errorMode = $section | Get-IISConfigAttributeValue -AttributeName "errorMode"
 
-		if (($errorMode -ne "Custom") -and ($errorMode -ne "DetailedLocalOnly")) {
-			$message = "HTTP detailed errors are set to 'Detailed'"
-			$audit = "False"
+			if (($errorMode -ne "Custom") -and ($errorMode -ne "DetailedLocalOnly")) {
+				$message = "HTTP detailed errors are set to 'Detailed'"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -880,17 +963,24 @@ function Test-IISAspNetTracingDisabled {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/trace"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/trace"
+			$section = $Configuration.GetSection($path)
 
-		$traceEnabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
+			$traceEnabled = $section | Get-IISConfigAttributeValue -AttributeName "enabled"
 
-		if ($traceEnabled) {
-			$message = "trace is enabled"
-			$audit = "FALSE"
+			if ($traceEnabled) {
+				$message = "trace is enabled"
+				$audit = "FALSE"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -947,17 +1037,24 @@ function Test-IISCookielessSessionState {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/sessionState"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/sessionState"
+			$section = $Configuration.GetSection($path)
 
-		$cookieless = $section | Get-IISConfigAttributeValue -AttributeName "cookieless"
+			$cookieless = $section | Get-IISConfigAttributeValue -AttributeName "cookieless"
 
-		if (($cookieless -ne "UseCookies") -and ($cookieless -ne "False")) {
-			$message = "sessionState set to $cookieless"
-			$audit = "False"
+			if (($cookieless -ne "UseCookies") -and ($cookieless -ne "False")) {
+				$message = "sessionState set to $cookieless"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -984,17 +1081,24 @@ function Test-IISCookiesHttpOnly {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.web/httpCookies"
-		$section = $Configuration.GetSection($path)
+			$path = "system.web/httpCookies"
+			$section = $Configuration.GetSection($path)
 
-		$httpOnlyCookies = $section | Get-IISConfigAttributeValue -AttributeName "httpOnlyCookies"
+			$httpOnlyCookies = $section | Get-IISConfigAttributeValue -AttributeName "httpOnlyCookies"
 
-		if (-not $httpOnlyCookie) {
-			$message = "httpOnlyCookies set to $httpOnlyCookies"
-			$audit = "False"
+			if (-not $httpOnlyCookies) {
+				$message = "httpOnlyCookies set to $httpOnlyCookies"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1118,14 +1222,20 @@ function Test-IISDotNetTrustLevel {
 		$siteAppPool = $site.Applications["/"].ApplicationPoolName
 		$appPoolVersion = (Get-IISAppPool -Name $siteAppPool).managedRuntimeVersion
 
-		$level = Get-IISConfigSection -CommitPath $Site.name `
-			-SectionPath "system.web/trust" `
+		if ($appPoolVersion -like "v4.*") {
+			$message = "This only applies to .Net 2.0. Future versions have stopped supporting this feature."
+			$audit = "Warning"
+		}
+		else {
+			$level = Get-IISConfigSection -CommitPath $Site.name `
+				-SectionPath "system.web/trust" `
 			| Get-IISConfigAttributeValue -AttributeName "level"
 
-		# medium trust level should be set in .NET 2.*, but not in later versions
-		if (($appPoolVersion -like "v2.*" -and $level -ne "medium") -or $appPoolVersion -notlike "v4.*") {
-			$message = "TrustLevel set to $level"
-			$audit = "False"
+			# medium trust level should be set in .NET 2.*, but not in later versions
+			if (($appPoolVersion -like "v2.*" -and $level -ne "medium") -or $appPoolVersion -notlike "v4.*") {
+				$message = "TrustLevel set to $level"
+				$audit = "False"
+			}
 		}
 
 		@{
@@ -1159,29 +1269,36 @@ function Test-IISMaxAllowedContentLength {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		# Ensure request filering is installed
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
-			$section = $Configuration.GetSection($path)
+			# Ensure request filering is installed
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
+				$section = $Configuration.GetSection($path)
 
-			$maxContentLength = $section `
+				$maxContentLength = $section `
 				| Get-IISConfigElement -ChildElementName "requestLimits" `
 				| Get-IISConfigAttributeValue -AttributeName "maxAllowedContentLength"
 
-			if ($maxContentLength -ge 0) {
-				$message += "`n maxContentLength: $maxContentLength"
+				if ($maxContentLength -ge 0) {
+					$message += "`n maxContentLength: $maxContentLength"
+				}
+				else {
+					$message = "maxContentLength not configured"
+					$audit = "False"
+				}
 			}
 			else {
-				$message = "maxContentLength not configured"
+				$message = "Request Filering is not installed"
 				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1208,29 +1325,36 @@ function Test-IISMaxURLRequestFilter {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		# Ensure request filering is installed
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
-			$section = $Configuration.GetSection($path)
+			# Ensure request filering is installed
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
+				$section = $Configuration.GetSection($path)
 
-			$maxURLRequestFilter = $section `
+				$maxURLRequestFilter = $section `
 				| Get-IISConfigElement -ChildElementName "requestLimits" `
 				| Get-IISConfigAttributeValue -AttributeName "maxURL"
 
-			if ($maxURLRequestFilter -ge 1) {
-				$message += "`n maxURLRequestFilter: $maxURLRequestFilter"
+				if ($maxURLRequestFilter -ge 1) {
+					$message += "`n maxURLRequestFilter: $maxURLRequestFilter"
+				}
+				else {
+					$message = "maxURLRequestFilter not configured"
+					$audit = "False"
+				}
 			}
 			else {
-				$message = "maxURLRequestFilter not configured"
+				$message = "Request Filering is not installed"
 				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 
@@ -1258,29 +1382,36 @@ function Test-IISMaxQueryStringRequestFilter {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		# Ensure request filering is installed
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
-			$section = $Configuration.GetSection($path)
+			# Ensure request filering is installed
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
+				$section = $Configuration.GetSection($path)
 
-			$maxQueryStringRequestFilter = $section `
+				$maxQueryStringRequestFilter = $section `
 				| Get-IISConfigElement -ChildElementName "requestLimits" `
 				| Get-IISConfigAttributeValue -AttributeName "maxQueryString"
 
-			if ($maxQueryStringRequestFilter -ge 1) {
-				$message += "`n maxQueryStringRequestFilter: $maxQueryStringRequestFilter"
+				if ($maxQueryStringRequestFilter -ge 1) {
+					$message += "`n maxQueryStringRequestFilter: $maxQueryStringRequestFilter"
+				}
+				else {
+					$message = "maxQueryStringRequestFilter not configured"
+					$audit = "False"
+				}
 			}
 			else {
-				$message = "maxQueryStringRequestFilter not configured"
+				$message = "Request Filering is not installed"
 				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1307,25 +1438,32 @@ function Test-IISNonASCIICharURLForbidden {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		# Ensure request filering is installed
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
-			$section = $Configuration.GetSection($path)
+			# Ensure request filering is installed
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
+				$section = $Configuration.GetSection($path)
 
-			$allowHighBitCharacters = $section `
+				$allowHighBitCharacters = $section `
 				| Get-IISConfigAttributeValue -AttributeName "allowHighBitCharacters"
 
-			if ($allowHighBitCharacters) {
-				$message = "non-ASCII characters in URLs are allowed"
+				if ($allowHighBitCharacters) {
+					$message = "non-ASCII characters in URLs are allowed"
+					$audit = "False"
+				}
+			}
+			else {
+				$message = "Request Filering is not installed"
 				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1351,25 +1489,32 @@ function Test-IISRejectDoubleEncodedRequests {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		# Ensure request filering is installed
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
-			$section = $Configuration.GetSection($path)
+			# Ensure request filering is installed
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
+				$section = $Configuration.GetSection($path)
 
-			$allowDoubleEscaping = $section`
+				$allowDoubleEscaping = $section`
 				| Get-IISConfigAttributeValue -AttributeName "allowDoubleEscaping"
 
-			if ($allowDoubleEscaping) {
-				$message = "Rejecting Double-Encoded requests not set"
+				if ($allowDoubleEscaping) {
+					$message = "Rejecting Double-Encoded requests not set"
+					$audit = "False"
+				}
+			}
+			else {
+				$message = "Request Filering is not installed"
 				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1396,29 +1541,36 @@ function Test-IISHTTPTraceMethodeDisabled {
 	)
 
 	process {
-		$message = "HTTP Trace Method is not filtered"
-		$audit = "False"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = "HTTP Trace Method is not filtered"
+			$audit = "False"
 
-		# Ensure request filering is installed
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
-			$section = $Configuration.GetSection($path)
+			# Ensure request filering is installed
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
+				$section = $Configuration.GetSection($path)
 
-			[array]$httpTraceMethod = $section.GetCollection("verbs") `
+				[array]$httpTraceMethod = $section.GetCollection("verbs") `
 				| Where-Object {
 					$trace = $_ | Get-IISConfigAttributeValue -AttributeName "verb"
 					$allowed = $_ | Get-IISConfigAttributeValue -AttributeName "allowed"
 					($trace -eq "trace") -and (-not $allowed)
 				}
 
-			if ($httpTraceMethod.Count -eq 1) {
-				$message = $MESSAGE_ALLGOOD
-				$audit = "True"
+				if ($httpTraceMethod.Count -eq 1) {
+					$message = $MESSAGE_ALLGOOD
+					$audit = "True"
+				}
+			}
+			else {
+				$message = "Request Filering is not installed"
+				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1445,27 +1597,34 @@ function Test-IISBlockUnlistedFileExtensions {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
-			$path = "system.webServer/security/requestFiltering"
+			if ((Get-WindowsFeature Web-Filtering).InstallState -eq [InstallState]::Installed) {
+				$path = "system.webServer/security/requestFiltering"
 
-			$section = $Configuration.GetSection($path)
+				$section = $Configuration.GetSection($path)
 
-			$allowUnlisted = $section `
+				$allowUnlisted = $section `
 				| Get-IISConfigElement -ChildElementName "fileExtensions" `
 				| Get-IISConfigAttributeValue -AttributeName "allowUnlisted"
 
 
-			if ($allowUnlisted) {
-				$message = "Unlisted file extensions allowed"
+				if ($allowUnlisted) {
+					$message = "Unlisted file extensions allowed"
+					$audit = "False"
+				}
+			}
+			else {
+				$message = "Request Filering is not installed"
 				$audit = "False"
 			}
 		}
 		else {
-			$message = "Request Filering is not installed"
-			$audit = "False"
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1492,17 +1651,24 @@ function Test-IISHandlerDenyWrite {
 	)
 
 	process {
-		$message = $MESSAGE_ALLGOOD
-		$audit = "True"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = $MESSAGE_ALLGOOD
+			$audit = "True"
 
-		$path = "system.webServer/handlers"
-		$section = $Configuration.GetSection($path)
-		$accessPolicy = ($section | Get-IISConfigAttributeValue -AttributeName "accessPolicy").Split(",")
+			$path = "system.webServer/handlers"
+			$section = $Configuration.GetSection($path)
+			$accessPolicy = ($section | Get-IISConfigAttributeValue -AttributeName "accessPolicy").Split(",")
 
-		if ((($accessPolicy -contains "Script") -or ($accessPolicy -contains "Execute")) `
-			-and ($accessPolicy -contains "Write")) {
-			$message = "Handler is granted write and script/execute"
-			$audit = "False"
+			if ((($accessPolicy -contains "Script") -or ($accessPolicy -contains "Execute")) `
+					-and ($accessPolicy -contains "Write")) {
+				$message = "Handler is granted write and script/execute"
+				$audit = "False"
+			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -1906,38 +2072,45 @@ function Test-IISHSTSHeaderSet {
 	)
 
 	process {
-		$message = "HSTS Header not set"
-		$audit = "False"
+		#Ensure $Configuration is not empty
+		if ($Configuration.RootSectionGroup) {
+			$message = "HSTS Header not set"
+			$audit = "False"
 
-		$path = "system.webServer/httpProtocol"
-		$section = $Configuration.GetSection($path)
+			$path = "system.webServer/httpProtocol"
+			$section = $Configuration.GetSection($path)
 
-		[array]$customHeaders = $section.GetCollection("customHeaders") `
+			[array]$customHeaders = $section.GetCollection("customHeaders") `
 			| Where-Object {
-				$name  = $_ | Get-IISConfigAttributeValue -AttributeName "name"
+				$name = $_ | Get-IISConfigAttributeValue -AttributeName "name"
 				$name -eq "Strict-Transport-Security"
 			}
 
-		if ($customHeaders.Count -eq 1) {
-			$value = $customHeaders[0] | Get-IISConfigAttributeValue -AttributeName "value"
-			$pattern = [regex]::new("max-age=(?<maxage>[0-9]*)")
-			$match = $pattern.Match($value)
+			if ($customHeaders.Count -eq 1) {
+				$value = $customHeaders[0] | Get-IISConfigAttributeValue -AttributeName "value"
+				$pattern = [regex]::new("max-age=(?<maxage>[0-9]*)")
+				$match = $pattern.Match($value)
 
-			if ($match.Success) {
-				[int]$maxAge = $match.Groups["maxage"].Value
-				if ($maxAge -eq 0) {
-					$message = "Max-age should be at least be higher than 0. It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
-					$audit = "False"
-				}
-				elseif ($maxAge -lt 480) {
-					$message = "It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
-					$audit = "Warning"
-				}
-				else {
-					$message = $MESSAGE_ALLGOOD + ". Max-age is set at $maxAge"
-					$audit = "True"
+				if ($match.Success) {
+					[int]$maxAge = $match.Groups["maxage"].Value
+					if ($maxAge -eq 0) {
+						$message = "Max-age should be at least be higher than 0. It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
+						$audit = "False"
+					}
+					elseif ($maxAge -lt 480) {
+						$message = "It is recommended to set max-age to at least 480 seconds. Max-age is set at $maxAge"
+						$audit = "Warning"
+					}
+					else {
+						$message = $MESSAGE_ALLGOOD + ". Max-age is set at $maxAge"
+						$audit = "True"
+					}
 				}
 			}
+		}
+		else {
+			$message = "Cannot read configuration file, the reference to the directory may not be correct or present"
+			$audit = "Warning"
 		}
 
 		@{
@@ -2071,16 +2244,16 @@ function Test-IISTLSDisabled {
 }
 
 # 7.5
-function Test-IISTLS1_1Enabled {
+function Test-IISTLS1_1Disabled {
 	<#
 	.Synopsis
-		Ensure TLS 1.1 is enabled
+		Ensure TLS 1.1 is disabled
 	.Description
-		Enabling TLS 1.1 is required for backward compatibility.
+		TLS 1.1 is required for backward compatibility. Ensure you fully test your application to ensure that backwards compatibility is not needed. If it is, build in exceptions as necessary for backwards compatibility.
 	#>
 
-	$message = $MESSAGE_ALLGOOD
-	$audit = "True"
+	$message = "TLS 1.1 not disabled"
+	$audit = "False"
 
 
 	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server"
@@ -2091,17 +2264,25 @@ function Test-IISTLS1_1Enabled {
 		$Key = Get-Item $path
 		if ($null -ne $Key.GetValue("Enabled", $null)) {
 			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-			# Ensure it is enabled
+			# Ensure it is set to 0
 			if ($value -eq 0) {
-				$message = "TLS 1.1 disabled"
-				$audit = "False"
+				$message = $MESSAGE_ALLGOOD
+				$audit = "True"
+			}
+		}
+		elseif ($null -ne $Key.GetValue("DisabledByDefault", $null)) {
+			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "DisabledByDefault"
+			# Ensure it is set to 1
+			if ($value -eq 1) {
+				$message = $MESSAGE_ALLGOOD
+				$audit = "True"
 			}
 		}
 	}
 
 	@{
 		Id      = "7.5"
-		Task    = "Ensure TLS 1.1 is enabled"
+		Task    = "Ensure TLS 1.1 is disabled"
 		Status  = $audit
 		Message = $message
 	} | Write-Output
@@ -2452,7 +2633,7 @@ function Get-IIS10SystemReport {
 	Test-IISSSL2Disabled
 	Test-IISSSL3Disabled
 	Test-IISTLSDisabled
-	Test-IISTLS1_1Enabled
+	Test-IISTLS1_1Disabled
 	Test-IISTLS1_2Enabled
 	Test-IISNullCipherDisabled
 	Test-IISDESCipherDisabled
