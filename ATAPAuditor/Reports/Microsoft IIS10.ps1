@@ -1224,7 +1224,7 @@ function Test-IISDotNetTrustLevel {
 
 		if ($appPoolVersion -like "v4.*") {
 			$message = "This only applies to .Net 2.0. Future versions have stopped supporting this feature."
-			$audit = "Warning"
+			$audit = "None"
 		}
 		else {
 			$level = Get-IISConfigSection -CommitPath $Site.name `
@@ -2208,7 +2208,7 @@ function Test-IISTLSDisabled {
 		SSL and early TLS are not considered strong cryptography and cannot be used as a security control after June 30, 2016.
 	#>
 
-	$message = "TLS 1.0 not disabled"
+	$message = "TLS 1.0 is enabled"
 	$audit = "False"
 
 	$path = "HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server"
@@ -2252,7 +2252,7 @@ function Test-IISTLS1_1Disabled {
 		TLS 1.1 is required for backward compatibility. Ensure you fully test your application to ensure that backwards compatibility is not needed. If it is, build in exceptions as necessary for backwards compatibility.
 	#>
 
-	$message = "TLS 1.1 not disabled"
+	$message = "TLS 1.1 is enabled"
 	$audit = "False"
 
 
