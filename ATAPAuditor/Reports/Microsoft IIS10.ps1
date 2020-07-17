@@ -2730,7 +2730,7 @@ function Get-SiteAudit {
 		$Site | Test-IISETWLoggingEnabled
 
 		# Section 6
-		$Site | Test-IISFtpIsDisabled
+		
 
 		# Section 7
 
