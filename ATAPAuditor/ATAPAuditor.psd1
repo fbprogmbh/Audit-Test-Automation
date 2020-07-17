@@ -1,6 +1,6 @@
 ﻿@{
 RootModule = 'ATAPAuditor.psm1'
-ModuleVersion = '4.3'
+ModuleVersion = '4.4'
 GUID = '1662a599-4e3a-4f72-a844-9582077b589e'
 Author = 'Benedikt Böhme'
 CompanyName = 'FB Pro GmbH'
