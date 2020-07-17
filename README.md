@@ -48,42 +48,43 @@ Microsoft Windows Server 2016 | Single (Version: V1R6, Date: 2018-10-26) | Singl
 Microsoft Windows Server 2019 | Single (Version: V1R2, Date: 2020-01-24) | Single (Version: 1.1.0, Date: 2020-01-10)
 
 
-## Download, installation and usage
+## Installation
 
-### Install from Github (manual way)
+### Manual Installation
 
-1. Download the most [recent release](/releases/latest)
+See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/powershell/scripting/developer/module/installing-a-powershell-module) guide for more specific instructions.
 
-2. Unzip  the release package on your local machines, for example by using the following commands in Powershell or by using your favourite unzipping toolset.
+1. Download the most [recent release](https://github.com/fbprogmbh/Audit-Test-Automation/releases/latest)
+
+2. Extract the archive, for example by using the following commands in Powershell or by using your favourite unzipping toolset.
+
 ```Powershell
 Expand-Archive -Path ".\Audit TAP.zip" -DestinationPath "Audit TAP"
 ```
+3. Copy the `ATAPAuditor` and the `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
-3. Import the modules "ATAPAuditor" and "ATAPHtmlReport" to any of the paths of `$env:PSModulePath` by using the following code:
+### Installation from PS Gallery
+
 ```Powershell
-Import-Module -Name .\ATAPAuditor\ATAPAuditor.psm1 -Verbose
-Import-Module -Name .\ATAPHtmlReport\ATAPHtmlReport.psm1 -verbose
+Install-Module -Name ATAPAuditor
 ```
 
-4. Create a new report in the `Documents\ATAPReports` folder. You can create a report for any report named in the above table.
-The force parameter creates the folder if it doesn't exist. For using an alternative Path, see customization.
+## Usage
+
+Optionally, import the `ATAPAuditor` module:
+
+```Powershell
+Import-Module -Name ATAPAuditor
+```
+
+By default the module creates a new report in the `Documents\ATAPReports` folder. You can create a report for any report named in the [above table](#reports). Just substitute the `ReportName` with the name of the benchmark.
+The force parameter creates the folder if it doesn't exist. For using an alternative Path, see [customization](#customization).
 
 ```Powershell
 Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
 Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
 ```
 
-### Install from PS Gallery
-
-1. You need to install both modules:
-```Powershell
-Install-Module -Name ATAPAuditor
-```
-2. Create a new report in the `Documents\ATAPReports` folder. The force parameter creates the folder if it doesn't exist. For using an alternative Path, see customization.
-
-```Powershell
-Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
-```
 ## Good to know
 
 * Make sure your execution policy is set to at least remoteSigned (the scripts are not digitally signed)
