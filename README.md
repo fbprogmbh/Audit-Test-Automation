@@ -78,7 +78,6 @@ Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
 1. You need to install both modules:
 ```Powershell
 Install-Module -Name ATAPAuditor
-Install-Module -Name ATAPHtmlReport
 ```
 2. Create a new report in the `Documents\ATAPReports` folder. The force parameter creates the folder if it doesn't exist. For using an alternative Path, see customization.
 
