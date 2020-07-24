@@ -607,7 +607,7 @@ function Test-SQLUseNonStandardPorts {
 #>
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
-        [Parameter(Mandatory = $true, ParameterSetName = "By Instance")]
+        [Parameter(Mandatory = $true, ParameterSetName = "ByInstance")]
         [string] $SqlInstance,
 
         [string] $MachineName = $env:COMPUTERNAME,
@@ -2210,10 +2210,10 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
 
     try {
         if ($PsCmdlet.ParameterSetName -eq "ByInstance" -and $sqlInstance -ne "MSSQLSERVER") {
-            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
+            $sqlResults = Invoke-Sqlcmd -Query $query -ServerInstance $instanceName -ErrorAction Stop
         }
         else {
-            $sqlResult = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
+            $sqlResults = Invoke-Sqlcmd -Query $query -ServerInstance $MachineName -ErrorAction Stop
         }
 
         $auditSpecifications = @()
@@ -2239,7 +2239,7 @@ function Test-SQLLoginAuditingIsSetToFailedAndSuccessfulLogins {
                 $foundSPecifications += $auditSpecification.audit_action_name
             }
         }
-        if ($null -eq $sqlResults) {
+        if ($null -eq $sqlResult) {
             $obj | Add-Member NoteProperty Status("TrackLogins file not found")
             $obj | Add-Member NoteProperty Audit("Warning")
         }
