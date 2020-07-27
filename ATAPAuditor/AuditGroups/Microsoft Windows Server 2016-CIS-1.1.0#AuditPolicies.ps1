@@ -100,7 +100,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -110,16 +110,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -157,7 +157,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -167,16 +167,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -214,7 +214,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -224,16 +224,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -271,7 +271,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -281,16 +281,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -328,7 +328,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -338,16 +338,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -385,7 +385,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -395,16 +395,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -442,7 +442,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -452,16 +452,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -499,7 +499,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -509,16 +509,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -556,7 +556,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -566,16 +566,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -613,7 +613,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -623,16 +623,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -670,7 +670,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -680,16 +680,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -727,7 +727,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -737,16 +737,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -784,7 +784,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -794,16 +794,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -841,7 +841,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -851,16 +851,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -898,7 +898,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -908,16 +908,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -955,7 +955,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -965,16 +965,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1012,7 +1012,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1022,16 +1022,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1069,7 +1069,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1079,16 +1079,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1126,7 +1126,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1136,16 +1136,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1183,7 +1183,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1193,16 +1193,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1240,7 +1240,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1250,16 +1250,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1297,7 +1297,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1307,16 +1307,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1354,7 +1354,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1364,16 +1364,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1411,7 +1411,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1421,16 +1421,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1468,7 +1468,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1478,16 +1478,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1525,7 +1525,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1535,16 +1535,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure") {
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1582,7 +1582,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1592,16 +1592,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1639,7 +1639,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
@@ -1649,16 +1649,16 @@ function Get-AuditPolicySubcategoryGUID {
             | Where-Object { $_ } `
             | Select-Object -Skip 3
         
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure)$") {
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "False"
+                Status = "Warning"
                 Message = "Couldn't get setting."
             }
         }
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
