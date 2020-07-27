@@ -37,9 +37,9 @@
                 Status = "False"
             }
         }
-        if (($setPolicy -gt 5184000 -or $setPolicy -le 0)) {
+        if (($setPolicy -gt 60 -or $setPolicy -le 0)) {
             return @{
-                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 5184000 and x > 0"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 60 and x > 0"
                 Status = "False"
             }
         }
@@ -63,9 +63,9 @@
                 Status = "False"
             }
         }
-        if (($setPolicy -lt 86400)) {
+        if (($setPolicy -lt 1)) {
             return @{
-                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 86400"
+                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1"
                 Status = "False"
             }
         }
@@ -115,9 +115,9 @@
                 Status = "False"
             }
         }
-        if ($setPolicy -ne $True) {
+        if ($setPolicy -ne 1) {
             return @{
-                Message = "'PasswordComplexity' currently set to: $setPolicy. Expected: True"
+                Message = "'PasswordComplexity' currently set to: $setPolicy. Expected: 1"
                 Status = "False"
             }
         }
@@ -141,9 +141,9 @@
                 Status = "False"
             }
         }
-        if ($setPolicy -ne $False) {
+        if ($setPolicy -ne 0) {
             return @{
-                Message = "'ClearTextPassword' currently set to: $setPolicy. Expected: False"
+                Message = "'ClearTextPassword' currently set to: $setPolicy. Expected: 0"
                 Status = "False"
             }
         }
@@ -167,9 +167,9 @@
                 Status = "False"
             }
         }
-        if (($setPolicy -lt 900)) {
+        if (($setPolicy -lt 15)) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 900"
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
                 Status = "False"
             }
         }
@@ -219,9 +219,9 @@
                 Status = "False"
             }
         }
-        if (($setPolicy -lt 900)) {
+        if (($setPolicy -lt 15)) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 900"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
                 Status = "False"
             }
         }
