@@ -11,6 +11,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -lt 15)) {
             return @{
                 Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
@@ -37,6 +39,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -gt 3 -or $setPolicy -eq 0)) {
             return @{
                 Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 3 and x != 0"
@@ -63,6 +67,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -lt 15)) {
             return @{
                 Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
@@ -89,6 +95,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -lt 24)) {
             return @{
                 Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x >= 24"
@@ -115,6 +123,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -gt 60)) {
             return @{
                 Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 60"
@@ -141,6 +151,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -lt 1)) {
             return @{
                 Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1"
@@ -167,6 +179,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if (($setPolicy -lt 14)) {
             return @{
                 Message = "'MinimumPasswordLength' currently set to: $setPolicy. Expected: x >= 14"
@@ -193,6 +207,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if ($setPolicy -ne 1) {
             return @{
                 Message = "'PasswordComplexity' currently set to: $setPolicy. Expected: 1"
@@ -219,6 +235,8 @@
                 Status = "False"
             }
         }
+        $setPolicy = [long]$setPolicy
+        
         if ($setPolicy -ne 0) {
             return @{
                 Message = "'ClearTextPassword' currently set to: $setPolicy. Expected: 0"
