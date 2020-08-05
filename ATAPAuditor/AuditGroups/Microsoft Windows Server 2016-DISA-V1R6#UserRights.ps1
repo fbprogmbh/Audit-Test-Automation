@@ -30,6 +30,7 @@ function ConvertTo-NTAccountUser {
 			"Remote Desktop Users" = "S-1-5-32-555"
 			"Service" = "S-1-5-6"
 			"Users" = "S-1-5-32-545"
+			"NT VIRTUAL MACHINE\Virtual Machines" = "S-1-5-83-0"
 		}
 
 		if ($map.ContainsKey($name)) {
@@ -37,7 +38,7 @@ function ConvertTo-NTAccountUser {
 		}
 
 		# Identity doesn't exist on when Hyper-V isn't installed
-		if ($Name -eq "NT VIRTUAL MACHINE\Virtual Machines" -and
+		if ($Name -eq "S-1-5-83-0" -and
 			(Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State -ne "Enabled") {
 			return $null
 		}
