@@ -592,12 +592,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "17.3.1"
     Task = "(L1) Ensure 'Audit PNP Activity' is set to include 'Success'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Plug and Play Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Plug and Play Events'"
                 Status = "None"
             }
         }
@@ -877,12 +877,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "17.5.2"
     Task = "(L1) Ensure 'Audit Group Membership' is set to include 'Success'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Group Membership
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Group Membership"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Group Membership'"
                 Status = "None"
             }
         }
@@ -1048,12 +1048,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "17.5.5"
     Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
     Test = {
-        # Get the audit policy for the subcategory Other Logon Logoff Events
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon Logoff Events"
+        # Get the audit policy for the subcategory Other Logon/Logoff Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Other Logon Logoff Events'"
+                Message = "Cannot get Subcategory 'Other Logon/Logoff Events'"
                 Status = "None"
             }
         }
@@ -1561,12 +1561,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "17.7.4"
     Task = "(L1) Ensure 'Audit MPSSVC Rule-Level Policy Change' is set to 'Success and Failure'"
     Test = {
-        # Get the audit policy for the subcategory Mpssvc Rule Level Policy Change
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Mpssvc Rule Level Policy Change"
+        # Get the audit policy for the subcategory Mpssvc Rule-Level Policy Change
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Mpssvc Rule-Level Policy Change"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Mpssvc Rule Level Policy Change'"
+                Message = "Cannot get Subcategory 'Mpssvc Rule-Level Policy Change'"
                 Status = "None"
             }
         }

@@ -478,12 +478,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "17.3.1"
     Task = "(L1) Ensure 'Audit PNP Activity' is set to 'Success'"
     Test = {
-        # Get the audit policy for the subcategory Pnp Activity
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Pnp Activity"
+        # Get the audit policy for the subcategory Plug and Play Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Pnp Activity'"
+                Message = "Cannot get Subcategory 'Plug and Play Events'"
                 Status = "None"
             }
         }
@@ -934,12 +934,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "17.5.5"
     Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
     Test = {
-        # Get the audit policy for the subcategory Other Logon Logoff Events
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon Logoff Events"
+        # Get the audit policy for the subcategory Other Logon/Logoff Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Other Logon Logoff Events'"
+                Message = "Cannot get Subcategory 'Other Logon/Logoff Events'"
                 Status = "None"
             }
         }
