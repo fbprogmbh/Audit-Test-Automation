@@ -43,6 +43,7 @@ class ReportSection {
 class Report {
 	[string] $Title
 	[string] $ModuleName
+	[string] $AuditorVersion
 	[hashtable] $HostInformation
 	[string[]] $BasedOn
 	[ReportSection[]] $Sections
