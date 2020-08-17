@@ -188,23 +188,21 @@
                 -Name "DisableInternetFilesInPV" `
                 | Select-Object -ExpandProperty "DisableInternetFilesInPV"
         
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
+            return @{
+                Message = "Registry value found."
+                Status = "False"
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant. Registry value not found."
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant. Registry key not found."
+                Status = "True"
             }
         }
         
