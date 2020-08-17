@@ -238,8 +238,12 @@ function Invoke-ATAPReport {
 	)
 
 	$script:loadedResources = @{}
+	# Load the module manifest
+	$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 
-	return (& "$RootPath\Reports\$ReportName.ps1")
+	[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
+	$report.AuditorVersion = $moduleInfo.ModuleVersion
+	return $report
 }
 
 <#
