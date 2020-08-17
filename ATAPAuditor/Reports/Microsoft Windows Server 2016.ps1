@@ -2,7 +2,6 @@
 [Report] @{
 	Title = "Windows Server 2016 Audit Report"
 	ModuleName = "ATAPAuditor"
-	AuditorVersion = '4.8'
 	BasedOn = @(
 		"Windows Server 2016 Security Technical Implementation Guide, Version: V1R6, Date: 2018-10-26"
 		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.1.0, Date: 2018-10-15"

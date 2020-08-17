@@ -1,7 +1,6 @@
 ﻿[Report] @{
 	Title = 'Microsoft Skype for Business 2016 Audit Report'
 	ModuleName = 'ATAPAuditor'
-	AuditorVersion = '4.8'
 	BasedOn = 'DISA Microsoft Skype for Business 2016 Security Technical Implementation Guide, Version: V1R1, Date: 2016-11-14'
 	Sections = @(
 		[ReportSection] @{

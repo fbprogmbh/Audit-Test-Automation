@@ -1,7 +1,6 @@
 ﻿[Report] @{
 	Title = "Windows 10 Report"
 	ModuleName = "ATAPAuditor"
-	AuditorVersion = '4.8'
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Enterprise Release 1909 Benchmark, Version: 1.8.1, Date: 2020-01-28"
 		"Windows 10 Security Technical Implementation Guide, Version: V1R16, Date: 2019-10-25"

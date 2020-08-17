@@ -1,7 +1,6 @@
 ﻿[Report] @{
 	Title = 'Google Chrome Audit Report'
 	ModuleName = 'ATAPAuditor'
-	AuditorVersion = '4.8'
 	BasedOn = @(
 		"CIS Google Chrome Benchmark, Version: 2.0.0, Date: 2019-05-17"
 		"DISA Google Chrome Security Technical Implementation Guide, Version: V1R15, Date: 2019-01-28"
