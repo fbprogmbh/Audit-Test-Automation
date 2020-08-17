@@ -1,6 +1,7 @@
 ﻿[Report] @{
 	Title = "Windows 10 GDPR Report"
 	ModuleName = "ATAPAuditor"
+	AuditorVersion = '4.8'
 	BasedOn = @(
 		'Bundesamt für Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31'
 		'GDPR settings by Microsoft, Version: 16082019, Date: 2019-08-16'

@@ -2756,6 +2756,7 @@ function Get-IISHostInformation {
 [Report] @{
 	Title = "IIS 10 Benchmarks"
 	ModuleName = "ATAPAuditor"
+	AuditorVersion = '4.8'
 	BasedOn = "CIS Microsoft IIS 10 Benchmark, Version: 1.1.0, Date: 12-11-2018"
 	HostInformation = Get-IISHostInformation
 	Sections = @(

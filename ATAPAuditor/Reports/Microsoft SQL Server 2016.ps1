@@ -2704,6 +2704,7 @@ switch ($PsCmdlet.ParameterSetName) {
 [Report] @{
     Title = "SQL 2016 Benchmarks"
     ModuleName = "ATAPAuditor"
+    AuditorVersion = '4.8'
     BasedOn = "CIS Microsoft SQL Server 2016 Benchmark, Version: 1.0.0, Date: 2017-11-08"
     Sections = @(
         foreach ($InstanceAudit in $InstanceAudits) {

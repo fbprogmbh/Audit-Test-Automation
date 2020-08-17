@@ -818,6 +818,7 @@ $currentLockPrefs = Get-FirefoxLockPrefs
 [Report] @{
 	Title = 'Mozilla Firefox Audit Report'
 	ModuleName = 'ATAPAuditor'
+	AuditorVersion = '4.8'
 	BasedOn = @(
 		'CIS Mozilla Firefox 38 ESR Benchmark, Version: 1.0.0, Date: 2015-12-31'
 		'DISA Mozilla FireFox Security Technical Implementation Guide, Version: V4R24, Date: 2019-01-25'
