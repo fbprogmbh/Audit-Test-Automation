@@ -581,8 +581,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\excel\security\protectedview" `
-                -Name "DisableInternetFilesInPV " `
-                | Select-Object -ExpandProperty "DisableInternetFilesInPV "
+                -Name "DisableInternetFilesInPV" `
+                | Select-Object -ExpandProperty "DisableInternetFilesInPV"
         
             return @{
                 Message = "Registry value found."
@@ -1011,8 +1011,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\excel\security" `
-                -Name "ExcelBypassEncryptedMacroScan " `
-                | Select-Object -ExpandProperty "ExcelBypassEncryptedMacroScan "
+                -Name "ExcelBypassEncryptedMacroScan" `
+                | Select-Object -ExpandProperty "ExcelBypassEncryptedMacroScan"
         
             return @{
                 Message = "Registry value found."
@@ -1189,8 +1189,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\excel\security\protectedview" `
-                -Name "DisableUnsafeLocationsInPV " `
-                | Select-Object -ExpandProperty "DisableUnsafeLocationsInPV "
+                -Name "DisableUnsafeLocationsInPV" `
+                | Select-Object -ExpandProperty "DisableUnsafeLocationsInPV"
         
             return @{
                 Message = "Registry value found."
@@ -1223,8 +1223,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\excel\security\filevalidation" `
-                -Name "openinprotectedview " `
-                | Select-Object -ExpandProperty "openinprotectedview "
+                -Name "openinprotectedview" `
+                | Select-Object -ExpandProperty "openinprotectedview"
         
             return @{
                 Message = "Registry value found."
@@ -1257,8 +1257,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\excel\security\filevalidation" `
-                -Name "DisableEditFromPV " `
-                | Select-Object -ExpandProperty "DisableEditFromPV "
+                -Name "DisableEditFromPV" `
+                | Select-Object -ExpandProperty "DisableEditFromPV"
         
             if ($regValue -ne 1) {
                 return @{
@@ -1293,8 +1293,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\Excel\security\protectedview" `
-                -Name "DisableAttachmentsInPV " `
-                | Select-Object -ExpandProperty "DisableAttachmentsInPV "
+                -Name "DisableAttachmentsInPV" `
+                | Select-Object -ExpandProperty "DisableAttachmentsInPV"
         
             if ($regValue -ne 0) {
                 return @{
@@ -1365,8 +1365,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\software\policies\Microsoft\office\16.0\excel\security" `
-                -Name "webservicefunctionwarnings " `
-                | Select-Object -ExpandProperty "webservicefunctionwarnings "
+                -Name "webservicefunctionwarnings" `
+                | Select-Object -ExpandProperty "webservicefunctionwarnings"
         
             return @{
                 Message = "Registry value found."

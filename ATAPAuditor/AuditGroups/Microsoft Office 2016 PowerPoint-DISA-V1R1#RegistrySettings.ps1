@@ -185,8 +185,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\protectedview" `
-                -Name "DisableInternetFilesInPV " `
-                | Select-Object -ExpandProperty "DisableInternetFilesInPV "
+                -Name "DisableInternetFilesInPV" `
+                | Select-Object -ExpandProperty "DisableInternetFilesInPV"
         
             return @{
                 Message = "Registry value found."
@@ -683,8 +683,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\protectedview" `
-                -Name "DisableAttachmentsInPV " `
-                | Select-Object -ExpandProperty "DisableAttachmentsInPV "
+                -Name "DisableAttachmentsInPV" `
+                | Select-Object -ExpandProperty "DisableAttachmentsInPV"
         
             if ($regValue -ne 0) {
                 return @{
@@ -1221,8 +1221,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\PowerPoint\security\filevalidation" `
-                -Name "openinprotectedview " `
-                | Select-Object -ExpandProperty "openinprotectedview "
+                -Name "openinprotectedview" `
+                | Select-Object -ExpandProperty "openinprotectedview"
         
             return @{
                 Message = "Registry value found."
