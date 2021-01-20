@@ -24,28 +24,31 @@ The package consists of the following modules:
 
 The *ATAPAuditor* contains the following reports based on the following benchmarks including the version number. 
 How to read the table below:
-* Both columns "DISA STIG" and "CIS benchmark" are filled - great, report directly shows conformity to both standards
-* "Single" references to one specific benchmark
-* "Multiple" directly checks several benchmarks and creates a consolidated report for you
-* "None" says we still have work to do ;-)
 
-Benchmark | DISA STIG | CIS benchmark
------------- | ------------- | -------------
-Google Chrome | Single (Version: V1R15, Date: 2019-01-28) | Single (Version: 2.0.0, Date: 2019-05-17)
-Mozilla Firefox | Single (Version: V4R24, Date: 2019-01-25) | Single (Version: 1.0.0, Date: 2015-12-31)
-Microsoft IE11 | Single (Version: V1R16, Date: 2018-06-08 | Single (Version: 1.0.0, Date: 2014-12-01)
-Microsoft IIS10 | None | Single (Version: 1.1.0, Date: 2018-11-12)
-Microsoft Office 2016 | Multiple (see below) | None
-Microsoft Office 2016 Excel | Single (Version: V1R2, Date: 2017-09-19) | None
-Microsoft Office 2016 Outlook | Single (Version: V1R2, Date: 2017-05-08) | None
-Microsoft Office 2016 PowerPoint | Single (Version: V1R1, Date: 2016-11-02) | None
-Microsoft Office 2016 SkypeForBusiness | Single (Version: V1R1, Date: 2016-11-02) | None
-Microsoft Office 2016 Word | Single (Version: V1R1, Date: 2016-11-02) | None
-Microsoft SQL Server 2016 | None | Single (Version: 1.0.0, Date: 2017-11-08)
-Microsoft Windows 10 | Single (Version: V1R16, Date: 2019-10-25) | Single (Version: 1.8.1, Date: 2020-01-28)
-Microsoft Windows 10 GDPR | None | None
-Microsoft Windows Server 2016 | Single (Version: V1R6, Date: 2018-10-26) | Single (Version: 1.1.0, Date: 2018-10-15)
-Microsoft Windows Server 2019 | Single (Version: V1R2, Date: 2020-01-24) | Single (Version: 1.1.0, Date: 2020-01-10)
+* The entries in the **DISA** column specify the version of the DISA STIG that is used.
+* The entries in the **CIS** column specify the version of the CIS benchmark that is used.
+* The entries in the **MS** column specify the version of the Microsoft security baseline that is used.
+
+Report | DISA | CIS | MS | BSI
+--------- | -----| --- | -- | ---
+Google Chrome | V1R15 | 2.0.0 | - | -
+Mozilla Firefox | V4R24 | 1.0.0 | - | -
+Microsoft Edge | - | - | 85 | -
+Microsoft IE11 | V1R16 | 1.0.0 | - | -
+Microsoft IIS10 | - | 1.1.0 | - | -
+Microsoft Office 2016 Excel | V1R2 | - | - | -
+Microsoft Office 2016 Outlook | V1R2 | - | - | -
+Microsoft Office 2016 PowerPoint | V1R1 | - | - | -
+Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | -
+Microsoft Office 2016 Word | V1R1 | - | - | -
+Microsoft SQL Server 2016 | - | 1.0.0 | - | -
+Microsoft Windows 7 | - | 3.1.0 | - | -
+Microsoft Windows 10 | V1R16 | 1.8.1 | - | -
+Microsoft Windows 10 GDPR | - | - | - | 16082019
+Microsoft Windows Server 2016 | V1R6 | 1.1.0 | - | -
+Microsoft Windows Server 2019 | V1R2 | 1.1.0 | - | -
+
+The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.
 
 
 ## Installation
