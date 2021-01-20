@@ -97,9 +97,7 @@ Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 ```
 
 * The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
-
-* Some reports are running longer than a few seconds due to hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs ;-)
- 
+* Some reports take more than a few seconds because hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs 😉
 * If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
 
 ```Powershell
