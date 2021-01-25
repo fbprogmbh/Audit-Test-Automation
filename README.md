@@ -44,7 +44,7 @@ Microsoft Office 2016 Word | V1R1 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | -
 Microsoft Windows 10 | V1R16 | 1.8.1 | - | -
-Microsoft Windows 10 GDPR | - | - | - | 16082019
+Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1
 Microsoft Windows Server 2016 | V1R6 | 1.1.0 | - | -
 Microsoft Windows Server 2019 | V1R2 | 1.1.0 | - | -
 
