@@ -853,6 +853,150 @@
     }
 }
 [AuditTest] @{
+    Id = "2.6.1"
+    Task = "(L1) Ensure 'Configure allowed app/extension types' is set to 'Enabled' with the values 'extension' speciﬁed"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionAllowedTypes" `
+                -Name "1" `
+                | Select-Object -ExpandProperty "1"
+        
+            if ($regValue -ne "extension") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: extension"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.6.2"
+    Task = "(L1) Ensure 'Configure allowed app/extension types' is set to 'Enabled' with the value 'hosted_app'speciﬁed"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionAllowedTypes" `
+                -Name "2" `
+                | Select-Object -ExpandProperty "2"
+        
+            if ($regValue -ne "hosted_app") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: hosted_app"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.6.3"
+    Task = "(L1) Ensure 'Configure allowed app/extension types' is set to 'Enabled' with the value 'platform_app' speciﬁed"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionAllowedTypes" `
+                -Name "3" `
+                | Select-Object -ExpandProperty "3"
+        
+            if ($regValue -ne "platform_app") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: platform_app"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.6.4"
+    Task = "(L1) Ensure 'Configure allowed app/extension types' is set to 'Enabled' with the value 'theme'speciﬁed"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionAllowedTypes" `
+                -Name "4" `
+                | Select-Object -ExpandProperty "4"
+        
+            if ($regValue -ne "theme") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: theme"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "2.7"
     Task = "(L2) Ensure 'Configure native messaging blacklist' is set to 'Enabled' (`"*`" for all messaging applications)"
     Test = {
@@ -865,6 +1009,42 @@
             if ($regValue -ne "*") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: *"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.8"
+    Task = "(L1) Ensure 'Enable saving passwords to the password manager' is Configured"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome" `
+                -Name "PasswordManagerEnabled" `
+                | Select-Object -ExpandProperty "PasswordManagerEnabled"
+        
+            if (($regValue -ne 1) -and ($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 0"
                     Status = "False"
                 }
             }
@@ -1225,6 +1405,42 @@
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.19"
+    Task = "(L1) Ensure 'Enable Chrome Cleanup on Windows' is Configured"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome" `
+                -Name "ChromeCleanupEnabled" `
+                | Select-Object -ExpandProperty "ChromeCleanupEnabled"
+        
+            if (($regValue -ne 0) -and ($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0 or x == 1"
                     Status = "False"
                 }
             }
