@@ -59,6 +59,34 @@
     Task = " Ensure 'Reset account lockout counter after' is set greater or equal 15"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
+        
+        if ($null -eq $setPolicy) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        $setPolicy = [long]$setPolicy
+        
+        if (($setPolicy -lt 15)) {
+            return @{
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "0102"
+    Task = " Ensure 'Account lockout duration' is set to '15 or more minute(s)'"
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
         
         if ($null -eq $setPolicy) {

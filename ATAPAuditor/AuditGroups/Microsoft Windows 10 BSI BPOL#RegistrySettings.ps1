@@ -143,42 +143,6 @@
     }
 }
 [AuditTest] @{
-    Id = "0030"
-    Task = " Ensure 'Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Setup" `
-                -Name "Retention" `
-                | Select-Object -ExpandProperty "Retention"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "0032"
     Task = "Ensure 'Setup: Specify the maximum log file size (KB)' is set to 32768."
     Test = {
@@ -1339,42 +1303,6 @@
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
                 -Name "EnableRegistrars" `
                 | Select-Object -ExpandProperty "EnableRegistrars"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "0142"
-    Task = "Ensure 'Configure Offer Remote Assistance' is set to 'Disabled'."
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\policies\Microsoft\Windows NT\Terminal Services" `
-                -Name "fAllowUnsolicited" `
-                | Select-Object -ExpandProperty "fAllowUnsolicited"
         
             if ($regValue -ne 0) {
                 return @{
@@ -2740,13 +2668,13 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppPrivacy" `
-                -Name "LetAppsAccessPhone" `
-                | Select-Object -ExpandProperty "LetAppsAccessPhone"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WcmSvc\GroupPolicy" `
+                -Name "fMinimizeConnections" `
+                | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($regValue -ne 2) {
+            if ($regValue -ne 3) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 3"
                     Status = "False"
                 }
             }
@@ -3209,8 +3137,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
-                -Name "EnableBDEWithNoTPM" `
-                | Select-Object -ExpandProperty "EnableBDEWithNoTPM"
+                -Name "UseAdvancedStartup" `
+                | Select-Object -ExpandProperty "UseAdvancedStartup"
         
             if ($regValue -ne 1) {
                 return @{
@@ -7236,42 +7164,6 @@
 }
 [AuditTest] @{
     Id = "0378"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' set to 'Do not allow 256-bit recovery key'."
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
-                -Name "OSRecoveryKey" `
-                | Select-Object -ExpandProperty "OSRecoveryKey"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "0379"
     Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' set to 'Do not allow 256-bit recovery key'."
     Test = {
         try {

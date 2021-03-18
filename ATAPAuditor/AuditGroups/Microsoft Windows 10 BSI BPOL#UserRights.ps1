@@ -180,7 +180,7 @@ function ConvertTo-NTAccountUser {
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeIncreaseQuotaPrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-2"
+            "S-1-5-19"
             "S-1-5-20"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -288,7 +288,7 @@ function ConvertTo-NTAccountUser {
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSystemtimePrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-2"
+            "S-1-5-19"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -324,7 +324,7 @@ function ConvertTo-NTAccountUser {
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTimeZonePrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-2"
+            "S-1-5-19"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -360,7 +360,7 @@ function ConvertTo-NTAccountUser {
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePagefilePrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-2"
+            "S-1-5-19"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -432,7 +432,7 @@ function ConvertTo-NTAccountUser {
         $identityAccounts = @(
             "S-1-5-32-544"
             "S-1-5-6"
-            "S-1-2"
+            "S-1-5-19"
             "S-1-5-20"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -643,7 +643,7 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeAuditPrivilege"]
         $identityAccounts = @(
-            "S-1-2"
+            "S-1-5-19"
             "S-1-5-20"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -680,7 +680,7 @@ function ConvertTo-NTAccountUser {
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-2"
+            "S-1-5-19"
             "S-1-5-20"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -892,7 +892,7 @@ function ConvertTo-NTAccountUser {
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSystemProfilePrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-5-80"
+            "S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }

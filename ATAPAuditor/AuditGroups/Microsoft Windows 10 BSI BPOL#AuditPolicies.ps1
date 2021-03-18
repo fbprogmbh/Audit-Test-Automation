@@ -79,12 +79,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0008"
     Task = " Ensure 'Audit Application Group Management' is set to 'Success and Failure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Application Group Management
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Application Group Management"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Application Group Management'"
                 Status = "None"
             }
         }
@@ -119,6 +119,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -135,12 +136,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0011"
     Task = " Ensure 'Audit Other Account Management Events' is set to 'Success and Failure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Other Account Management Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Account Management Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Other Account Management Events'"
                 Status = "None"
             }
         }
@@ -175,6 +176,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -191,12 +193,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0012"
     Task = " Ensure 'Audit Security Group Management' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Security Group Management
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security Group Management"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Security Group Management'"
                 Status = "None"
             }
         }
@@ -231,6 +233,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -247,12 +250,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0013"
     Task = " Ensure 'Audit account management' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory User Account Management
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "User Account Management"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'User Account Management'"
                 Status = "None"
             }
         }
@@ -287,6 +290,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -303,12 +307,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0014"
     Task = " Ensure 'Advanced security audit policy settings' is set to 'SuccessAndNotFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Plug and Play Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Plug and Play Events'"
                 Status = "None"
             }
         }
@@ -343,6 +347,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -359,12 +364,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0015"
     Task = " Ensure 'Audit Process Creation' is set to 'SuccessAndNotFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Process Creation
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Process Creation"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Process Creation'"
                 Status = "None"
             }
         }
@@ -399,6 +404,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -415,12 +421,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0016"
     Task = " Ensure 'Audit Other Logon/Logoff Events' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Other Logon/Logoff Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Other Logon/Logoff Events'"
                 Status = "None"
             }
         }
@@ -455,6 +461,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -471,12 +478,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0017"
     Task = " Ensure 'Audit Account Lockout' is set to 'SuccessAndNotFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Account Lockout
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Account Lockout"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Account Lockout'"
                 Status = "None"
             }
         }
@@ -511,6 +518,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -527,12 +535,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0018"
     Task = " Ensure 'How to track users logon/logoff' is set to 'SuccessAndNotFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Logoff
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logoff"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Logoff'"
                 Status = "None"
             }
         }
@@ -567,6 +575,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -583,12 +592,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0019"
     Task = " Ensure 'Audit Policy: Logon-Logoff: Logon' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Logon
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logon"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Logon'"
                 Status = "None"
             }
         }
@@ -623,6 +632,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -639,12 +649,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0020"
     Task = " Ensure 'Audit Policy: Logon-Logoff: Special Logon' is set to 'Enabled'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Special Logon
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Special Logon"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Special Logon'"
                 Status = "None"
             }
         }
@@ -679,6 +689,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -695,12 +706,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0021"
     Task = " Ensure 'Audit Policy: Object Access:Removable Storage' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Removable Storage
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Removable Storage"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Removable Storage'"
                 Status = "None"
             }
         }
@@ -735,6 +746,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -751,12 +763,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0022"
     Task = " Ensure 'Audit Policy: Policy Change: Audit Policy Change' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Audit Policy Change
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Audit Policy Change'"
                 Status = "None"
             }
         }
@@ -791,6 +803,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -807,12 +820,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0023"
     Task = " Ensure 'Audit Policy: Policy Change: Authentication Policy Change' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Authentication Policy Change
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Authentication Policy Change"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Authentication Policy Change'"
                 Status = "None"
             }
         }
@@ -847,6 +860,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -863,12 +877,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0025"
     Task = " Ensure 'Audit Policy: System: IPsecDriver' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Ipsec Driver
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Ipsec Driver"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Ipsec Driver'"
                 Status = "None"
             }
         }
@@ -903,6 +917,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -919,12 +934,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0026"
     Task = " Ensure 'Audit Policy: System: OtherSystem Events' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Other System Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other System Events"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Other System Events'"
                 Status = "None"
             }
         }
@@ -959,6 +974,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -975,12 +991,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0027"
     Task = " Ensure 'Audit Policy: System: Security State Change' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Security State Change
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security State Change"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Security State Change'"
                 Status = "None"
             }
         }
@@ -1015,6 +1031,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1031,12 +1048,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0028"
     Task = " Ensure 'Audit Policy: System: Security System Extension' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory Security System Extension
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security System Extension"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'Security System Extension'"
                 Status = "None"
             }
         }
@@ -1071,6 +1088,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1087,12 +1105,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "0029"
     Task = " Ensure 'Audit Policy: System: System Integrity' is set to 'SuccessAndFailure'"
     Test = {
-        # Get the audit policy for the subcategory 
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory ""
+        # Get the audit policy for the subcategory System Integrity
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "System Integrity"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory ''"
+                Message = "Cannot get Subcategory 'System Integrity'"
                 Status = "None"
             }
         }
@@ -1127,6 +1145,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
