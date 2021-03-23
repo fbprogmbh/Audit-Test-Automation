@@ -4,6 +4,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "app.update.auto"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -11,12 +13,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -39,6 +42,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "app.update.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -46,12 +51,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -74,6 +80,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "app.update.staging.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -81,12 +89,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -109,6 +118,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "plugins.update.notifyUser"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -116,12 +127,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -144,6 +156,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "plugins.hide_infobar_for_outdated_plugin"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -151,12 +165,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -179,6 +194,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "app.update.interval"; Value = 43200
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -186,12 +203,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -214,6 +232,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "app.update.promptWaitTime"; Value = 172800
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -221,12 +241,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -249,6 +270,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "app.update.silent"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -256,12 +279,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -284,6 +308,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.search.update"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -291,12 +317,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -319,6 +346,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.proxy.type"; Value = 5
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -326,12 +355,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -354,6 +384,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.http.sendSecureXSiteReferrer"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -361,12 +393,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -389,6 +422,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.auth.force-generic-ntlm-v1"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -396,12 +431,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -424,6 +460,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.http.phishy-userpass-length"; Value = 1
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -431,12 +469,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -459,6 +498,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.IDN_show_punycode"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -466,12 +507,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -494,6 +536,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.fileuri.strict_origin_policy"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -501,12 +545,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -529,6 +574,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "services.sync.enabled"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -536,12 +583,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -564,6 +612,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "media.peerconnection.enabled"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -571,12 +621,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -599,6 +650,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "media.peerconnection.use_document_iceservers"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -606,12 +659,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -634,6 +688,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.ssl_override_behavior"; Value = 0
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -641,12 +697,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -669,6 +726,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.tls.version.max"; Value = 3
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -676,12 +735,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -704,6 +764,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.tls.version.min"; Value = 1
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -711,12 +773,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -739,6 +802,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.OCSP.enabled"; Value = 1
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -746,12 +811,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -774,6 +840,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.mixed_content.block_active_content"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -781,12 +849,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -809,6 +878,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.OCSP.require"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -816,12 +887,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -844,6 +916,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "dom.disable_window_status_change"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -851,12 +925,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -879,6 +954,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.xpconnect.plugin.unrestricted"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -886,12 +963,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -914,6 +992,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "dom.disable_window_open_feature.location"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -921,12 +1001,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -949,6 +1030,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "dom.disable_window_open_feature.status"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -956,12 +1039,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -984,6 +1068,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "dom.allow_scripts_to_close_windows"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -991,12 +1077,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1019,6 +1106,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "privacy.popups.policy"; Value = 1
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1026,12 +1115,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1054,6 +1144,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.urlbar.filter.javascript"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1061,12 +1153,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1089,6 +1182,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "signon.rememberSignons"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1096,12 +1191,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1124,6 +1220,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.cookie.cookieBehavior"; Value = 1
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1131,12 +1229,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1159,6 +1258,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "privacy.donottrackheader.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1166,12 +1267,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1194,6 +1296,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "privacy.donottrackheader.value"; Value = 1
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1201,12 +1305,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1229,6 +1334,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "privacy.trackingprotection.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1236,12 +1343,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1264,6 +1372,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "privacy.trackingprotection.pbmode"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1271,12 +1381,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1299,6 +1410,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "security.dialog_enable_delay"; Value = 2000
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1306,12 +1419,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1334,6 +1448,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.helperApps.alwaysAsk.force"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1341,12 +1457,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1369,6 +1486,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "xpinstall.whitelist.required"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1376,12 +1495,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1404,6 +1524,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "extensions.blocklist.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1411,12 +1533,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1439,6 +1562,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "extensions.blocklist.interval"; Value = 86400
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1446,12 +1571,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1474,6 +1600,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.protocol-handler.warn-external-default"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1481,12 +1609,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1509,6 +1638,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "privacy.popups.disable_from_plugins"; Value = 2
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1516,12 +1647,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1544,6 +1676,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "extensions.update.autoUpdateDefault"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1551,12 +1685,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1579,6 +1714,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "extensions.update.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1586,12 +1723,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1614,6 +1752,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "extensions.update.interval"; Value = 86400
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1621,12 +1761,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1649,6 +1790,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.download.manager.scanWhenDone"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1656,12 +1799,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1684,6 +1828,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "network.jar.open-unsafe-types"; Value = $false
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1691,12 +1837,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1719,6 +1866,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.safebrowsing.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1726,12 +1875,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "
@@ -1754,6 +1904,8 @@
     Test = {
         $currentLockPrefs = (Get-AuditResource 'FirefoxPreferences').LockedPreferences
         $preferenceConfigPath = (Get-AuditResource 'FirefoxPreferences').PreferenceConfigPath
+        $preference = @{ Name = "browser.safebrowsing.malware.enabled"; Value = $true
+        }
         if (-not (Test-Path $preferenceConfigPath) -or $null -eq $currentLockPrefs) {
             return @{
                 Status = "False"
@@ -1761,12 +1913,13 @@
             }
         }
         
-        $missingLockPrefs = @()
-        foreach ($preference in $Preferences) {
-            if ($preference -notin $currentLockPrefs) {
-                $missingLockPrefs +=$preference
-            }
-        }
+        $missingLockPrefs = $preference | Where-Object {
+        			$preference = $_
+        			# LockPref not in currentLockPrefs
+        			($currentLockPrefs | Where-Object {
+        				($_.Name -eq $preference.Name) -and ($_.Value -is $preference.Value.GetType()) -and ($_.Value -eq $preference.Value)
+        			}).Count -eq 0
+        		}
         
         if ($missingLockPrefs.Count -gt 0) {
             $msg = ($missingLockPrefs | ForEach-Object { "lockPref(`"{0}`", {1})" -f $_.Name, $_.Value }) -join "; "

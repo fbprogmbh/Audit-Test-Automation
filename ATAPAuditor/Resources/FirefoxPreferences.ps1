@@ -47,7 +47,7 @@ if (Test-Path $PreferenceConfigPath) {
 				$value = $Matches["string"]
 			}
 	
-			$LockedPreferences += [FirefoxPreference]@{ Name = $Matches[1]; Value = $value }
+			$LockedPreferences += @{ Name = $Matches[1]; Value = $value }
 		}
 	}
 }

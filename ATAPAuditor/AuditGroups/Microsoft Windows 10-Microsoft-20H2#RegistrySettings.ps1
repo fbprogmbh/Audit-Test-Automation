@@ -2564,9 +2564,9 @@
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1,RequireIntegrity=1"
+                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
                     Status = "False"
                 }
             }
@@ -2600,9 +2600,9 @@
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1,RequireIntegrity=1"
+                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
                     Status = "False"
                 }
             }
