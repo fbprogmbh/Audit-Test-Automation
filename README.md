@@ -32,7 +32,7 @@ How to read the table below:
 * The entries in the **CyverGovAu** column specify the version of the CyverGovAu benchmark that is used.
 
 Report | DISA | CIS | MS | BSI | CyverGovAu
---------- | -----| --- | -- | ---
+--------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
 Microsoft Edge | - | - | 85 | - | -
