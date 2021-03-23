@@ -43,6 +43,7 @@ Microsoft Office 2016 Outlook | V1R2 | - | - | - | -
 Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
 Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
+Microsoft Office 2016 | - | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202 | 06.2020
