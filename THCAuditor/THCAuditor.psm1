@@ -4,9 +4,9 @@ using namespace Microsoft.PowerShell.Commands
 
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 
-$script:atapReportsPath = $env:ATAPReportPath
-if (-not $script:atapReportsPath) {
-	$script:atapReportsPath = [Environment]::GetFolderPath('MyDocuments') | Join-Path -ChildPath 'ATAPReports'
+$script:thcReportsPath = $env:THCReportPath
+if (-not $script:thcReportsPath) {
+	$script:thcReportsPath = [Environment]::GetFolderPath('MyDocuments') | Join-Path -ChildPath 'THCReports'
 }
 #endregion
 
@@ -201,10 +201,10 @@ function Get-AuditResource {
 .PARAMETER ReportName
 	The name of the report.
 .EXAMPLE
-	PS C:\> Get-ATAPReport
+	PS C:\> Get-THCReport
 	Gets all reports.
 #>
-function Get-ATAPReport {
+function Get-THCReport {
 	[CmdletBinding()]
 	param (
 		[Parameter()]
@@ -217,18 +217,18 @@ function Get-ATAPReport {
 
 <#
 .SYNOPSIS
-	Invokes an ATAPReport
+	Invokes an THCReport
 .DESCRIPTION
 	Long description
 .EXAMPLE
-	PS C:\> ATAPReport -ReportName "Google Chrome"
+	PS C:\> THCReport -ReportName "Google Chrome"
 	This runs the report and outputs the logical report data.
 .PARAMETER ReportName
 	The name of the report.
 .OUTPUTS
 	Logical report data.
 #>
-function Invoke-ATAPReport {
+function Invoke-THCReport {
 	[CmdletBinding()]
 	param (
 		[Alias('RN')]
@@ -239,7 +239,7 @@ function Invoke-ATAPReport {
 
 	$script:loadedResources = @{}
 	# Load the module manifest
-	$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
+	$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\THCAuditor.psd1"
 
 	[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
@@ -248,12 +248,12 @@ function Invoke-ATAPReport {
 
 <#
 .SYNOPSIS
-	Saves an ATAPHtmlReport
+	Saves an THCHtmlReport
 .DESCRIPTION
-	Runs the specified ATAPReport and creates a report.
+	Runs the specified THCReport and creates a report.
 .EXAMPLE
-	PS C:\> Save-ATAPHtmlReport -ReportName "Google Chrome"
-	This runs the 'Google Chrome' report and stores the resulting html file (by default) under ~\Documents\ATAPReports
+	PS C:\> Save-THCHtmlReport -ReportName "Google Chrome"
+	This runs the 'Google Chrome' report and stores the resulting html file (by default) under ~\Documents\THCReports
 .PARAMETER ReportName
 	The name of the report.
 .PARAMETER Path
@@ -265,7 +265,7 @@ function Invoke-ATAPReport {
 .OUTPUTS
 	None.
 #>
-function Save-ATAPHtmlReport {
+function Save-THCHtmlReport {
 	[CmdletBinding()]
 	param(
 		[Alias('RN')]
@@ -275,7 +275,7 @@ function Save-ATAPHtmlReport {
 
 		[Parameter(Mandatory = $false)]
 		[string]
-		$Path = ($script:atapReportsPath | Join-Path -ChildPath "$($ReportName)_$(Get-Date -UFormat %Y%m%d_%H%M).html"),
+		$Path = ($script:thcReportsPath | Join-Path -ChildPath "$($ReportName)_$(Get-Date -UFormat %Y%m%d_%H%M).html"),
 
 		[switch]
 		$DarkMode,
@@ -295,10 +295,10 @@ function Save-ATAPHtmlReport {
 			return
 		}
 	}
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -DarkMode:$DarkMode
+	Invoke-THCReport -ReportName $ReportName | Get-THCHtmlReport -Path $Path -DarkMode:$DarkMode
 }
 
-New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
+New-Alias -Name 'shr' -Value Save-THCHtmlReport
 
 $completer = {
 	param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
@@ -309,5 +309,5 @@ $completer = {
 		| Where-Object { $_ -like "*$wordToComplete*" }
 }.GetNewClosure()
 
-Register-ArgumentCompleter -CommandName Save-ATAPHtmlReport -ParameterName ReportName -ScriptBlock $completer
+Register-ArgumentCompleter -CommandName Save-THCHtmlReport -ParameterName ReportName -ScriptBlock $completer
 Register-ArgumentCompleter -CommandName shr -ParameterName ReportName -ScriptBlock $completer

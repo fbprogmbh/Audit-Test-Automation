@@ -33,22 +33,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'ATAPHtmlReport.psm1'
+RootModule = 'THCHtmlReport.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.7'
+ModuleVersion = '1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
 
 # ID used to uniquely identify this module
-GUID = 'b732e8cd-6500-4da8-ac96-ab60087c739b'
+GUID = 'eb05233a-7259-4216-a9ce-3d5112cd38bd'
 
 # Author of this module
-Author = 'Benedikt Böhme'
+Author = 'Benedikt Böhme, Patrick Helbach'
 
 # Company or vendor of this module
-CompanyName = 'FB Pro GmbH'
+CompanyName = 'TEAL Technology Consulting GmbH'
 
 # Copyright statement for this module
 Copyright = '(c) 2020 FB Pro GmbH. All rights reserved.'
@@ -93,7 +93,7 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Get-ATAPHtmlReport', 'Get-ATAPHostInformation')
+FunctionsToExport = @('Get-THCHtmlReport', 'Get-THCHostInformation')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -119,13 +119,13 @@ PrivateData = @{
 	PSData = @{
 
 		# Tags applied to this module. These help with module discovery in online galleries.
-		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html')
+		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'teal')
 
 		# A URL to the license for this module.
-		LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
+		LicenseUri = 'https://github.com/teal-technology-consulting/Audit-Test-Automation/blob/master/LICENSE'
 
 		# A URL to the main website for this project.
-		ProjectUri = 'https://github.com/fbprogmbh/Audit-Test-Automation'
+		ProjectUri = 'https://github.com/teal-technology-consulting/Audit-Test-Automation'
 
 		# A URL to an icon representing this module.
 		# IconUri = ''

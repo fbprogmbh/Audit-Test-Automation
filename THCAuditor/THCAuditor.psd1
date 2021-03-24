@@ -1,14 +1,14 @@
 ﻿@{
-RootModule = 'ATAPAuditor.psm1'
-ModuleVersion = '4.11'
-GUID = '1662a599-4e3a-4f72-a844-9582077b589e'
-Author = 'Benedikt Böhme'
-CompanyName = 'FB Pro GmbH'
+RootModule = 'THCAuditor.psm1'
+ModuleVersion = '1.0'
+GUID = '5a22bfb8-9cda-47b4-8b4f-e03e6f0624fe'
+Author = 'Benedikt Böhme, Patrick Helbach'
+CompanyName = 'TEAL Technology Consulting GmbH'
 Copyright = '(c) 2020 FB Pro GmbH. All rights reserved.'
 Description = 'Allows you to tests your system with the included reports.'
 PowerShellVersion = '5.0'
 RequiredModules = @(
-	'ATAPHtmlReport'
+	'THCHtmlReport'
 )
 # RequiredAssemblies = @()
 # ScriptsToProcess = @()
@@ -16,9 +16,9 @@ RequiredModules = @(
 # FormatsToProcess = @()
 # NestedModules = @()
 FunctionsToExport = @(
-	'Save-ATAPHtmlReport'
-	'Invoke-ATAPReport'
-	'Get-ATAPReport'
+	'Save-THCHtmlReport'
+	'Invoke-THCReport'
+	'Get-THCReport'
 	'Get-AuditResource'
 	'Test-AuditGroup'
 )
@@ -31,9 +31,9 @@ AliasesToExport = @(
 # FileList = @()
 PrivateData = @{
 	PSData = @{
-		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html')
-		LicenseUri = 'https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/LICENSE'
-		ProjectUri = 'https://github.com/fbprogmbh/Audit-Test-Automation'
+		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'teal')
+		LicenseUri = 'https://github.com/teal-technology-consulting/Audit-Test-Automation/blob/master/LICENSE'
+		ProjectUri = 'https://github.com/teal-technology-consulting/Audit-Test-Automation'
 		# IconUri = ''
 		# ReleaseNotes = ''
 
@@ -41,5 +41,5 @@ PrivateData = @{
 
 } # End of PrivateData hashtable
 # HelpInfoURI = ''
-# DefaultCommandPrefix = 'ATAP'
+# DefaultCommandPrefix = 'THC'
 }
