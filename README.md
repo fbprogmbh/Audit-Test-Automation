@@ -1,8 +1,8 @@
-# Teal Health Check
+# Teal Hardening Check
 
 ## Overview
 
-The Teal Health Check gives you the ability to get an overview about the compliance
+The Teal Hardening Check gives you the ability to get an overview about the compliance
 status of several systems. You can easily create HTML-reports and have a transparent overview over
 compliance and non-compliance of explicit setttings and configurations in comparison to industry
 standards and hardening guides. 
