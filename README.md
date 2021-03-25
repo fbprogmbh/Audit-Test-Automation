@@ -1,8 +1,7 @@
-# Teal Hardening Check
-
+# Teal Audit Proof
 ## Overview
 
-The Teal Hardening Check gives you the ability to get an overview about the compliance
+The Teal Audit Proof gives you the ability to get an overview about the compliance
 status of several systems. You can easily create HTML-reports and have a transparent overview over
 compliance and non-compliance of explicit setttings and configurations in comparison to industry
 standards and hardening guides. 
