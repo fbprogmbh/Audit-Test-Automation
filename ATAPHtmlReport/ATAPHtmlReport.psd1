@@ -45,7 +45,7 @@ ModuleVersion = '1.7'
 GUID = 'b732e8cd-6500-4da8-ac96-ab60087c739b'
 
 # Author of this module
-Author = 'Benedikt Böhme'
+Author = 'Benedikt Böhme, Patrick Helbach'
 
 # Company or vendor of this module
 CompanyName = 'FB Pro GmbH'
