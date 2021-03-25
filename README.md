@@ -116,5 +116,5 @@ Permanent scope: Machine
 
  ## Related links
 
-* Github-Link: https://github.com/teal-technology-consulting/Teal-Hardening-Check
+* Github-Link: https://github.com/teal-technology-consulting/Teal-Audit-Proof
 * Our Homepage: https://www.teal-consulting.de/
