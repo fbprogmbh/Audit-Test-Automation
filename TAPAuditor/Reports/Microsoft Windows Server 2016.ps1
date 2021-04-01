@@ -1,11 +1,11 @@
 
 [Report] @{
 	Title = "Windows Server 2016 Audit Report"
-	ModuleName = "THCAuditor"
+	ModuleName = "TAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.2.0, Date: 2020-05-14"
 		"Microsoft Security baseline for Windows Server 2016, Version: FINAL, Date 2016-10-17"
-		"SiSyPHuS Windows - Telemetry components - Bundesamt für Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31"
+		"SiSyPHuS Windows - Telemetry components - Bundesamt fuer Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31"
 	)
 	Sections = @(
 		[ReportSection] @{

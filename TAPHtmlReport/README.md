@@ -1,8 +1,8 @@
-# THC Html Report
+# TAP Html Report
 
 ## Overview
 
-A module part of the *Audit Test Automation Package* that creates html reports with tables and sections for audit reporting.
+A module part of the *Teal Audit Proof* that creates html reports with tables and sections for audit reporting.
 
 ## Requirements
 
@@ -16,15 +16,15 @@ It is recommended that you install the module on your system.
 
 1. Findout out where PowerShell stores modules with `$env:PSModulePath`. For example, this folder might be C:\Users\Administrator\Documents\WindowsPowerShell\Modules.
 2. Copy this folder into the modules folder
-3. Check with `Get-Module THCHtmlReport -ListAvailable` if PowerShell detects the module.
+3. Check with `Get-Module TAPHtmlReport -ListAvailable` if PowerShell detects the module.
 
 ## Usage
 
-To generate a report, use `Get-THCHtmlReport`. However, you will need to provide the *path* where the report will be stored, the report *title*, the audit *module name*, and what hardening standard it is *based on*. To give the report a little bit more context, about the computer the report was generated on, you can provide your own *host information* (a table at the beginning of the report).
+To generate a report, use `Get-TAPHtmlReport`. However, you will need to provide the *path* where the report will be stored, the report *title*, the audit *module name*, and what hardening standard it is *based on*. To give the report a little bit more context, about the computer the report was generated on, you can provide your own *host information* (a table at the beginning of the report).
 
 The main content of the report is structured into *sections*. A section must have a *title*, but can also include a *description*, a table of *AuditInfos*, and *SubSections*. AuditInfos represent a single audit test with an *Id*, *Task*, *Message*, and *Audit* that states whether the the system completed the test with True, False, Warning, or None.
 
-**Important**: To use the AuditInfos class defined in the modul, you need to add `using module THCHtmlReport` to the top of the file. This might not work if the module is not in a PSModulePath location.
+**Important**: To use the AuditInfos class defined in the modul, you need to add `using module TAPHtmlReport` to the top of the file. This might not work if the module is not in a PSModulePath location.
 
 For example, a simple section could look like this:
 
@@ -89,10 +89,10 @@ $reportSections += @{
 }
 ```
 
-Tied up, the full usage of the `Get-THCHtmlReport` function could look like this:
+Tied up, the full usage of the `Get-TAPHtmlReport` function could look like this:
 
 ```powershell
-Get-THCHtmlReport `
+Get-TAPHtmlReport `
     -Path $Path `
     -Title "My Audit Benchmark" `
     -ModuleName "MyAuditBenchmark" `
