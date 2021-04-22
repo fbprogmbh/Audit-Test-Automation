@@ -1,8 +1,8 @@
 # Teal Audit Proof
 ## Overview
 
-The Teal Audit Proof gives you the ability to get an overview about the compliance
-status of several systems. You can easily create HTML-reports and have a transparent overview over
+The Teal Audit Proof provides the ability to generate a compliance overview of your system.
+You can easily create HTML-reports and have a transparent overview over
 compliance and non-compliance of explicit setttings and configurations in comparison to industry
 standards and hardening guides. 
 
@@ -63,6 +63,8 @@ Install-Module -Name TAPAuditor
 
 ## Usage
 
+NOTE: local administrative permissions are required to generate a compliance report.
+
 Optionally, import the `TAPAuditor` module:
 
 ```Powershell
@@ -90,10 +92,6 @@ Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 * If you used old versions of TAP you may want to clean up your modules. Be sure you have not integrated TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
 
 
-## Sample reports
-
-You can find several sample reports in the "Samples" folder.
-
 ## Customization
 
 You can change the default folder for `Save-TAPHtmlReport`, which is `Documents\TAPReports`, by creating and later editing the environment variable `TAPReportPath`. 
@@ -115,5 +113,5 @@ Permanent scope: Machine
 
  ## Related links
 
-* Github-Link: https://github.com/teal-technology-consulting/Teal-Hardening-Check
+* Github-Link: https://github.com/teal-technology-consulting/Teal-Audit-Proof/
 * Our Homepage: https://www.teal-consulting.de/
