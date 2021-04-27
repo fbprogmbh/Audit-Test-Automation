@@ -2,6 +2,7 @@
 BSD 3-Clause License
 
 Copyright (c) 2018, FB Pro GmbH
+Copyright (c) 2021, Teal Technology Consulting GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'THCHtmlReport.psm1'
+RootModule = 'TAPHtmlReport.psm1'
 
 # Version number of this module.
 ModuleVersion = '1.0'
@@ -93,7 +94,7 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Get-THCHtmlReport', 'Get-THCHostInformation')
+FunctionsToExport = @('Get-TAPHtmlReport', 'Get-TAPHostInformation')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -122,10 +123,10 @@ PrivateData = @{
 		Tags = @('reporting', 'auditing', 'benchmarks', 'fb-pro', 'html', 'teal')
 
 		# A URL to the license for this module.
-		LicenseUri = 'https://github.com/teal-technology-consulting/Audit-Test-Automation/blob/master/LICENSE'
+		LicenseUri = 'https://github.com/teal-technology-consulting/Teal-Audit-Proof/blob/master/LICENSE'
 
 		# A URL to the main website for this project.
-		ProjectUri = 'https://github.com/teal-technology-consulting/Audit-Test-Automation'
+		ProjectUri = 'https://github.com/teal-technology-consulting/Teal-Audit-Proof'
 
 		# A URL to an icon representing this module.
 		# IconUri = ''

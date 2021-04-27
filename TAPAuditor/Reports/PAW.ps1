@@ -1,19 +1,19 @@
 ﻿[Report] @{
 	Title = "Privileged Access Workstation Windows 10 Report"
-	ModuleName = "THCAuditor"
+	ModuleName = "TAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Enterprise Release 2004 Benchmark, Version: 1.9.0, Date: 2020-08-14"
 		"CIS Google Chrome Benchmark, Version: 2.0.0, Date: 2019-05-17"
 		'CIS Mozilla Firefox 38 ESR Benchmark, Version: 1.0.0, Date: 2015-12-31'
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 20H2, Date: 2020-12-17"
 		"Microsoft Edge v85 Security Baseline FINAL, Version: 85, Date: 2020-08-27"
-		"BSI SiSyPHuS Windows 10 - Telemetry components, Version: V1.1, Date: 2019-07-31"
+		"SiSyPHuS Windows 10 - Telemetry components - Bundesamt fuer Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31"
 		
 	)
 	Sections = @(
 		[ReportSection] @{
 			Title = 'CIS Benchmarks'
-			Description = 'This section contains the CIS Benchmark results.'
+			Description = 'This section contains all benchmarks from CIS.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Windows 10'
@@ -61,7 +61,7 @@
 		}
 		[ReportSection] @{
 			Title = 'Microsoft Benchmarks'
-			Description = 'This section contains the Microsoft Benchmark results.'
+			Description = 'This section contains all benchmarks from Microsoft.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Windows 10'
