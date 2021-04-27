@@ -10,7 +10,7 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
-			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.2.0 - 14-05-2020. WARNING: Tests in this version haven't been fully tested yet."
+			Description = "This section contains all benchmarks from CIS."
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
@@ -32,7 +32,7 @@
 		}
 		[ReportSection] @{
 			Title = "Microsoft Benchmarks"
-			Description = "This section contains all benchmarks from Microsoft Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.2.0 - 14-05-2020. WARNING: Tests in this version haven't been fully tested yet."
+			Description = "This section contains all benchmarks from Microsoft."
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"

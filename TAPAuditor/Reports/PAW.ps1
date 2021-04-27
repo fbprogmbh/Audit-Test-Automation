@@ -13,7 +13,7 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = 'CIS Benchmarks'
-			Description = 'This section contains the CIS Benchmark results.'
+			Description = 'This section contains all benchmarks from CIS.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Windows 10'
@@ -61,7 +61,7 @@
 		}
 		[ReportSection] @{
 			Title = 'Microsoft Benchmarks'
-			Description = 'This section contains the Microsoft Benchmark results.'
+			Description = 'This section contains all benchmarks from Microsoft.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Windows 10'

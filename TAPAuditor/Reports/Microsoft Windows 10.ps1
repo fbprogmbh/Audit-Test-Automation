@@ -3,13 +3,14 @@
 	ModuleName = "TAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Enterprise Release 2004 Benchmark, Version: 1.9.0, Date: 2020-08-14"
+		"CIS Microsoft Office 2016 Benchmark, Version: 1.1.0, Date: 2016-11-08"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 20H2, Date: 2020-12-17"
 		"SiSyPHuS Windows - Telemetry components - Bundesamt fuer Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31"
 	)
 	Sections = @(
 		[ReportSection] @{
 			Title = 'CIS Benchmarks'
-			Description = 'This section contains the CIS Benchmark results.'
+			Description = 'This section contains all benchmarks from CIS.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Windows 10'
@@ -47,7 +48,7 @@
 		}
 		[ReportSection] @{
 			Title = 'Microsoft Benchmarks'
-			Description = 'This section contains the Microsoft Benchmark results.'
+			Description = 'This section contains all benchmarks from Microsoft.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
