@@ -55,12 +55,6 @@ Expand-Archive -Path ".\TAP.zip" -DestinationPath "TAP"
 ```
 3. Copy the `TAPAuditor` and the `TAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
-### Installation from PS Gallery
-
-```Powershell
-Install-Module -Name TAPAuditor
-```
-
 ## Usage
 
 NOTE: local administrative permissions are required to generate a compliance report.
