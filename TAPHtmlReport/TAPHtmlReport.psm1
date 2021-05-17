@@ -286,13 +286,17 @@ function Get-TAPHostInformation {
 function Get-CompletionStatus {
 	param(
 		[string[]]
-		$Statuses
+		$Statuses,
+
+		[array]$Sections
 	)
 
 	$totalCount = $Statuses.Count
 	$status = @{
 		TotalCount = $totalCount
 	}
+
+	#Total completion status
 	foreach ($value in $StatusValues) {
 		$count = ($Statuses | Where-Object { $_ -eq $value }).Count
 		$status[$value] = @{
@@ -301,8 +305,31 @@ function Get-CompletionStatus {
 		}
 	}
 
-	return $status
+	#Section Total Count
+	$sectionTotalCountHash = @{}
+	foreach ($section in $Sections) {
+		$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
+		$totalSectionCount = 0
+		foreach ($value in $StatusValues) {
+			$count = ($sectionResult | Where-Object { $_ -eq $value }).Count
+			$totalSectionCount += $count
+		}
+		$sectionTotalCountHash.Add($section.Title, $totalSectionCount)
+	}
+
+	$sectionCountHash = @{}
+	foreach ($section in $Sections) {
+		$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
+		foreach ($value in $StatusValues) {
+			$count = ($sectionResult | Where-Object { $_ -eq $value }).Count
+			$sectionCountHash.Add($section.Title + $value + "Count", $count)
+			$percent = (100 * ($count / $sectionTotalCountHash[$section.Title])).ToString("0.00", [cultureinfo]::InvariantCulture)
+			$sectionCountHash.Add($section.Title + $value + "Percent", $percent)
+		}
+	}
+	return $status, $sectionTotalCountHash, $sectionCountHash
 }
+
 
 function Get-OverallComplianceCSS {
 	[CmdletBinding()]
@@ -406,7 +433,7 @@ function Get-TAPHtmlReport {
 
 	process {
 		$allConfigResults = foreach ($section in $Sections) { $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status' }
-		$completionStatus = Get-CompletionStatus $allConfigResults
+		$completionStatus, $sectionTotalCountHash, $sectionCountHash = Get-CompletionStatus -Statuses $allConfigResults -sections $Sections
 
 		# HTML <head> markup
 		$head = htmlElement 'head' @{} {
@@ -501,6 +528,48 @@ function Get-TAPHtmlReport {
 						}
 
 					}
+					# Sections
+					foreach ($section in $Sections) {
+						#$sectionValues = Get-SectionValues -section $section
+						#$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
+
+						htmlElement 'h2' @{ style = 'clear:both; padding-top: 50px;' } { $section.Title }
+						htmlElement 'p' @{} {
+							'A total of {0} tests have been executed in section {1}.' -f @(
+								$sectionTotalCountHash[$section.Title]
+								$section.Title
+							)
+						}
+
+						# Status percentage gauge for sections
+						htmlElement 'div' @{ class = 'gauge' } {
+							foreach ($value in $StatusValues) {
+								$count = $sectionCountHash[$section.Title + $value + "Count"]
+								$htmlClass = Get-HtmlClassFromStatus $value
+								$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+
+								htmlElement 'div' @{
+									class = "gauge-meter $htmlClass"
+									style = "width: $($percent)%"
+									title = "$value $count test(s), $($percent)%"
+								} { }
+							}
+						}
+						htmlElement 'ol' @{ class = 'gauge-info' } {
+							foreach ($value in $StatusValues) {
+								$count = $sectionCountHash[$section.Title + $value + "Count"]
+								$htmlClass = Get-HtmlClassFromStatus $value
+								$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+
+								htmlElement 'li' @{ class = 'gauge-info-item' } {
+									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
+									" $count test(s) &#x2259; $($percent)%"
+								}
+							}
+						}
+					}
+
+
 					# Table of Contents
 					htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
 					htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
