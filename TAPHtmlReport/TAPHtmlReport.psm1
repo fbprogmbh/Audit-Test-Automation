@@ -316,7 +316,7 @@ function Get-CompletionStatus {
 		}
 		$sectionTotalCountHash.Add($section.Title, $totalSectionCount)
 	}
-
+	#Counts the completion status for each section and each value. Also calculates the percentage.
 	$sectionCountHash = @{}
 	foreach ($section in $Sections) {
 		$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
@@ -530,9 +530,6 @@ function Get-TAPHtmlReport {
 					}
 					# Sections
 					foreach ($section in $Sections) {
-						#$sectionValues = Get-SectionValues -section $section
-						#$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
-
 						htmlElement 'h2' @{ style = 'clear:both; padding-top: 50px;' } { $section.Title }
 						htmlElement 'p' @{} {
 							'A total of {0} tests have been executed in section {1}.' -f @(
