@@ -7,6 +7,7 @@
 		"CYBERGOVAU Hardening Microsoft Windows 10 version 1909 Workstations, Version: 06.2020, Date 2020-06-26"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 20H2, Date: 2020-12-17"
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
+        "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities (HD): Version 1.3, Date: 2021-05-03"
 	)
 	Sections = @(
 		[ReportSection] @{

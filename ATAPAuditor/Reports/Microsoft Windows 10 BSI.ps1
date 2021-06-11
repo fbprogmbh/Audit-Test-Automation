@@ -3,6 +3,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
+        "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities (HD): Version 1.3, Date: 2021-05-03"
 	)
 	Sections = @(
 		[ReportSection] @{

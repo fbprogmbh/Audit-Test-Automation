@@ -29,9 +29,9 @@ How to read the table below:
 * The entries in the **CIS** column specify the version of the CIS benchmark that is used.
 * The entries in the **MS** column specify the version of the Microsoft security baseline that is used.
 * The entries in the **BSI** column specify the version of the BSI benchmark that is used.
-* The entries in the **CyberGovAu** column specify the version of the CyverGovAu benchmark that is used.
+* The entries in the **CyberGovAu** column specify the version of the CyberGovAu benchmark that is used.
 
-Report | DISA | CIS | MS | BSI | CyberGovAu
+Report | DISA | Center for Internet Security | Microsoft | BSI | CyberGovAu
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
@@ -46,8 +46,9 @@ Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | - | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202 | 06.2020
-Microsoft Windows 10 GDPR | - | - | - | 16082019 | -
+Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, 1.3 | 06.2020
+Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
+Microsoft Windows 10 BSI | - | - | - | SiM-08202, 1.3 | -
 Microsoft Windows Server 2012 R2 | - | 2.4.0 | - | - | -
 Microsoft Windows Server 2016 | V1R6 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
