@@ -1,5 +1,12 @@
 using module .\..\Helpers\SecurityPolicy.psm1
 
+$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+$isAdministrator = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if(-not $isAdministrator){
+	throw "Administrator privileges are required!"
+}
+
 # get a temporary file to save and process the secedit settings
 $securityPolicyPath = Join-Path -Path $env:TEMP -ChildPath 'SecurityPolicy.inf'
 
