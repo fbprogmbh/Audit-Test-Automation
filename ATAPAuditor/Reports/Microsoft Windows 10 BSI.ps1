@@ -7,24 +7,16 @@
 	)
 	Sections = @(
 		[ReportSection] @{
-			Title = 'BSI Benchmarks BPOL'
+			Title = 'BSI Benchmarks SySiPHuS Logging'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS Logging-BSI-1.3#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS Logging-BSI-1.3#AuditPolicies"
 				}
 			)
 		}
@@ -44,9 +36,63 @@
 					Title = 'Account Policies'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AccountPolicies"
 				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'BSI Benchmarks SySiPHuS ND'
+			Description = 'This section contains the BSI Benchmark results.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
+				}
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'BSI Benchmarks SySiPHuS NE'
+			Description = 'This section contains the BSI Benchmark results.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#UserRights"
+				}
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#AccountPolicies"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'BSI Benchmarks'
+			Description = 'This section contains the BSI Benchmark results.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#UserRights"
+				}
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AccountPolicies"
+				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AuditPolicies"
 				}
 			)
 		}
