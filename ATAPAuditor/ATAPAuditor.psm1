@@ -123,7 +123,10 @@ function Test-AuditGroup {
 
 	$tests = . "$RootPath\AuditGroups\$($GroupName).ps1"
 
+	$i = 1
 	foreach ($test in $tests) {
+		[int]$p = $i++ / $config.reports.Count * 100
+        Write-Progress -Activity "Creating AuditGroups for '$($report.name)'" -Status "$p% Complete:" -PercentComplete $p
 		Write-Verbose "Testing $($test.Id)"
 		$message = "Test not implemented yet."
 		$status = [AuditInfoStatus]::None
