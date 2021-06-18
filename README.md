@@ -151,6 +151,10 @@ Permanent scope: Machine
 
 * Github-Link: https://github.com/fbprogmbh/Audit-Test-Automation
 * Our Homepage: https://fb-pro.com/
+* BSI SiSyPHus: https://www.bsi.bund.de/EN/Topics/Cyber-Security/Recommendations/SiSyPHuS_Win10/SiSyPHuS_node.html
+* Center for Internet Security: https://www.cisecurity.org/
+* DISA STIGs: https://public.cyber.mil/stigs/
+* Microsoft Security baselines: https://techcommunity.microsoft.com/t5/microsoft-security-baselines/bg-p/Microsoft-Security-Baselines
 
  ## Questions, issues or project support
 
