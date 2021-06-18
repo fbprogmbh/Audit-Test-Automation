@@ -529,7 +529,17 @@ for (var i = 0; i < collapseButtons.length; i++) {
 		}
 
 		$html = "<!DOCTYPE html><html lang=`"en`">$($head)$($body)</body></html> "
-		New-Item $path -type File
+
+		if(Test-Path -Path $path){
+			Write-Warning "$path already exists. $path will be overridden!"
+		}
+
+		New-Item $path -ItemType File -Force
+
+
+
 		$html | Out-File $Path -Encoding utf8
+
+		Write-Verbose "Done"
 	}
 }
