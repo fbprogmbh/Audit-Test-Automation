@@ -46,7 +46,7 @@ Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | - | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, 1.3 | 06.2020
+Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 06.2020
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging)| -
 Microsoft Windows Server 2012 R2 | - | 2.4.0 | - | - | -
@@ -158,6 +158,10 @@ Permanent scope: Machine
 
 * Github-Link: https://github.com/fbprogmbh/Audit-Test-Automation
 * Our Homepage: https://fb-pro.com/
+* BSI SiSyPHus: https://www.bsi.bund.de/EN/Topics/Cyber-Security/Recommendations/SiSyPHuS_Win10/SiSyPHuS_node.html
+* Center for Internet Security: https://www.cisecurity.org/
+* DISA STIGs: https://public.cyber.mil/stigs/
+* Microsoft Security baselines: https://techcommunity.microsoft.com/t5/microsoft-security-baselines/bg-p/Microsoft-Security-Baselines
 
  ## Questions, issues or project support
 
