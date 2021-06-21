@@ -1,23 +1,17 @@
 ﻿<#
 BSD 3-Clause License
-
 Copyright (c) 2018, FB Pro GmbH
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-
 * Redistributions of source code must retain the above copyright notice, this
   list of conditions and the following disclaimer.
-
 * Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
-
 * Neither the name of the copyright holder nor the names of its
   contributors may be used to endorse or promote products derived from
   this software without specific prior written permission.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -242,6 +236,9 @@ function Get-HtmlReportSection {
 			if ($null -ne $Description) {
 				htmlElement 'p' @{} { $Description }
 			}
+			# if ($null -ne $ConfigAudits){
+			# 	htmlElement 'p' @{} {$ConfigAudits.Count + ' tests have been executed in this section'}
+			# }
 			if ($null -ne $ConfigAudits) {
 				htmlElement 'table' @{ class = 'audit-info' } {
 					htmlElement 'tbody' @{} {
@@ -282,13 +279,17 @@ function Get-ATAPHostInformation {
 function Get-CompletionStatus {
 	param(
 		[string[]]
-		$Statuses
+		$Statuses,
+
+		[array]$Sections
 	)
 
 	$totalCount = $Statuses.Count
 	$status = @{
 		TotalCount = $totalCount
 	}
+
+	#Total completion status
 	foreach ($value in $StatusValues) {
 		$count = ($Statuses | Where-Object { $_ -eq $value }).Count
 		$status[$value] = @{
@@ -297,7 +298,29 @@ function Get-CompletionStatus {
 		}
 	}
 
-	return $status
+	#Section Total Count
+	$sectionTotalCountHash = @{}
+	foreach ($section in $Sections) {
+		$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
+		$totalSectionCount = 0
+		foreach ($value in $StatusValues) {
+			$count = ($sectionResult | Where-Object { $_ -eq $value }).Count
+			$totalSectionCount += $count
+		}
+		$sectionTotalCountHash.Add($section.Title, $totalSectionCount)
+	}
+	#Counts the completion status for each section and each value. Also calculates the percentage.
+	$sectionCountHash = @{}
+	foreach ($section in $Sections) {
+		$sectionResult = $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status'
+		foreach ($value in $StatusValues) {
+			$count = ($sectionResult | Where-Object { $_ -eq $value }).Count
+			$sectionCountHash.Add($section.Title + $value + "Count", $count)
+			$percent = (100 * ($count / $sectionTotalCountHash[$section.Title])).ToString("0.00", [cultureinfo]::InvariantCulture)
+			$sectionCountHash.Add($section.Title + $value + "Percent", $percent)
+		}
+	}
+	return $status, $sectionTotalCountHash, $sectionCountHash
 }
 
 function Get-OverallComplianceCSS {
@@ -402,7 +425,7 @@ function Get-ATAPHtmlReport {
 
 	process {
 		$allConfigResults = foreach ($section in $Sections) { $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status' }
-		$completionStatus = Get-CompletionStatus $allConfigResults
+		$completionStatus, $sectionTotalCountHash, $sectionCountHash = Get-CompletionStatus -Statuses $allConfigResults -sections $Sections
 
 		# HTML <head> markup
 		$head = htmlElement 'head' @{} {
@@ -439,7 +462,7 @@ function Get-ATAPHtmlReport {
 			# Main section
 			htmlElement 'div' @{ class = 'main content' } {
 				htmlElement 'div' @{ class = 'host-information' } {
-					htmlElement 'p' @{} { "This report was generated at $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
+					htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with TAPHtmlReport version $ModuleVersion." }
 					# Host information
 					htmlElement 'table' @{} {
 						htmlElement 'tbody' @{} {
@@ -466,12 +489,11 @@ function Get-ATAPHtmlReport {
 					# Summary
 					htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
 					htmlElement 'p' @{} {
-						'A total of {0} tests have been run. {1} resulted in false. {2} resulted in warning.' -f @(
+						'A total of {0} tests have been executed.' -f @(
 							$completionStatus.TotalCount
-							$completionStatus['False'].Count
-							$completionStatus['Warning'].Count
 						)
 					}
+
 					# Status percentage gauge
 					htmlElement 'div' @{ class = 'gauge' } {
 						foreach ($value in $StatusValues) {
@@ -499,6 +521,45 @@ function Get-ATAPHtmlReport {
 						}
 
 					}
+					# Sections
+					foreach ($section in $Sections) {
+						htmlElement 'h2' @{ style = 'clear:both; margin-top: 0;' } { $section.Title }
+						htmlElement 'p' @{} {
+							'A total of {0} tests have been executed in section {1}.' -f @(
+								$sectionTotalCountHash[$section.Title]
+								$section.Title
+							)
+						}
+
+						# Status percentage gauge for sections
+						htmlElement 'div' @{ class = 'gauge' } {
+							foreach ($value in $StatusValues) {
+								$count = $sectionCountHash[$section.Title + $value + "Count"]
+								$htmlClass = Get-HtmlClassFromStatus $value
+								$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+
+								htmlElement 'div' @{
+									class = "gauge-meter $htmlClass"
+									style = "width: $($percent)%"
+									title = "$value $count test(s), $($percent)%"
+								} { }
+							}
+						}
+						htmlElement 'ol' @{ class = 'gauge-info' } {
+							foreach ($value in $StatusValues) {
+								$count = $sectionCountHash[$section.Title + $value + "Count"]
+								$htmlClass = Get-HtmlClassFromStatus $value
+								$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+
+								htmlElement 'li' @{ class = 'gauge-info-item' } {
+									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
+									" $count test(s) &#x2259; $($percent)%"
+								}
+							}
+						}
+					}
+
+
 					# Table of Contents
 					htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
 					htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
@@ -510,7 +571,6 @@ function Get-ATAPHtmlReport {
 				}
 			}
 			htmlElement 'script' @{ type = 'text/javascript' } { @"
-
 function collapseHandler(e) {
 	var targetSection = e.target.parentElement.parentElement;
 	if (targetSection.classList.toggle('collapsed')) {
@@ -519,7 +579,6 @@ function collapseHandler(e) {
 		e.target.innerText = '-';
 	}
 }
-
 var collapseButtons = document.getElementsByClassName("collapseButton");
 for (var i = 0; i < collapseButtons.length; i++) {
     collapseButtons[i].addEventListener('click', collapseHandler);
