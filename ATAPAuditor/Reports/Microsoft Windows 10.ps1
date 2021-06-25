@@ -67,12 +67,12 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'CyverGovAu Benchmarks'
-			Description = 'This section contains the CyverGovAu Benchmark results.'
+			Title = 'CyberGovAu Benchmarks'
+			Description = 'This section contains the CyberGovAu Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyverGovAu-06.2020#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-06.2020#RegistrySettings"
 				}
 			)
 		}
@@ -167,7 +167,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks'
+			Title = 'BSI Benchmarks SiM-08202 - BPOL'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
