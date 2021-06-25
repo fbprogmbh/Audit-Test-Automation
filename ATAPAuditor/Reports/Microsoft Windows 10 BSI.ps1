@@ -1,5 +1,5 @@
 [Report] @{
-	Title = "Windows 10 Report"
+	Title = "Windows 10 BSI Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
