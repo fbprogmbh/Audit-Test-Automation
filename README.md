@@ -38,6 +38,7 @@ Microsoft Security Baseline Windows Server 2016 - FINAL | - | - | X | - | -
 Microsoft Security Baseline Windows Server 2019 - FINAL | - | - | - | X | -
 Microsoft Security Baseline Windows Server 2019 DC - FINAL | - | - | - | - | X
 BSI SiSyPHuS Windows 10 - Telemetry components - V1.1 | X | X | X | X | X
+Microsoft Windows 10 BSI BPOL | X | X | - | - | -
 
 
 ## Installation

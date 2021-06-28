@@ -364,12 +364,12 @@ function Get-AuditPolicySubcategoryGUID {
     Id = "AuditPolicy-006"
     Task = "Ensure 'PNP Activity' is set to 'Success'."
     Test = {
-        # Get the audit policy for the subcategory Plug and Play Events
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
+        # Get the audit policy for the subcategory PNP Activity
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "PNP Activity"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Plug and Play Events'"
+                Message = "Cannot get Subcategory 'PNP Activity'"
                 Status = "None"
             }
         }

@@ -6,6 +6,7 @@
 		"CIS Microsoft Office 2016 Benchmark, Version: 1.1.0, Date: 2016-11-08"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 20H2, Date: 2020-12-17"
 		"SiSyPHuS Windows - Telemetry components - Bundesamt fuer Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31"
+		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -75,6 +76,28 @@
 				[ReportSection] @{
 					Title = "Telemetry"
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 GDPR-BSI-V1.1#RegistrySettings"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'BSI Benchmarks'
+			Description = 'This section contains the BSI Benchmark results.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#UserRights"
+				}
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AuditPolicies"
 				}
 			)
 		}
