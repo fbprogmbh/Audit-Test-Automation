@@ -6,6 +6,7 @@
 		"CIS Microsoft Office 2016 Benchmark, Version: 1.1.0, Date: 2016-11-08"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 20H2, Date: 2020-12-17"
 		"SiSyPHuS Windows - Telemetry components - Bundesamt fuer Sicherheit in der Informationstechnik (BSI), Version: V1.1, Date: 2019-07-31"
+		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
 	)
 	Sections = @(
 		[ReportSection] @{
