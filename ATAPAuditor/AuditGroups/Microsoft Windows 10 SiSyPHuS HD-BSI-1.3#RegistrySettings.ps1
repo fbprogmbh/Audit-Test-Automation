@@ -1,6 +1,6 @@
 ﻿[AuditTest] @{
     Id = "1"
-    Task = "(ND, NE) Ensure 'Apply UAC restrictions to local accounts on network`nlogons' is set to 'Enabled'. "
+    Task = "(ND, NE) Ensure 'Apply UAC restrictions to local accounts on network logons' is set to 'Enabled'. "
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -36,7 +36,7 @@
 }
 [AuditTest] @{
     Id = "2"
-    Task = "(ND, NE) Ensure 'Configure SMB v1 client driver' is set to 'Enabled:`nDisable driver."
+    Task = "(ND, NE) Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -108,7 +108,7 @@
 }
 [AuditTest] @{
     Id = "4"
-    Task = "(ND, NE) Ensure 'Enable Structured Exception Handling Overwrite`nProtection (SEHOP)' is set to 'Enabled'."
+    Task = "(ND, NE) Ensure 'Enable Structured Exception Handling OverwriteProtection (SEHOP)' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -252,7 +252,7 @@
 }
 [AuditTest] @{
     Id = "9"
-    Task = "(ND, NE) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing`nprotection level (protects against packet spoofing)' is set to 'Enabled:`nHighest protection, source routing is completely disabled'."
+    Task = "(ND, NE) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routingprotection level (protects against packet spoofing)' is set to 'Enabled:Highest protection, source routing is completely disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -288,7 +288,7 @@
 }
 [AuditTest] @{
     Id = "10"
-    Task = "(ND, NE) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing`nprotection level (protects against packet spoofing)' is set to 'Enabled:`nHighest protection, source routing is completely disabled'."
+    Task = "(ND, NE) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled:Highest protection, source routing is completely disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -324,7 +324,7 @@
 }
 [AuditTest] @{
     Id = "11"
-    Task = "(HD) Ensure 'MSS: (DisableSavePassword) Prevent the dial-up`npassword from being saved' is set to 'Enabled'."
+    Task = "(HD) Ensure 'MSS: (DisableSavePassword) Prevent the dial-up password from being saved' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -360,7 +360,7 @@
 }
 [AuditTest] @{
     Id = "12"
-    Task = "(ND, NE) Ensure 'MSS: (EnableICMPRedirect) Allow ICMP redirects to`noverride OSPF generated routes' is set to 'Disabled'."
+    Task = "(ND, NE) Ensure 'MSS: (EnableICMPRedirect) Allow ICMP redirects to override OSPF generated routes' is set to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -396,7 +396,7 @@
 }
 [AuditTest] @{
     Id = "13"
-    Task = "(HD) Ensure 'MSS: (KeepAliveTime) How often keep-alive packets`nare sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes`n(recommended)'."
+    Task = "(HD) Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -436,7 +436,7 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NetBT\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\netBT\Parameters" `
                 -Name "nonamereleaseondemand" `
                 | Select-Object -ExpandProperty "nonamereleaseondemand"
         
@@ -540,7 +540,7 @@
 }
 [AuditTest] @{
     Id = "17"
-    Task = "(ND, NE) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'."
+    Task = "(ND, NE) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -688,7 +688,7 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netbt\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\netbt\Parameters" `
                 -Name "NodeType" `
                 | Select-Object -ExpandProperty "NodeType"
         
@@ -792,7 +792,7 @@
 }
 [AuditTest] @{
     Id = "24_1"
-    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`".`n"
+    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`"."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -828,7 +828,7 @@
 }
 [AuditTest] @{
     Id = "24_2"
-    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`".`n"
+    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`"."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1332,7 +1332,7 @@
 }
 [AuditTest] @{
     Id = "38"
-    Task = "(HD) Ensure 'Turn off Help Experience Improvement Program'`nis set to 'Enabled'."
+    Task = "(HD) Ensure 'Turn off Help Experience Improvement Program'is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3244,7 +3244,7 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpClient" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders	pClient" `
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
         
@@ -3280,7 +3280,7 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders\NtpServer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\W32Time\TimeProviders	pServer" `
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
         
@@ -5256,7 +5256,7 @@
 }
 [AuditTest] @{
     Id = "146"
-    Task = "(ND, NE) Ensure 'Disallow Autoplay for non-volume devices' is set to`n'Enabled'."
+    Task = "(ND, NE) Ensure 'Disallow Autoplay for non-volume devices' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6200,7 +6200,7 @@
                 -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
                 | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6236,7 +6236,7 @@
                 -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
                 | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6272,7 +6272,7 @@
                 -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
                 | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6308,7 +6308,7 @@
                 -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
                 | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6344,7 +6344,7 @@
                 -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
                 | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6380,7 +6380,7 @@
                 -Name "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b" `
                 | Select-Object -ExpandProperty "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6416,7 +6416,7 @@
                 -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
                 | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6452,7 +6452,7 @@
                 -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
                 | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6488,7 +6488,7 @@
                 -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
                 | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6524,7 +6524,7 @@
                 -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
                 | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -6560,7 +6560,7 @@
                 -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
                 | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -7560,7 +7560,7 @@
 }
 [AuditTest] @{
     Id = "210"
-    Task = "(ND, NE)  Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'.`n`n"
+    Task = "(ND, NE)  Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7668,7 +7668,7 @@
 }
 [AuditTest] @{
     Id = "213"
-    Task = "(ND, NE) Ensure 'User Account Control: Switch to the secure desktop when prompting for elevation' is set to 'Enabled'.`n`n"
+    Task = "(ND, NE) Ensure 'User Account Control: Switch to the secure desktop when prompting for elevation' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7848,7 +7848,7 @@
 }
 [AuditTest] @{
     Id = "218"
-    Task = "(ND, NE) Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Prompt for credentials on the secure desktop'.`n"
+    Task = "(ND, NE) Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Prompt for credentials on the secure desktop'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7884,7 +7884,7 @@
 }
 [AuditTest] @{
     Id = "219"
-    Task = "(ND) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'.`n`n"
+    Task = "(ND) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7920,7 +7920,7 @@
 }
 [AuditTest] @{
     Id = "220"
-    Task = "(ND) Ensure 'Domain member: Digitally sign secure channel data`n(when possible)' is set to 'Enabled'."
+    Task = "(ND) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8424,7 +8424,7 @@
 }
 [AuditTest] @{
     Id = "234"
-    Task = "(ND, NE) Ensure 'Interactive logon: Don't display last signed-in' is set`nto 'Enabled'."
+    Task = "(ND, NE) Ensure 'Interactive logon: Don't display last signed-in' is setto 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8819,6 +8819,78 @@
     }
 }
 [AuditTest] @{
+    Id = "250"
+    Task = "(HD) Ensure 'Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers' is set to 'Deny all'."
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Name "RestrictSendingNTLMTraffic" `
+                | Select-Object -ExpandProperty "RestrictSendingNTLMTraffic"
+        
+            if ($regValue -ne 2) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "251"
+    Task = "(HD) Ensure 'Network security: Restrict NTLM: Incoming NTLM traffic' is set to 'Deny all accounts'."
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Name "RestrictReceivingNTLMTraffic" `
+                | Select-Object -ExpandProperty "RestrictReceivingNTLMTraffic"
+        
+            if ($regValue -ne 2) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "252"
     Task = "(ND) Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'."
     Test = {
@@ -8867,6 +8939,42 @@
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "254"
+    Task = "(ND, NE) Ensure 'Network security: LAN Manager authentication level' is set to 'Send NTLMv2 response only'."
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Name "LmCompatibilityLevel" `
+                | Select-Object -ExpandProperty "LmCompatibilityLevel"
+        
+            if ($regValue -ne 5) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 5"
                     Status = "False"
                 }
             }
@@ -9036,7 +9144,7 @@
 }
 [AuditTest] @{
     Id = "259"
-    Task = "(ND) Ensure 'Network security: LDAP client signing requirements' is set to 'Negotiate signing' or higher.`n"
+    Task = "(ND) Ensure 'Network security: LDAP client signing requirements' is set to 'Negotiate signing' or higher."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9360,7 +9468,7 @@
 }
 [AuditTest] @{
     Id = "268"
-    Task = "(ND, NE) Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves'. `n"
+    Task = "(ND, NE) Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves'. "
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9533,6 +9641,42 @@
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "273"
+    Task = "(HD) Ensure 'System settings: Optional subsystems' is set to 'None'. "
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\SubSystems" `
+                -Name "Optional" `
+                | Select-Object -ExpandProperty "Optional"
+        
+            if ($regValue -ne "") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: "
                     Status = "False"
                 }
             }
@@ -11430,7 +11574,7 @@
 }
 [AuditTest] @{
     Id = "365"
-    Task = "(ND, NE) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)' .`n"
+    Task = "(ND, NE) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)' ."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

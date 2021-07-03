@@ -3885,7 +3885,7 @@
                 -Name "AutoAdminLogon" `
                 | Select-Object -ExpandProperty "AutoAdminLogon"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne "0") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
@@ -4173,9 +4173,9 @@
                 -Name "ScreenSaverGracePeriod" `
                 | Select-Object -ExpandProperty "ScreenSaverGracePeriod"
         
-            if (($regValue -gt 5)) {
+            if ($regValue -notmatch "^[0-5]$") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x <= 5"
+                    Message = "Registry value is '$regValue'. Expected: Matching expression '^[0-5]$'"
                     Status = "False"
                 }
             }
