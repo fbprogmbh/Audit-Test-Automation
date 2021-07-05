@@ -29,9 +29,9 @@ How to read the table below:
 * The entries in the **CIS** column specify the version of the CIS benchmark that is used.
 * The entries in the **MS** column specify the version of the Microsoft security baseline that is used.
 * The entries in the **BSI** column specify the version of the BSI benchmark that is used.
-* The entries in the **CyberGovAu** column specify the version of the CyverGovAu benchmark that is used.
+* The entries in the **CyberGovAu** column specify the version of the CyberGovAu benchmark that is used.
 
-Report | DISA | CIS | MS | BSI | CyberGovAu
+Report | DISA | Center for Internet Security | Microsoft | BSI | CyberGovAu
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
@@ -46,8 +46,9 @@ Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | - | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202 | 06.2020
-Microsoft Windows 10 GDPR | - | - | - | 16082019 | -
+Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 06.2020
+Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
+Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging)| -
 Microsoft Windows Server 2012 R2 | - | 2.4.0 | - | - | -
 Microsoft Windows Server 2016 | V1R6 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
@@ -55,7 +56,13 @@ Microsoft Windows Server 2019 | V1R2 | 1.1.0 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
 
 The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.
+The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10 1809* reports.
 
+Short explanation for BSI (see related links):
+ * Normal protection needs standalone computer (NE)
+ * Normal protection needs domain member (ND)
+ * Increased protection needs domain member (HD)
+ * Logging and forensics for all profiles (Logging)
 
 ## Installation
 
@@ -160,3 +167,4 @@ Permanent scope: Machine
 
 *  For questions or issues regarding Audit TAP please use Github issue tracker.
 *  For questions regarding project support please write a short mail to team@fb-pro.com 
+
