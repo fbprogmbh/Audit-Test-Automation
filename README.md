@@ -29,9 +29,9 @@ How to read the table below:
 * The entries in the **CIS** column specify the version of the CIS benchmark that is used.
 * The entries in the **MS** column specify the version of the Microsoft security baseline that is used.
 * The entries in the **BSI** column specify the version of the BSI benchmark that is used.
-* The entries in the **CyberGovAu** column specify the version of the CyberGovAu benchmark that is used.
+* The entries in the **ACSC** column specify the version of the ACSC benchmark that is used.
 
-Report | DISA | Center for Internet Security | Microsoft | BSI | CyberGovAu
+Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
