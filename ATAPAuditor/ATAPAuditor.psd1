@@ -1,10 +1,10 @@
 ﻿@{
 RootModule = 'ATAPAuditor.psm1'
-ModuleVersion = '4.11'
+ModuleVersion = '4.12'
 GUID = '1662a599-4e3a-4f72-a844-9582077b589e'
-Author = 'Benedikt Böhme, Patrick Helbach'
+Author = 'Benedikt Böhme, Patrick Helbach, Steffen Winternheimer'
 CompanyName = 'FB Pro GmbH'
-Copyright = '(c) 2020 FB Pro GmbH. All rights reserved.'
+Copyright = '(c) 2021 FB Pro GmbH. All rights reserved.'
 Description = 'Allows you to tests your system with the included reports.'
 PowerShellVersion = '5.0'
 RequiredModules = @(

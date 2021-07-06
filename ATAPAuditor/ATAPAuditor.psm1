@@ -123,7 +123,10 @@ function Test-AuditGroup {
 
 	$tests = . "$RootPath\AuditGroups\$($GroupName).ps1"
 
+	$i = 1
 	foreach ($test in $tests) {
+		[int]$p = $i++ / $tests.Count * 100
+		Write-Progress -Activity "Testing Report for '$GroupName'" -Status "Progress:" -PercentComplete $p
 		Write-Verbose "Testing $($test.Id)"
 		$message = "Test not implemented yet."
 		$status = [AuditInfoStatus]::None
@@ -148,6 +151,7 @@ function Test-AuditGroup {
 			if ($null -ne $innerResult) {
 				$message = $innerResult.Message
 				$status = [AuditInfoStatus]$innerResult.Status
+				
 			}
 		}
 		catch {
@@ -275,7 +279,7 @@ function Save-ATAPHtmlReport {
 
 		[Parameter(Mandatory = $false)]
 		[string]
-		$Path = ($script:atapReportsPath | Join-Path -ChildPath "$($ReportName)_$(Get-Date -UFormat %Y%m%d_%H%M).html"),
+		$Path = ($script:atapReportsPath | Join-Path -ChildPath "$($ReportName)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"),
 
 		[switch]
 		$DarkMode,
