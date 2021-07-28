@@ -237,9 +237,9 @@ function Get-HtmlReportSection {
 			if ($null -ne $Description) {
 				htmlElement 'p' @{} { $Description }
 			}
-			if ($null -ne $ConfigAudits){
-				htmlElement 'p' @{} {$ConfigAudits.Count + ' tests have been executed in this section'}
-			}
+			#if ($null -ne $ConfigAudits){
+			#	htmlElement 'p' @{} {$ConfigAudits.Count + ' tests have been executed in this section'}
+			#}
 			if ($null -ne $ConfigAudits) {
 				htmlElement 'table' @{ class = 'audit-info' } {
 					htmlElement 'tbody' @{} {
