@@ -179,7 +179,7 @@
 		}
 		
 		[ReportSection] @{
-			Title = 'BSI Benchmarks'
+			Title = 'BSI BPOL Benchmarks'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
