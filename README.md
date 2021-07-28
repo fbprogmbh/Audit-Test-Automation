@@ -4,7 +4,7 @@
 The Teal Audit Proof provides the ability to generate a compliance overview of your system.
 You can easily create HTML-reports and have a transparent overview over
 compliance and non-compliance of explicit setttings and configurations in comparison to industry
-standards and hardening guides. 
+standards and hardening guides.
 
 ## Modules
 
@@ -15,7 +15,7 @@ The package consists of the following modules:
 
 ## Reports
 
-The *TAPAuditor* contains the following reports based on the following benchmarks including the version number. 
+The *TAPAuditor* contains the following reports based on the following benchmarks including the version number.
 
 **Reports**
 * PAW
@@ -24,22 +24,27 @@ The *TAPAuditor* contains the following reports based on the following benchmark
 * Microsoft Windows Server 2019
 * Microsoft Windows Server 2019 DC
 
-Benchmark | PAW | Microsoft Windows 10 | Microsoft Windows Server 2016 | Microsoft Windows Server 2019 | Microsoft Windows Server 2019 DC 
---------- | -----| --- | -- | --- | -- 
-CIS Google Chrome - 2.0.0 | X | - | - | - | - 
-CIS Mozilla Firefox - 1.0.0 | X | - | - | - | - 
-CIS Microsoft Office 2016 - 1.1.0 | - | X | - | - | - 
+Benchmark | PAW | Microsoft Windows 10 | Microsoft Windows Server 2016 | Microsoft Windows Server 2019 | Microsoft Windows Server 2019 DC
+--------- | -----| --- | -- | --- | --
+CIS Google Chrome - 2.0.0 | X | - | - | - | -
+CIS Mozilla Firefox - 1.0.0 | X | - | - | - | -
+CIS Microsoft Office 2016 - 1.1.0 | - | X | - | - | -
 CIS Microsoft Windows 10 - 1.9.0| X | X | - | - | -
-CIS Microsoft Windows Server 2016 - 1.2.0 | - | - | X | - | - 
+CIS Microsoft Windows Server 2016 - 1.2.0 | - | - | X | - | -
 CIS Microsoft Windows Server 2019 - 1.1.0 | - | - | - | X | X
-Microsoft Security Baseline Edge - 85 | X | - | - | - | - 
-Microsoft Security Baseline Windows 10 - 20H2 | X | X | - | - | - 
+Microsoft Security Baseline Edge - 85 | X | - | - | - | -
+Microsoft Security Baseline Windows 10 - 20H2 | X | X | - | - | -
 Microsoft Security Baseline Windows Server 2016 - FINAL | - | - | X | - | -
 Microsoft Security Baseline Windows Server 2019 - FINAL | - | - | - | X | -
 Microsoft Security Baseline Windows Server 2019 DC - FINAL | - | - | - | - | X
 BSI SiSyPHuS Windows 10 - Telemetry components - V1.1 | X | X | X | X | X
 Microsoft Windows 10 BSI BPOL | X | X | - | - | -
 
+Short explanation for BSI (see related links):
+ * Normal protection needs standalone computer (NE)
+ * Normal protection needs domain member (ND)
+ * Increased protection needs domain member (HD)
+ * Logging and forensics for all profiles (Logging)
 
 ## Installation
 
@@ -89,7 +94,7 @@ Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 
 ## Customization
 
-You can change the default folder for `Save-TAPHtmlReport`, which is `Documents\TAPReports`, by creating and later editing the environment variable `TAPReportPath`. 
+You can change the default folder for `Save-TAPHtmlReport`, which is `Documents\TAPReports`, by creating and later editing the environment variable `TAPReportPath`.
 Environment variables can bet set for different scopes - please choose the one that fits your needs. The following samples will set the default path to 'C:\TAPReports'.
 
 Temporary scope: CurrentSession

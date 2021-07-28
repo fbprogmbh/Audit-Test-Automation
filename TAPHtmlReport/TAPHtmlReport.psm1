@@ -1,24 +1,18 @@
 ﻿<#
 BSD 3-Clause License
-
 Copyright (c) 2018, FB Pro GmbH
 Copyright (c) 2021, Teal Technology Consulting GmbH
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-
 * Redistributions of source code must retain the above copyright notice, this
   list of conditions and the following disclaimer.
-
 * Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
-
 * Neither the name of the copyright holder nor the names of its
   contributors may be used to endorse or promote products derived from
   this software without specific prior written permission.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -501,6 +495,7 @@ function Get-TAPHtmlReport {
 							$completionStatus.TotalCount
 						)
 					}
+
 					# Status percentage gauge
 					htmlElement 'div' @{ class = 'gauge' } {
 						foreach ($value in $StatusValues) {
@@ -578,7 +573,6 @@ function Get-TAPHtmlReport {
 				}
 			}
 			htmlElement 'script' @{ type = 'text/javascript' } { @"
-
 function collapseHandler(e) {
 	var targetSection = e.target.parentElement.parentElement;
 	if (targetSection.classList.toggle('collapsed')) {
@@ -587,7 +581,6 @@ function collapseHandler(e) {
 		e.target.innerText = '-';
 	}
 }
-
 var collapseButtons = document.getElementsByClassName("collapseButton");
 for (var i = 0; i < collapseButtons.length; i++) {
     collapseButtons[i].addEventListener('click', collapseHandler);
@@ -597,7 +590,17 @@ for (var i = 0; i < collapseButtons.length; i++) {
 		}
 
 		$html = "<!DOCTYPE html><html lang=`"en`">$($head)$($body)</body></html> "
-		New-Item $path -type File
+
+		if(Test-Path -Path $path){
+			Write-Warning "$path already exists. $path will be overridden!"
+		}
+
+		New-Item $path -ItemType File -Force
+
+
+
 		$html | Out-File $Path -Encoding utf8
+
+		Write-Verbose "Done"
 	}
 }
