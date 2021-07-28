@@ -108,7 +108,6 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateTokenPrivilege"]
         $identityAccounts = @(
-            
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -143,7 +142,6 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTrustedCredManAccessPrivilege"]
         $identityAccounts = @(
-            
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -426,7 +424,6 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
         $identityAccounts = @(
-            
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -461,7 +458,6 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePermanentPrivilege"]
         $identityAccounts = @(
-            
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -745,7 +741,6 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLockMemoryPrivilege"]
         $identityAccounts = @(
-            
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -780,7 +775,6 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTcbPrivilege"]
         $identityAccounts = @(
-            
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
