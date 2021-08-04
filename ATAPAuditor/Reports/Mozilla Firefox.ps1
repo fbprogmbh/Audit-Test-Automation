@@ -489,13 +489,23 @@ class LockPrefSetting {
 
 #region Helper functions
 function Get-FirefoxInstallDirectory {
-	$firefoxPath = "HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\"
-	if (-not (Test-Path $firefoxPath)) {
-		$firefoxPath = "HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\"
+	if (Test-Path 'HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\') {
+		$firefoxPath = 'HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\'
+	}if (Test-Path 'HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\') {
+		$firefoxPath = 'HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\'
 	}
-	$currentFirefox = Get-ChildItem -Path $firefoxPath | Select-Object -Last 1
-	$installDir = $currentFirefox | Get-ChildItem | Where-Object PSChildName -EQ "Main"
-	return $installDir | Get-ItemProperty | Select-Object -ExpandProperty "Install Directory"
+	if(-not($null -eq $firefoxPath)){
+		$currentFirefox = Get-ChildItem -Path $firefoxPath | Select-Object -Last 1
+		$installDir = $currentFirefox | Get-ChildItem | Where-Object PSChildName -EQ "Main"
+		return $installDir | Get-ItemProperty | Select-Object -ExpandProperty "Install Directory"	
+	}
+	else{
+		Write-Output "Mozilla Firefox is not installed on OS"
+	}
+	# $firefoxPath = "HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\"
+	# if (-not (Test-Path $firefoxPath)) {
+	# 	$firefoxPath = "HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\"
+	# }
 }
 
 function Get-FirefoxLocalSettingsFile {
