@@ -1,19 +1,3 @@
-# Calculate Firefox installation path
-if (Test-Path 'HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\') {
-	$firefoxRegKeyPath = 'HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\'
-	doFirefox -path $firefoxRegKeyPath
-}if (Test-Path 'HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\') {
-	$firefoxRegKeyPath = 'HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\'
-	doFirefox -path $firefoxRegKeyPath
-}else {
-	return [PSCustomObject] @{
-		InstallationPath = "Seems like Firefox is not installed on this system."
-		LocalSettingsPath = "Seems like Firefox is not installed on this system."
-		PreferenceConfigPath = "Seems like Firefox is not installed on this system."
-		LockedPreferences = "Seems like Firefox is not installed on this system."
-	}
-}
-
 function doFirefox {
 	param (
 		[Parameter(Mandatory = $true)]
@@ -130,5 +114,21 @@ function doFirefox {
 		LocalSettingsPath = $LocalSettingsPath
 		PreferenceConfigPath = $PreferenceConfigPath
 		LockedPreferences = $LockedPreferences
+	}
+}
+
+# Calculate Firefox installation path
+if (Test-Path 'HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\') {
+	$firefoxRegKeyPath = 'HKLM:\SOFTWARE\WOW6432Node\Mozilla\Mozilla Firefox\'
+	doFirefox -path $firefoxRegKeyPath
+}if (Test-Path 'HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\') {
+	$firefoxRegKeyPath = 'HKLM:\SOFTWARE\Mozilla\Mozilla Firefox\'
+	doFirefox -path $firefoxRegKeyPath
+}else {
+	return [PSCustomObject] @{
+		InstallationPath = "Seems like Firefox is not installed on this system."
+		LocalSettingsPath = "Seems like Firefox is not installed on this system."
+		PreferenceConfigPath = "Seems like Firefox is not installed on this system."
+		LockedPreferences = "Seems like Firefox is not installed on this system."
 	}
 }
