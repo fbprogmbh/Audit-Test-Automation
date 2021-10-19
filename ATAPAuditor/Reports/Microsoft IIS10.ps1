@@ -1232,7 +1232,8 @@ function Test-IISDotNetTrustLevel {
 			| Get-IISConfigAttributeValue -AttributeName "level"
 
 			# medium trust level should be set in .NET 2.*, but not in later versions
-			if (($appPoolVersion -like "v2.*" -and $level -ne "medium") -or $appPoolVersion -notlike "v4.*") {
+			if (($appPoolVersion -like "v2.*" -and $level -ne "medium") `
+			-or ($appPoolVersion -notlike "v4.*" and appPoolVersion -notlike "no*")) {
 				$message = "TrustLevel set to $level"
 				$audit = "False"
 			}
