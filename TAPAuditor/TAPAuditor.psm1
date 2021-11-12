@@ -268,6 +268,8 @@ function Invoke-TAPReport {
 	If the parent directory doesn't exist it will be created.
 .OUTPUTS
 	None.
+.EXAMPLE
+	C:\PS> Save-TAPHtmlReport -ReportName "PAW" -Force -CreateCsv $true
 #>
 function Save-TAPHtmlReport {
 	[CmdletBinding()]
@@ -286,7 +288,11 @@ function Save-TAPHtmlReport {
 
 		[Parameter()]
 		[switch]
-		$Force
+		$Force,
+
+		[Parameter(Mandatory = $false)]
+		[bool]
+		$CreateCsv
 	)
 
 	$parent = Split-Path $Path
@@ -299,7 +305,24 @@ function Save-TAPHtmlReport {
 			return
 		}
 	}
-	Invoke-TAPReport -ReportName $ReportName | Get-TAPHtmlReport -Path $Path -DarkMode:$DarkMode
+	$ReportRaw = Invoke-TAPReport -ReportName $ReportName 
+	
+	Get-TAPHtmlReport -Path $Path `
+	-DarkMode:$DarkMode `
+	-Title $ReportRaw.Title `
+	-ModuleName $ReportRaw.ModuleName `
+	-AuditorVersion $ReportRaw.AuditorVersion `
+	-BasedOn $ReportRaw.BasedOn `
+	-Sections $ReportRaw.Sections
+
+	if ($CreateCSV) {
+		Get-TAPCSVReport -Path $Path `
+		-Title $ReportRaw.Title `
+		-ModuleName $ReportRaw.ModuleName `
+		-AuditorVersion $ReportRaw.AuditorVersion `
+		-BasedOn $ReportRaw.BasedOn `
+		-Sections $ReportRaw.Sections
+	}
 }
 
 New-Alias -Name 'shr' -Value Save-TAPHtmlReport

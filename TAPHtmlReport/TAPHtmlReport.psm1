@@ -604,3 +604,48 @@ for (var i = 0; i < collapseButtons.length; i++) {
 		Write-Verbose "Done"
 	}
 }
+
+	<#
+	.Synopsis
+		Generates an csv version of the html report
+	.Description
+		The `Get-TAPCSVReport` cmdlet collects data from the current machine to generate an csv audit report.
+	.Parameter Path
+		Specifies the relative path to the file in which the report will be stored.
+	.Example
+		C:\PS> Save-TAPHtmlReport -ReportName "PAW" -Force -CreateCsv $true
+	#>
+function Get-TAPCSVReport {
+	param (
+		[Parameter(Mandatory = $true)]
+		[string]
+		$Path,
+
+		[Parameter(Mandatory = $false)]
+		[hashtable]
+		$HostInformation = (Get-TAPHostInformation),
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$ModuleName,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$AuditorVersion,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]]
+		$BasedOn,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$Sections
+	)
+	process {
+		foreach ($section in $Sections) { $section | Select-ConfigAudit | Export-Csv -Path $($path.Substring(0,$Path.Length-4) + "csv") -Append -NoTypeInformation }
+	}	
+}
