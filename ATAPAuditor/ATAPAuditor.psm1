@@ -300,6 +300,9 @@ function Save-ATAPHtmlReport {
 		}
 	}
 	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -DarkMode:$DarkMode
+	#reload powershell session
+	Invoke-Command { & "powershell.exe" } -NoNewScope # PowerShell 5
+	Invoke-Command { & "pwsh.exe"       } -NoNewScope # PowerShell 7
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
