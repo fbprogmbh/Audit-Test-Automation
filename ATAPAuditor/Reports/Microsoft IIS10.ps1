@@ -1,5 +1,6 @@
 ﻿using namespace Microsoft.Web.Administration
 using namespace Microsoft.Windows.ServerManager.Commands
+Import-Module IISAdministration -Force
 
 #region Helper Functions
 $MESSAGE_ALLGOOD = "All Good"
