@@ -2484,7 +2484,7 @@ function Test-IISAES256Enabled {
 		$Key = Get-Item $path
 		if ($null -ne $Key.GetValue("Enabled", $null)) {
 			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-			if ($value -eq 1) {
+			if ($value -eq 0xffffffff) {
 				$message = $MESSAGE_ALLGOOD
 				$audit = "True"
 			}
