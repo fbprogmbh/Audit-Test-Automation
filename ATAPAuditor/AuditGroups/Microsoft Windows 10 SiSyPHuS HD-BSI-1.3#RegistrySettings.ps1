@@ -1332,7 +1332,7 @@
 }
 [AuditTest] @{
     Id = "38"
-    Task = "(HD) Ensure 'Turn off Help Experience Improvement Program'is set to 'Enabled'."
+    Task = "(HD) Ensure 'Turn off Help Experience Improvement Program' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3572,7 +3572,7 @@
                 -Name "RestrictImplicitTextCollection" `
                 | Select-Object -ExpandProperty "RestrictImplicitTextCollection"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
@@ -3608,7 +3608,7 @@
                 -Name "RestrictImplicitInkCollection" `
                 | Select-Object -ExpandProperty "RestrictImplicitInkCollection"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"

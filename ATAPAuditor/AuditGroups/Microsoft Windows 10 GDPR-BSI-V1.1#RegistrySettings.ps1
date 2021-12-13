@@ -1,72 +1,77 @@
-﻿[AuditTest] @{
-    Id = "3.1.1_1"
-    Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" `
-                -Name "AllowTelemetry" `
-                | Select-Object -ExpandProperty "AllowTelemetry"
-        
-            if ($regValue -ne 0) {
+﻿if((Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise Evaluation" -or 
+(Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise"){
+    [AuditTest] @{
+        Id = "3.1.1_1"
+        Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
+        Test = {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" `
+                    -Name "AllowTelemetry" `
+                    | Select-Object -ExpandProperty "AllowTelemetry"
+            
+                if ($regValue -ne 0) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 0"
+                        Status = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value not found."
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+            
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
         }
     }
 }
-[AuditTest] @{
-    Id = "3.1.1_2"
-    Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" `
-                -Name "AllowTelemetry" `
-                | Select-Object -ExpandProperty "AllowTelemetry"
-        
-            if ($regValue -ne 1) {
+else{
+    [AuditTest] @{
+        Id = "3.1.1_2"
+        Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
+        Test = {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" `
+                    -Name "AllowTelemetry" `
+                    | Select-Object -ExpandProperty "AllowTelemetry"
+            
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Status = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value not found."
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+            
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
         }
     }
 }
