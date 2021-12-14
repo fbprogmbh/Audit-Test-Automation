@@ -36,8 +36,28 @@
             }
         }
     }
+    [AuditTest] @{
+        Id = "3.1.1_2"
+        Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
+        Test = {
+            return @{
+                Message = "Windows operating system is 'Enterprise' edition"
+                Status = "None"
+            }
+        }
+    }
 }
 else{
+    [AuditTest] @{
+        Id = "3.1.1_1"
+        Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
+        Test = {
+            return @{
+                Message = "Windows operating system is not 'Enterprise' edition"
+                Status = "None"
+            }
+        }
+    }
     [AuditTest] @{
         Id = "3.1.1_2"
         Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
@@ -73,7 +93,7 @@ else{
                 Status = "True"
             }
         }
-    }
+    }   
 }
 [AuditTest] @{
     Id = "3.1.2.1"
