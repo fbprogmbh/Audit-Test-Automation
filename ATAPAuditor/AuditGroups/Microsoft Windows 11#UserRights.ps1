@@ -68,7 +68,7 @@ function ConvertTo-NTAccountUser {
 # Tests
 [AuditTest] @{
     Id = "UserRight-176"
-    Task = "Ensure 'SeSecurityPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeSecurityPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
@@ -103,7 +103,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-177"
-    Task = "Ensure 'SeRestorePrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeRestorePrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRestorePrivilege"]
@@ -138,7 +138,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-178"
-    Task = "Ensure 'SeTakeOwnershipPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeTakeOwnershipPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTakeOwnershipPrivilege"]
@@ -173,7 +173,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-179"
-    Task = "Ensure 'SeBackupPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeBackupPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeBackupPrivilege"]
@@ -208,7 +208,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-180"
-    Task = "Ensure 'SeDenyRemoteInteractiveLogonRight' is set to 'S-1-5-113'"
+    Task = "Ensure 'SeDenyRemoteInteractiveLogonRight' is set to 'Local account'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
@@ -243,11 +243,12 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-181"
-    Task = "Ensure 'SeCreatePermanentPrivilege' is set to ''"
+    Task = "Ensure 'SeCreatePermanentPrivilege' is set to 'none'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePermanentPrivilege"]
         $identityAccounts = @(
+            "S-1-0-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -277,7 +278,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-182"
-    Task = "Ensure 'SeManageVolumePrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeManageVolumePrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeManageVolumePrivilege"]
@@ -312,7 +313,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-183"
-    Task = "Ensure 'SeLoadDriverPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeLoadDriverPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLoadDriverPrivilege"]
@@ -347,11 +348,12 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-184"
-    Task = "Ensure 'SeLockMemoryPrivilege' is set to ''"
+    Task = "Ensure 'SeLockMemoryPrivilege' is set to 'none'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLockMemoryPrivilege"]
         $identityAccounts = @(
+            ""
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -381,7 +383,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-185"
-    Task = "Ensure 'SeDenyNetworkLogonRight' is set to 'S-1-5-113'"
+    Task = "Ensure 'SeDenyNetworkLogonRight' is set to 'Local account'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
@@ -416,7 +418,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-186"
-    Task = "Ensure 'SeNetworkLogonRight' is set to 'S-1-5-32-544, S-1-5-32-555'"
+    Task = "Ensure 'SeNetworkLogonRight' is set to 'administrator, Remote Desktop Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
@@ -452,7 +454,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-187"
-    Task = "Ensure 'SeImpersonatePrivilege' is set to 'S-1-5-32-544, S-1-5-6, S-1-5-19, S-1-5-20'"
+    Task = "Ensure 'SeImpersonatePrivilege' is set to 'administrator, Service, Local Service, Network Service'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
@@ -490,11 +492,12 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-188"
-    Task = "Ensure 'SeCreateTokenPrivilege' is set to ''"
+    Task = "Ensure 'SeCreateTokenPrivilege' is set to 'none'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateTokenPrivilege"]
         $identityAccounts = @(
+            "S-1-0-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -524,7 +527,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-189"
-    Task = "Ensure 'SeCreateGlobalPrivilege' is set to 'S-1-5-32-544, S-1-5-6, S-1-5-19, S-1-5-20'"
+    Task = "Ensure 'SeCreateGlobalPrivilege' is set to 'administrator, Service, Local Service, Network Service'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateGlobalPrivilege"]
@@ -562,7 +565,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-190"
-    Task = "Ensure 'SeSystemEnvironmentPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeSystemEnvironmentPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSystemEnvironmentPrivilege"]
@@ -597,7 +600,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-191"
-    Task = "Ensure 'SeCreatePagefilePrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeCreatePagefilePrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePagefilePrivilege"]
@@ -632,7 +635,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-192"
-    Task = "Ensure 'SeInteractiveLogonRight' is set to 'S-1-5-32-544, S-1-5-32-545'"
+    Task = "Ensure 'SeInteractiveLogonRight' is set to 'administrator, Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeInteractiveLogonRight"]
@@ -668,7 +671,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-193"
-    Task = "Ensure 'SeRemoteShutdownPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeRemoteShutdownPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteShutdownPrivilege"]
@@ -703,7 +706,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-194"
-    Task = "Ensure 'SeDebugPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeDebugPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDebugPrivilege"]
@@ -738,11 +741,12 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-195"
-    Task = "Ensure 'SeTrustedCredManAccessPrivilege' is set to ''"
+    Task = "Ensure 'SeTrustedCredManAccessPrivilege' is set to 'none'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTrustedCredManAccessPrivilege"]
         $identityAccounts = @(
+            "S-1-0-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -772,7 +776,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-196"
-    Task = "Ensure 'SeProfileSingleProcessPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'SeProfileSingleProcessPrivilege' is set to 'administrator'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeProfileSingleProcessPrivilege"]
@@ -807,11 +811,12 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-197"
-    Task = "Ensure 'SeTcbPrivilege' is set to ''"
+    Task = "Ensure 'SeTcbPrivilege' is set to 'none'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTcbPrivilege"]
         $identityAccounts = @(
+            "S-1-0-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -841,11 +846,12 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-198"
-    Task = "Ensure 'SeEnableDelegationPrivilege' is set to ''"
+    Task = "Ensure 'SeEnableDelegationPrivilege' is set to 'none'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
         $identityAccounts = @(
+            "S-1-0-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
