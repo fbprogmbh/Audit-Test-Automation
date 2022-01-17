@@ -3282,9 +3282,11 @@
                 -Name "fUseMailto" `
                 | Select-Object -ExpandProperty "fUseMailto"
         
-            return @{
-                Message = "Registry value found."
-                Status = "False"
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
