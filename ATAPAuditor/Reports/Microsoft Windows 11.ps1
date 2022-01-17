@@ -11,19 +11,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-2022#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-2022#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-2022#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-2022#AuditPolicies"
 				}
 			)
 		}
