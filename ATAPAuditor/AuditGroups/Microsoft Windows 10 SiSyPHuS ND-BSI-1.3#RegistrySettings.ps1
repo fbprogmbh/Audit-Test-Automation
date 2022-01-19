@@ -617,8 +617,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
-                -Name "\*\NETLOGON" `
-                | Select-Object -ExpandProperty "\*\NETLOGON"
+                -Name "\\*\NETLOGON" `
+                | Select-Object -ExpandProperty "\\*\NETLOGON"
         
             if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
@@ -653,8 +653,8 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
-                -Name "\*\SYSVOL" `
-                | Select-Object -ExpandProperty "\*\SYSVOL"
+                -Name "\\*\SYSVOL" `
+                | Select-Object -ExpandProperty "\\*\SYSVOL"
         
             if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{

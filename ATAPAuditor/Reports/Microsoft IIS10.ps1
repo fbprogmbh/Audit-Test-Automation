@@ -1,5 +1,6 @@
 ﻿using namespace Microsoft.Web.Administration
 using namespace Microsoft.Windows.ServerManager.Commands
+Import-Module IISAdministration -Force
 
 #region Helper Functions
 $MESSAGE_ALLGOOD = "All Good"
@@ -1232,7 +1233,8 @@ function Test-IISDotNetTrustLevel {
 			| Get-IISConfigAttributeValue -AttributeName "level"
 
 			# medium trust level should be set in .NET 2.*, but not in later versions
-			if (($appPoolVersion -like "v2.*" -and $level -ne "medium") -or $appPoolVersion -notlike "v4.*") {
+			if (($appPoolVersion -like "v2.*" -and $level -ne "medium") `
+			-or ($appPoolVersion -notlike "v4.*" -and -not [string]::IsNullOrEmpty($appPoolVersion))) {
 				$message = "TrustLevel set to $level"
 				$audit = "False"
 			}
@@ -2482,7 +2484,7 @@ function Test-IISAES256Enabled {
 		$Key = Get-Item $path
 		if ($null -ne $Key.GetValue("Enabled", $null)) {
 			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-			if ($value -eq 1) {
+			if ($value -eq 0xffffffff) {
 				$message = $MESSAGE_ALLGOOD
 				$audit = "True"
 			}

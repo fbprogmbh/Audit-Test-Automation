@@ -46,14 +46,16 @@ Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | - | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 06.2020
+Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 10.2020
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging)| -
+Microsoft Windows 11 | - | - | FINAL | - | -
 Microsoft Windows Server 2012 R2 | - | 2.4.0 | - | - | -
 Microsoft Windows Server 2016 | V1R6 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
-Microsoft Windows Server 2019 | V1R2 | 1.1.0 | FINAL | - | -
+Microsoft Windows Server 2019 | V1R2 | 1.2.1 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
+Microsoft Windows Server 2022 | - | - | FINAL | - | -
 
 The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10 1809* reports.

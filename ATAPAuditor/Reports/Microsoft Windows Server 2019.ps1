@@ -44,15 +44,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.1.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.1.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.1.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#AccountPolicies"
 				}
 				# [ReportSection] @{
 				# 	Title = "Windows Firewall with Advanced Security"
@@ -60,7 +60,7 @@
 				# }
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.1.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#AuditPolicies"
 				}
 			)
 		}

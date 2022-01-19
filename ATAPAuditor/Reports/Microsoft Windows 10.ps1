@@ -4,10 +4,10 @@
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Enterprise Release 1909 Benchmark, Version: 1.9.0, Date: 2020-08-14"
 		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R16, Date: 2019-10-25"
-		"CYBERGOVAU Hardening Microsoft Windows 10 version 1909 Workstations, Version: 06.2020, Date 2020-06-26"
-		"Microsoft Security baseline (FINAL) for Windows 10, Version: 20H2, Date: 2020-12-17"
+		"CYBERGOVAU Hardening Microsoft Windows 10 version 21H1 Workstations, Version: 10.2020, Date 2020-10-01"
+		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
-        	"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
+        "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -72,7 +72,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-06.2020#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#RegistrySettings"
+				}
+				# [ReportSection] @{
+				# 	Title = 'User Rights Assignment'
+				# 	AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#UserRights"
+				# }
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#AuditPolicies"
 				}
 			)
 		}
@@ -82,19 +94,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-20H2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-20H2#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-20H2#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-20H2#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AuditPolicies"
 				}
 			)
 		}
