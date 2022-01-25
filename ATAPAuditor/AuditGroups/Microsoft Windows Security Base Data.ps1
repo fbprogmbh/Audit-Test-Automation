@@ -544,3 +544,40 @@
 		}
 	}
 }
+[AuditTest] @{
+	Id = "SBD-021"
+	Task = "Ensure the Attack Surface Reduction (ASR) rules are enabled."
+	Test = {
+		$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
+		$ruleactions = (Get-MpPreference).AttackSurfaceReductionRules_Actions
+		$RuleTable = for ($i = 0; $i -lt $ruleids.Count; $i++) {
+			[PSCustomObject]@{
+				RuleId = $ruleids[$i]
+				RuleAction = $ruleactions[$i]
+			}
+		}
+		$countEnabled = ($RuleTable | Where-Object {$_.RuleAction -eq 1} | Measure-Object).Count
+		
+		$status = switch ($countEnabled) {
+			{$PSItem -ge 12}{
+				@{
+					Message = "Compliant (12+ rules enabled)"
+					Status = "True"
+				}
+			}
+			{($PSItem -ge 1) -and ($PSItem -lt 12)}{
+				@{
+					Message = "Less than 12 ASR rules are enabled."
+					Status = "Warning"
+				}
+			}
+			Default {
+				@{
+					Message = "ASR rules are not enabled."
+					Status = "False"
+				}
+			}
+		}
+		return $status
+	}
+}
