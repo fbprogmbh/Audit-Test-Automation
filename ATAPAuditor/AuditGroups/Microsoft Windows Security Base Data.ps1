@@ -206,7 +206,7 @@
 }
 [AuditTest] @{
 	Id = "SBD-008"
-	Task = "Ensure the TPM Chip is implementing the specification version 2.0."
+	Task = "Ensure the TPM Chip is implementing the specification version 2.0 or higher."
 	Test = {
 		# get array of implemented spec versions
 		$obj = (Get-CimInstance -Class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SpecVersion)
