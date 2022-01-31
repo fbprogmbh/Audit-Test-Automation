@@ -75,7 +75,8 @@ Find several detailed explanations below and use them as follows:
 * The most easy automated way - just install our package directly from PowerShell Gallery.
 
 ### Video tutorial
-Find the video referenced here https://www.youtube.com/watch?v=5fJGdHCxqpM.
+Find the tutorial as follows:
+[![How to get a transparent system hardening report?](https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg)](https://www.youtube.com/watch?v=5fJGdHCxqpM)
 
 
 ### Manual Installation
