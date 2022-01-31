@@ -76,6 +76,8 @@ Find several detailed explanations below and use them as follows:
 
 ### Video tutorial
 Find the tutorial as follows:
+
+
 [![How to get a transparent system hardening report?](https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg)](https://www.youtube.com/watch?v=5fJGdHCxqpM)
 
 
