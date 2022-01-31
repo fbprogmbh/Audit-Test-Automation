@@ -67,6 +67,16 @@ Short explanation for BSI (see related links):
  * Logging and forensics for all profiles (Logging)
 
 ## Installation
+We offer several ways of how you can use our free of charge AuditTAP. 
+Find several detailed explanations below and use them as follows:
+
+* Video tutorial - following the well known phrase "A picture is worth a thousand words" we visualized the installation of AuditTAP in a roughly three minute video. Have fun!
+* Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
+* The most easy automated way - just install our package directly from PowerShell Gallery.
+
+### Video tutorial
+Find the video referenced here https://www.youtube.com/watch?v=5fJGdHCxqpM.
+
 
 ### Manual Installation
 
