@@ -1,223 +1,334 @@
+function isWindows8OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
+}
+function isWindows81OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,3))
+}
+function isWindows10OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
+}
 [AuditTest] @{
 	Id = "SBD-001"
 	Task = "Ensure the system is booting in 'UEFI' mode."
-	Test = {	
-		$status = switch ($env:firmware_type) {
-			"UEFI" {
-				@{
+	Test = {
+		if (isWindows8OrNewer) {
+			$status = switch ($env:firmware_type) {
+				"UEFI" {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				"Legacy" {
+					@{
+						Message = "System is booting using 'Legacy' mode."
+						Status = "False"
+					}
+				}
+				Default {
+					@{
+						Message = "Unknown boot mode"
+						Status = "False"
+					}
+				}
+			}
+			return $status
+		}
+		else {
+			if ((bcdedit | findstr -i path | findstr -i winload.efi).Count -ge 1) {
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			"Legacy" {
-				@{
+			elseif (((bcdedit | findstr -i path | findstr -i winload.exe).Count -ge 1)) {
+				return @{
 					Message = "System is booting using 'Legacy' mode."
 					Status = "False"
 				}
 			}
-			Default {
-				@{
+			else {
+				return @{
 					Message = "Unknown boot mode"
 					Status = "False"
 				}
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-002"
 	Task = "Ensure the system is using SecureBoot."
 	Test = {
-		try {
-			$obj = Confirm-SecureBootUEFI
+		if (isWindows8OrNewer) {
+			try {
+				$obj = Confirm-SecureBootUEFI
+			}
+			catch [UnauthorizedAccessException] {
+				return @{
+					Message = "Permission Denied"
+					Status = "Error"
+				}
+			}
+			$status = switch ($obj) {
+				$true {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				$false {
+					@{
+						Message = "SecureBoot is supported but disabled."
+						Status = "False"
+					}
+				}
+				Default {
+					@{
+						Message = "SecureBoot is not supported or system is in non-UEFI mode."
+						Status = "False"
+					}
+				}
+			}
+			return $status
 		}
-		catch [UnauthorizedAccessException] {
+		else {
 			return @{
-				Message = "Permission Denied"
-				Status = "Error"
+				Message = "SecureBoot is not supported on this system."
+				Status = "None"
 			}
 		}
-		$status = switch ($obj) {
-			$true {
-				@{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			$false {
-				@{
-					Message = "SecureBoot is supported but disabled."
-					Status = "False"
-				}
-			}
-			Default {
-				@{
-					Message = "SecureBoot is not supported or system is in non-UEFI mode."
-					Status = "False"
-				}
-			}
-		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-003"
 	Task = "Ensure the TPM Chip is 'present'."
 	Test = {
-		$obj = (Get-Tpm).TpmPresent
-		if ($obj -isnot [Boolean]) {
-			return @{
-				Message = "Cannot get 'present' status of TPM."
-				Status = "Error"
-			}
-		}
-		$status = switch ($obj) {
-			$true {
-				@{
-					Message = "Compliant"
-					Status = "True"
+		if (isWindows8OrNewer) {
+			$obj = (Get-Tpm).TpmPresent
+			if ($obj -isnot [Boolean]) {
+				return @{
+					Message = "Cannot get 'present' status of TPM."
+					Status = "Error"
 				}
 			}
-			$false {
-				@{
+			$status = switch ($obj) {
+				$true {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				$false {
+					@{
+						Message = "The TPM Chip is not 'present'."
+						Status = "False"
+					}
+				}
+			}
+			return $status
+		}
+		else {
+			# Get any property to see if a TPM is present
+			if ((Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null) {
+				return @{
 					Message = "The TPM Chip is not 'present'."
 					Status = "False"
 				}
 			}
+			else {
+				return @{
+					Message = "Compliant"
+					Status = "True"
+				}
+			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-004"
 	Task = "Ensure the TPM Chip is 'ready'."
 	Test = {
-		$obj = (Get-Tpm).TpmReady
-		if ($obj -isnot [Boolean]) {
+		if (isWindows8OrNewer) {
+			$obj = (Get-Tpm).TpmReady
+			if ($obj -isnot [Boolean]) {
+				return @{
+					Message = "Cannot get 'ready' status of TPM."
+					Status = "Error"
+				}
+			}
+			$status = switch ($obj) {
+				$true {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				$false {
+					@{
+						Message = "The TPM Chip is not 'ready'."
+						Status = "False"
+					}
+				}
+			}
+			return $status
+		}
+		else {
 			return @{
-				Message = "Cannot get 'ready' status of TPM."
-				Status = "Error"
+				Message = "System does not expose a 'ready' status"
+				Status = "None"
 			}
 		}
-
-		$status = switch ($obj) {
-			$true {
-				@{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			$false {
-				@{
-					Message = "The TPM Chip is not 'ready'."
-					Status = "False"
-				}
-			}
-		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-005"
 	Task = "Ensure the TPM Chip is 'enabled'."
 	Test = {
-		$obj = (Get-Tpm).TpmEnabled
-		if ($obj -isnot [Boolean]) {
-			return @{
-				Message = "Cannot get 'enabled' status of TPM."
-				Status = "Error"
+		if (isWindows8OrNewer) {
+			$obj = (Get-Tpm).TpmEnabled
+			if ($obj -isnot [Boolean]) {
+				return @{
+					Message = "Cannot get 'enabled' status of TPM."
+					Status = "Error"
+				}
 			}
+			$status = switch ($obj) {
+				$true {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				$false {
+					@{
+						Message = "The TPM Chip is not 'enabled'."
+						Status = "False"
+					}
+				}
+			}
+			return $status
 		}
-		$status = switch ($obj) {
-			$true {
-				@{
+		else {
+			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsEnabled_InitialValue) {
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			$false {
-				@{
+			else {
+				return @{
 					Message = "The TPM Chip is not 'enabled'."
 					Status = "False"
 				}
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-006"
 	Task = "Ensure the TPM Chip is 'activated'."
 	Test = {
-		$obj = (Get-Tpm).TpmActivated
-		if ($obj -isnot [Boolean]) {
-			return @{
-				Message = "Cannot get 'activated' status of TPM."
-				Status = "Error"
+		if (isWindows8OrNewer) {
+			$obj = (Get-Tpm).TpmActivated
+			if ($obj -isnot [Boolean]) {
+				return @{
+					Message = "Cannot get 'activated' status of TPM."
+					Status = "Error"
+				}
 			}
+			$status = switch ($obj) {
+				$true {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				$false {
+					@{
+						Message = "The TPM Chip is not 'activated'."
+						Status = "False"
+					}
+				}
+			}
+			return $status
 		}
-
-		$status = switch ($obj) {
-			$true {
-				@{
+		else {
+			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) {
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			$false {
-				@{
+			else {
+				return @{
 					Message = "The TPM Chip is not 'activated'."
 					Status = "False"
 				}
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-007"
 	Task = "Ensure the TPM Chip is 'owned'."
 	Test = {
-		$obj = (Get-Tpm).TpmOwned
-		if ($obj -isnot [Boolean]) {
-			return @{
-				Message = "Cannot get 'owned' status of TPM."
-				Status = "Error"
+		if (isWindows8OrNewer) {
+			$obj = (Get-Tpm).TpmOwned
+			if ($obj -isnot [Boolean]) {
+				return @{
+					Message = "Cannot get 'owned' status of TPM."
+					Status = "Error"
+				}
 			}
-		}
 
-		$status = switch ($obj) {
-			$true {
-				@{
+			$status = switch ($obj) {
+				$true {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				$false {
+					@{
+						Message = "The TPM Chip is not 'owned'."
+						Status = "False"
+					}
+				}
+			}
+			return $status
+		}
+		else {
+			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsOwned_InitialValue) {
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			$false {
-				@{
+			else {
+				return @{
 					Message = "The TPM Chip is not 'owned'."
 					Status = "False"
 				}
 			}
+			
 		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-008"
-	Task = "Ensure the TPM Chip is implementing the specification version 2.0 or higher."
+	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
 		# get array of implemented spec versions
 		$obj = (Get-CimInstance -Class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SpecVersion)
 		if ($obj -eq $null) {
 			return @{
-				Message = "Permission Denied"
-				Status = "Error"
+				Message = "System did not provide specification version information"
+				Status = "False"
 			}
 		}
 		# get main spec version (first element)
-		$obj = $obj.replace(' ','').split(',')[0]
+		$obj = $obj.split(', ')[0]
 
 		if ($obj -ge 2.0) {
 			return @{
@@ -232,7 +343,7 @@
 			}
 		} else {
 			return @{
-				Message = "No TPM implemented specification version found."
+				Message = "No implemented specification version found."
 				Status = "False"
 			}
 		}
@@ -329,8 +440,21 @@
 	Id = "SBD-012"
 	Task = "Ensure that Bitlocker is activated on all volumes."
 	Test = {
-		$volumes = (Get-Bitlockervolume).Count
-		$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
+		if (isWindows8OrNewer) {
+			$volumes = (Get-Bitlockervolume).Count
+			$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
+		}
+		else {
+			$volumes = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Measure-Object).Count
+			$volumes_fullenc = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Where-Object {$_.ProtectionStatus -eq 1} | Measure-Object).Count
+		}
+
+		if ($volumes -lt 1) {
+			return @{
+				Message = "Bitlocker status is unknown."
+				Status = "Error"
+			}
+		}
 		$enc_ratio = $volumes_fullenc / $volumes
 		$status = switch ($enc_ratio) {
 			{$PSItem -ge 1}{
@@ -380,7 +504,16 @@
 	Id = "SBD-014"
 	Task = "Ensure the status of the Windows Defender Advanced Threat Protection service is 'Running'."
 	Test = {
-		$status = switch ((Get-Service Sense).Status) {
+		try {
+			$obj = (Get-Service Sense -ErrorAction Stop).Status
+		}
+		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
+			return @{
+				Message = "Service does not exist."
+				Status = "None"
+			}
+		}
+		$status = switch ($obj) {
 			"Running"{
 				@{
 					Message = "Compliant"
@@ -399,23 +532,40 @@
 }
 [AuditTest] @{
 	Id = "SBD-015"
-	Task = "Ensure the status of the Windows Firewall service is 'Running'."
+	Task = "Ensure the Windows Firewall is enabled on all profiles."
 	Test = {
-		$status = switch ((Get-Service mpssvc).Status) {
-			"Running"{
-				@{
+		if (isWindows8OrNewer) {
+			if ((Get-NetFirewallProfile | Where-Object {$_.Enabled -eq 'False'} | Measure-Object).Count -gt 0) {
+				return @{
+					Message = "Firewall is not enabled on all profiles"
+					Status = "False"
+				}
+			}
+			else {
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			default {
-				@{
-					Message = "Service is not 'Running'."
+		}
+		else {
+			$fw = New-Object -ComObject hnetcfg.fwpolicy2 
+			$domain = $fw.FireWallEnabled(1)
+			$private = $fw.FireWallEnabled(2)
+			$public = $fw.FireWallEnabled(4)
+			if ($domain -and $private -and $public) {
+				return @{
+					Message = "Compliant"
+					Status = "True"
+				}
+			}
+			else {
+				return @{
+					Message = "Firewall is not enabled on all profiles"
 					Status = "False"
 				}
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
@@ -478,49 +628,65 @@
 	Id = "SBD-018"
 	Task = "Ensure Virtualization Based Security is enabled and running."
 	Test = {
-		$obj = (Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).VirtualizationBasedSecurityStatus
-		$status = switch ($obj) {
-			{$PSItem -eq 2} {
-				@{
-					Message = "Compliant"
-					Status = "True"
+		if (isWindows10OrNewer) {
+			$obj = (Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).VirtualizationBasedSecurityStatus
+			$status = switch ($obj) {
+				{$PSItem -eq 2} {
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				{$PSItem -eq 1} {
+					@{
+						Message = "VBS is activated but not running."
+						Status = "False"
+					}
+				}
+				{$PSItem -eq 0} {
+					@{
+						Message = "VBS is not activated."
+						Status = "False"
+					}
+				}
+				default {
+					@{
+						Message = "Cannot get the VBS status."
+						Status = "Error"
+					}
 				}
 			}
-			{$PSItem -eq 1} {
-				@{
-					Message = "VBS is activated but not running."
-					Status = "False"
-				}
-			}
-			{$PSItem -eq 0} {
-				@{
-					Message = "VBS is not activated."
-					Status = "False"
-				}
-			}
-			default {
-				@{
-					Message = "Cannot get the VBS status."
-					Status = "Error"
-				}
+			return $status
+		}
+		else {
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "False"
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
 	Id = "SBD-019"
 	Task = "Ensure Hypervisor-protected Code Integrity (HVCI) is running."
 	Test = {
-		if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 2) {
-			return @{
-				Message = "Compliant"
-				Status = "True"
+		if (isWindows10OrNewer) {
+			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 2) {
+				return @{
+					Message = "Compliant"
+					Status = "True"
+				}
+			}
+			else {
+				return @{
+					Message = "HVCI is not running."
+					Status = "False"
+				}
 			}
 		}
 		else {
 			return @{
-				Message = "HVCI is not running."
+				Message = "System does not support this feature (Windows 10 or newer required)."
 				Status = "False"
 			}
 		}
@@ -530,15 +696,23 @@
 	Id = "SBD-020"
 	Task = "Ensure Credential Guard is running."
 	Test = {
-		if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 1) {
-			return @{
-				Message = "Compliant"
-				Status = "True"
+		if (isWindows10OrNewer) {
+			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 1) {
+				return @{
+					Message = "Compliant"
+					Status = "True"
+				}
+			}
+			else {
+				return @{
+					Message = "Credential Guard is not running."
+					Status = "False"
+				}
 			}
 		}
 		else {
 			return @{
-				Message = "Credential Guard is not running."
+				Message = "System does not support this feature (Windows 10 or newer required)."
 				Status = "False"
 			}
 		}
@@ -548,36 +722,44 @@
 	Id = "SBD-021"
 	Task = "Ensure the Attack Surface Reduction (ASR) rules are enabled."
 	Test = {
-		$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
-		$ruleactions = (Get-MpPreference).AttackSurfaceReductionRules_Actions
-		$RuleTable = for ($i = 0; $i -lt $ruleids.Count; $i++) {
-			[PSCustomObject]@{
-				RuleId = $ruleids[$i]
-				RuleAction = $ruleactions[$i]
+		if (isWindows10OrNewer) {
+			$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
+			$ruleactions = (Get-MpPreference).AttackSurfaceReductionRules_Actions
+			$RuleTable = for ($i = 0; $i -lt $ruleids.Count; $i++) {
+				[PSCustomObject]@{
+					RuleId = $ruleids[$i]
+					RuleAction = $ruleactions[$i]
+				}
+			}
+			$countEnabled = ($RuleTable | Where-Object {$_.RuleAction -eq 1} | Measure-Object).Count
+			
+			$status = switch ($countEnabled) {
+				{$PSItem -ge 12}{
+					@{
+						Message = "Compliant (12+ rules enabled)"
+						Status = "True"
+					}
+				}
+				{($PSItem -ge 1) -and ($PSItem -lt 12)}{
+					@{
+						Message = "Less than 12 ASR rules are enabled."
+						Status = "Warning"
+					}
+				}
+				Default {
+					@{
+						Message = "ASR rules are not enabled."
+						Status = "False"
+					}
+				}
+			}
+			return $status
+		}
+		else {
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "False"
 			}
 		}
-		$countEnabled = ($RuleTable | Where-Object {$_.RuleAction -eq 1} | Measure-Object).Count
-		
-		$status = switch ($countEnabled) {
-			{$PSItem -ge 12}{
-				@{
-					Message = "Compliant (12+ rules enabled)"
-					Status = "True"
-				}
-			}
-			{($PSItem -ge 1) -and ($PSItem -lt 12)}{
-				@{
-					Message = "Less than 12 ASR rules are enabled."
-					Status = "Warning"
-				}
-			}
-			Default {
-				@{
-					Message = "ASR rules are not enabled."
-					Status = "False"
-				}
-			}
-		}
-		return $status
 	}
 }
