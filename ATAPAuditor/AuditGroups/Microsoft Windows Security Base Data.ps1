@@ -94,7 +94,7 @@ function isWindows10OrNewer {
 		}
 		else {
 			return @{
-				Message = "SecureBoot is not supported on this system."
+				Message = "System does not support this feature (Windows 8 or newer required)."
 				Status = "None"
 			}
 		}
@@ -502,14 +502,14 @@ function isWindows10OrNewer {
 }
 [AuditTest] @{
 	Id = "SBD-014"
-	Task = "Ensure the status of the Windows Defender Advanced Threat Protection service is 'Running'."
+	Task = "Ensure the status of the Microsoft Defender for Endpoint service is 'Running'."
 	Test = {
 		try {
 			$obj = (Get-Service Sense -ErrorAction Stop).Status
 		}
 		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
 			return @{
-				Message = "Service does not exist."
+				Message = "Service does not exist (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
 				Status = "None"
 			}
 		}
@@ -522,7 +522,7 @@ function isWindows10OrNewer {
 			}
 			default {
 				@{
-					Message = "Service is not 'Running'."
+					Message = "Service is not 'Running' (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
 					Status = "False"
 				}
 			}
@@ -661,7 +661,7 @@ function isWindows10OrNewer {
 		else {
 			return @{
 				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "False"
+				Status = "None"
 			}
 		}
 	}
@@ -687,7 +687,7 @@ function isWindows10OrNewer {
 		else {
 			return @{
 				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "False"
+				Status = "None"
 			}
 		}
 	}
@@ -713,7 +713,7 @@ function isWindows10OrNewer {
 		else {
 			return @{
 				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "False"
+				Status = "None"
 			}
 		}
 	}
@@ -758,7 +758,7 @@ function isWindows10OrNewer {
 		else {
 			return @{
 				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "False"
+				Status = "None"
 			}
 		}
 	}
