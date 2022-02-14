@@ -763,3 +763,30 @@ function isWindows10OrNewer {
 		}
 	}
 }
+[AuditTest] @{
+	Id = "SBD-022"
+	Task = "Ensure Windows Defender Application Guard is enabled."
+	Test = {
+		if (isWindows10OrNewer) {
+			$state = (Get-WindowsOptionalFeature -Online -FeatureName Windows-Defender-ApplicationGuard).State
+			if ($state -eq 'Enabled') {
+				return @{
+					Message = "Compliant"
+					Status = "True"
+				}
+			}
+			else {
+				return @{
+					Message = "Windows Defender Application Guard is not enabled."
+					Status = "False"
+				}
+			}
+		}
+		else {
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "None"
+			}
+		}
+	}
+}
