@@ -7,6 +7,9 @@ function isWindows81OrNewer {
 function isWindows10OrNewer {
 	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
 }
+function win7NoTPMChipDetected {
+	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
+}
 [AuditTest] @{
 	Id = "SBD-001"
 	Task = "Ensure the system is booting in 'UEFI' mode."
@@ -130,13 +133,12 @@ function isWindows10OrNewer {
 		}
 		else {
 			# Get any property to see if a TPM is present
-			if ((Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null) {
+			if (win7NoTPMChipDetected) {
 				return @{
-					Message = "The TPM Chip is not 'present'."
-					Status = "False"
+					Message = "No TPM Chip detected."
+					Status = "None"
 				}
-			}
-			else {
+			} else {
 				return @{
 					Message = "Compliant"
 					Status = "True"
@@ -174,9 +176,16 @@ function isWindows10OrNewer {
 			return $status
 		}
 		else {
-			return @{
-				Message = "System does not expose a 'ready' status"
-				Status = "None"
+			if (win7NoTPMChipDetected) {
+				return @{
+					Message = "No TPM Chip detected."
+					Status = "None"
+				}
+			} else {
+				return @{
+					Message = "System does not expose a 'ready' status"
+					Status = "None"
+				}
 			}
 		}
 	}
@@ -210,6 +219,12 @@ function isWindows10OrNewer {
 			return $status
 		}
 		else {
+			if (win7NoTPMChipDetected) {
+				return @{
+					Message = "No TPM Chip detected."
+					Status = "None"
+				}
+			}
 			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsEnabled_InitialValue) {
 				return @{
 					Message = "Compliant"
@@ -254,6 +269,12 @@ function isWindows10OrNewer {
 			return $status
 		}
 		else {
+			if (win7NoTPMChipDetected) {
+				return @{
+					Message = "No TPM Chip detected."
+					Status = "None"
+				}
+			}
 			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) {
 				return @{
 					Message = "Compliant"
@@ -299,6 +320,12 @@ function isWindows10OrNewer {
 			return $status
 		}
 		else {
+			if (win7NoTPMChipDetected) {
+				return @{
+					Message = "No TPM Chip detected."
+					Status = "None"
+				}
+			}
 			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsOwned_InitialValue) {
 				return @{
 					Message = "Compliant"
@@ -320,11 +347,11 @@ function isWindows10OrNewer {
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
 		# get array of implemented spec versions
-		$obj = (Get-CimInstance -Class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SpecVersion)
+		$obj = (Get-CimInstance -Class Win32_Tpm -Namespace root\CIMV2\Security\MicrosoftTpm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SpecVersion)
 		if ($obj -eq $null) {
 			return @{
-				Message = "System did not provide specification version information"
-				Status = "False"
+				Message = "No TPM Chip detected."
+				Status = "None"
 			}
 		}
 		# get main spec version (first element)
