@@ -50,9 +50,9 @@ function askSelection {
         # show menu and ask the user for a selection (or multiple)
         Show-Menu $reports
         if ($retry) {
-            [string]$selection = Read-Host "Invalid selection. Please try again`nYou can select multiple reports by comma seperating the numbers"
+            [string]$selection = Read-Host "Invalid selection. Please try again`nYou can select multiple reports by comma separating the numbers"
         } else {
-            [string]$selection = Read-Host "Please choose a report to run`nYou can select multiple reports by comma seperating the numbers"
+            [string]$selection = Read-Host "Please choose a report to run`nYou can select multiple reports by comma separating the numbers"
         }
 
         # sanitize input data

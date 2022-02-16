@@ -446,8 +446,16 @@ function win7NoTPMChipDetected {
 	Id = "SBD-011"
 	Task = "Ensure the status of the Bitlocker service is 'Running'."
 	Test = {
-		$status = switch ((Get-Service BDESVC).Status) {
-			"Running"{
+		if (isWindows8OrNewer) {
+			if ((Get-WindowsOptionalFeature -Online -FeatureName Bitlocker).State -eq 'Disabled') {
+				return @{
+					Message = "Bitlocker feature is not installed."
+					Status = "False"
+				}
+			}
+		}
+		$status = switch ((Get-Service BDESVC -ErrorAction SilentlyContinue).Status) {
+			"Running" {
 				@{
 					Message = "Compliant"
 					Status = "True"
@@ -468,10 +476,15 @@ function win7NoTPMChipDetected {
 	Task = "Ensure that Bitlocker is activated on all volumes."
 	Test = {
 		if (isWindows8OrNewer) {
+			if ((Get-WindowsOptionalFeature -Online -FeatureName Bitlocker).State -eq 'Disabled') {
+				return @{
+					Message = "Bitlocker feature is not installed."
+					Status = "False"
+				}
+			}
 			$volumes = (Get-Bitlockervolume).Count
 			$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
-		}
-		else {
+		} else {
 			$volumes = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Measure-Object).Count
 			$volumes_fullenc = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Where-Object {$_.ProtectionStatus -eq 1} | Measure-Object).Count
 		}

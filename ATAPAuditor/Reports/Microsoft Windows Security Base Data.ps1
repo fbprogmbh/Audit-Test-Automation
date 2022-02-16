@@ -11,6 +11,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Security Base Data'
+					Description = "This section contains basic recommendations for a secure Microsoft Windows configuration."
 					AuditInfos = Test-AuditGroup "Microsoft Windows Security Base Data"
 				}
 			)
