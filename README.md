@@ -87,6 +87,9 @@ Expand-Archive -Path ".\Audit TAP.zip" -DestinationPath "Audit TAP"
 Install-Module -Name ATAPAuditor
 ```
 
+### Installer
+
+Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps. Additionally to the modules, it also installs a shortcut to the menu based runner in the start menu.
 ## Usage
 
 Optionally, import the `ATAPAuditor` module:
@@ -102,6 +105,8 @@ The force parameter creates the folder if it doesn't exist. For using an alterna
 Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
 Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
 ```
+
+The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the windows based installer, a shortcut can be found in the start menu.
 
 ## Good to know
 
