@@ -6,7 +6,7 @@ function Get-Reports {
         $atapFile = $atapFile[0] # use the first result if there are several
     } elseif ($atapFile.Count -eq 0) {
         Write-Host "The ATAP module could not be found."
-        pressAnyKey
+        pressAnyKeyToQuit
         Exit
     }
 
@@ -32,10 +32,9 @@ function Show-Menu {
     )
     Clear-Host
     Write-Host "============== AuditTAP Reports ==============`n"
+    $padCount = ([string]$reports.Count).Length
     foreach ($item in $reports.GetEnumerator()) {
-        $k = $item.Key
-        $v = $item.Value
-        Write-Host "[$k] $v"
+        Write-Host (' {0}: {1}' -f $item.Key.PadLeft($padCount, ' '), $item.Value)
     }
     Write-Host ""
 }
@@ -92,21 +91,52 @@ function runReports {
 }
 
 function isAdmin {
-    return ([Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544')
+    $unixOS = [System.Environment]::OSVersion.Platform -eq 'Unix'
+	if ($unixOS) {
+        return ($(id -u) -eq 0)
+    } else {
+        return ([Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544')
+    }
 }
 
-function pressAnyKey {
+function pressAnyKeyToQuit {
+    if ($psISE) {
+        Return
+    }
     Write-Host "Press any key to quit"
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
 
 if (!(isAdmin)) {
     Write-Host "Please run as administrator`n"
+    pressAnyKeyToQuit
 } else {
     $reports = Get-Reports
     Show-Menu $reports
     $sel = askSelection $reports
     runReports $sel
-}
 
-pressAnyKey
+    if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
+        if (($env:XDG_SESSION_TYPE -eq 'tty') -or ($null -eq $env:SUDO_USER)) {
+            # 1. reason to return: no graphical environment to open the file explorer
+            # 2. reason to return: we do not want to open the file explorer as root
+            Return
+        }
+    }
+
+    [string]$action = Read-Host "Do you want to open the output directory? (y/N)"
+    if ($action -eq 'y') {
+        if ($null -eq $env:ATAPReportPath) {
+            $outPath = [Environment]::GetFolderPath('MyDocuments') | Join-Path -ChildPath 'ATAPReports'
+        } else {
+            $outPath = $env:ATAPReportPath
+        }
+        if (Test-Path -Path $outPath) {
+            if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
+                su $env:SUDO_USER -c "xdg-open $outPath"
+            } else {
+                explorer.exe $outPath
+            }
+        }
+    }
+}
