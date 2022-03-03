@@ -382,7 +382,7 @@ function ConvertTo-NTAccountUser {
                     $User = $SID.Translate( [System.Security.Principal.NTAccount])
                     $users += "$($User.Value) ($($missingUser))"
                 }
-                $messages += "The user 'SeDenyRemoteInteractiveLogonRight' setting does not contain the following users: " + ($users -join ", ")
+                $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' setting does not contain the following users: " + ($users -join ", ")
             }
             $message = $messages -join [System.Environment]::NewLine
         
