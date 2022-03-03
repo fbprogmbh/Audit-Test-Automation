@@ -8483,7 +8483,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.2"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office communication application from creating child processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8519,7 +8519,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.3"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office applications from creating executable content ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8555,7 +8555,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.4"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block execution of potentially obfuscated scripts ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8591,7 +8591,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.5"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office applications from injecting code into other processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8627,7 +8627,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.6"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Block Adobe Reader from creating child processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8663,7 +8663,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.7"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Win32 API calls from Office macro ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8699,7 +8699,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.8"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block credential stealing from the Windows local security authority subsystem (lsass.exe)) ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8735,7 +8735,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.9"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block untrusted and unsigned processes that run from USB ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8771,7 +8771,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.10"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block executable content from email client and webmail ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8807,7 +8807,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.11"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules Block JavaScript or VBScript from launching downloaded executable content ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8843,7 +8843,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.12"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office applications from creating child processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8879,7 +8879,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.13"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block persistence through WMI event subscription ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9995,7 +9995,7 @@
 }
 [AuditTest] @{
     Id = "18.9.80.1.1.1"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10031,7 +10031,7 @@
 }
 [AuditTest] @{
     Id = "18.9.80.1.1.2"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Warn and prevent bypass'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
