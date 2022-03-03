@@ -1151,6 +1151,9 @@
 [AuditTest] @{
     Id = "Registry-033"
     Task = "Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2123,6 +2126,9 @@
 [AuditTest] @{
     Id = "Registry-060"
     Task = "Set registry value 'AdmPwdEnabled' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
