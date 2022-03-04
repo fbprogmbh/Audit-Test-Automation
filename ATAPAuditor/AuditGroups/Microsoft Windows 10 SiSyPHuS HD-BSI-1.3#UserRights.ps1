@@ -376,6 +376,7 @@ function ConvertTo-NTAccountUser {
                 }
                 $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' contains following unexpected users: " +  ($users -join ", ")
             }
+            $users = @()
             if ($missingUsers.Count -gt 0) {
                 foreach($missingUser in $missingUsers){
                     $SID = New-Object System.Security.Principal.SecurityIdentifier($missingUser)
