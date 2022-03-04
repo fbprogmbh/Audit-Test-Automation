@@ -69,7 +69,7 @@ function commandExists {
 	Id = "DSBD-004"
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
-		if (getKernelVersion -ge [version]'5.6.0.0') { # For Ubuntu 20.04 e.g.
+		if ($(getKernelVersion) -ge [version]'5.6.0.0') { # For Ubuntu 20.04 e.g.
 			$spec = [float](Get-Content -Path '/sys/class/tpm/tpm0/tpm_version_major')
 		} else {
 		$tpm2toolsMajorVersion = [int]($(tpm2_getcap -v) | Select-String -Pattern '^.+version=\"(\d)\..+$').Matches.Groups[1].Value
