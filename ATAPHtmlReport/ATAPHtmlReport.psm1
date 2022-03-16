@@ -264,16 +264,6 @@ function Get-HtmlReportSection {
 
 function Get-ATAPHostInformation {
 	$unixOS = [System.Environment]::OSVersion.Platform -eq 'Unix' # returns 'Unix' on Linux and MacOS and 'Win32NT' on Windows, PS v6+ has builtin environment variable for this
-	$DomainRole = (Get-WmiObject Win32_ComputerSystem).DomainRole
-	$role
-	switch ($DomainRole) {
-		0 { $role = "Stand Alone Workstation"}
-		1 { $role = "Member Workstation"}
-		2 { $role = "Standalone Server"}
-		3 { $role = "Member Server"}
-		4 { $role = "Backup Domain Controller"}
-		5 { $role = "Primary Domain Controller"}
-	}
 	if ($unixOS) {
 		return [ordered]@{
 			"Hostname"                  = hostname
