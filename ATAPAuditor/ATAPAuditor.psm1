@@ -140,7 +140,7 @@ function Test-AuditGroup {
 					Write-Output ([AuditInfo]@{
 						Id = $test.Id
 						Task = $test.Task
-						Message = 'Not applicable. This audit does not apply to Domain controllers.'
+						Message = 'Not applicable. This audit only applies to Domain controllers.'
 						Status = [AuditInfoStatus]::None
 					})
 				}
@@ -148,7 +148,7 @@ function Test-AuditGroup {
 					Write-Output ([AuditInfo]@{
 						Id = $test.Id
 						Task = $test.Task
-						Message = 'Not applicable. This audit only applies to Domain controllers.'
+						Message = 'Not applicable. This audit does not apply to Domain controllers.'
 						Status = [AuditInfoStatus]::None
 					})
 				}
