@@ -276,6 +276,14 @@ function Get-ATAPHostInformation {
 	} else {
 		$infos = Get-CimInstance Win32_OperatingSystem
 		$disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
+		$role = Switch ((Get-CimInstance -Class Win32_ComputerSystem).DomainRole) {
+			"0"	{"Standalone Workstation"}
+			"1"	{"Member Workstation"}
+			"2"	{"Standalone Server"}
+			"3"	{"Member Server"}
+			"4"	{"Backup Domain Controller"}
+			"5"	{"Primary Domain Controller"}
+		}
 		return [ordered]@{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
 			"Operating System"          = $infos.Caption
@@ -283,6 +291,7 @@ function Get-ATAPHostInformation {
 			"Build Number"              = $infos.BuildNumber
 			"Free physical memory (GB)" = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
 			"Free disk space (GB)"		= "{0:N1}" -f ($disk.FreeSpace / 1GB)
+			"Domain role"				= $role
 		}
 	}
 }
