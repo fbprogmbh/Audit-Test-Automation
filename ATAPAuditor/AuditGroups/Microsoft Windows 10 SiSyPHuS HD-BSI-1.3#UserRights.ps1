@@ -322,22 +322,68 @@ function ConvertTo-NTAccountUser {
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
+        $currentUserSIDs = @()
+        $unexpectedUsers = @()
+        $missingUsers = @()
+    
+        #save all sids 
+        foreach($sid in $currentUserRights.sid){
+            $currentUserSIDs += $sid
+        }
+        #only these sids have to be in userRight 
         $identityAccounts = @(
             "S-1-5-7"
             "S-1-5-32-546"
             "S-1-2-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
+        ) 
+    
+    
+        #check for unexpected users
+        #for every currentUserSID, check if sid exists in $identityAccount
+        for($i = 0; $i -lt $currentUserSIDs.Count; $i++){
+            
+            $sidExists = "false"
+            for($j = 0; $j -lt $identityAccounts.Count; $j++){
+                if($currentUserSIDs[$i] -eq $identityAccounts[$j]){
+                    $sidExists = "true"
+                }
+            }
+            if($sidExists -eq "false"){
+                $unexpectedUsers += $currentUserSIDs[$i]
+            }
+        }
+    
+        #check for missing users
+        for($i = 0; $i -lt $identityAccounts.Count; $i++){
+            $sidExists = "false"
+            for($j = 0; $j -lt $currentUserSIDs.Count; $j++){
+                if($identityAccounts[$i] -eq $currentUserSIDs[$j]){
+                    $sidExists = "true"
+                }
+            }
+            if($sidExists -eq "false"){
+                $missingUsers += $identityAccounts[$i]
+            }
+        }
         if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
             $messages = @()
+            $users = @()
             if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+                foreach($unexpectedUser in $unexpectedUsers){
+                    $SID = New-Object System.Security.Principal.SecurityIdentifier($unexpectedUser)
+                    $User = $SID.Translate( [System.Security.Principal.NTAccount])
+                    $users += "$($User.Value) ($($unexpectedUser))"
+                }
+                $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' contains following unexpected users: " +  ($users -join ", ")
             }
+            $users = @()
             if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeDenyRemoteInteractiveLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
+                foreach($missingUser in $missingUsers){
+                    $SID = New-Object System.Security.Principal.SecurityIdentifier($missingUser)
+                    $User = $SID.Translate( [System.Security.Principal.NTAccount])
+                    $users += "$($User.Value) ($($missingUser))"
+                }
+                $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' setting does not contain the following users: " + ($users -join ", ")
             }
             $message = $messages -join [System.Environment]::NewLine
         

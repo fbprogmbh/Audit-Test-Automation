@@ -217,6 +217,9 @@
 [AuditTest] @{
     Id = "2.3.5.1"
     Task = "(L1) Ensure 'Domain controller: Allow server operators to schedule tasks' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -253,6 +256,9 @@
 [AuditTest] @{
     Id = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: Allow vulnerable Netlogon secure channel connections' is set to 'Not Configured' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -287,6 +293,9 @@
 [AuditTest] @{
     Id = "2.3.5.3"
     Task = "(L1) Ensure 'Domain controller: LDAP server channel binding token requirements' is set to 'Always' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -323,6 +332,9 @@
 [AuditTest] @{
     Id = "2.3.5.4"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -359,6 +371,9 @@
 [AuditTest] @{
     Id = "2.3.5.5"
     Task = "(L1) Ensure 'Domain controller: Refuse machine account password changes' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -395,6 +410,9 @@
 [AuditTest] @{
     Id = "2.3.6.1"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -431,6 +449,9 @@
 [AuditTest] @{
     Id = "2.3.6.2"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -467,6 +488,9 @@
 [AuditTest] @{
     Id = "2.3.6.3"
     Task = "(L1) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -503,6 +527,9 @@
 [AuditTest] @{
     Id = "2.3.6.4"
     Task = "(L1) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -539,6 +566,9 @@
 [AuditTest] @{
     Id = "2.3.6.5"
     Task = "(L1) Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -575,6 +605,9 @@
 [AuditTest] @{
     Id = "2.3.6.6"
     Task = "(L1) Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1403,6 +1436,9 @@
 [AuditTest] @{
     Id = "2.3.10.6"
     Task = "(L1) Configure 'Network access: Named Pipes that can be accessed anonymously' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3516,6 +3552,9 @@
 [AuditTest] @{
     Id = "18.2.2"
     Task = "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3552,6 +3591,9 @@
 [AuditTest] @{
     Id = "18.2.3"
     Task = "(L1) Ensure 'Enable Local Admin Password Management' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3588,6 +3630,9 @@
 [AuditTest] @{
     Id = "18.2.4"
     Task = "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3624,6 +3669,9 @@
 [AuditTest] @{
     Id = "18.2.5"
     Task = "(L1) Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3660,6 +3708,9 @@
 [AuditTest] @{
     Id = "18.2.6"
     Task = "(L1) Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5604,6 +5655,9 @@
 [AuditTest] @{
     Id = "18.8.5.6"
     Task = "(NG) Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Disabled' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8483,7 +8537,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.2"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office communication application from creating child processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8519,7 +8573,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.3"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office applications from creating executable content ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8555,7 +8609,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.4"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block execution of potentially obfuscated scripts ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8591,7 +8645,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.5"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office applications from injecting code into other processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8627,7 +8681,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.6"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Block Adobe Reader from creating child processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8663,7 +8717,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.7"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Win32 API calls from Office macro ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8699,7 +8753,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.8"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block credential stealing from the Windows local security authority subsystem (lsass.exe)) ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8735,7 +8789,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.9"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block untrusted and unsigned processes that run from USB ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8771,7 +8825,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.10"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block executable content from email client and webmail ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8807,7 +8861,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.11"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules Block JavaScript or VBScript from launching downloaded executable content ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8843,7 +8897,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.12"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block Office applications from creating child processes ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8879,7 +8933,7 @@
 }
 [AuditTest] @{
     Id = "18.9.45.4.1.13"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rule: Block persistence through WMI event subscription ' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9995,7 +10049,7 @@
 }
 [AuditTest] @{
     Id = "18.9.80.1.1.1"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10031,7 +10085,7 @@
 }
 [AuditTest] @{
     Id = "18.9.80.1.1.2"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Warn and prevent bypass'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

@@ -7,6 +7,17 @@
 	)
 	Sections = @(
 		[ReportSection] @{
+			Title = "General Benchmarks"
+			Description = "This section contains general benchmarks"
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Security Base Data'
+					Description = "This section contains basic recommendations for a secure Microsoft Windows configuration."
+					AuditInfos = Test-AuditGroup "Microsoft Windows Security Base Data"
+				}
+			)
+		}
+		[ReportSection] @{
 			Title = "CIS Benchmarks"
 			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.2.0 - 14-05-2020. WARNING: Tests in this version haven't been fully tested yet."
 			SubSections = @(

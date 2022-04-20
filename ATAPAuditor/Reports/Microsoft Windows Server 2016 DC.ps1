@@ -9,6 +9,17 @@
 	)
 	Sections = @(
 		[ReportSection] @{
+			Title = "General Benchmarks"
+			Description = "This section contains general benchmarks"
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Security Base Data'
+					Description = "This section contains basic recommendations for a secure Microsoft Windows configuration."
+					AuditInfos = Test-AuditGroup "Microsoft Windows Security Base Data"
+				}
+			)
+		}
+		[ReportSection] @{
 			Title = "DISA Recommendations"
 			Description = "This section contains all recommendations from the Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27"
 			SubSections = @(
