@@ -759,7 +759,7 @@
                 -Name "LegalNoticeText" `
                 | Select-Object -ExpandProperty "LegalNoticeText"
         
-            if ($regValue -notmatch ".+") {
+            if ($regValue -notmatch ".+" -or [string]::IsNullOrEmpty($regValue)) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"
