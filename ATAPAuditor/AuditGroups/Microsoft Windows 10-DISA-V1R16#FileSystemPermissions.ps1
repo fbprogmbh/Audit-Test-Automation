@@ -65,15 +65,28 @@ function Convert-FileSystemRights {
         Write-Verbose "File system permissions for TARGET: ${Env:SystemRoot}\System32\winevt\Logs\Application.evtx)"
         
         $PrincipalRights = @{
-            "BUILTIN\Administrators" = "FullControl"
-            "NT AUTHORITY\SYSTEM" = "FullControl"
-            "NT SERVICE\EventLog" = "FullControl"
+            "S-1-5-32-544" = "FullControl"
+            "S-1-5-18" = "FullControl"
+            "S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122" = "FullControl"
         }
         
-        $principalsWithTooManyRights = $acls | Where-Object {
+        $convertedACLS = @() # is hashtable of string -> string
+        #convert IndentityReferences to SIDs
+        foreach($principal in $acls){
+            $element = new-object System.Security.Principal.NTAccount $principal.IdentityReference
+            $sid = $element.Translate([type]'System.Security.Principal.SecurityIdentifier')
+            $convertedACLS += [PSCustomObject]@{
+                IdentityReference = $sid.Value
+                FileSystemRights = $principal.FileSystemRights
+            }
+        }
+        
+        
+        
+        $principalsWithTooManyRights = $convertedACLS | Where-Object {
             $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
         }
-        $principalsWithWrongRights = $acls `
+        $principalsWithWrongRights = $convertedACLS `
             | Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
             | Where-Object {
                 # convert string to rights enum
@@ -115,15 +128,28 @@ function Convert-FileSystemRights {
         Write-Verbose "File system permissions for TARGET: ${Env:SystemRoot}\System32\winevt\Logs\Security.evtx)"
         
         $PrincipalRights = @{
-            "BUILTIN\Administrators" = "FullControl"
-            "NT AUTHORITY\SYSTEM" = "FullControl"
-            "NT SERVICE\EventLog" = "FullControl"
+            "S-1-5-32-544" = "FullControl"
+            "S-1-5-18" = "FullControl"
+            "S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122" = "FullControl"
         }
         
-        $principalsWithTooManyRights = $acls | Where-Object {
+        $convertedACLS = @() # is hashtable of string -> string
+        #convert IndentityReferences to SIDs
+        foreach($principal in $acls){
+            $element = new-object System.Security.Principal.NTAccount $principal.IdentityReference
+            $sid = $element.Translate([type]'System.Security.Principal.SecurityIdentifier')
+            $convertedACLS += [PSCustomObject]@{
+                IdentityReference = $sid.Value
+                FileSystemRights = $principal.FileSystemRights
+            }
+        }
+        
+        
+        
+        $principalsWithTooManyRights = $convertedACLS | Where-Object {
             $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
         }
-        $principalsWithWrongRights = $acls `
+        $principalsWithWrongRights = $convertedACLS `
             | Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
             | Where-Object {
                 # convert string to rights enum
@@ -162,22 +188,27 @@ function Convert-FileSystemRights {
     Test = {
         $acls = (Get-Acl "${Env:SystemRoot}\System32\winevt\Logs\System.evtx").Access
         
-        Write-Verbose "File system permissions for TARGET: ${Env:SystemRoot}\System32\winevt\Logs\System.evtx)" 
+        Write-Verbose "File system permissions for TARGET: ${Env:SystemRoot}\System32\winevt\Logs\System.evtx)"
         
         $PrincipalRights = @{
-            "S-1-5-32-544" = "FullControl" # "BUILTIN\Administrators" = "FullControl"
-            "NT AUTHORITY\SYSTEM" = "FullControl"
-            "NT SERVICE\EventLog" = "FullControl"
+            "S-1-5-32-544" = "FullControl"
+            "S-1-5-18" = "FullControl"
+            "S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122" = "FullControl"
         }
-
-        $convertedACLS = @{}
+        
+        $convertedACLS = @() # is hashtable of string -> string
         #convert IndentityReferences to SIDs
-        foreach($principal in $acls.IdentityReference){
-            $element = new-object System.Security.Principal.NTAccount $principal
+        foreach($principal in $acls){
+            $element = new-object System.Security.Principal.NTAccount $principal.IdentityReference
             $sid = $element.Translate([type]'System.Security.Principal.SecurityIdentifier')
-            $convertedACLS.Add($sid.Value, $principal.FileSystemRights)
+            $convertedACLS += [PSCustomObject]@{
+                IdentityReference = $sid.Value
+                FileSystemRights = $principal.FileSystemRights
+            }
         }
-
+        
+        
+        
         $principalsWithTooManyRights = $convertedACLS | Where-Object {
             $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
         }
