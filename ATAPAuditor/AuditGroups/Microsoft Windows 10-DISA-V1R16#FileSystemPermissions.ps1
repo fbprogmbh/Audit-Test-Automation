@@ -162,18 +162,26 @@ function Convert-FileSystemRights {
     Test = {
         $acls = (Get-Acl "${Env:SystemRoot}\System32\winevt\Logs\System.evtx").Access
         
-        Write-Verbose "File system permissions for TARGET: ${Env:SystemRoot}\System32\winevt\Logs\System.evtx)"
+        Write-Verbose "File system permissions for TARGET: ${Env:SystemRoot}\System32\winevt\Logs\System.evtx)" 
         
         $PrincipalRights = @{
-            "BUILTIN\Administrators" = "FullControl"
+            "S-1-5-32-544" = "FullControl" # "BUILTIN\Administrators" = "FullControl"
             "NT AUTHORITY\SYSTEM" = "FullControl"
             "NT SERVICE\EventLog" = "FullControl"
         }
-        
-        $principalsWithTooManyRights = $acls | Where-Object {
+
+        $convertedACLS = @{}
+        #convert IndentityReferences to SIDs
+        foreach($principal in $acls.IdentityReference){
+            $element = new-object System.Security.Principal.NTAccount $principal
+            $sid = $element.Translate([type]'System.Security.Principal.SecurityIdentifier')
+            $convertedACLS.Add($sid.Value, $principal.FileSystemRights)
+        }
+
+        $principalsWithTooManyRights = $convertedACLS | Where-Object {
             $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
         }
-        $principalsWithWrongRights = $acls `
+        $principalsWithWrongRights = $convertedACLS `
             | Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
             | Where-Object {
                 # convert string to rights enum
