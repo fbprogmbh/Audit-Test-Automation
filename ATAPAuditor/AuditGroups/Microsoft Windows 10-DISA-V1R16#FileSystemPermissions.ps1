@@ -70,6 +70,7 @@ function Convert-FileSystemRights {
             "S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122" = "FullControl"
         }
         
+        
         $convertedACLS = @() # is hashtable of string -> string
         #convert IndentityReferences to SIDs
         foreach($principal in $acls){
@@ -82,15 +83,14 @@ function Convert-FileSystemRights {
         }
         
         
-        
         $principalsWithTooManyRights = $convertedACLS | Where-Object {
-            $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
+            $_.IdentityReference -NotIn $PrincipalRights.Keys
         }
         $principalsWithWrongRights = $convertedACLS `
-            | Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
+            | Where-Object { $_.IdentityReference -in $PrincipalRights.Keys } `
             | Where-Object {
                 # convert string to rights enum
-                $referenceRights = $PrincipalRights[$_.IdentityReference.Value] | ForEach-Object { [FileSystemRights]$_ }
+                $referenceRights = $PrincipalRights[$_.IdentityReference] | ForEach-Object { [FileSystemRights]$_ }
                 $mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
                 $mappedRights -notin $referenceRights
             }
@@ -102,7 +102,7 @@ function Convert-FileSystemRights {
                 "Unexpected '$($_.IdentityReference)' with access '$mappedRights'"
             }
             $messages += $principalsWithWrongRights | ForEach-Object {
-                $idKey = $_.IdentityReference.Value
+                $idKey = $_.IdentityReference
                 $mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
                 "Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
             }
@@ -133,6 +133,7 @@ function Convert-FileSystemRights {
             "S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122" = "FullControl"
         }
         
+        
         $convertedACLS = @() # is hashtable of string -> string
         #convert IndentityReferences to SIDs
         foreach($principal in $acls){
@@ -145,15 +146,14 @@ function Convert-FileSystemRights {
         }
         
         
-        
         $principalsWithTooManyRights = $convertedACLS | Where-Object {
-            $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
+            $_.IdentityReference -NotIn $PrincipalRights.Keys
         }
         $principalsWithWrongRights = $convertedACLS `
-            | Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
+            | Where-Object { $_.IdentityReference -in $PrincipalRights.Keys } `
             | Where-Object {
                 # convert string to rights enum
-                $referenceRights = $PrincipalRights[$_.IdentityReference.Value] | ForEach-Object { [FileSystemRights]$_ }
+                $referenceRights = $PrincipalRights[$_.IdentityReference] | ForEach-Object { [FileSystemRights]$_ }
                 $mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
                 $mappedRights -notin $referenceRights
             }
@@ -165,7 +165,7 @@ function Convert-FileSystemRights {
                 "Unexpected '$($_.IdentityReference)' with access '$mappedRights'"
             }
             $messages += $principalsWithWrongRights | ForEach-Object {
-                $idKey = $_.IdentityReference.Value
+                $idKey = $_.IdentityReference
                 $mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
                 "Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
             }
@@ -196,6 +196,7 @@ function Convert-FileSystemRights {
             "S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122" = "FullControl"
         }
         
+        
         $convertedACLS = @() # is hashtable of string -> string
         #convert IndentityReferences to SIDs
         foreach($principal in $acls){
@@ -208,15 +209,14 @@ function Convert-FileSystemRights {
         }
         
         
-        
         $principalsWithTooManyRights = $convertedACLS | Where-Object {
-            $_.IdentityReference.Value -NotIn $PrincipalRights.Keys
+            $_.IdentityReference -NotIn $PrincipalRights.Keys
         }
         $principalsWithWrongRights = $convertedACLS `
-            | Where-Object { $_.IdentityReference.Value -in $PrincipalRights.Keys } `
+            | Where-Object { $_.IdentityReference -in $PrincipalRights.Keys } `
             | Where-Object {
                 # convert string to rights enum
-                $referenceRights = $PrincipalRights[$_.IdentityReference.Value] | ForEach-Object { [FileSystemRights]$_ }
+                $referenceRights = $PrincipalRights[$_.IdentityReference] | ForEach-Object { [FileSystemRights]$_ }
                 $mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
                 $mappedRights -notin $referenceRights
             }
@@ -228,7 +228,7 @@ function Convert-FileSystemRights {
                 "Unexpected '$($_.IdentityReference)' with access '$mappedRights'"
             }
             $messages += $principalsWithWrongRights | ForEach-Object {
-                $idKey = $_.IdentityReference.Value
+                $idKey = $_.IdentityReference
                 $mappedRights = Convert-FileSystemRights -OriginalRights $_.FileSystemRights
                 "Found '$($idKey)' with access '$($mappedRights)' instead of '$($PrincipalRights[$idKey])'"
             }
