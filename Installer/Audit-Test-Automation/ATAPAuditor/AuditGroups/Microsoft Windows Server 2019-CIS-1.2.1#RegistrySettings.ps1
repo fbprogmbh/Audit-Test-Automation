@@ -217,6 +217,9 @@
 [AuditTest] @{
     Id = "2.3.5.1"
     Task = "(L1) Ensure 'Domain controller: Allow server operators to schedule tasks' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -253,6 +256,9 @@
 [AuditTest] @{
     Id = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: Allow vulnerable Netlogon secure channel connections' is set to 'Not Configured' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -287,6 +293,9 @@
 [AuditTest] @{
     Id = "2.3.5.3"
     Task = "(L1) Ensure 'Domain controller: LDAP server channel binding token requirements' is set to 'Always' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -323,6 +332,9 @@
 [AuditTest] @{
     Id = "2.3.5.4"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -359,6 +371,9 @@
 [AuditTest] @{
     Id = "2.3.5.5"
     Task = "(L1) Ensure 'Domain controller: Refuse machine account password changes' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -395,6 +410,9 @@
 [AuditTest] @{
     Id = "2.3.6.1"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -431,6 +449,9 @@
 [AuditTest] @{
     Id = "2.3.6.2"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -467,6 +488,9 @@
 [AuditTest] @{
     Id = "2.3.6.3"
     Task = "(L1) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -503,6 +527,9 @@
 [AuditTest] @{
     Id = "2.3.6.4"
     Task = "(L1) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -539,6 +566,9 @@
 [AuditTest] @{
     Id = "2.3.6.5"
     Task = "(L1) Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -575,6 +605,9 @@
 [AuditTest] @{
     Id = "2.3.6.6"
     Task = "(L1) Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -721,17 +754,13 @@
     Task = "(L1) Configure 'Interactive logon: Message text for users attempting to log on'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
-                -Name "LegalNoticeText" `
-                | Select-Object -ExpandProperty "LegalNoticeText"
-        
-            if ($regValue -notmatch ".+") {
+            $regValue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+            if ($regValue.legalnoticetext -notmatch ".+" -or [string]::IsNullOrWhiteSpace($regValue.legalnoticetext) -or [string]::IsNullOrEmpty($regValue.legalnoticetext)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
+                    Message = "Registry value is '$($regValue.legalnoticetext)'. Expected: Matching expression '.+'"
                     Status = "False"
                 }
-            }
+            } 
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
@@ -1403,6 +1432,9 @@
 [AuditTest] @{
     Id = "2.3.10.6"
     Task = "(L1) Configure 'Network access: Named Pipes that can be accessed anonymously' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3516,6 +3548,9 @@
 [AuditTest] @{
     Id = "18.2.2"
     Task = "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3552,6 +3587,9 @@
 [AuditTest] @{
     Id = "18.2.3"
     Task = "(L1) Ensure 'Enable Local Admin Password Management' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3588,6 +3626,9 @@
 [AuditTest] @{
     Id = "18.2.4"
     Task = "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3624,6 +3665,9 @@
 [AuditTest] @{
     Id = "18.2.5"
     Task = "(L1) Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3660,6 +3704,9 @@
 [AuditTest] @{
     Id = "18.2.6"
     Task = "(L1) Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5604,6 +5651,9 @@
 [AuditTest] @{
     Id = "18.8.5.6"
     Task = "(NG) Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Disabled' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8446,7 +8496,7 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.1"
+    Id = "18.9.45.4.1 A"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
@@ -8482,18 +8532,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.2"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 B"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office communication application from creating child processes)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "1" `
-                | Select-Object -ExpandProperty "1"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
+                | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
         
-            if ($regValue -ne "26190899-1602-49e8-8b27-eb1d0a1ce869") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 26190899-1602-49e8-8b27-eb1d0a1ce869"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8518,18 +8568,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.3"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 C"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office applications from creating executable content)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "2" `
-                | Select-Object -ExpandProperty "2"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
+                | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
         
-            if ($regValue -ne "3b576869-a4ec-4529-8536-b80a7769e899") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 3b576869-a4ec-4529-8536-b80a7769e899"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8554,18 +8604,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.4"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 D"
+    Task = " (L1) Set the state for each Attack Surface Reduction (ASR) rule (Block execution of potentially obfuscated scripts)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "3" `
-                | Select-Object -ExpandProperty "3"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
+                | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
         
-            if ($regValue -ne "5beb7efe-fd9a-4556-801d-275e5ffc04cc") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 5beb7efe-fd9a-4556-801d-275e5ffc04cc"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8590,18 +8640,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.5"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 E"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office applications from injecting code into other processes)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "4" `
-                | Select-Object -ExpandProperty "4"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
+                | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
         
-            if ($regValue -ne "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8626,18 +8676,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.6"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 F"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Adobe Reader from creating child processes)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "5" `
-                | Select-Object -ExpandProperty "5"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
+                | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
         
-            if ($regValue -ne "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8662,18 +8712,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.7"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 G"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Win32 API calls from Office macros)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "6" `
-                | Select-Object -ExpandProperty "6"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b" `
+                | Select-Object -ExpandProperty "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
         
-            if ($regValue -ne "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8698,18 +8748,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.8"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 H"
+    Task = " (L1) Set the state for each Attack Surface Reduction (ASR) rule (Block credential stealing from the Windows local security authority subsystem (lsass.exe))."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "7" `
-                | Select-Object -ExpandProperty "7"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
+                | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
         
-            if ($regValue -ne "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8734,18 +8784,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.9"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 I"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block untrusted and unsigned processes that run from USB)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "8" `
-                | Select-Object -ExpandProperty "8"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
+                | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
         
-            if ($regValue -ne "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8770,18 +8820,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.10"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 J"
+    Task = " (L1) Set the state for each Attack Surface Reduction (ASR) rule (Block executable content from email client and webmail)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "9" `
-                | Select-Object -ExpandProperty "9"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
+                | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
         
-            if ($regValue -ne "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8806,18 +8856,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.11"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 K"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block JavaScript or VBScript from launching downloaded executable content)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "10" `
-                | Select-Object -ExpandProperty "10"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
+                | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
         
-            if ($regValue -ne "d3e037e1-3eb8-44c8-a917-57927947596d") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: d3e037e1-3eb8-44c8-a917-57927947596d"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8842,18 +8892,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.12"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 L"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block all Office applications from creating child processes)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "11" `
-                | Select-Object -ExpandProperty "11"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
+                | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
         
-            if ($regValue -ne "d4f940ab-401b-4efc-aadc-ad5f3c50688a") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -8878,18 +8928,18 @@
     }
 }
 [AuditTest] @{
-    Id = "18.9.45.4.1.13"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Id = "18.9.45.4.1 M"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block persistence through WMI event subscription)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "12" `
-                | Select-Object -ExpandProperty "12"
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
+                | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
         
-            if ($regValue -ne "e6db77e5-3df2-4cf1-b95a-636979351e5b") {
+            if ($regValue -ne "1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: e6db77e5-3df2-4cf1-b95a-636979351e5b"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -11155,9 +11205,9 @@
                 -Name "ScreenSaveTimeOut" `
                 | Select-Object -ExpandProperty "ScreenSaveTimeOut"
         
-            if ($regValue -ne 900) {
+            if (($regValue -gt 900 -or $regValue -le 0)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 900"
+                    Message = "Registry value is '$regValue'. Expected: x <= 900 and x > 0"
                     Status = "False"
                 }
             }

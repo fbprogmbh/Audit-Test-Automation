@@ -629,6 +629,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "UserRight-017"
     Task = "Ensure 'SeDenyNetworkLogonRight' is set to 'S-1-5-114'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
@@ -840,6 +843,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "UserRight-023"
     Task = "Ensure 'SeDenyRemoteInteractiveLogonRight' is set to 'S-1-5-113'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]

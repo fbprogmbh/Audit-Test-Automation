@@ -507,17 +507,13 @@
     Task = "(L1) Configure 'Interactive logon: Message title for users attempting to log on'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
-                -Name "LegalNoticeCaption" `
-                | Select-Object -ExpandProperty "LegalNoticeCaption"
-        
-            if ($regValue -notmatch ".+") {
+            $regValue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+            if ($regValue.LegalNoticeCaption -notmatch ".+" -or [string]::IsNullOrWhiteSpace($regValue.LegalNoticeCaption) -or [string]::IsNullOrEmpty($regValue.LegalNoticeCaption)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
+                    Message = "Registry value is '$($regValue.LegalNoticeCaption)'. Expected: Matching expression '.+'"
                     Status = "False"
                 }
-            }
+            } 
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
