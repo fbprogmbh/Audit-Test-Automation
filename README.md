@@ -33,6 +33,8 @@ How to read the table below:
 
 Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
+Debian 10 | - | - | - | - | -
+Fedora 35 | - | - | - | - | -
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
 Microsoft Edge | - | - | 85 | - | -
@@ -46,16 +48,18 @@ Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | - | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R16 | 1.9.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 10.2021
+Microsoft Windows 10 | V1R16 | 1.11.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 10.2021
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging)| -
-Microsoft Windows 11 | - | - | FINAL | - | -
+Microsoft Windows 11 | - | 1.0.0 | FINAL | - | -
 Microsoft Windows Server 2012 R2 | - | 2.4.0 | - | - | -
 Microsoft Windows Server 2016 | V1R6 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2019 | V1R2 | 1.2.1 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
-Microsoft Windows Server 2022 | - | - | FINAL | - | -
+Microsoft Windows Server 2022 | - | 1.0.0 | FINAL | - | -
+Red Hat Enterprise Linux 8 | - | - | - | - | -
+Ubuntu 20.04 | - | - | - | - | -
 
 The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10 1809* reports.
@@ -100,6 +104,13 @@ Expand-Archive -Path ".\Audit TAP.zip" -DestinationPath "Audit TAP"
 Install-Module -Name ATAPAuditor
 ```
 
+### Installer
+
+Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps. Additionally to the modules, it also installs a shortcut to the menu based runner in the start menu.
+
+### Linux
+For usage on Linux systems a Powershell installation is required. The neccessary steps depend on the type of Linux distribution and is documented [here](https://docs.microsoft.com/de-de/powershell/scripting/install/installing-powershell-on-linux). Once Powershell is installed proceed with a [manual](#manual-installation) installation or using the [PS Gallery](#installation-from-ps-gallery).
+
 ## Usage
 
 Optionally, import the `ATAPAuditor` module:
@@ -115,6 +126,8 @@ The force parameter creates the folder if it doesn't exist. For using an alterna
 Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
 Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
 ```
+
+The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
 
 ## Good to know
 
