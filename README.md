@@ -109,7 +109,7 @@ Install-Module -Name ATAPAuditor
 Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps. Additionally to the modules, it also installs a shortcut to the menu based runner in the start menu.
 
 ### Linux
-For usage on Linux systems a Powershell installation is required. The neccessary steps depend on the type of Linux distribution and is documented [here](https://docs.microsoft.com/de-de/powershell/scripting/install/installing-powershell-on-linux). Once Powershell is installed proceed with a [manual](#manual-installation) installation or using the [PS Gallery](#installation-from-ps-gallery).
+For usage on Linux systems a Powershell installation is required. The neccessary steps depend on the type of Linux distribution and is documented [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux). Once Powershell is installed proceed with a [manual](#manual-installation) installation or using the [PS Gallery](#installation-from-ps-gallery).
 
 ## Usage
 
