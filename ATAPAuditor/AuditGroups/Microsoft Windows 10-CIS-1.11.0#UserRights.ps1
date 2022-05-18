@@ -3,12 +3,16 @@ function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
 	[OutputType([hashtable])]
 	Param(
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Parameter(Mandatory = $false, ValueFromPipeline = $true)]
 		[string] $Name
 	)
 
 	process {
         try {
+            if($null -eq $Name){
+                return
+            }
+
             # Convert Domaingroups to german
             $language = Get-UICulture
             if ($language.Name -match "de-DE"){
