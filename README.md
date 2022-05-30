@@ -78,12 +78,10 @@ Find several detailed explanations below and use them as follows:
 * Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
 * The most easy automated way - just install our package directly from PowerShell Gallery.
 
-### Video tutorial
-Find the tutorial as follows:
-
+### Video tutorials
+Find following tutorials suitable for your needs:
 
 [![How to get a transparent system hardening report?](https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg)](https://www.youtube.com/watch?v=5fJGdHCxqpM)
-
 
 ### Manual Installation
 
@@ -182,10 +180,16 @@ Permanent scope: Machine
 [System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::Machine)
 ```
 
- ## Related links
+## Related links
+
+### Audit TAP information
 
 * Github-Link: https://github.com/fbprogmbh/Audit-Test-Automation
-* Our Homepage: https://fb-pro.com/
+* Audit TAP landing page: https://www.fb-pro.com/audit-tap-product-information
+* Youtube channel with more videos: https://www.youtube.com/channel/UCFolaYgClJ005glpn5owRUg
+
+### Hardening recommendation in general
+* #NoCodeHardening: https://www.nocodehardening.com
 * BSI SiSyPHus: https://www.bsi.bund.de/EN/Topics/Cyber-Security/Recommendations/SiSyPHuS_Win10/SiSyPHuS_node.html
 * Center for Internet Security: https://www.cisecurity.org/
 * DISA STIGs: https://public.cyber.mil/stigs/
