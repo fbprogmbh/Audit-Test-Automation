@@ -1765,7 +1765,7 @@
 }
 [AuditTest] @{
     Id = "Registry-050"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1801,7 +1801,7 @@
 }
 [AuditTest] @{
     Id = "Registry-051"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1837,7 +1837,7 @@
 }
 [AuditTest] @{
     Id = "Registry-052"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Domain: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1873,7 +1873,7 @@
 }
 [AuditTest] @{
     Id = "Registry-053"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Private: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1909,7 +1909,7 @@
 }
 [AuditTest] @{
     Id = "Registry-054"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Private: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1945,7 +1945,7 @@
 }
 [AuditTest] @{
     Id = "Registry-055"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Private: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1981,7 +1981,7 @@
 }
 [AuditTest] @{
     Id = "Registry-056"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Public: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2017,7 +2017,7 @@
 }
 [AuditTest] @{
     Id = "Registry-057"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Public: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2053,7 +2053,7 @@
 }
 [AuditTest] @{
     Id = "Registry-058"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Public: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

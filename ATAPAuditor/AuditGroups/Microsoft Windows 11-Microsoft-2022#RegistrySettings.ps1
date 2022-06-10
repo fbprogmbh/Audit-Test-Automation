@@ -3664,7 +3664,7 @@
 }
 [AuditTest] @{
     Id = "Registry-111"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3700,7 +3700,7 @@
 }
 [AuditTest] @{
     Id = "Registry-112"
-    Task = "Set registry value 'DisableNotifications' to 1."
+    Task = "Domain: Set registry value 'DisableNotifications' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3736,7 +3736,7 @@
 }
 [AuditTest] @{
     Id = "Registry-113"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Domain: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3772,7 +3772,7 @@
 }
 [AuditTest] @{
     Id = "Registry-114"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3808,7 +3808,7 @@
 }
 [AuditTest] @{
     Id = "Registry-115"
-    Task = "Set registry value 'LogDroppedPackets' to 1."
+    Task = "Domain: Set registry value 'LogDroppedPackets' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3844,7 +3844,7 @@
 }
 [AuditTest] @{
     Id = "Registry-116"
-    Task = "Set registry value 'LogFileSize' to 16384."
+    Task = "Domain: Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3880,7 +3880,7 @@
 }
 [AuditTest] @{
     Id = "Registry-117"
-    Task = "Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Domain: Set registry value 'LogSuccessfulConnections' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3916,7 +3916,7 @@
 }
 [AuditTest] @{
     Id = "Registry-118"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Private: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3952,7 +3952,7 @@
 }
 [AuditTest] @{
     Id = "Registry-119"
-    Task = "Set registry value 'DisableNotifications' to 1."
+    Task = "Private: Set registry value 'DisableNotifications' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3988,7 +3988,7 @@
 }
 [AuditTest] @{
     Id = "Registry-120"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Private: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4024,7 +4024,7 @@
 }
 [AuditTest] @{
     Id = "Registry-121"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Private: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4060,7 +4060,7 @@
 }
 [AuditTest] @{
     Id = "Registry-122"
-    Task = "Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Private: Set registry value 'LogSuccessfulConnections' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4096,7 +4096,7 @@
 }
 [AuditTest] @{
     Id = "Registry-123"
-    Task = "Set registry value 'LogDroppedPackets' to 1."
+    Task = "Private: Set registry value 'LogDroppedPackets' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4132,7 +4132,7 @@
 }
 [AuditTest] @{
     Id = "Registry-124"
-    Task = "Set registry value 'LogFileSize' to 16384."
+    Task = "Private: Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4168,7 +4168,7 @@
 }
 [AuditTest] @{
     Id = "Registry-125"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Public: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4204,7 +4204,7 @@
 }
 [AuditTest] @{
     Id = "Registry-126"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Public: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4240,7 +4240,7 @@
 }
 [AuditTest] @{
     Id = "Registry-127"
-    Task = "Set registry value 'DisableNotifications' to 1."
+    Task = "Public: Set registry value 'DisableNotifications' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4276,7 +4276,7 @@
 }
 [AuditTest] @{
     Id = "Registry-128"
-    Task = "Set registry value 'AllowLocalIPsecPolicyMerge' to 0."
+    Task = "Public: Set registry value 'AllowLocalIPsecPolicyMerge' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4312,7 +4312,7 @@
 }
 [AuditTest] @{
     Id = "Registry-129"
-    Task = "Set registry value 'AllowLocalPolicyMerge' to 0."
+    Task = "Public: Set registry value 'AllowLocalPolicyMerge' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4348,7 +4348,7 @@
 }
 [AuditTest] @{
     Id = "Registry-130"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Public: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4384,7 +4384,7 @@
 }
 [AuditTest] @{
     Id = "Registry-131"
-    Task = "Set registry value 'LogFileSize' to 16384."
+    Task = "Public: Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4420,7 +4420,7 @@
 }
 [AuditTest] @{
     Id = "Registry-132"
-    Task = "Set registry value 'LogDroppedPackets' to 1."
+    Task = "Public: Set registry value 'LogDroppedPackets' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4456,7 +4456,7 @@
 }
 [AuditTest] @{
     Id = "Registry-133"
-    Task = "Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Public: Set registry value 'LogSuccessfulConnections' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
