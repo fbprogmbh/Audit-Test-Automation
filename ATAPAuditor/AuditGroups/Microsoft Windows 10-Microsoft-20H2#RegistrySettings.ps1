@@ -864,7 +864,7 @@
 }
 [AuditTest] @{
     Id = "Registry-025"
-    Task = "Set registry value '75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -900,7 +900,7 @@
 }
 [AuditTest] @{
     Id = "Registry-026"
-    Task = "Set registry value '3b576869-a4ec-4529-8536-b80a7769e899' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -936,7 +936,7 @@
 }
 [AuditTest] @{
     Id = "Registry-027"
-    Task = "Set registry value 'd4f940ab-401b-4efc-aadc-ad5f3c50688a' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -972,7 +972,7 @@
 }
 [AuditTest] @{
     Id = "Registry-028"
-    Task = "Set registry value '92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1008,7 +1008,7 @@
 }
 [AuditTest] @{
     Id = "Registry-029"
-    Task = "Set registry value '5beb7efe-fd9a-4556-801d-275e5ffc04cc' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1044,7 +1044,7 @@
 }
 [AuditTest] @{
     Id = "Registry-030"
-    Task = "Set registry value 'd3e037e1-3eb8-44c8-a917-57927947596d' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1080,7 +1080,7 @@
 }
 [AuditTest] @{
     Id = "Registry-031"
-    Task = "Set registry value 'be9ba2d9-53ea-4cdc-84e5-9b1eeee46550' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1116,7 +1116,7 @@
 }
 [AuditTest] @{
     Id = "Registry-032"
-    Task = "Set registry value '9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1152,7 +1152,7 @@
 }
 [AuditTest] @{
     Id = "Registry-033"
-    Task = "Set registry value 'b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1188,7 +1188,7 @@
 }
 [AuditTest] @{
     Id = "Registry-034"
-    Task = "Set registry value '26190899-1602-49e8-8b27-eb1d0a1ce869' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1224,7 +1224,7 @@
 }
 [AuditTest] @{
     Id = "Registry-035"
-    Task = "Set registry value '7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1260,7 +1260,7 @@
 }
 [AuditTest] @{
     Id = "Registry-036"
-    Task = "Set registry value 'c1db55ab-c21a-4637-bb3f-a12568109d35' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules' is configured (Use advanced protection against ransomware)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1296,7 +1296,7 @@
 }
 [AuditTest] @{
     Id = "Registry-037"
-    Task = "Set registry value 'e6db77e5-3df2-4cf1-b95a-636979351e5b' to 1."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
