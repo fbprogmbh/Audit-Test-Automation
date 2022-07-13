@@ -776,13 +776,13 @@ function win7NoTPMChipDetected {
 			$status = switch ($countEnabled) {
 				{$PSItem -ge 12}{
 					@{
-						Message = "Compliant (12+ rules enabled)"
+						Message = "Compliant (12+ rules enabled). For more information on the ASR rules, check corresponding benchmarks."
 						Status = "True"
 					}
 				}
 				{($PSItem -ge 1) -and ($PSItem -lt 12)}{
 					@{
-						Message = "Less than 12 ASR rules are enabled."
+						Message = "$countEnabled ASR rules are activated. For more information on the ASR rules, check corresponding benchmarks."
 						Status = "Warning"
 					}
 				}
