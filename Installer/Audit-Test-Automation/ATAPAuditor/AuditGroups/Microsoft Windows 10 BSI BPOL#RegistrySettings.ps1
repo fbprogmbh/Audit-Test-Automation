@@ -5372,9 +5372,9 @@
                 -Name "FDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
-            if ($regValue -ne "") {
+            if ($regValue -ne "<none>") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: <none>"
                     Status = "False"
                 }
             }
@@ -5408,9 +5408,9 @@
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
-            if ($regValue -ne "") {
+            if ($regValue -ne "<none>") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: <none>"
                     Status = "False"
                 }
             }

@@ -9674,9 +9674,9 @@
                 -Name "Optional" `
                 | Select-Object -ExpandProperty "Optional"
         
-            if ($regValue -ne "") {
+            if ($regValue -ne $null) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: (Blank)"
                     Status = "False"
                 }
             }
