@@ -125,7 +125,9 @@
         }
         $setPolicy = [long]$setPolicy
         
+        if ($setPolicy -ne 1) {
             return @{
+                Message = "'PasswordComplexity' currently set to: $setPolicy. Expected: 1"
                 Status = "False"
             }
         }
@@ -151,7 +153,9 @@
         }
         $setPolicy = [long]$setPolicy
         
+        if ($setPolicy -ne 0) {
             return @{
+                Message = "'ClearTextPassword' currently set to: $setPolicy. Expected: 0"
                 Status = "False"
             }
         }
