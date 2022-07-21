@@ -37,25 +37,25 @@ Debian 10 | - | - | - | - | -
 Fedora 35 | - | - | - | - | -
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
-Microsoft Edge | - | - | 85 | - | -
-Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
-Microsoft IIS10 | - | 1.1.0 | - | - | -
+Microsoft Edge | - | - | 99 | - | -
+Microsoft Internet Explorer 11 | V1R16 | 1.1.0 | 2004 | - | -
+Microsoft IIS10 | - | 1.1.1 | - | - | -
 Microsoft Office 2016 Excel | V1R2 | - | - | - | -
 Microsoft Office 2016 Outlook | V1R2 | - | - | - | -
 Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
 Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | - | 1.1.0 | - | - | -
-Microsoft SQL Server 2016 | - | 1.0.0 | - | - | -
+Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R16 | 1.11.0 | 20H2 | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging) | 10.2021
+Microsoft Windows 10 | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
-Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS Version March 2021 (HD, ND, NE, Logging)| -
-Microsoft Windows 11 | - | 1.0.0 | FINAL | - | -
-Microsoft Windows Server 2012 R2 | - | 2.4.0 | - | - | -
-Microsoft Windows Server 2016 | V1R6 | 1.2.0 | FINAL | - | -
+Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS 1.3 | -
+Microsoft Windows 11 | - | 1.0.0 | FINAL, RTLFB 21H2 | - | -
+Microsoft Windows Server 2012 R2 | 2.19 | 2.5.0 | - | - | -
+Microsoft Windows Server 2016 | 1.12 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
-Microsoft Windows Server 2019 | V1R2 | 1.2.1 | FINAL | - | -
+Microsoft Windows Server 2019 | 1.5 | 1.2.1 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
 Microsoft Windows Server 2022 | - | 1.0.0 | FINAL | - | -
 Red Hat Enterprise Linux 8 | - | - | - | - | -

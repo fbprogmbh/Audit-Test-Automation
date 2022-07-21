@@ -13,7 +13,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 11-CIS-1.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 10-CIS-1.1.0#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 10-CIS-1.1.0#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 10-CIS-1.1.0#UserRights"
 				}
 			)
 		}
