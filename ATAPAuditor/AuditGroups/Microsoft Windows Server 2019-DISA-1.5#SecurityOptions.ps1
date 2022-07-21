@@ -2,7 +2,7 @@
     Id = "V-93281"
     Task = "Windows Server 2019 built-in administrator account must be renamed."
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["NewAdministratorName"]
         
         if ($null -eq $setOption) {
@@ -28,7 +28,7 @@
     Id = "V-93283"
     Task = "Windows Server 2019 built-in guest account must be renamed."
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["NewGuestName"]
         
         if ($null -eq $setOption) {
@@ -54,7 +54,7 @@
     Id = "V-93289"
     Task = "Windows Server 2019 must not allow anonymous SID/Name translation."
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["LSAAnonymousNameLookup"]
         
         if ($null -eq $setOption) {
@@ -80,7 +80,7 @@
     Id = "V-93497"
     Task = "Windows Server 2019 must have the built-in guest account disabled."
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableGuestAccount"]
         
         if ($null -eq $setOption) {

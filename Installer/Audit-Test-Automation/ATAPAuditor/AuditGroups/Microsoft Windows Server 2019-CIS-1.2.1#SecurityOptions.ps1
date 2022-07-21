@@ -2,7 +2,7 @@
     Id = "2.3.1.1"
     Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled' (MS only)"
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableAdminAccount"]
         
         if ($null -eq $setOption) {
@@ -28,7 +28,7 @@
     Id = "2.3.1.3"
     Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only)"
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableGuestAccount"]
         
         if ($null -eq $setOption) {
@@ -54,7 +54,7 @@
     Id = "2.3.1.5"
     Task = "(L1) Configure 'Accounts: Rename administrator account'"
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["NewAdministratorName"]
         
         if ($null -eq $setOption) {
@@ -80,7 +80,7 @@
     Id = "2.3.1.6"
     Task = "(L1) Configure 'Accounts: Rename guest account'"
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["NewGuestName"]
         
         if ($null -eq $setOption) {
@@ -106,7 +106,7 @@
     Id = "2.3.11.6"
     Task = "(L1) Ensure 'Network security: Force logoff when logon hours expire' is set to 'Enabled'"
     Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityOption"
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["ForceLogoffWhenHourExpire"]
         
         if ($null -eq $setOption) {
