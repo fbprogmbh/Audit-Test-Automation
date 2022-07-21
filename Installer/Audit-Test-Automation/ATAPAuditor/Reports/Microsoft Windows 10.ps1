@@ -155,6 +155,10 @@
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AuditPolicies"
 				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
+				}
 			)
 		}
 		[ReportSection] @{
@@ -177,6 +181,10 @@
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AuditPolicies"
 				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
+				}
 			)
 		}
 		[ReportSection] @{
@@ -198,6 +206,10 @@
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#SecurityOptions"
 				}
 			)
 		}
