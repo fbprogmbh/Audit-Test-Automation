@@ -13,14 +13,6 @@
 					Title = "Registry Settings/Group Policies"
 					AuditInfos = Test-AuditGroup "Microsoft Edge-Microsoft-99#RegistrySettings"
 				}
-				[ReportSection] @{
-					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Edge-Microsoft-99#AuditPolicies"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Edge-Microsoft-99#UserRights"
-				}
 			)
 		}
 	)
