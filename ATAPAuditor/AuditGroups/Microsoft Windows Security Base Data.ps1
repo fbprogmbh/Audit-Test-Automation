@@ -539,21 +539,29 @@ function win7NoTPMChipDetected {
 	Id = "SBD-013"
 	Task = "Ensure the status of the Windows Defender service is 'Running'."
 	Test = {
-		$status = switch ((Get-Service WinDefend).Status) {
-			"Running"{
-				@{
-					Message = "Compliant"
-					Status = "True"
+		try{
+			$status = switch ((Get-Service WinDefend -ErrorAction Stop).Status) {
+				"Running"{
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				default {
+					@{
+						Message = "Service is not 'Running'."
+						Status = "False"
+					}
 				}
 			}
-			default {
-				@{
-					Message = "Service is not 'Running'."
-					Status = "False"
-				}
+			return $status
+		}
+		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
+			return @{
+				Message = "Current version is not supported."
+				Status = "None"
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
