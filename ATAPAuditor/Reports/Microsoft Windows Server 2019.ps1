@@ -28,10 +28,6 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#RegistrySettings"
 				},
 				[ReportSection] @{
-					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#UserRights"
-				},
-				[ReportSection] @{
 					Title = "Account Policies"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#AccountPolicies"
 				},
