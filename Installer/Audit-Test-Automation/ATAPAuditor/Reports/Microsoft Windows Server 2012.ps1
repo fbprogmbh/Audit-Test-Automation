@@ -50,10 +50,6 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#RegistrySettings"
 				}
 				[ReportSection] @{
-					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#UserRights"
-				}
-				[ReportSection] @{
 					Title = "Account Policies"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#AccountPolicies"
 				}
