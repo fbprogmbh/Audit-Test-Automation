@@ -65,7 +65,23 @@ function win7NoTPMChipDetected {
 	Test = {
 		if (isWindows8OrNewer) {
 			try {
-				$obj = Confirm-SecureBootUEFI
+				$status = switch ($env:firmware_type) {
+					"UEFI" {
+						$obj = Confirm-SecureBootUEFI
+					}
+					"Legacy" {
+						return @{
+							Message = "System is booting using 'Legacy' mode. SecureBoot not supported."
+							Status = "False"
+						}
+					}
+					Default {
+						return @{
+							Message = "Unknown boot mode"
+							Status = "False"
+						}
+					}
+				}
 			}
 			catch [UnauthorizedAccessException] {
 				return @{
