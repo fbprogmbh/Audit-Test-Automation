@@ -32,11 +32,11 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#AccountPolicies"
 				},
 				[ReportSection] @{
-					Title = "Security Options"
+					Title = " Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#SecurityOptions"
 				},
 				[ReportSection] @{
-					Title = "Advanced Audit Policy Configuration"
+					Title = " Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#AuditPolicies"
 				}
 			)

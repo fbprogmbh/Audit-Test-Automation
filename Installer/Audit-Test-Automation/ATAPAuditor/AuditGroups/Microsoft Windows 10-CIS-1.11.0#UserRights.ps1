@@ -3,12 +3,16 @@ function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
 	[OutputType([hashtable])]
 	Param(
-		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+		[Parameter(Mandatory = $false, ValueFromPipeline = $true)]
 		[string] $Name
 	)
 
 	process {
         try {
+            if($null -eq $Name){
+                return
+            }
+
             # Convert Domaingroups to german
             $language = Get-UICulture
             if ($language.Name -match "de-DE"){
@@ -824,8 +828,7 @@ function ConvertTo-NTAccountUser {
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
-        $identityAccounts = @(            
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
@@ -1107,8 +1110,7 @@ function ConvertTo-NTAccountUser {
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
-        $identityAccounts = @(
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }

@@ -2340,7 +2340,7 @@
 }
 [AuditTest] @{
     Id = "100_1"
-    Task = "(ND, NE) Ensure 'Turn off automatic learning' is set to 'Enabled'."
+    Task = "(ND, NE) Ensure 'Turn off automatic learning' is set to 'Enabled' for ImplicitTextCollection."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2376,7 +2376,7 @@
 }
 [AuditTest] @{
     Id = "100_2"
-    Task = "(ND, NE) Ensure 'Turn off automatic learning' is set to 'Enabled'."
+    Task = "(ND, NE) Ensure 'Turn off automatic learning' is set to 'Enabled' for ImplicitInkCollection."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4212,7 +4212,7 @@
 }
 [AuditTest] @{
     Id = "172_1"
-    Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
+    Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4788,7 +4788,7 @@
 }
 [AuditTest] @{
     Id = "180"
-    Task = "(ND, NE) Ensure 'Always install with elevated privileges' is set to 'Disabled'."
+    Task = "(ND, NE) Ensure 'Always install with elevated privileges' is set to 'Disabled' on current_user on local_machine."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4824,7 +4824,7 @@
 }
 [AuditTest] @{
     Id = "181"
-    Task = "(ND, NE) Ensure 'Always install with elevated privileges' is set to 'Disabled'."
+    Task = "(ND, NE) Ensure 'Always install with elevated privileges' is set to 'Disabled' on current_user."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
