@@ -49,25 +49,8 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows 11 Restricted Traffic Limited Functionality Baseline (Machine)-Microsoft-21H2#RegistrySettings"
 				}
 				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11 Restricted Traffic Limited Functionality Baseline (Machine)-Microsoft-21H2#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11 Restricted Traffic Limited Functionality Baseline (Machine)-Microsoft-21H2#AuditPolicies"
-				}
-
-				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 11 Restricted Traffic Limited Functionality Baseline (User)-Microsoft-21H2#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11 Restricted Traffic Limited Functionality Baseline (User)-Microsoft-21H2#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11 Restricted Traffic Limited Functionality Baseline (User)-Microsoft-21H2#AuditPolicies"
 				}
 			)
 		}

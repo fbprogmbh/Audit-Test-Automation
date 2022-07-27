@@ -1510,7 +1510,7 @@
 }
 [AuditTest] @{
     Id = "3"
-    Task = "Turn off `Find My Device`"
+    Task = "Turn off 'Find My Device'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
