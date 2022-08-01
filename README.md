@@ -8,21 +8,20 @@ ATAPAuditor:\
 
 ## Overview
 
-The Audit Test Automation Package gives you the ability to get an overview about the compliance
-status of several systems. You can easily create HTML-reports and have a transparent overview over
-compliance and non-compliance of explicit setttings and configurations in comparison to industry
-standards and hardening guides. 
+Our Audit Test Automation Package enables you to get an overview about the compliance
+status of your systems against established hardening guidelines. Below you will find an overview of the integrated hardening standards and their respective authors (such as Microsoft, CIS, BSI, etc.).
+The resulting HTML-reports provide a transparent and comprehensible overview over the compliance-status for each of the different settings and configurations suggested inside the provided industry standards and hardening guides. 
 
 ## Modules
 
-The package consists of the following modules:
+The package consists of the following PowerShell modules:
 
 * ATAPHtmlReport
 * ATAPAuditor
 
 ## Reports
 
-The *ATAPAuditor* contains the following reports based on the following benchmarks including the version number. 
+*ATAPAuditor* contains reports based on the following benchmarks including the version number. 
 How to read the table below:
 
 * The entries in the **DISA** column specify the version of the DISA STIG that is used.
@@ -61,8 +60,8 @@ Microsoft Windows Server 2022 | - | 1.0.0 | FINAL | - | -
 Red Hat Enterprise Linux 8 | - | - | - | - | -
 Ubuntu 20.04 | - | - | - | - | -
 
-The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.
-The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10 1809* reports.
+The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
+The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
 Short explanation for BSI (see related links):
  * Normal protection needs standalone computer (NE)
@@ -188,7 +187,7 @@ Permanent scope: Machine
 * Audit TAP landing page: https://www.fb-pro.com/audit-tap-product-information
 * Youtube channel with more videos: https://www.youtube.com/channel/UCFolaYgClJ005glpn5owRUg
 
-### Hardening recommendation in general
+### Hardening recommendations in general
 * #NoCodeHardening: https://www.nocodehardening.com
 * BSI SiSyPHus: https://www.bsi.bund.de/EN/Topics/Cyber-Security/Recommendations/SiSyPHuS_Win10/SiSyPHuS_node.html
 * Center for Internet Security: https://www.cisecurity.org/
@@ -196,6 +195,7 @@ Permanent scope: Machine
 * Microsoft Security baselines: https://techcommunity.microsoft.com/t5/microsoft-security-baselines/bg-p/Microsoft-Security-Baselines
 
  ## Questions, issues or project support
+Please check the [FAQ-section](https://github.com/fbprogmbh/Audit-Test-Automation/tree/master/FAQ) first before opening an issue or contacting us.
 
 *  For questions or issues regarding Audit TAP please use Github issue tracker.
 *  For questions regarding project support please write a short mail to team@fb-pro.com 
