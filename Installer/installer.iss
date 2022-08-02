@@ -4,8 +4,8 @@
 #define AppPublisher "FB Pro GmbH"
 #define AppURL "https://www.fb-pro.com/"
 #define AppIcon "AT.ico"
-#define AppVersion "5.0"
-#define BaseFolder "atap-packaged"
+#define AppVersion "5.1"
+#define BaseFolder "Audit-Test-Automation"
 #define AskVersionText "Please select the version to be installed"
 
 

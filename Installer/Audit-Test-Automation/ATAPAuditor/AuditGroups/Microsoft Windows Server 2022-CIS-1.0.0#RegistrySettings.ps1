@@ -8064,7 +8064,7 @@
 }
 [AuditTest] @{
     Id = "18.9.90.2"
-    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled'"
+    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' on local_machine"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8460,7 +8460,7 @@
 }
 [AuditTest] @{
     Id = "19.7.43.1"
-    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' (AlwaysInstallElevated)"
+    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' (AlwaysInstallElevated) on current_user"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

@@ -684,7 +684,7 @@
 }
 [AuditTest] @{
     Id = "Registry-028"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -720,7 +720,7 @@
 }
 [AuditTest] @{
     Id = "Registry-029"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -756,7 +756,7 @@
 }
 [AuditTest] @{
     Id = "Registry-030"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -792,7 +792,7 @@
 }
 [AuditTest] @{
     Id = "Registry-031"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -828,7 +828,7 @@
 }
 [AuditTest] @{
     Id = "Registry-032"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -864,7 +864,7 @@
 }
 [AuditTest] @{
     Id = "Registry-033"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -900,7 +900,7 @@
 }
 [AuditTest] @{
     Id = "Registry-034"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -936,7 +936,7 @@
 }
 [AuditTest] @{
     Id = "Registry-035"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -972,7 +972,7 @@
 }
 [AuditTest] @{
     Id = "Registry-036"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1008,7 +1008,7 @@
 }
 [AuditTest] @{
     Id = "Registry-037"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1044,7 +1044,7 @@
 }
 [AuditTest] @{
     Id = "Registry-038"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3664,7 +3664,7 @@
 }
 [AuditTest] @{
     Id = "Registry-111"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3700,7 +3700,7 @@
 }
 [AuditTest] @{
     Id = "Registry-112"
-    Task = "Set registry value 'DisableNotifications' to 1."
+    Task = "Domain: Set registry value 'DisableNotifications' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3736,7 +3736,7 @@
 }
 [AuditTest] @{
     Id = "Registry-113"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Domain: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3772,7 +3772,7 @@
 }
 [AuditTest] @{
     Id = "Registry-114"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3808,7 +3808,7 @@
 }
 [AuditTest] @{
     Id = "Registry-115"
-    Task = "Set registry value 'LogDroppedPackets' to 1."
+    Task = "Domain: Set registry value 'LogDroppedPackets' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3844,7 +3844,7 @@
 }
 [AuditTest] @{
     Id = "Registry-116"
-    Task = "Set registry value 'LogFileSize' to 16384."
+    Task = "Domain: Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3880,7 +3880,7 @@
 }
 [AuditTest] @{
     Id = "Registry-117"
-    Task = "Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Domain: Set registry value 'LogSuccessfulConnections' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3916,7 +3916,7 @@
 }
 [AuditTest] @{
     Id = "Registry-118"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Private: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3952,7 +3952,7 @@
 }
 [AuditTest] @{
     Id = "Registry-119"
-    Task = "Set registry value 'DisableNotifications' to 1."
+    Task = "Private: Set registry value 'DisableNotifications' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3988,7 +3988,7 @@
 }
 [AuditTest] @{
     Id = "Registry-120"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Private: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4024,7 +4024,7 @@
 }
 [AuditTest] @{
     Id = "Registry-121"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Private: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4060,7 +4060,7 @@
 }
 [AuditTest] @{
     Id = "Registry-122"
-    Task = "Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Private: Set registry value 'LogSuccessfulConnections' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4096,7 +4096,7 @@
 }
 [AuditTest] @{
     Id = "Registry-123"
-    Task = "Set registry value 'LogDroppedPackets' to 1."
+    Task = "Private: Set registry value 'LogDroppedPackets' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4132,7 +4132,7 @@
 }
 [AuditTest] @{
     Id = "Registry-124"
-    Task = "Set registry value 'LogFileSize' to 16384."
+    Task = "Private: Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4168,7 +4168,7 @@
 }
 [AuditTest] @{
     Id = "Registry-125"
-    Task = "Set registry value 'DefaultOutboundAction' to 0."
+    Task = "Public: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4204,7 +4204,7 @@
 }
 [AuditTest] @{
     Id = "Registry-126"
-    Task = "Set registry value 'EnableFirewall' to 1."
+    Task = "Public: Set registry value 'EnableFirewall' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4240,7 +4240,7 @@
 }
 [AuditTest] @{
     Id = "Registry-127"
-    Task = "Set registry value 'DisableNotifications' to 1."
+    Task = "Public: Set registry value 'DisableNotifications' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4276,7 +4276,7 @@
 }
 [AuditTest] @{
     Id = "Registry-128"
-    Task = "Set registry value 'AllowLocalIPsecPolicyMerge' to 0."
+    Task = "Public: Set registry value 'AllowLocalIPsecPolicyMerge' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4312,7 +4312,7 @@
 }
 [AuditTest] @{
     Id = "Registry-129"
-    Task = "Set registry value 'AllowLocalPolicyMerge' to 0."
+    Task = "Public: Set registry value 'AllowLocalPolicyMerge' to 0."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4348,7 +4348,7 @@
 }
 [AuditTest] @{
     Id = "Registry-130"
-    Task = "Set registry value 'DefaultInboundAction' to 1."
+    Task = "Public: Set registry value 'DefaultInboundAction' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4384,7 +4384,7 @@
 }
 [AuditTest] @{
     Id = "Registry-131"
-    Task = "Set registry value 'LogFileSize' to 16384."
+    Task = "Public: Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4420,7 +4420,7 @@
 }
 [AuditTest] @{
     Id = "Registry-132"
-    Task = "Set registry value 'LogDroppedPackets' to 1."
+    Task = "Public: Set registry value 'LogDroppedPackets' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4456,7 +4456,7 @@
 }
 [AuditTest] @{
     Id = "Registry-133"
-    Task = "Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Public: Set registry value 'LogSuccessfulConnections' to 1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

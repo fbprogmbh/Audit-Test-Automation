@@ -65,7 +65,23 @@ function win7NoTPMChipDetected {
 	Test = {
 		if (isWindows8OrNewer) {
 			try {
-				$obj = Confirm-SecureBootUEFI
+				$status = switch ($env:firmware_type) {
+					"UEFI" {
+						$obj = Confirm-SecureBootUEFI
+					}
+					"Legacy" {
+						return @{
+							Message = "System is booting using 'Legacy' mode. SecureBoot not supported."
+							Status = "False"
+						}
+					}
+					Default {
+						return @{
+							Message = "Unknown boot mode"
+							Status = "False"
+						}
+					}
+				}
 			}
 			catch [UnauthorizedAccessException] {
 				return @{
@@ -523,21 +539,29 @@ function win7NoTPMChipDetected {
 	Id = "SBD-013"
 	Task = "Ensure the status of the Windows Defender service is 'Running'."
 	Test = {
-		$status = switch ((Get-Service WinDefend).Status) {
-			"Running"{
-				@{
-					Message = "Compliant"
-					Status = "True"
+		try{
+			$status = switch ((Get-Service WinDefend -ErrorAction Stop).Status) {
+				"Running"{
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				default {
+					@{
+						Message = "Service is not 'Running'."
+						Status = "False"
+					}
 				}
 			}
-			default {
-				@{
-					Message = "Service is not 'Running'."
-					Status = "False"
-				}
+			return $status
+		}
+		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
+			return @{
+				Message = "Current version is not supported."
+				Status = "None"
 			}
 		}
-		return $status
 	}
 }
 [AuditTest] @{
@@ -776,13 +800,13 @@ function win7NoTPMChipDetected {
 			$status = switch ($countEnabled) {
 				{$PSItem -ge 12}{
 					@{
-						Message = "Compliant (12+ rules enabled)"
+						Message = "Compliant (12+ rules enabled). For more information on the ASR rules, check corresponding benchmarks."
 						Status = "True"
 					}
 				}
 				{($PSItem -ge 1) -and ($PSItem -lt 12)}{
 					@{
-						Message = "Less than 12 ASR rules are enabled."
+						Message = "$countEnabled ASR rules are activated. For more information on the ASR rules, check corresponding benchmarks."
 						Status = "Warning"
 					}
 				}

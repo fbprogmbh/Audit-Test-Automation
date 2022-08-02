@@ -47,6 +47,10 @@
 					Title = 'Account Policies'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AccountPolicies"
 				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
+				}
 			)
 		}
 		[ReportSection] @{
@@ -65,6 +69,10 @@
 					Title = 'Account Policies'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
 				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
+				}
 			)
 		}
 		[ReportSection] @{
@@ -82,6 +90,10 @@
 				[ReportSection] @{
 					Title = 'Account Policies'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#SecurityOptions"
 				}
 			)
 		}
