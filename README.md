@@ -5,6 +5,8 @@ ATAPHtmlReport:\
 
 ATAPAuditor:\
 [![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
+:warning: Update for PowerShell Gallery pending :warning:
+ 	
 
 ## Overview
 
