@@ -1,7 +1,13 @@
-# helper
+# helper for RiskQualityReport
 function Test-RiskScoreQuality {
     [CmdletBinding()]
     [OutputType([RiskQualityReport[]])]
+
+    param (
+        [Parameter()]
+        [ResultTable[]]
+        $resultTable
+    )
 
     $tests = . "$RootPath\RiskScore\RiskScoreTests.ps1"
 
@@ -14,38 +20,38 @@ function Test-RiskScoreQuality {
         }
     }
 
-    Write-Output ([RiskQualityReport]@{
+    return ([RiskQualityReport]@{
             TestTable   = $tests
             ResultTable = $resultTable
-            EndResult   = Get-RiskScoreEndResult($resultTable)
+            Endresult   = Get-RiskScoreEndResult($resultTable)
         })
 }
 
+# helper for EndResult
 function Get-RiskScoreEndResult {
     [CmdletBinding()]
     [OutputType([string])]
 
     param (
         [Parameter(Mandatory = $true)]
-        [array]
+        [ResultTable[]]
         $resultTable
     )
 
+    $result = "Unknown"
+    
     $f = $resultTable.Failed
     if ($f -lt 3) {
-        return "Low"
+        $result = "Low"
     }
     if ($f -ge 3 -and $f -le 4) {
-        return "Medium"
+        $result = "Medium"
     }
     if ($f -eq 5) {
-        return "High"
+        $result = "High"
     }
     if ($f -ge 6) {
-        return "Critical"
+        $result = "Critical"
     }
-}   }
-    if ($f -ge 6) {
-        return "Critical"
-    }
+    return $result
 }
