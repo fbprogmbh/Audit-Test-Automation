@@ -48,6 +48,17 @@ class Report {
 	[string[]] $BasedOn
 	[ReportSection[]] $Sections
 }
+
+class RiskQualityReport {
+	[AuditTest[]] $TestTable
+	[ResultTable[]] $ResultTable 
+	[string] $Endresult
+}
+
+class ResultTable {
+	[int] $Failed
+	[int] $Success
+}
 #endregion
 
 #region helpers
