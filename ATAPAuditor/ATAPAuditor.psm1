@@ -47,18 +47,38 @@ class Report {
 	[hashtable] $HostInformation
 	[string[]] $BasedOn
 	[ReportSection[]] $Sections
+	[RSFullReport[]] $RSReport
 }
 
-class RiskQualityReport {
+# RiskScore Classes
+enum RSEndResult {
+	Critical
+	High
+	Medium
+	Low
+	Unknown
+}
+
+class RSFullReport {
+	[RSSeverityReport] $RSSeverityReport
+	[RSQuantityReport] $RSQuantityReport
+}
+
+class RSSeverityReport {
 	[AuditTest[]] $TestTable
-	[ResultTable[]] $ResultTable 
-	[string] $Endresult
+	[ResultTable[]] $ResultTable
+	[RSEndResult] $Endresult
+}
+
+class RSQuantityReport {
+
 }
 
 class ResultTable {
-	[int] $Failed
 	[int] $Success
+	[int] $Failed
 }
+
 #endregion
 
 #region helpers
@@ -108,6 +128,69 @@ function Test-ArrayEqual {
 # 5 {"Primary Domain Controller"}
 function Get-DomainRole {
 	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+}
+
+
+# region for RiskScore functions
+# function that calls all RiskScore-Subfunctions and generates the RSFullReport
+function Get-RSFullReport {
+	[CmdletBinding()]
+	[OutputType([RSFullReport[]])]
+	
+	$severity = Get-RSSeverityReport
+
+	
+	return ([RSFullReport]@{
+		RSSeverityReport = $severity
+	})
+}
+# function to generate RiskSeverityReport
+function Get-RSSeverityReport {
+    [CmdletBinding()]
+    [OutputType([RSSeverityReport[]])]
+
+    # Initialization
+    $tests = . "$RootPath\RiskScore\RiskScoreTests.ps1"
+
+    # gather results of tests and save it in resultTable
+	$resultTable = [ResultTable]::new()
+    foreach ($test in $tests) {
+		if ($test.Test.Status -EQ "True") {
+			$resultTable.Success += 1
+		}
+        if ($test.Test.Status -ne "True") {
+            $resultTable.Failed += 1
+        }
+    }
+
+    return ([RSSeverityReport]@{
+            TestTable   = $tests
+            ResultTable = $resultTable
+            Endresult   = Get-RSSeverityEndResult($resultTable)
+        })
+}
+
+# helper for EndResult of RiskScoreSeverity
+function Get-RSSeverityEndResult {
+    [CmdletBinding()]
+    [OutputType([RSEndResult])]
+
+    param (
+        [Parameter(Mandatory = $true)]
+        [ResultTable[]]
+        $resultTable
+    )
+
+    $result = "Unknown"
+
+    $f = $resultTable.Failed
+    if ($f -eq 0) {
+        $result = "Low"
+    }
+    if ($f -ge 1) {
+        $result = "Critical"
+    }
+    return $result
 }
 
 #endregion
@@ -282,6 +365,7 @@ function Invoke-ATAPReport {
 	$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 
 	[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
+	$report.RSReport = Get-RSFullReport
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }

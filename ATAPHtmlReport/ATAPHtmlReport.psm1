@@ -439,6 +439,10 @@ function Get-ATAPHtmlReport {
 		[array]
 		$Sections,
 
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[RSFullReport[]]
+		$RSReport,
+
 		[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
@@ -747,19 +751,22 @@ function Get-ATAPHtmlReport {
 						htmlElement 'tr' @{} {
 							htmlElement 'td' @{} {'Issue02'}
 							htmlElement 'td' @{} {'Driver Server not enabled!'}
-							htmlElement 'td' @{} {'Quality'}
+							htmlElement 'td' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success
+						'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed
+					'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult
+				'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable}
+							}
 						}
 					}
 				}
 			}
-		}
-
+		
 		$head = $head + " " + $html_RiskScore
-
+		
 		if(Test-Path -Path $path){
 			Write-Warning "$path already exists. $path will be overridden!"
 		}
-
+		
 		
 		#Create Report Path		
 		$reportName = [System.IO.Path]::GetFileNameWithoutExtension($path) 
