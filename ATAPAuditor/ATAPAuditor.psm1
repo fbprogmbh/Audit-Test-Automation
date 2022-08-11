@@ -150,7 +150,7 @@ function Get-RSSeverityReport {
     [OutputType([RSSeverityReport[]])]
 
     # Initialization
-    $tests = . "$RootPath\RiskScore\RiskScoreTests.ps1"
+    $tests = . "$RootPath\RiskScore\RSSeverityTests.ps1"
 
     # gather results of tests and save it in resultTable
 	$resultTable = [ResultTable]::new()
