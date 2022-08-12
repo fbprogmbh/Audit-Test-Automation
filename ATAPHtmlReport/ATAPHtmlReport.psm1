@@ -136,7 +136,7 @@ function Convert-SectionTitleToHtmlId {
 		switch ($_) {
 			' ' { "-" }
 			'-' { "--" }
-			Default {$_}
+			Default { $_ }
 		}
 	}
 
@@ -228,7 +228,7 @@ function Get-HtmlReportSection {
 			htmlElement 'h1' @{ id = $id } {
 				htmlElement 'span' @{ class = $class } { $Title }
 				htmlElement 'span' @{ class = 'sectionAction collapseButton' } { '-' }
-				htmlElement 'a' @{ href = '#toc'; class = 'sectionAction'} {
+				htmlElement 'a' @{ href = '#toc'; class = 'sectionAction' } {
 					htmlElement 'span' @{ style = "font-size: 75%;" } { '&uarr;' }
 				}
 			}
@@ -268,22 +268,23 @@ function Get-ATAPHostInformation {
 		return [ordered]@{
 			"Hostname"                  = hostname
 			"Operating System"          = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
-			"Installation Language"     = (($(locale) | Where-Object {$_ -match "LANG="}) -split '=')[1]
+			"Installation Language"     = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
 			"Kernel Version"            = uname -r
-			"Free physical memory (GB)" = "{0:N1}" -f ((-split (Get-Content /proc/meminfo | Where-Object {$_ -match 'MemFree:'}))[1] / 1MB)
-			"Free disk space (GB)"		= "{0:N1}" -f ((Get-PSDrive | Where-Object {$_.Name -eq '/'}).Free / 1GB)
-			"Domain role"				= $role			
+			"Free physical memory (GB)" = "{0:N1}" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
+			"Free disk space (GB)"      = "{0:N1}" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
+			"Domain role"               = $role			
 		}
-	} else {
+	}
+ else {
 		$infos = Get-CimInstance Win32_OperatingSystem
 		$disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
 		$role = Switch ((Get-CimInstance -Class Win32_ComputerSystem).DomainRole) {
-			"0"	{"Standalone Workstation"}
-			"1"	{"Member Workstation"}
-			"2"	{"Standalone Server"}
-			"3"	{"Member Server"}
-			"4"	{"Backup Domain Controller"}
-			"5"	{"Primary Domain Controller"}
+			"0"	{ "Standalone Workstation" }
+			"1"	{ "Member Workstation" }
+			"2"	{ "Standalone Server" }
+			"3"	{ "Member Server" }
+			"4"	{ "Backup Domain Controller" }
+			"5"	{ "Primary Domain Controller" }
 		}
 		return [ordered]@{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
@@ -291,8 +292,8 @@ function Get-ATAPHostInformation {
 			"Installation Language"     = ((Get-UICulture).DisplayName)
 			"Build Number"              = $infos.BuildNumber
 			"Free physical memory (GB)" = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
-			"Free disk space (GB)"		= "{0:N1}" -f ($disk.FreeSpace / 1GB)
-			"Domain role"				= $role
+			"Free disk space (GB)"      = "{0:N1}" -f ($disk.FreeSpace / 1GB)
+			"Domain role"               = $role
 		}
 	}
 }
@@ -314,7 +315,7 @@ function Get-CompletionStatus {
 	foreach ($value in $StatusValues) {
 		$count = ($Statuses | Where-Object { $_ -eq $value }).Count
 		$status[$value] = @{
-			Count = $count
+			Count   = $count
 			Percent = (100 * ($count / $totalCount)).ToString("0.00", [cultureinfo]::InvariantCulture)
 		}
 	}
@@ -355,7 +356,7 @@ function Get-OverallComplianceCSS {
 	$percent = $completionStatus['True'].Percent / 1
 
 	if ($percent -gt 50) {
-		$degree = 180 + ((($percent-50)/1) * 3.6)
+		$degree = 180 + ((($percent - 50) / 1) * 3.6)
 		$css += ".donut-chart.chart .slice.one {clip: rect(0 200px 100px 0); -webkit-transform: rotate(90deg); transform: rotate(90deg);}"
 		$css += ".donut-chart.chart .slice.two {clip: rect(0 100px 200px 0); -webkit-transform: rotate($($degree)deg); transform: rotate($($degree)deg);}"
 	}
@@ -454,9 +455,9 @@ function Get-ATAPHtmlReport {
 
 		# HTML <head> markup
 		$head = htmlElement 'head' @{} {
-			htmlElement 'meta' @{ charset = 'UTF-8'} { }
+			htmlElement 'meta' @{ charset = 'UTF-8' } { }
 			htmlElement 'meta' @{ name = 'viewport'; content = 'width=device-width, initial-scale=1.0' } { }
-			htmlElement 'meta' @{ 'http-equiv' = 'X-UA-Compatible'; content = 'ie=edge'} { }
+			htmlElement 'meta' @{ 'http-equiv' = 'X-UA-Compatible'; content = 'ie=edge' } { }
 			htmlElement 'title' @{} { "$Title [$(Get-Date)]" }
 			htmlElement 'style' @{} {
 				$cssEnding = ''
@@ -471,9 +472,9 @@ function Get-ATAPHtmlReport {
 			}
 		}
 
-		$body = htmlElement 'body' @{onload="startConditions()"} {
+		$body = htmlElement 'body' @{onload = "startConditions()" } {
 			# Header
-			htmlElement 'div' @{ class = 'header content'} {
+			htmlElement 'div' @{ class = 'header content' } {
 				$Settings.LogoSvg
 				htmlElement 'h1' @{} { $Title }
 				htmlElement 'p' @{} {
@@ -507,21 +508,21 @@ function Get-ATAPHtmlReport {
 					# Show compliance status
 					if ($ComplianceStatus) {
 						$sliceColorClass = Get-HtmlClassFromStatus 'True'
-						htmlElement 'div' @{ class = 'card'} {
+						htmlElement 'div' @{ class = 'card' } {
 							htmlElement 'h2' @{} { 'Compliance status' }
-							htmlElement 'div' @{ class = 'donut-chart chart'} {
+							htmlElement 'div' @{ class = 'donut-chart chart' } {
 								htmlElement 'div' @{ class = "slice one $sliceColorClass" } { }
 								htmlElement 'div' @{ class = "slice two $sliceColorClass" } { }
 								htmlElement 'div' @{ class = 'chart-center' } { htmlElement 'span' @{} { } }
 							}
 						}
 					}
-					htmlElement 'div' @{id='navigationButtons'} {
-						htmlElement 'button' @{type='button'; id='summaryBtn'; onclick="clickSummaryBtn()"}{"Summary"}
-						htmlElement 'button' @{type='button'; id='riskScoreBtn'; onclick="clickRiskScoreBtn()"}{"Risk Score"}
+					htmlElement 'div' @{id = 'navigationButtons' } {
+						htmlElement 'button' @{type = 'button'; id = 'summaryBtn'; onclick = "clickSummaryBtn()" } { "Summary" }
+						htmlElement 'button' @{type = 'button'; id = 'riskScoreBtn'; onclick = "clickRiskScoreBtn()" } { "Risk Score" }
 					}
 					#This div hides/reveals the whole summary section
-					htmlElement 'div' @{id='summary'}{
+					htmlElement 'div' @{id = 'summary' } {
 
 						# Summary
 						htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
@@ -601,13 +602,55 @@ function Get-ATAPHtmlReport {
 						htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
-							foreach ($section in $Sections) { $section | Get-HtmlToc  }
+							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
 						# Report Sections Sections
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
-					htmlElement 'p' @{id = 'riskScore'} {"Hier steht der RiskScore"}
+					htmlElement 'div' @{id = 'riskScore' } {
+						htmlElement 'div' @{id ='riskMatrixContainer'}{
+							htmlElement 'div' @{id ='severity'} {
+								htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+							}
+							htmlElement 'div' @{id ='quantity'} {
+								htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
+							}
+							htmlElement 'div' @{id ='severityCritical'}{"Critical"}
+							htmlElement 'div' @{id ='severityHigh'}{"High"}
+							htmlElement 'div' @{id ='severityMedium'}{"Medium"}
+							htmlElement 'div' @{id ='severityLow'}{"Low"}
+
+							htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
+							htmlElement 'div' @{id ='quantityHigh'}{"High"}
+							htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
+							htmlElement 'div' @{id ='quantityLow'}{"Low"}
+
+							#colored areas
+							htmlElement 'div' @{id ='critical_low'}{}
+							htmlElement 'div' @{id ='high_low'}{}
+							htmlElement 'div' @{id ='medium_low'}{}
+							htmlElement 'div' @{id ='low_low'}{}
+
+							htmlElement 'div' @{id ='critical_medium'}{}
+							htmlElement 'div' @{id ='high_medium'}{}
+							htmlElement 'div' @{id ='medium_medium'}{}
+							htmlElement 'div' @{id ='low_medium'}{}
+
+							htmlElement 'div' @{id ='critical_high'}{}
+							htmlElement 'div' @{id ='high_high'}{}
+							htmlElement 'div' @{id ='medium_high'}{}
+							htmlElement 'div' @{id ='low_high'}{}
+
+							htmlElement 'div' @{id ='critical_critical'}{}
+							htmlElement 'div' @{id ='high_critical'}{}
+							htmlElement 'div' @{id ='medium_critical'}{}
+							htmlElement 'div' @{id ='low_critical'}{}
+
+
+						}
+					}
+					
 				}
 			}
 			htmlElement 'script' @{ type = 'text/javascript' } { @"
@@ -685,7 +728,7 @@ function Get-ATAPHtmlReport {
 		
 		$html_RiskScore =
 		htmlElement 'body' @{} {
-			htmlElement 'div' @{ class = 'header'} {
+			htmlElement 'div' @{ class = 'header' } {
 				$Settings.LogoSvg
 				htmlElement 'h1' @{} { $Title }
 				htmlElement 'p' @{} {
@@ -700,85 +743,85 @@ function Get-ATAPHtmlReport {
 					}
 				}
 			}
-			htmlElement 'h1' @{} {'Risk Score'}
+			htmlElement 'h1' @{} { 'Risk Score' }
 			htmlElement 'h1' @{} {
 				'Your System has following condition: &nbsp;&nbsp;&nbsp;'
-				if($risk.Contains('Critical')){
-					htmlElement 'p' @{style="color:#cc0000;"} {"Critical Risk!"}
+				if ($risk.Contains('Critical')) {
+					htmlElement 'p' @{style = "color:#cc0000;" } { "Critical Risk!" }
 				}
-				else{
-					htmlElement 'p' @{style="color:#33cca6;"} {"Low Risk!"}
+				else {
+					htmlElement 'p' @{style = "color:#33cca6;" } { "Low Risk!" }
 				}
 			}
-			htmlElement 'div' @{class = 'riskMatrix'} {
-				htmlElement 'table' @{style="border-collapse: collapse;"} {
+			htmlElement 'div' @{class = 'riskMatrix' } {
+				htmlElement 'table' @{style = "border-collapse: collapse;" } {
 					htmlElement 'tbody' @{} {
 						htmlElement 'tr' @{} {
-							htmlElement 'td' @{rowspan=3; style="font-weight:bold;"} {'Quality'}
-							htmlElement 'td' @{} {'Critical'}
-							htmlElement 'td' @{class='red'} {
-								if($risk -eq "LowCritical"){
+							htmlElement 'td' @{rowspan = 3; style = "font-weight:bold;" } { 'Quality' }
+							htmlElement 'td' @{} { 'Critical' }
+							htmlElement 'td' @{class = 'red' } {
+								if ($risk -eq "LowCritical") {
 									'Critical Risk'
 								}
 							}
-							htmlElement 'td' @{class='red'} {
-								if($risk -eq "CriticalCritical"){
+							htmlElement 'td' @{class = 'red' } {
+								if ($risk -eq "CriticalCritical") {
 									'Critical Risk'
 								}
 							}
 						}
 						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} {'Low'}
-							htmlElement 'td' @{class='green'} {
-								if($risk -eq "LowLow"){
+							htmlElement 'td' @{} { 'Low' }
+							htmlElement 'td' @{class = 'green' } {
+								if ($risk -eq "LowLow") {
 									'Low Risk'
 								}
 							}
-							htmlElement 'td' @{class='red'} {
-								if($risk -eq "CriticalLow"){
+							htmlElement 'td' @{class = 'red' } {
+								if ($risk -eq "CriticalLow") {
 									'Critical Risk'
 								}
 							}
 						}
 						htmlElement 'tr' @{} {
 							htmlElement 'td' @{} {}
-							htmlElement 'td' @{} {'Low'}
-							htmlElement 'td' @{} {'Critical'}
+							htmlElement 'td' @{} { 'Low' }
+							htmlElement 'td' @{} { 'Critical' }
 						}
 						htmlElement 'tr' @{} {
 							htmlElement 'td' @{} {}
-							htmlElement 'td' @{colspan=3; style="text-align:center; font-weight:bold;"} {'Quantity'}
+							htmlElement 'td' @{colspan = 3; style = "text-align:center; font-weight:bold;" } { 'Quantity' }
 						}
 					}
 				}
-				htmlElement 'table'@{style="width:100%; margin-top: 80px; border-collapse: collapse;"}{
-					htmlElement 'tbody' @{}{
+				htmlElement 'table'@{style = "width:100%; margin-top: 80px; border-collapse: collapse;" } {
+					htmlElement 'tbody' @{} {
 						htmlElement 'tr' @{} {
-							htmlElement 'td' @{style="font-weight: bold;"} {'Issue'}
-							htmlElement 'td' @{style="font-weight: bold;"} {'Description'}
-							htmlElement 'td' @{style="font-weight: bold;"} {'Type'}
+							htmlElement 'td' @{style = "font-weight: bold;" } { 'Issue' }
+							htmlElement 'td' @{style = "font-weight: bold;" } { 'Description' }
+							htmlElement 'td' @{style = "font-weight: bold;" } { 'Type' }
 						}
 						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} {'Issue01'}
-							htmlElement 'td' @{} {'SMBv1 not configured!'}
-							htmlElement 'td' @{} {'Quantity'}
+							htmlElement 'td' @{} { 'Issue01' }
+							htmlElement 'td' @{} { 'SMBv1 not configured!' }
+							htmlElement 'td' @{} { 'Quantity' }
 						}
 						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} {'Issue02'}
-							htmlElement 'td' @{} {'Driver Server not enabled!'}
-							htmlElement 'td' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success
-						'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed
-					'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult
-				'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable}
-							}
+							htmlElement 'td' @{} { 'Issue02' }
+							htmlElement 'td' @{} { 'Driver Server not enabled!' }
+							htmlElement 'td' @{} { 'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success
+								'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed
+								'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult
+								'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable }
 						}
 					}
 				}
 			}
+		}
 		
 		$head = $head + " " + $html_RiskScore
 		
-		if(Test-Path -Path $path){
+		if (Test-Path -Path $path) {
 			Write-Warning "$path already exists. $path will be overridden!"
 		}
 		
@@ -787,7 +830,7 @@ function Get-ATAPHtmlReport {
 		$reportName = [System.IO.Path]::GetFileNameWithoutExtension($path) 
 		$directoryPath = Split-Path -Path $path
 		New-Item -Path $directoryPath"\"$reportName -ItemType Directory
-		$directoryPath = $directoryPath+"\"+$reportName
+		$directoryPath = $directoryPath + "\" + $reportName
 
 		#Create Report file
 		New-Item $path -ItemType File -Force

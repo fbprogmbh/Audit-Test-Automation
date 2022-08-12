@@ -243,3 +243,234 @@ span.auditstatus {
 button{
 	margin-left: 10px;
 }
+
+#riskMatrixContainer{
+    display: grid;
+    position: relative;
+    grid-template-columns: 100px repeat(5,60px);
+    grid-template-rows: repeat(6,60px);
+    left: 40%;
+    margin-top: 50px;
+}
+
+#riskMatrixContainer div{
+	border: 1px solid black;
+}
+
+
+#severity{
+	grid-column-start: 1;
+	grid-column-end: 2;
+	grid-row-start: 1;
+	grid-row-end: 6;
+	position: relative;
+}
+
+#quantity{
+	grid-column-start: 2;
+	grid-column-end: 7;
+	grid-row-start: 6;
+	grid-row-end: 7;
+	position: relative;
+}
+
+#severityArea{
+	text-align: center;
+	position: absolute;
+	margin: 0;
+	top:50%;
+	left: 20%;
+}
+
+#quantityArea{
+    text-align: center;
+    position: absolute;
+    margin: 0;
+    top: 35%;
+    left: 40%;
+}
+
+#severityCritical{
+	grid-column-start: 2;
+	grid-column-end: 3;
+	grid-row-start: 1;
+	grid-row-end: 2;
+}
+
+#severityHigh{
+	grid-column-start: 2;
+	grid-column-end: 3;
+	grid-row-start: 2;
+	grid-row-end: 3;
+}
+
+#severityMedium{
+	grid-column-start: 2;
+	grid-column-end: 3;
+	grid-row-start: 3;
+	grid-row-end: 4;
+}
+
+#severityLow{
+	grid-column-start: 2;
+	grid-column-end: 3;
+	grid-row-start: 4;
+	grid-row-end: 5;
+}
+
+#quantityCritical{
+	grid-column-start: 6;
+	grid-column-end: 7;
+	grid-row-start: 5;
+	grid-row-end: 6;
+	text-align: center;
+}
+
+#quantityHigh{
+	grid-column-start: 5;
+	grid-column-end: 6;
+	grid-row-start: 5;
+	grid-row-end: 6;
+	text-align: center;
+}
+#quantityMedium{
+	grid-column-start: 4;
+	grid-column-end: 5;
+	grid-row-start: 5;
+	grid-row-end: 6;
+	text-align: center;
+}
+
+#quantityLow{
+	grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 5;
+	grid-row-end: 6;
+	text-align: center;
+}
+
+/* Color for each Risk */
+#medium_medium, #medium_low, #low_medium{
+	background-color: yellow;
+}
+
+#high_low, #high_medium, #high_high, #medium_high, #low_high{
+	background-color: red;
+}
+
+#critical_low, #critical_medium, #critical_high, #critical_critical, #high_critical, #medium_critical, #low_critical{
+	background-color: purple;
+}
+
+
+/* Low Risk */
+#low_low{
+	background-color: cyan;
+	grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 4;
+	grid-row-end: 5;
+}
+
+/* Medium Risk */
+#medium_low{
+	grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 3;
+	grid-row-end: 4;
+}
+#medium_medium{
+	grid-column-start: 4;
+	grid-column-end: 5;
+	grid-row-start: 3;
+	grid-row-end: 4;
+}
+#low_medium{
+	grid-column-start: 4;
+	grid-column-end: 5;
+	grid-row-start: 4;
+	grid-row-end: 5;
+}
+
+/* High Risk*/
+#high_low{
+	grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 2;
+	grid-row-end: 3;
+}
+#high_medium{
+	grid-column-start: 4;
+	grid-column-end: 5;
+	grid-row-start: 2;
+	grid-row-end: 3;
+}
+#high_high{
+	grid-column-start: 5;
+	grid-column-end: 6;
+	grid-row-start: 2;
+	grid-row-end: 3;
+}
+#medium_high{
+	grid-column-start: 5;
+	grid-column-end: 6;
+	grid-row-start: 3;
+	grid-row-end: 4;
+}
+#low_high{
+	grid-column-start: 5;
+	grid-column-end: 6;
+	grid-row-start: 4;
+	grid-row-end: 5;
+}
+
+/* Critical Risk */
+#critical_low{
+	grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 1;
+	grid-row-end: 2;
+}
+
+#critical_medium{
+	grid-column-start: 4;
+	grid-column-end: 5;
+	grid-row-start: 1;
+	grid-row-end: 2;
+}
+
+#critical_high{
+	grid-column-start: 5;
+	grid-column-end: 6;
+	grid-row-start: 1;
+	grid-row-end: 2;
+}
+
+#critical_critical{
+	grid-column-start: 6;
+	grid-column-end: 7;
+	grid-row-start: 1;
+	grid-row-end: 2;
+}
+
+#high_critical{
+	grid-column-start: 6;
+	grid-column-end: 7;
+	grid-row-start: 2;
+	grid-row-end: 3;
+}
+
+#medium_critical{
+	grid-column-start: 6;
+	grid-column-end: 7;
+	grid-row-start: 3;
+	grid-row-end: 4;
+}
+
+#low_critical{
+	grid-column-start: 6;
+	grid-column-end: 7;
+	grid-row-start: 4;
+	grid-row-end: 5;
+}
+
