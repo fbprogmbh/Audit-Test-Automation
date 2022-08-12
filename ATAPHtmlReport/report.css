@@ -244,12 +244,16 @@ button{
 	margin-left: 10px;
 }
 
+#riskScore h1, #riskScore h2{
+	text-align: center;
+}
+
 #riskMatrixContainer{
     display: grid;
     position: relative;
     grid-template-columns: 100px repeat(5,60px);
     grid-template-rows: repeat(6,60px);
-    left: 40%;
+    margin-left: 30%;
     margin-top: 50px;
 }
 
@@ -349,9 +353,14 @@ button{
 	text-align: center;
 }
 
+#riskMatrixContainer:nth-child(10){
+	position: relative;
+}
+
+
 /* Color for each Risk */
 #medium_medium, #medium_low, #low_medium{
-	background-color: yellow;
+	background-color: #ffc000;
 }
 
 #high_low, #high_medium, #high_high, #medium_high, #low_high{
@@ -365,7 +374,7 @@ button{
 
 /* Low Risk */
 #low_low{
-	background-color: cyan;
+	background-color: #548dd6;
 	grid-column-start: 3;
 	grid-column-end: 4;
 	grid-row-start: 4;
@@ -474,3 +483,28 @@ button{
 	grid-row-end: 5;
 }
 
+/* Table Quantity */
+#riskScore table{
+	margin-left: 30%;
+	margin-top: 30px;
+	border: 1px solid black;
+}
+
+#riskScore th{
+	background-color: #5b9bd5;
+}
+
+#riskScore tr:nth-child(2n) td{
+	background-color: #d2deef;
+}
+
+.dot {
+	height: 25px;
+    width: 25px;
+    background-color: black;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    left: 25%;
+    top: 25%;
+}

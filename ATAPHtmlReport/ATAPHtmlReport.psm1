@@ -609,6 +609,10 @@ function Get-ATAPHtmlReport {
 					}
 
 					htmlElement 'div' @{id = 'riskScore' } {
+						htmlElement 'h1'@{} {"Risk Score"}
+						htmlElement 'h2' @{} {"Current Risk score on your System: <TEST VALUE>"}
+
+						
 						htmlElement 'div' @{id ='riskMatrixContainer'}{
 							htmlElement 'div' @{id ='severity'} {
 								htmlElement 'p' @{id = 'severityArea'}{'Severity'}
@@ -627,7 +631,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{id ='quantityLow'}{"Low"}
 
 							#colored areas
-							htmlElement 'div' @{id ='critical_low'}{}
+							htmlElement 'div' @{id ='critical_low'}{htmlElement 'div' @{class='dot'}{}}
 							htmlElement 'div' @{id ='high_low'}{}
 							htmlElement 'div' @{id ='medium_low'}{}
 							htmlElement 'div' @{id ='low_low'}{}
@@ -649,6 +653,35 @@ function Get-ATAPHtmlReport {
 
 
 						}
+
+						htmlElement 'table' @{}{
+							htmlElement 'tr' @{}{
+								htmlElement 'th' @{}{'Compliance to Benchmark'}
+								htmlElement 'th' @{}{'Risk Assessment'}
+							}
+							htmlElement 'tr' @{}{
+								htmlElement 'td' @{}{'85% < X'}
+								htmlElement 'td' @{}{'Low'}
+							}
+							htmlElement 'tr' @{}{
+								htmlElement 'td' @{}{'70% < X < 85%'}
+								htmlElement 'td' @{}{'Medium'}
+							}
+							htmlElement 'tr' @{}{
+								htmlElement 'td' @{}{'55% < X < 70%'}
+								htmlElement 'td' @{}{'High'}
+							}
+							htmlElement 'tr' @{}{
+								htmlElement 'td' @{}{'X < 55%'}
+								htmlElement 'td' @{}{'Critical'}
+							}
+						}
+
+						htmlElement 'h2' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success }
+						htmlElement 'h2' @{} {'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed }
+						htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
+						
+						# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable 
 					}
 					
 				}
@@ -824,22 +857,9 @@ function Get-ATAPHtmlReport {
 		if (Test-Path -Path $path) {
 			Write-Warning "$path already exists. $path will be overridden!"
 		}
-		
-		
-		#Create Report Path		
-		$reportName = [System.IO.Path]::GetFileNameWithoutExtension($path) 
-		$directoryPath = Split-Path -Path $path
-		New-Item -Path $directoryPath"\"$reportName -ItemType Directory
-		$directoryPath = $directoryPath + "\" + $reportName
-
+	
 		#Create Report file
 		New-Item $path -ItemType File -Force
 		$html | Out-File -FilePath $path -Encoding utf8
-		#Move Report file to newly created directory
-		Move-Item -Path $path -Destination $directoryPath
-
-		
-		#Create RiskScore file
-		New-Item $directoryPath -Name "$($reportName)_RiskScore.html" -ItemType File -Value $head
 	}
 }
