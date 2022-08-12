@@ -233,3 +233,13 @@ span.auditstatus {
 	line-height: 150px;
 	color: black;
 }
+
+
+#navigationButtons{
+	display: grid;
+	grid-template-rows: 50px;
+	grid-template-columns: 160px 160px;
+}
+button{
+	margin-left: 10px;
+}

@@ -465,9 +465,13 @@ function Get-ATAPHtmlReport {
 				Get-Content $cssPath
 				Get-OverallComplianceCSS $completionStatus
 			}
+			htmlElement 'script' @{} {
+				$jsPath = $ScriptRoot | Join-path -ChildPath "/report.js"
+				Get-Content $jsPath
+			}
 		}
 
-		$body = htmlElement 'body' @{} {
+		$body = htmlElement 'body' @{onload="startConditions()"} {
 			# Header
 			htmlElement 'div' @{ class = 'header content'} {
 				$Settings.LogoSvg
@@ -497,6 +501,7 @@ function Get-ATAPHtmlReport {
 									htmlElement 'td' @{} { $hostDatum.Value }
 								}
 							}
+							
 						}
 					}
 					# Show compliance status
@@ -511,57 +516,27 @@ function Get-ATAPHtmlReport {
 							}
 						}
 					}
-					# Summary
-					htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
-					htmlElement 'p' @{} {
-						'A total of {0} tests have been executed.' -f @(
-							$completionStatus.TotalCount
-						)
+					htmlElement 'div' @{id='navigationButtons'} {
+						htmlElement 'button' @{type='button'; id='summaryBtn'; onclick="clickSummaryBtn()"}{"Summary"}
+						htmlElement 'button' @{type='button'; id='riskScoreBtn'; onclick="clickRiskScoreBtn()"}{"Risk Score"}
 					}
+					#This div hides/reveals the whole summary section
+					htmlElement 'div' @{id='summary'}{
 
-					# Status percentage gauge
-					htmlElement 'div' @{ class = 'gauge' } {
-						foreach ($value in $StatusValues) {
-							$count = $completionStatus[$value].Count
-							$htmlClass = Get-HtmlClassFromStatus $value
-							$percent = $completionStatus[$value].Percent
-
-							htmlElement 'div' @{
-								class = "gauge-meter $htmlClass"
-								style = "width: $($percent)%"
-								title = "$value $count test(s), $($percent)%"
-							} { }
-						}
-					}
-					htmlElement 'ol' @{ class = 'gauge-info' } {
-						foreach ($value in $StatusValues) {
-							$count = $completionStatus[$value].Count
-							$htmlClass = Get-HtmlClassFromStatus $value
-							$percent = $completionStatus[$value].Percent
-
-							htmlElement 'li' @{ class = 'gauge-info-item' } {
-								htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
-								" $count test(s) &#x2259; $($percent)%"
-							}
-						}
-
-					}
-					# Sections
-					foreach ($section in $Sections) {
-						htmlElement 'h2' @{ style = 'clear:both; margin-top: 0;' } { $section.Title }
+						# Summary
+						htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
 						htmlElement 'p' @{} {
-							'A total of {0} tests have been executed in section {1}.' -f @(
-								$sectionTotalCountHash[$section.Title]
-								$section.Title
+							'A total of {0} tests have been executed.' -f @(
+								$completionStatus.TotalCount
 							)
 						}
 
-						# Status percentage gauge for sections
+						# Status percentage gauge
 						htmlElement 'div' @{ class = 'gauge' } {
 							foreach ($value in $StatusValues) {
-								$count = $sectionCountHash[$section.Title + $value + "Count"]
+								$count = $completionStatus[$value].Count
 								$htmlClass = Get-HtmlClassFromStatus $value
-								$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+								$percent = $completionStatus[$value].Percent
 
 								htmlElement 'div' @{
 									class = "gauge-meter $htmlClass"
@@ -572,27 +547,67 @@ function Get-ATAPHtmlReport {
 						}
 						htmlElement 'ol' @{ class = 'gauge-info' } {
 							foreach ($value in $StatusValues) {
-								$count = $sectionCountHash[$section.Title + $value + "Count"]
+								$count = $completionStatus[$value].Count
 								$htmlClass = Get-HtmlClassFromStatus $value
-								$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+								$percent = $completionStatus[$value].Percent
 
 								htmlElement 'li' @{ class = 'gauge-info-item' } {
 									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
 									" $count test(s) &#x2259; $($percent)%"
 								}
 							}
+
 						}
+						# Sections
+						foreach ($section in $Sections) {
+							htmlElement 'h2' @{ style = 'clear:both; margin-top: 0;' } { $section.Title }
+							htmlElement 'p' @{} {
+								'A total of {0} tests have been executed in section {1}.' -f @(
+									$sectionTotalCountHash[$section.Title]
+									$section.Title
+								)
+							}
+
+							# Status percentage gauge for sections
+							htmlElement 'div' @{ class = 'gauge' } {
+								foreach ($value in $StatusValues) {
+									$count = $sectionCountHash[$section.Title + $value + "Count"]
+									$htmlClass = Get-HtmlClassFromStatus $value
+									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+
+									htmlElement 'div' @{
+										class = "gauge-meter $htmlClass"
+										style = "width: $($percent)%"
+										title = "$value $count test(s), $($percent)%"
+									} { }
+								}
+							}
+							htmlElement 'ol' @{ class = 'gauge-info' } {
+								foreach ($value in $StatusValues) {
+									$count = $sectionCountHash[$section.Title + $value + "Count"]
+									$htmlClass = Get-HtmlClassFromStatus $value
+									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+
+									htmlElement 'li' @{ class = 'gauge-info-item' } {
+										htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
+										" $count test(s) &#x2259; $($percent)%"
+									}
+								}
+							}
+						}
+					
+
+						# Table of Contents
+						htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
+						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+						htmlElement 'ul' @{} {
+							foreach ($section in $Sections) { $section | Get-HtmlToc  }
+						}
+						# Report Sections Sections
+						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
-
-					# Table of Contents
-					htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
-					htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
-					htmlElement 'ul' @{} {
-						foreach ($section in $Sections) { $section | Get-HtmlToc  }
-					}
-					# Report Sections Sections
-					foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+					htmlElement 'p' @{id = 'riskScore'} {"Hier steht der RiskScore"}
 				}
 			}
 			htmlElement 'script' @{ type = 'text/javascript' } { @"
