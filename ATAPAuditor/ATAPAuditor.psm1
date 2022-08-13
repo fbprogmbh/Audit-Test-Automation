@@ -47,7 +47,7 @@ class Report {
 	[hashtable] $HostInformation
 	[string[]] $BasedOn
 	[ReportSection[]] $Sections
-	[RSFullReport[]] $RSReport
+	[RSFullReport] $RSReport
 }
 
 # RiskScore Classes
@@ -65,7 +65,7 @@ class RSFullReport {
 }
 
 class RSSeverityReport {
-	[AuditTest[]] $TestTable
+	[AuditInfo[]] $AuditInfos
 	[ResultTable[]] $ResultTable
 	[RSEndResult] $Endresult
 }
@@ -135,7 +135,7 @@ function Get-DomainRole {
 # function that calls all RiskScore-Subfunctions and generates the RSFullReport
 function Get-RSFullReport {
 	[CmdletBinding()]
-	[OutputType([RSFullReport[]])]
+	[OutputType([RSFullReport])]
 	
 	$severity = Get-RSSeverityReport
 
@@ -147,24 +147,24 @@ function Get-RSFullReport {
 # function to generate RiskSeverityReport
 function Get-RSSeverityReport {
     [CmdletBinding()]
-    [OutputType([RSSeverityReport[]])]
+    [OutputType([RSSeverityReport])]
 
     # Initialization
-    $tests = . "$RootPath\RiskScore\RSSeverityTests.ps1"
+	[AuditInfo[]]$tests = Test-AuditGroup "RSSeverityTests"
 
     # gather results of tests and save it in resultTable
 	$resultTable = [ResultTable]::new()
     foreach ($test in $tests) {
-		if ($test.Test.Status -EQ "True") {
+		if ($test.AuditInfoStatus -EQ "True") {
 			$resultTable.Success += 1
 		}
-        if ($test.Test.Status -ne "True") {
+        if ($test.AuditInfostatus -ne "True") {
             $resultTable.Failed += 1
         }
     }
 
     return ([RSSeverityReport]@{
-            TestTable   = $tests
+            AuditInfos  = $tests
             ResultTable = $resultTable
             Endresult   = Get-RSSeverityEndResult($resultTable)
         })
