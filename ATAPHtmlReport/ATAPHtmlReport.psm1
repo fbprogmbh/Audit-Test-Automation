@@ -471,7 +471,8 @@ function Get-ATAPHtmlReport {
 				Get-Content $jsPath
 			}
 		}
-
+		$AmountOfRules = $completionStatus.TotalCount;
+		$AmountOfCompliantRules = 0;
 		$body = htmlElement 'body' @{onload = "startConditions()" } {
 			# Header
 			htmlElement 'div' @{ class = 'header content' } {
@@ -523,7 +524,6 @@ function Get-ATAPHtmlReport {
 					}
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{id = 'summary' } {
-
 						# Summary
 						htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
 						htmlElement 'p' @{} {
@@ -535,6 +535,9 @@ function Get-ATAPHtmlReport {
 						# Status percentage gauge
 						htmlElement 'div' @{ class = 'gauge' } {
 							foreach ($value in $StatusValues) {
+								if($value -eq 'True'){
+									$AmountOfCompliantRules = $completionStatus[$value].Count
+								}
 								$count = $completionStatus[$value].Count
 								$htmlClass = Get-HtmlClassFromStatus $value
 								$percent = $completionStatus[$value].Percent
@@ -609,6 +612,9 @@ function Get-ATAPHtmlReport {
 					}
 
 					htmlElement 'div' @{id = 'riskScore' } {
+						
+						htmlElement 'h2' @{} {"Total amount: " +$AmountOfRules}
+						htmlElement 'h2' @{} {"compliant amount: " +$AmountOfCompliantRules}
 						htmlElement 'h1'@{} {"Risk Score"}
 						htmlElement 'h2' @{} {"Current Risk score on your System: <TEST VALUE>"}
 
