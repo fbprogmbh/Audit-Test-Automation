@@ -104,19 +104,20 @@ function calcDotPosition(){
     }
 
     let totalComplianceValue = Math.max(complianceValueQuantity, complianceValueSeverity);
-    let riskSummary = document.getElementById("CurrentRiskScore");
-    let riskScore;
+    
+    let summary;
     if(totalComplianceValue == 1){
-        riskScore = document.createTextNode("Low");
+        summary = "Current Risk score on your System: Low";
     }
     else if(totalComplianceValue == 2){
-        riskScore = document.createTextNode("Medium");
+        summary = "Current Risk score on your System: Medium";
     }
     else if(totalComplianceValue == 3){
-        riskScore = document.createTextNode("High");
+        summary = "Current Risk score on your System: High";
     }
     else{
-        riskScore = document.createTextNode("Critical");
+        summary = "Current Risk score on your System: Critical";
     }
-    riskSummary.appendChild(riskScore);
+    document.getElementById("CurrentRiskScore").textContent = summary;
+
 }
