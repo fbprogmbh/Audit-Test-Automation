@@ -249,12 +249,11 @@ button{
 }
 
 #riskMatrixContainer{
-    display: grid;
-    position: relative;
-    grid-template-columns: 100px repeat(5,60px);
-    grid-template-rows: repeat(6,60px);
-    margin-left: 30%;
-    margin-top: 50px;
+	display: grid;
+	position: relative;
+	grid-template-columns: 100px repeat(5,60px);
+	grid-template-rows: repeat(6,60px);
+	justify-content: center;
 }
 
 #riskMatrixContainer div{
@@ -485,9 +484,10 @@ button{
 
 /* Table Quantity */
 #riskScore table{
-	margin-left: 30%;
+	margin-left: auto;
 	margin-top: 30px;
 	border: 1px solid black;
+	margin-right: auto;
 }
 
 #riskScore th{
@@ -498,13 +498,13 @@ button{
 	background-color: #d2deef;
 }
 
-.dot {
+#dot {
 	height: 25px;
-    width: 25px;
-    background-color: black;
-    border-radius: 50%;
-    display: inline-block;
-    position: absolute;
-    left: 25%;
-    top: 25%;
+	width: 25px;
+	background-color: black;
+	border-radius: 50%;
+	display: inline-block;
+	position: absolute;
+	left: 15px;
+	top: 15px;
 }

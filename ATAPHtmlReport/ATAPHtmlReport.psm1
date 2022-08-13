@@ -272,7 +272,7 @@ function Get-ATAPHostInformation {
 			"Kernel Version"            = uname -r
 			"Free physical memory (GB)" = "{0:N1}" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space (GB)"      = "{0:N1}" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
-			"Domain role"               = $role			
+			"Domain role"               = $role
 		}
 	}
  else {
@@ -471,8 +471,6 @@ function Get-ATAPHtmlReport {
 				Get-Content $jsPath
 			}
 		}
-		$AmountOfRules = $completionStatus.TotalCount;
-		$AmountOfCompliantRules = 0;
 		$body = htmlElement 'body' @{onload = "startConditions()" } {
 			# Header
 			htmlElement 'div' @{ class = 'header content' } {
@@ -503,7 +501,7 @@ function Get-ATAPHtmlReport {
 									htmlElement 'td' @{} { $hostDatum.Value }
 								}
 							}
-							
+
 						}
 					}
 					# Show compliance status
@@ -518,6 +516,41 @@ function Get-ATAPHtmlReport {
 							}
 						}
 					}
+
+					###  Risk Checks ###
+					# Quantity
+					$TotalAmountOfRules = $completionStatus.TotalCount;
+					$AmountOfCompliantRules = 0;
+					$AmountOfNonCompliantRules = 0;
+					foreach ($value in $StatusValues) {
+						if($value -eq 'True'){
+							$AmountOfCompliantRules = $completionStatus[$value].Count
+						}
+						if($value -eq 'False'){
+							$AmountOfNonCompliantRules = $completionStatus[$value].Count
+						}
+					}
+					# percentage of compliance quantity
+					$QuantityCompliance = [math]::round(($AmountOfCompliantRules / $TotalAmountOfRules) * 100,2);	
+
+					# Variables, which will be evaluated in report.js
+					htmlElement 'div' @{id="AmountOfNonCompliantRules"} {"$($AmountOfNonCompliantRules)"}
+					htmlElement 'div' @{id="AmountOfCompliantRules"} {"$($AmountOfCompliantRules)"}
+					htmlElement 'div' @{id="TotalAmountOfRules"} {"$($TotalAmountOfRules)"}
+					htmlElement 'div' @{id="QuantityCompliance"} {"$($QuantityCompliance)"}
+
+					# Severity
+					htmlElement 'div' @{id="TotalAmountOfSeverityRules"} {"$($RSReport.RSSeverityReport.AuditInfos.Length)"}
+					$AmountOfFailedSeverityRules = 0;
+					foreach($rule in $RSReport.RSSeverityReport.AuditInfos){
+						if($rule.Status -ne "True"){
+							$AmountOfFailedSeverityRules ++;
+						}
+					}
+					htmlElement 'div' @{id="AmountOfFailedSeverityRules"} {"$($AmountOfFailedSeverityRules)"}
+
+
+
 					htmlElement 'div' @{id = 'navigationButtons' } {
 						htmlElement 'button' @{type = 'button'; id = 'summaryBtn'; onclick = "clickSummaryBtn()" } { "Summary" }
 						htmlElement 'button' @{type = 'button'; id = 'riskScoreBtn'; onclick = "clickRiskScoreBtn()" } { "Risk Score" }
@@ -535,9 +568,6 @@ function Get-ATAPHtmlReport {
 						# Status percentage gauge
 						htmlElement 'div' @{ class = 'gauge' } {
 							foreach ($value in $StatusValues) {
-								if($value -eq 'True'){
-									$AmountOfCompliantRules = $completionStatus[$value].Count
-								}
 								$count = $completionStatus[$value].Count
 								$htmlClass = Get-HtmlClassFromStatus $value
 								$percent = $completionStatus[$value].Percent
@@ -599,7 +629,7 @@ function Get-ATAPHtmlReport {
 								}
 							}
 						}
-					
+
 
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
@@ -611,15 +641,15 @@ function Get-ATAPHtmlReport {
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
-					htmlElement 'div' @{id = 'riskScore' } {
-						
-						htmlElement 'h2' @{} {"Total amount: " +$AmountOfRules}
-						htmlElement 'h2' @{} {"compliant amount: " +$AmountOfCompliantRules}
-						htmlElement 'h1'@{} {"Risk Score"}
-						htmlElement 'h2' @{} {"Current Risk score on your System: <TEST VALUE>"}
 
-						
+
+
+					htmlElement 'div' @{id = 'riskScore' } {
+						htmlElement 'h1'@{} {"Risk Score"}
+						htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on your System: "}
+
 						htmlElement 'div' @{id ='riskMatrixContainer'}{
+							htmlElement 'div' @{id='dot'}{}
 							htmlElement 'div' @{id ='severity'} {
 								htmlElement 'p' @{id = 'severityArea'}{'Severity'}
 							}
@@ -637,7 +667,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{id ='quantityLow'}{"Low"}
 
 							#colored areas
-							htmlElement 'div' @{id ='critical_low'}{htmlElement 'div' @{class='dot'}{}}
+							htmlElement 'div' @{id ='critical_low'}{}
 							htmlElement 'div' @{id ='high_low'}{}
 							htmlElement 'div' @{id ='medium_low'}{}
 							htmlElement 'div' @{id ='low_low'}{}
@@ -656,8 +686,6 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{id ='high_critical'}{}
 							htmlElement 'div' @{id ='medium_critical'}{}
 							htmlElement 'div' @{id ='low_critical'}{}
-
-
 						}
 
 						htmlElement 'table' @{}{
@@ -683,13 +711,29 @@ function Get-ATAPHtmlReport {
 							}
 						}
 
-						htmlElement 'h2' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success }
-						htmlElement 'h2' @{} {'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed }
-						htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
+						htmlElement 'table' @{}{
+							htmlElement 'tr' @{}{
+								htmlElement 'th' @{}{'Severity Compliance'}
+								htmlElement 'th' @{}{'Risk Assessment'}
+							}
+							foreach($info in $RSReport.RSSeverityReport.AuditInfos){
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{} {"$($info.Task)"}
+									htmlElement 'td' @{} {"$($info.Status)"}
+								}
+							}
+						}
+
 						
-						# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable 
+
+
+						# htmlElement 'h2' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success }
+						# htmlElement 'h2' @{} {'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed }
+						# htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
+
+						# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
 					}
-					
+
 				}
 			}
 			htmlElement 'script' @{ type = 'text/javascript' } { @"
@@ -711,7 +755,7 @@ function Get-ATAPHtmlReport {
 
 		$html = "<!DOCTYPE html><html lang=`"en`">$($head)$($body)</body></html> "
 
-		$head = "			
+		$head = "
 		<head>
 			<title>A Meaningful Page Title</title>
 			<style>
@@ -753,117 +797,10 @@ function Get-ATAPHtmlReport {
 		"
 
 
-		#Different Risks:
-		#QualityQuantity
-		#First word is risk of Quality
-		#Second word is risk of Quantity
-
-		#LowLow
-		#LowCritical
-		#CriticalLow
-		#CriticalCritical
-
-		$risk = "CriticalLow"
-		
-		$html_RiskScore =
-		htmlElement 'body' @{} {
-			htmlElement 'div' @{ class = 'header' } {
-				$Settings.LogoSvg
-				htmlElement 'h1' @{} { $Title }
-				htmlElement 'p' @{} {
-					"Generated by the <i>$ModuleName</i> Module Version <i>$AuditorVersion</i> by FB Pro GmbH. Get it in the <a href=`"$($Settings.PackageLink)`">Audit Test Automation Package</a>. Are you seeing a lot of red sections? Check out our <a href=`"$($Settings.SolutionsLink)`">hardening solutions</a>."
-				}
-				htmlElement 'p' @{} {
-					"Based on:"
-					htmlElement 'ul' @{} {
-						foreach ($item in $BasedOn) {
-							htmlElement 'li' @{} { $item }
-						}
-					}
-				}
-			}
-			htmlElement 'h1' @{} { 'Risk Score' }
-			htmlElement 'h1' @{} {
-				'Your System has following condition: &nbsp;&nbsp;&nbsp;'
-				if ($risk.Contains('Critical')) {
-					htmlElement 'p' @{style = "color:#cc0000;" } { "Critical Risk!" }
-				}
-				else {
-					htmlElement 'p' @{style = "color:#33cca6;" } { "Low Risk!" }
-				}
-			}
-			htmlElement 'div' @{class = 'riskMatrix' } {
-				htmlElement 'table' @{style = "border-collapse: collapse;" } {
-					htmlElement 'tbody' @{} {
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{rowspan = 3; style = "font-weight:bold;" } { 'Quality' }
-							htmlElement 'td' @{} { 'Critical' }
-							htmlElement 'td' @{class = 'red' } {
-								if ($risk -eq "LowCritical") {
-									'Critical Risk'
-								}
-							}
-							htmlElement 'td' @{class = 'red' } {
-								if ($risk -eq "CriticalCritical") {
-									'Critical Risk'
-								}
-							}
-						}
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} { 'Low' }
-							htmlElement 'td' @{class = 'green' } {
-								if ($risk -eq "LowLow") {
-									'Low Risk'
-								}
-							}
-							htmlElement 'td' @{class = 'red' } {
-								if ($risk -eq "CriticalLow") {
-									'Critical Risk'
-								}
-							}
-						}
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} {}
-							htmlElement 'td' @{} { 'Low' }
-							htmlElement 'td' @{} { 'Critical' }
-						}
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} {}
-							htmlElement 'td' @{colspan = 3; style = "text-align:center; font-weight:bold;" } { 'Quantity' }
-						}
-					}
-				}
-				htmlElement 'table'@{style = "width:100%; margin-top: 80px; border-collapse: collapse;" } {
-					htmlElement 'tbody' @{} {
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{style = "font-weight: bold;" } { 'Issue' }
-							htmlElement 'td' @{style = "font-weight: bold;" } { 'Description' }
-							htmlElement 'td' @{style = "font-weight: bold;" } { 'Type' }
-						}
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} { 'Issue01' }
-							htmlElement 'td' @{} { 'SMBv1 not configured!' }
-							htmlElement 'td' @{} { 'Quantity' }
-						}
-						htmlElement 'tr' @{} {
-							htmlElement 'td' @{} { 'Issue02' }
-							htmlElement 'td' @{} { 'Driver Server not enabled!' }
-							htmlElement 'td' @{} { 'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success
-								'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed
-								'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult
-								'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable }
-						}
-					}
-				}
-			}
-		}
-		
-		$head = $head + " " + $html_RiskScore
-		
 		if (Test-Path -Path $path) {
 			Write-Warning "$path already exists. $path will be overridden!"
 		}
-	
+
 		#Create Report file
 		New-Item $path -ItemType File -Force
 		$html | Out-File -FilePath $path -Encoding utf8
