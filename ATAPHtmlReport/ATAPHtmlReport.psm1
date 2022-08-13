@@ -493,7 +493,7 @@ function Get-ATAPHtmlReport {
 			# Main section
 			htmlElement 'div' @{ class = 'main content' } {
 				htmlElement 'div' @{ class = 'host-information' } {
-					htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with TAPHtmlReport version $ModuleVersion." }
+					htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
 					# Host information
 					htmlElement 'table' @{} {
 						htmlElement 'tbody' @{} {
