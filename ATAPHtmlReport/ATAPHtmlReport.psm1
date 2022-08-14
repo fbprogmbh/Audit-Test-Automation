@@ -554,6 +554,7 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{id = 'navigationButtons' } {
 						htmlElement 'button' @{type = 'button'; id = 'summaryBtn'; onclick = "clickSummaryBtn()" } { "Summary" }
 						htmlElement 'button' @{type = 'button'; id = 'riskScoreBtn'; onclick = "clickRiskScoreBtn()" } { "Risk Score" }
+						htmlElement 'button' @{type = 'button';} { "References" }
 					}
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{id = 'summary' } {

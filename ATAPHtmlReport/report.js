@@ -58,8 +58,6 @@ Will be calleed, after the user has clicked on Risk Score Button
 */
 function calcDotPosition(){
 
-    console.log(AmountOfFailedSeverityRules);
-
     let dot = document.getElementById("dot");
     QuantityCompliance = parseFloat(QuantityCompliance);
 
@@ -73,19 +71,16 @@ function calcDotPosition(){
     }
     /*medium quantity compliance*/
     else if(70 < QuantityCompliance && QuantityCompliance < 85){
-        console.log("medium quantity compliance");
         dot.style.gridColumnStart = 4;
         complianceValueQuantity = 2;
     }
     /*high quantity compliance*/
     else if(55 < QuantityCompliance && QuantityCompliance < 70){
-        console.log("high quantity compliance");
         dot.style.gridColumnStart = 5;
         complianceValueQuantity = 3;
     }
     /*critical quantity compliance*/
     else{
-        console.log("critical quantity compliance");
         dot.style.gridColumnStart = 6;
         complianceValueQuantity = 4;
     }
