@@ -552,12 +552,12 @@ function Get-ATAPHtmlReport {
 
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
-						htmlElement 'button' @{type = 'button'; id = 'summaryBtn'; onclick = "clickSummaryBtn()" } { "Summary" }
-						htmlElement 'button' @{type = 'button'; id = 'riskScoreBtn'; onclick = "clickRiskScoreBtn()" } { "Risk Score" }
-						htmlElement 'button' @{type = 'button';} { "References" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Summary" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "References" }
 					}
 					#This div hides/reveals the whole summary section
-					htmlElement 'div' @{id = 'summary' } {
+					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
 						# Summary
 						htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
 						htmlElement 'p' @{} {
@@ -642,10 +642,7 @@ function Get-ATAPHtmlReport {
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
-
-
-
-					htmlElement 'div' @{id = 'riskScore' } {
+					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 						htmlElement 'h1'@{} {"Risk Score"}
 						htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on your System: "}
 
@@ -734,6 +731,11 @@ function Get-ATAPHtmlReport {
 
 						# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
 					}
+
+					htmlElement 'div' @{class = 'tabContent'; id = 'references'}{
+						htmlElement 'h2' @{} {"Here will the references appear..."}
+					}
+
 
 				}
 			}

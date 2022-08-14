@@ -9,11 +9,19 @@ let SeverityCompliance;
 
 
 function startConditions(){
-    document.getElementById("riskScore").style.display = "none";
+    /* Default-Value: Display summary always at the beginning */
     document.getElementById("summary").style.display = "block";
+    
+    /* Default-Value: Disable all other tabs at the beginning */
+    document.getElementById("riskScore").style.display = "none";
+    document.getElementById("references").style.display = "none";
+
+
     document.getElementById("summaryBtn").style.backgroundColor= '#ff9933';
     document.getElementById("riskScoreBtn").style.backgroundColor= 'transparent';
+    document.getElementById("referenceBtn").style.backgroundColor= 'transparent';
 
+    /* Initialize necessary variables */
     AmountOfNonCompliantRules = document.getElementById("AmountOfNonCompliantRules").textContent;
     document.getElementById("AmountOfNonCompliantRules").hidden = true;
 
@@ -26,9 +34,6 @@ function startConditions(){
     QuantityCompliance = document.getElementById("QuantityCompliance").textContent;
     document.getElementById("QuantityCompliance").hidden = true;
 
-
-
-
     TotalAmountOfSeverityRules = document.getElementById("TotalAmountOfSeverityRules").textContent;
     document.getElementById("TotalAmountOfSeverityRules").hidden = true;
 
@@ -36,20 +41,43 @@ function startConditions(){
     document.getElementById("AmountOfFailedSeverityRules").hidden = true;
 }
 
-function clickSummaryBtn() {
-    document.getElementById("riskScore").style.display = "none";
-    document.getElementById("summary").style.display = "block";
-    document.getElementById("summaryBtn").style.backgroundColor= '#ff9933';
-    document.getElementById("riskScoreBtn").style.backgroundColor= 'transparent';
+
+function clickButton(value){
+    let buttonNumber = parseInt(value);
+
+    /* Disable all content */
+    let tabContents = document.getElementsByClassName('tabContent');
+    for(let i = 0; i < tabContents.length; i++){
+        tabContents.item(i).style.display = "none";
+    }
+
+    /* Disable all buttons */
+    let buttons = document.getElementsByClassName('navButton');
+    for(let i = 0; i < buttons.length; i++){
+        buttons.item(i).style.backgroundColor= 'transparent';
+    }
+
+
+
+    /* Re-Enable fitting content / button */
+    switch(buttonNumber){
+        case 1:
+            document.getElementById("summary").style.display = "block";
+            document.getElementById("summaryBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 2:
+            document.getElementById("riskScore").style.display = "block";
+            document.getElementById("riskScoreBtn").style.backgroundColor= '#ff9933';
+            calcDotPosition();
+        break;
+        case 3:
+            document.getElementById("references").style.display = "block";
+            document.getElementById("referenceBtn").style.backgroundColor= '#ff9933';
+        break;
+    }
+
 }
 
-function clickRiskScoreBtn() {
-    document.getElementById("riskScoreBtn").style.backgroundColor= '#ff9933';
-    document.getElementById("summaryBtn").style.backgroundColor= 'transparent';
-    document.getElementById("riskScore").style.display = "block";
-    document.getElementById("summary").style.display = "none";
-    calcDotPosition();
-}
 
 
 /* 

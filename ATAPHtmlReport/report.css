@@ -236,9 +236,10 @@ span.auditstatus {
 
 
 #navigationButtons{
+	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: 160px 160px;
+	grid-template-columns: repeat(3,160px);
 }
 button{
 	margin-left: 10px;
