@@ -239,13 +239,14 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(3,160px);
+	grid-template-columns: repeat(4,160px);
 }
 button{
 	margin-left: 10px;
 }
 
-#riskScore h1, #riskScore h2{
+#riskScore{
+	font-family: Arial, sans-serif;
 	text-align: center;
 }
 
@@ -254,7 +255,9 @@ button{
 	position: relative;
 	grid-template-columns: 100px repeat(5,60px);
 	grid-template-rows: repeat(6,60px);
-	justify-content: center;
+	left: 10%;
+	float: left;
+	margin-top: 50px;
 }
 
 #riskMatrixContainer div{
@@ -483,29 +486,65 @@ button{
 	grid-row-end: 5;
 }
 
-/* Table Quantity */
-#riskScore table{
-	margin-left: auto;
-	margin-top: 30px;
-	border: 1px solid black;
-	margin-right: auto;
+#severityDetails{
+	margin-left: 8%;
+    margin-top: 30px;
+    border: 1px solid #d2d2d2;
+    margin-right: 8%;
+    float: right;
+	margin-bottom: 40px;
+}
+#severityDetails td{
+	border: 1px solid #d2d2d2;
 }
 
+#calculationTables{
+	float: right;
+    position: relative;
+    margin-right: 10%;
+}
+
+.calculationTablesText{
+	text-align: center;
+	font-family: Arial, sans-serif;
+}
+
+
+
+
 #riskScore th{
-	background-color: #5b9bd5;
+	background-color: white;
 }
 
 #riskScore tr:nth-child(2n) td{
-	background-color: #d2deef;
+	background-color: #efefef;
 }
 
 #dot {
-	height: 25px;
-	width: 25px;
-	background-color: black;
-	border-radius: 50%;
-	display: inline-block;
-	position: absolute;
-	left: 15px;
-	top: 15px;
+    height: 15px;
+    width: 15px;
+    background-color: white;
+    border-radius: 50%;
+    border-style: dotted;
+    display: inline-block;
+    position: absolute;
+    left: 22px;
+    border-width: 2px;
+    top: 22px;
 }
+
+#quantityTable{
+	margin-left: auto;
+    margin-top: 30px;
+    border: 1px solid black;
+    margin-right: auto;
+}
+
+
+#severityTable{
+    margin-left: auto;
+    margin-top: 30px;
+    border: 1px solid black;
+    margin-right: auto;
+}
+

@@ -552,10 +552,25 @@ function Get-ATAPHtmlReport {
 
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
-						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Summary" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Summary" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Settings Overview" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "References" }
 					}
+
+					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
+
+						# Table of Contents
+						htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
+						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+						htmlElement 'ul' @{} {
+							foreach ($section in $Sections) { $section | Get-HtmlToc }
+						}
+						# Report Sections Sections
+						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+					}
+
+
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
 						# Summary
@@ -632,19 +647,22 @@ function Get-ATAPHtmlReport {
 						}
 
 
-						# Table of Contents
-						htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
-						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
-						htmlElement 'ul' @{} {
-							foreach ($section in $Sections) { $section | Get-HtmlToc }
-						}
-						# Report Sections Sections
-						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+						# # Table of Contents
+						# htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
+						# htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+						# htmlElement 'ul' @{} {
+						# 	foreach ($section in $Sections) { $section | Get-HtmlToc }
+						# }
+						# # Report Sections Sections
+						# foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
+
+					
 					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 						htmlElement 'h1'@{} {"Risk Score"}
-						htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on your System: "}
+						htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The greater risk is used as the overall risk.'}
+						htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on tested System: "}
 
 						htmlElement 'div' @{id ='riskMatrixContainer'}{
 							htmlElement 'div' @{id='dot'}{}
@@ -686,30 +704,59 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{id ='low_critical'}{}
 						}
 
-						htmlElement 'table' @{}{
-							htmlElement 'tr' @{}{
-								htmlElement 'th' @{}{'Compliance to Benchmark'}
-								htmlElement 'th' @{}{'Risk Assessment'}
+						htmlElement 'div' @{id='calculationTables'} {
+							htmlElement 'h3' @{class = 'calculationTablesText'} {"Agenda"}
+							htmlElement 'p' @{class = 'calculationTablesText'} {"The calculation of the RiskScore is based on the set of compliant rules at the quantity level and also at the severity level."}
+							htmlElement 'table' @{id='quantityTable'}{
+								htmlElement 'tr' @{}{
+									htmlElement 'th' @{}{'Compliance to Benchmarks (Quantity)'}
+									htmlElement 'th' @{}{'Risk Assessment'}
+								}
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{}{'85% < X'}
+									htmlElement 'td' @{}{'Low'}
+								}
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{}{'70% < X < 85%'}
+									htmlElement 'td' @{}{'Medium'}
+								}
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{}{'55% < X < 70%'}
+									htmlElement 'td' @{}{'High'}
+								}
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{}{'X < 55%'}
+									htmlElement 'td' @{}{'Critical'}
+								}
 							}
-							htmlElement 'tr' @{}{
-								htmlElement 'td' @{}{'85% < X'}
-								htmlElement 'td' @{}{'Low'}
-							}
-							htmlElement 'tr' @{}{
-								htmlElement 'td' @{}{'70% < X < 85%'}
-								htmlElement 'td' @{}{'Medium'}
-							}
-							htmlElement 'tr' @{}{
-								htmlElement 'td' @{}{'55% < X < 70%'}
-								htmlElement 'td' @{}{'High'}
-							}
-							htmlElement 'tr' @{}{
-								htmlElement 'td' @{}{'X < 55%'}
-								htmlElement 'td' @{}{'Critical'}
+	
+							htmlElement 'table' @{id='severityTable'}{
+								htmlElement 'tr' @{}{
+									htmlElement 'th' @{}{'Compliance to Benchmarks (Severity)'}
+									htmlElement 'th' @{}{'Risk Assessment'}
+								}
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{}{'X = 0'}
+									htmlElement 'td' @{}{'Low'}
+								}
+								# htmlElement 'tr' @{}{
+								# 	htmlElement 'td' @{}{'70% < X < 85%'}
+								# 	htmlElement 'td' @{}{'Medium'}
+								# }
+								# htmlElement 'tr' @{}{
+								# 	htmlElement 'td' @{}{'55% < X < 70%'}
+								# 	htmlElement 'td' @{}{'High'}
+								# }
+								htmlElement 'tr' @{}{
+									htmlElement 'td' @{}{'X > 1'}
+									htmlElement 'td' @{}{'Critical'}
+								}
 							}
 						}
 
-						htmlElement 'table' @{}{
+
+
+						htmlElement 'table' @{id = 'severityDetails'}{
 							htmlElement 'tr' @{}{
 								htmlElement 'th' @{}{'Severity Compliance'}
 								htmlElement 'th' @{}{'Risk Assessment'}
