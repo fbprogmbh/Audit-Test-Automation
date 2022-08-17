@@ -302,6 +302,7 @@ button{
 	grid-column-end: 3;
 	grid-row-start: 1;
 	grid-row-end: 2;
+	padding-top: 20px;
 }
 
 #severityHigh{
@@ -309,6 +310,7 @@ button{
 	grid-column-end: 3;
 	grid-row-start: 2;
 	grid-row-end: 3;
+	padding-top: 20px;
 }
 
 #severityMedium{
@@ -316,6 +318,7 @@ button{
 	grid-column-end: 3;
 	grid-row-start: 3;
 	grid-row-end: 4;
+	padding-top: 20px;
 }
 
 #severityLow{
@@ -323,6 +326,7 @@ button{
 	grid-column-end: 3;
 	grid-row-start: 4;
 	grid-row-end: 5;
+	padding-top: 20px;
 }
 
 #quantityCritical{
@@ -331,6 +335,7 @@ button{
 	grid-row-start: 5;
 	grid-row-end: 6;
 	text-align: center;
+	padding-top: 20px;
 }
 
 #quantityHigh{
@@ -339,6 +344,7 @@ button{
 	grid-row-start: 5;
 	grid-row-end: 6;
 	text-align: center;
+	padding-top: 20px;
 }
 #quantityMedium{
 	grid-column-start: 4;
@@ -346,6 +352,7 @@ button{
 	grid-row-start: 5;
 	grid-row-end: 6;
 	text-align: center;
+	padding-top: 20px;
 }
 
 #quantityLow{
@@ -354,6 +361,7 @@ button{
 	grid-row-start: 5;
 	grid-row-end: 6;
 	text-align: center;
+	padding-top: 20px;
 }
 
 #riskMatrixContainer:nth-child(10){
