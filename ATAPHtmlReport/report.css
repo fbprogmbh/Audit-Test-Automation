@@ -368,6 +368,9 @@ button{
 	position: relative;
 }
 
+#riskMatrixSummary:nth-child(10){
+	position: relative;
+}
 
 /* Color for each Risk */
 #medium_medium, #medium_low, #low_medium{
@@ -528,10 +531,31 @@ button{
 	background-color: #efefef;
 }
 
-#dot {
+#summaryTable{
+	float: left;
+
+}
+
+#riskMatrixSummary{
+	display: grid;
+	position: relative;
+	grid-template-columns: 100px repeat(5,60px);
+	grid-template-rows: repeat(6,60px);
+	right: 10%;
+	float:right;
+}
+
+#riskMatrixSummary div{
+	border: 1px solid black;
+}
+
+
+
+
+#dotRiskScoreTab {
     height: 15px;
     width: 15px;
-    background-color: white;
+    background-color: black;
     border-radius: 50%;
     border-style: dotted;
     display: inline-block;
@@ -540,6 +564,20 @@ button{
     border-width: 2px;
     top: 22px;
 }
+
+#dotSummaryTab {
+    height: 15px;
+    width: 15px;
+    background-color: black;
+    border-radius: 50%;
+    border-style: dotted;
+    display: inline-block;
+    position: absolute;
+    left: 22px;
+    border-width: 2px;
+    top: 22px;
+}
+
 
 #quantityTable{
 	margin-left: auto;

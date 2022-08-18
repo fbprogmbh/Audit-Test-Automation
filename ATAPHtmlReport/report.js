@@ -41,6 +41,8 @@ function startConditions(){
 
     AmountOfFailedSeverityRules = document.getElementById("AmountOfFailedSeverityRules").textContent;
     document.getElementById("AmountOfFailedSeverityRules").hidden = true;
+
+    calcDotPosition();
 }
 
 
@@ -92,7 +94,8 @@ Will be calleed, after the user has clicked on Risk Score Button
 */
 function calcDotPosition(){
 
-    let dot = document.getElementById("dot");
+    let dotRiskScoreTab = document.getElementById("dotRiskScoreTab");
+    let dotSummaryTab = document.getElementById("dotSummaryTab");
     QuantityCompliance = parseFloat(QuantityCompliance);
 
     let complianceValueQuantity = 0;
@@ -100,22 +103,26 @@ function calcDotPosition(){
 
     /*low quantity compliance*/
     if(85 < QuantityCompliance){
-        dot.style.gridColumnStart = 3;
+        dotRiskScoreTab.style.gridColumnStart = 3;
+        dotSummaryTab.style.gridColumnStart = 3;
         complianceValueQuantity = 1;
     }
     /*medium quantity compliance*/
     else if(70 < QuantityCompliance && QuantityCompliance < 85){
-        dot.style.gridColumnStart = 4;
+        dotRiskScoreTab.style.gridColumnStart = 4;
+        dotSummaryTab.style.gridColumnStart = 4;
         complianceValueQuantity = 2;
     }
     /*high quantity compliance*/
     else if(55 < QuantityCompliance && QuantityCompliance < 70){
-        dot.style.gridColumnStart = 5;
+        dotRiskScoreTab.style.gridColumnStart = 5;
+        dotSummaryTab.style.gridColumnStart = 5;
         complianceValueQuantity = 3;
     }
     /*critical quantity compliance*/
     else{
-        dot.style.gridColumnStart = 6;
+        dotRiskScoreTab.style.gridColumnStart = 6;
+        dotSummaryTab.style.gridColumnStart = 6;
         complianceValueQuantity = 4;
     }
 
@@ -123,12 +130,14 @@ function calcDotPosition(){
     SeverityCompliance = parseInt(AmountOfFailedSeverityRules);
     /*low severity compliance*/
     if(SeverityCompliance == 0){
-        dot.style.gridRowStart = 4;
+        dotRiskScoreTab.style.gridRowStart = 4;
+        dotSummaryTab.style.gridRowStart = 4;
         complianceValueSeverity = 1;
     }
     /*critical severity compliance*/
     else{
-        dot.style.gridRowStart = 1;
+        dotRiskScoreTab.style.gridRowStart = 1;
+        dotSummaryTab.style.gridRowStart = 1;
         complianceValueSeverity = 4;
     }
 
