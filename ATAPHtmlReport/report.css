@@ -243,6 +243,8 @@ span.auditstatus {
 }
 button{
 	margin-left: 10px;
+	border-radius: 8px;
+	font-weight: bold;
 }
 
 #riskScore{
@@ -549,8 +551,17 @@ button{
 	border: 1px solid black;
 }
 
+#riskMatrixSummaryArea{
+	float: right;
+	text-align: center;
+	margin-right: 10%;
+}
 
-
+#systemData{
+	float: left;
+	text-align: center;
+	margin-left: 10%;
+}
 
 #dotRiskScoreTab {
     height: 15px;
@@ -594,3 +605,41 @@ button{
     margin-right: auto;
 }
 
+.severityResultFalse{
+	display: block;
+	padding: 5px 10px;
+	border-radius: 8px;
+	font-weight: bold;
+	margin: auto;
+	color: #fff;
+	background-color: #cc0000; 
+}
+
+
+.severityResultTrue{
+	display: block;
+	padding: 5px 10px;
+	border-radius: 8px;
+	font-weight: bold;
+	margin: auto;
+	color: #fff;
+	background-color: #33cca6;
+}
+
+.severityResultNone, .severityResultError{
+	display: block;
+	padding: 5px 10px;
+	border-radius: 8px;
+	font-weight: bold;
+	margin: auto;
+}
+
+.severityResultWarning{
+	display: block;
+	padding: 5px 10px;
+	border-radius: 8px;
+	font-weight: bold;
+	margin: auto;
+	background-color: #ff9933;
+	color: #000;
+}

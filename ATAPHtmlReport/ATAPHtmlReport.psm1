@@ -486,6 +486,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'li' @{} { $item }
 						}
 					}
+					htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
 				}
 			}
 			# Main section
@@ -573,60 +574,67 @@ function Get-ATAPHtmlReport {
 
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
-						htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
+						# htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
 						# Host information
-						htmlElement 'table' @{id='summaryTable'} {
-							htmlElement 'tbody' @{} {
-								foreach ($hostDatum in $HostInformation.GetEnumerator()) {
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $hostDatum.Name }
-										htmlElement 'td' @{} { $hostDatum.Value }
+						htmlElement 'div' @{id="systemData"} {
+							htmlElement 'h2' @{} {'Collected Data of tested system:'}
+							htmlElement 'table' @{id='summaryTable'} {
+								htmlElement 'tbody' @{} {
+									foreach ($hostDatum in $HostInformation.GetEnumerator()) {
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { $hostDatum.Name }
+											htmlElement 'td' @{} { $hostDatum.Value }
+										}
 									}
-								}
 
+								}
 							}
 						}
-						htmlElement 'div' @{id ='riskMatrixSummary'}{
-							htmlElement 'div' @{id='dotSummaryTab'}{}
-							htmlElement 'div' @{id ='severity'} {
-								htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+						htmlElement 'div' @{id='riskMatrixSummaryArea'}{
+							htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on tested System: "}
+							htmlElement 'h3' @{} {'For further information, please head to the tab "Risk Score".'}
+							htmlElement 'div' @{id ='riskMatrixSummary'}{
+								htmlElement 'div' @{id='dotSummaryTab'}{}
+								htmlElement 'div' @{id ='severity'} {
+									htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+								}
+								htmlElement 'div' @{id ='quantity'} {
+									htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
+								}
+								htmlElement 'div' @{id ='severityCritical'}{"Critical"}
+								htmlElement 'div' @{id ='severityHigh'}{"High"}
+								htmlElement 'div' @{id ='severityMedium'}{"Medium"}
+								htmlElement 'div' @{id ='severityLow'}{"Low"}
+
+								htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
+								htmlElement 'div' @{id ='quantityHigh'}{"High"}
+								htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
+								htmlElement 'div' @{id ='quantityLow'}{"Low"}
+
+								#colored areas
+								htmlElement 'div' @{id ='critical_low'}{}
+								htmlElement 'div' @{id ='high_low'}{}
+								htmlElement 'div' @{id ='medium_low'}{}
+								htmlElement 'div' @{id ='low_low'}{}
+
+								htmlElement 'div' @{id ='critical_medium'}{}
+								htmlElement 'div' @{id ='high_medium'}{}
+								htmlElement 'div' @{id ='medium_medium'}{}
+								htmlElement 'div' @{id ='low_medium'}{}
+
+								htmlElement 'div' @{id ='critical_high'}{}
+								htmlElement 'div' @{id ='high_high'}{}
+								htmlElement 'div' @{id ='medium_high'}{}
+								htmlElement 'div' @{id ='low_high'}{}
+
+								htmlElement 'div' @{id ='critical_critical'}{}
+								htmlElement 'div' @{id ='high_critical'}{}
+								htmlElement 'div' @{id ='medium_critical'}{}
+								htmlElement 'div' @{id ='low_critical'}{}
 							}
-							htmlElement 'div' @{id ='quantity'} {
-								htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
-							}
-							htmlElement 'div' @{id ='severityCritical'}{"Critical"}
-							htmlElement 'div' @{id ='severityHigh'}{"High"}
-							htmlElement 'div' @{id ='severityMedium'}{"Medium"}
-							htmlElement 'div' @{id ='severityLow'}{"Low"}
-
-							htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
-							htmlElement 'div' @{id ='quantityHigh'}{"High"}
-							htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
-							htmlElement 'div' @{id ='quantityLow'}{"Low"}
-
-							#colored areas
-							htmlElement 'div' @{id ='critical_low'}{}
-							htmlElement 'div' @{id ='high_low'}{}
-							htmlElement 'div' @{id ='medium_low'}{}
-							htmlElement 'div' @{id ='low_low'}{}
-
-							htmlElement 'div' @{id ='critical_medium'}{}
-							htmlElement 'div' @{id ='high_medium'}{}
-							htmlElement 'div' @{id ='medium_medium'}{}
-							htmlElement 'div' @{id ='low_medium'}{}
-
-							htmlElement 'div' @{id ='critical_high'}{}
-							htmlElement 'div' @{id ='high_high'}{}
-							htmlElement 'div' @{id ='medium_high'}{}
-							htmlElement 'div' @{id ='low_high'}{}
-
-							htmlElement 'div' @{id ='critical_critical'}{}
-							htmlElement 'div' @{id ='high_critical'}{}
-							htmlElement 'div' @{id ='medium_critical'}{}
-							htmlElement 'div' @{id ='low_critical'}{}
 						}
 						# Summary
-						htmlElement 'h1' @{ style = 'clear:both; padding-top: 50px;' } { 'Summary' }
+						htmlElement 'h1' @{ style = 'clear:both;' } { 'Summary' }
 						htmlElement 'p' @{} {
 							'A total of {0} tests have been executed.' -f @(
 								$completionStatus.TotalCount
@@ -713,7 +721,7 @@ function Get-ATAPHtmlReport {
 					
 					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 						htmlElement 'h1'@{} {"Risk Score"}
-						htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The greater risk is used as the overall risk.'}
+						htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
 						htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on tested System: "}
 
 						htmlElement 'div' @{id ='riskMatrixContainer'}{
@@ -811,20 +819,35 @@ function Get-ATAPHtmlReport {
 						htmlElement 'table' @{id = 'severityDetails'}{
 							htmlElement 'tr' @{}{
 								htmlElement 'th' @{}{'Severity Compliance'}
-								htmlElement 'th' @{}{'Risk Assessment'}
+								htmlElement 'th' @{}{'Status'}
 							}
 							foreach($info in $RSReport.RSSeverityReport.AuditInfos){
 								htmlElement 'tr' @{}{
 									htmlElement 'td' @{} {"$($info.Task)"}
 									htmlElement 'td' @{} {
 										if($info.Status -eq 'False'){
-											htmlElement 'span' @{style="background-color: red"}{
-												"$($info.Status) Doof"
+											htmlElement 'span' @{class="severityResultFalse"}{
+												"$($info.Status)"
 											}
 										}
 										elseif($info.Status -eq 'True'){
-											htmlElement 'span' @{style="background-color: green"}{
-												"$($info.Status) cool"
+											htmlElement 'span' @{class="severityResultTrue"}{
+												"$($info.Status)"
+											}
+										}
+										elseif($info.Status -eq 'None'){
+											htmlElement 'span' @{class="severityResultNone"}{
+												"$($info.Status)"
+											}
+										}
+										elseif($info.Status -eq 'Warning'){
+											htmlElement 'span' @{class="severityResultWarning"}{
+												"$($info.Status)"
+											}
+										}
+										elseif($info.Status -eq 'Error'){
+											htmlElement 'span' @{class="severityResultError"}{
+												"$($info.Status)"
 											}
 										}
 									}
