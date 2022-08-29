@@ -539,8 +539,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1909.24"
-    Task = "Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for files' is set to 'Enabled'"
+    Id = "18.9.80.2.2"
+    Task = "(L1) Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for files' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
