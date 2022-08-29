@@ -107,6 +107,7 @@ table.audit-info th, table.audit-info td {
 
 table.audit-info th {
 	border-bottom-width: 2px;
+	background-color: lightgray;
 }
 
 table.audit-info tr:nth-child(even) {
@@ -526,7 +527,7 @@ button{
 
 
 #riskScore th{
-	background-color: white;
+	background-color: lightgray;
 }
 
 #riskScore tr:nth-child(2n) td{
