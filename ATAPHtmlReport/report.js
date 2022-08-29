@@ -1,3 +1,5 @@
+"use strict";
+
 let AmountOfNonCompliantRules;
 let AmountOfCompliantRules;
 let TotalAmountOfRules;
@@ -43,6 +45,15 @@ function startConditions(){
     document.getElementById("AmountOfFailedSeverityRules").hidden = true;
 
     calcDotPosition();
+    let severityComplianceCollapseBtn = document.getElementById("severityComplianceCollapse");
+    severityComplianceCollapseBtn.addEventListener("click", ()=>{
+        if(document.getElementById("severityDetails").style.display == "none"){
+            document.getElementById("severityDetails").style.display = "block";
+        }
+        else{
+            document.getElementById("severityDetails").style.display = "none";
+        }
+    })
 }
 
 
@@ -133,29 +144,51 @@ function calcDotPosition(){
         dotRiskScoreTab.style.gridRowStart = 4;
         dotSummaryTab.style.gridRowStart = 4;
         complianceValueSeverity = 1;
+        document.getElementById("complianceStatus").id = 'complianceStatusTrue';
     }
     /*critical severity compliance*/
     else{
         dotRiskScoreTab.style.gridRowStart = 1;
         dotSummaryTab.style.gridRowStart = 1;
         complianceValueSeverity = 4;
+        document.getElementById("complianceStatus").id = 'complianceStatusFalse';
     }
 
     let totalComplianceValue = Math.max(complianceValueQuantity, complianceValueSeverity);
     
-    let summary;
+    let summary = "Current Risk score on tested System: ";
+    let riskResult = document.createElement("p");
+    riskResult.style.display = "contents";
     if(totalComplianceValue == 1){
-        summary = "Current Risk score on your System: Low";
+        riskResult.innerText = "Low";
+        riskResult.style.backgroundColor = "#548dd6";
     }
     else if(totalComplianceValue == 2){
-        summary = "Current Risk score on your System: Medium";
+        riskResult.innerText = "Medium";
+        riskResult.style.backgroundColor = "#ffc000";
     }
     else if(totalComplianceValue == 3){
-        summary = "Current Risk score on your System: High";
+        riskResult.innerText = "High";
+        riskResult.style.color = "white";
+        riskResult.style.backgroundColor = "#cc0000";
     }
     else{
-        summary = "Current Risk score on your System: Critical";
+        riskResult.innerText = "Critical";
+        riskResult.style.color = "white";
+        riskResult.style.backgroundColor = "purple";
     }
+    riskResult.style.display = "inline";
+    riskResult.style.padding = "5px 10px";
+    riskResult.style.borderRadius = "8px";
+    riskResult.style.fontWeight = "bold";
+    riskResult.style.margin = "auto";
+
+    let copyRiskResult = riskResult.cloneNode();
+    copyRiskResult.innerText  = riskResult.innerText;
+
     document.getElementById("CurrentRiskScore").textContent = summary;
+    document.getElementById("CurrentRiskScore").appendChild(riskResult);
+    document.getElementById("CurrentRiskScoreRS").textContent = summary;
+    document.getElementById("CurrentRiskScoreRS").appendChild(copyRiskResult);
 
 }

@@ -97,7 +97,8 @@ th, td {
 
 /* audit-info table */
 table.audit-info {
-	width: 100%;
+	margin-left: 8%;
+	margin-right: 8%;
 }
 
 table.audit-info th, table.audit-info td {
@@ -122,7 +123,7 @@ table.audit-info th:nth-child(1), table.audit-info td:nth-child(1) {
 /* First column in an audit-info table */
 table.audit-info th:nth-child(2), table.audit-info td:nth-child(2) {
 	text-align: left;
-	width: 30%;
+	width: 50%;
 }
 
 /* Last column in an audit-info table */
@@ -517,7 +518,7 @@ button{
 }
 
 .calculationTablesText{
-	text-align: center;
+	text-align: left;
 	font-family: Arial, sans-serif;
 }
 
@@ -558,8 +559,7 @@ button{
 
 #systemData{
 	float: left;
-	text-align: center;
-	margin-left: 10%;
+    text-align: left;
 }
 
 #dotRiskScoreTab {
@@ -590,7 +590,6 @@ button{
 
 
 #quantityTable{
-	margin-left: auto;
     margin-top: 30px;
     border: 1px solid black;
     margin-right: auto;
@@ -598,7 +597,6 @@ button{
 
 
 #severityTable{
-    margin-left: auto;
     margin-top: 30px;
     border: 1px solid black;
     margin-right: auto;
@@ -641,4 +639,33 @@ button{
 	margin: auto;
 	background-color: #ff9933;
 	color: #000;
+}
+
+.tabContent#riskScore{
+	text-align: left;
+}
+
+#severityCompliance{
+	margin-top: 25%;
+	clear: both;
+}
+
+#complianceStatusFalse{
+	padding: 5px 10px;
+    border-radius: 8px;
+	background-color: #cc0000;
+	color: #fff;
+	margin-left: 6%;
+	font-weight: bold;
+	display: inline;
+}
+
+#complianceStatusTrue{
+	padding: 5px 10px;
+    border-radius: 8px;
+	background-color: #33cca6;
+	color: #fff;
+	margin-left: 6%;
+	font-weight: bold;
+	display: inline;
 }

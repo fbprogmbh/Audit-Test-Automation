@@ -265,14 +265,14 @@ function Get-HtmlReportSection {
 function Get-ATAPHostInformation {
 	$unixOS = [System.Environment]::OSVersion.Platform -eq 'Unix' # returns 'Unix' on Linux and MacOS and 'Win32NT' on Windows, PS v6+ has builtin environment variable for this
 	if ($unixOS) {
-		return [ordered]@{
+		return @{
 			"Hostname"                  = hostname
+			"Domain role"               = $role
 			"Operating System"          = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
 			"Installation Language"     = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
 			"Kernel Version"            = uname -r
 			"Free physical memory (GB)" = "{0:N1}" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space (GB)"      = "{0:N1}" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
-			"Domain role"               = $role
 		}
 	}
  else {
@@ -286,15 +286,18 @@ function Get-ATAPHostInformation {
 			"4"	{ "Backup Domain Controller" }
 			"5"	{ "Primary Domain Controller" }
 		}
-		return [ordered]@{
+		$freeMemory = ($infos.FreePhysicalMemory /1024) / 1024;
+		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
+		
+		return @{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
-			"Operating System"          = $infos.Caption
-			"Installation Language"     = ((Get-UICulture).DisplayName)
-			"Build Number"              = $infos.BuildNumber
-			"Free physical memory (GB)" = "{0:N3}" -f ($infos.FreePhysicalMemory / 1MB)
-			"Free disk space (GB)"      = "{0:N1}" -f ($disk.FreeSpace / 1GB)
 			"Domain role"               = $role
-		}
+			"Operating System"          = $infos.Caption
+			"Build Number"              = $infos.BuildNumber
+			"Installation Language"     = ((Get-UICulture).DisplayName)
+			"Free disk space (GB)"      = "{0:N1}" -f ($disk.FreeSpace / 1GB)
+			"Free physical memory (GB)" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
+		} 
 	}
 }
 
@@ -553,7 +556,7 @@ function Get-ATAPHtmlReport {
 
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
-						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Summary" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark compliance" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Settings Overview" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "References" }
@@ -576,17 +579,47 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
 						# htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
 						# Host information
+						htmlElement 'h1' @{} { 'Summary' }
 						htmlElement 'div' @{id="systemData"} {
-							htmlElement 'h2' @{} {'Collected Data of tested system:'}
+							htmlElement 'h2' @{} {'System information'}
 							htmlElement 'table' @{id='summaryTable'} {
 								htmlElement 'tbody' @{} {
-									foreach ($hostDatum in $HostInformation.GetEnumerator()) {
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $hostDatum.Name }
-											htmlElement 'td' @{} { $hostDatum.Value }
-										}
+									$hostInformation = Get-ATAPHostInformation;
+									#Hostname
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
 									}
-
+									#Domain Role
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
+									}
+									#Operating System
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
+									}
+									#Build Number
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[5] }
+									}
+									#Installation Language
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
+									}
+									#Free disk space (GB)
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[0] }
+									}
+									#Free physical memory (GB)
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
+									}
 								}
 							}
 						}
@@ -633,8 +666,8 @@ function Get-ATAPHtmlReport {
 								htmlElement 'div' @{id ='low_critical'}{}
 							}
 						}
-						# Summary
-						htmlElement 'h1' @{ style = 'clear:both;' } { 'Summary' }
+						# Benchmark compliance
+						htmlElement 'h1' @{ style = 'clear:both;' } {}
 						htmlElement 'p' @{} {
 							'A total of {0} tests have been executed.' -f @(
 								$completionStatus.TotalCount
@@ -722,7 +755,7 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 						htmlElement 'h1'@{} {"Risk Score"}
 						htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
-						htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk score on tested System: "}
+						htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk score on tested System: "}
 
 						htmlElement 'div' @{id ='riskMatrixContainer'}{
 							htmlElement 'div' @{id='dotRiskScoreTab'}{}
@@ -815,39 +848,44 @@ function Get-ATAPHtmlReport {
 						}
 
 
-
-						htmlElement 'table' @{id = 'severityDetails'}{
-							htmlElement 'tr' @{}{
-								htmlElement 'th' @{}{'Severity Compliance'}
-								htmlElement 'th' @{}{'Status'}
-							}
-							foreach($info in $RSReport.RSSeverityReport.AuditInfos){
+						htmlElement 'div' @{id ="severityCompliance"} {
+							htmlElement 'p' @{id="complianceStatus"}{'Severity Compliance'}
+							htmlElement 'span' @{class="sectionAction collapseButton"; id="severityComplianceCollapse"} {"-"}
+							htmlElement 'table' @{id = 'severityDetails'}{
 								htmlElement 'tr' @{}{
-									htmlElement 'td' @{} {"$($info.Task)"}
-									htmlElement 'td' @{} {
-										if($info.Status -eq 'False'){
-											htmlElement 'span' @{class="severityResultFalse"}{
-												"$($info.Status)"
+									htmlElement 'th' @{}{'Id'}
+									htmlElement 'th' @{}{'Task'}
+									htmlElement 'th' @{}{'Status'}
+								}
+								foreach($info in $RSReport.RSSeverityReport.AuditInfos){
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{} {"$($info.Id)"}
+										htmlElement 'td' @{} {"$($info.Task)"}
+										htmlElement 'td' @{} {
+											if($info.Status -eq 'False'){
+												htmlElement 'span' @{class="severityResultFalse"}{
+													"$($info.Status)"
+												}
 											}
-										}
-										elseif($info.Status -eq 'True'){
-											htmlElement 'span' @{class="severityResultTrue"}{
-												"$($info.Status)"
+											elseif($info.Status -eq 'True'){
+												htmlElement 'span' @{class="severityResultTrue"}{
+													"$($info.Status)"
+												}
 											}
-										}
-										elseif($info.Status -eq 'None'){
-											htmlElement 'span' @{class="severityResultNone"}{
-												"$($info.Status)"
+											elseif($info.Status -eq 'None'){
+												htmlElement 'span' @{class="severityResultNone"}{
+													"$($info.Status)"
+												}
 											}
-										}
-										elseif($info.Status -eq 'Warning'){
-											htmlElement 'span' @{class="severityResultWarning"}{
-												"$($info.Status)"
+											elseif($info.Status -eq 'Warning'){
+												htmlElement 'span' @{class="severityResultWarning"}{
+													"$($info.Status)"
+												}
 											}
-										}
-										elseif($info.Status -eq 'Error'){
-											htmlElement 'span' @{class="severityResultError"}{
-												"$($info.Status)"
+											elseif($info.Status -eq 'Error'){
+												htmlElement 'span' @{class="severityResultError"}{
+													"$($info.Status)"
+												}
 											}
 										}
 									}
