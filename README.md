@@ -1,7 +1,7 @@
 # Audit Test Automation Package
 
 ATAPHtmlReport:\
-[![atashtmlreportphield](https://img.shields.io/powershellgallery/v/ATAPHtmlReport)](https://www.powershellgallery.com/packages/ATAPHtmlReport)
+[![ataphtmlreportshield](https://img.shields.io/powershellgallery/v/ATAPHtmlReport)](https://www.powershellgallery.com/packages/ATAPHtmlReport)
 
 ATAPAuditor:\
 [![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
@@ -81,7 +81,13 @@ Find several detailed explanations below and use them as follows:
 Following the well-known phrase "A picture is worth a thousand words" we visualized AuditTAP-installation in a roughly three minute video.
 The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
 
-[![How to get a transparent system hardening report?](https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg)](https://www.youtube.com/watch?v=5fJGdHCxqpM)
+<div align="center">
+   <a href="https://www.youtube.com/watch?v=5fJGdHCxqpM">
+     <img src="https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg" 
+      alt="How to get a transparent system hardening report?" 
+     >
+   </a>
+</div>
 
 ### Manual Installation
 
