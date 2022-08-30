@@ -6,7 +6,6 @@ ATAPHtmlReport:\
 ATAPAuditor:\
 [![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
  	
-
 ## Overview
 
 Our Audit Test Automation Package enables you to get an overview about the compliance
@@ -74,56 +73,60 @@ Short explanation for BSI (see related links):
 We offer several ways of how you can use our free of charge AuditTAP. 
 Find several detailed explanations below and use them as follows:
 
-* Video tutorial - following the well known phrase "A picture is worth a thousand words" we visualized the installation of AuditTAP in a roughly three minute video. Have fun!
 * Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
-* The most easy automated way - just install our package directly from PowerShell Gallery.
+* Installation via PSGallery - just install our package directly from PowerShell Gallery.
+* New::star:Use our installer to install or update AuditTAP :star:
 
-### Video tutorials
-Find following tutorials suitable for your needs:
+### Video tutorial
+Following the well-known phrase "A picture is worth a thousand words" we visualized AuditTAP-installation in a roughly three minute video.
+The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
 
 [![How to get a transparent system hardening report?](https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg)](https://www.youtube.com/watch?v=5fJGdHCxqpM)
 
 ### Manual Installation
 
-See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/powershell/scripting/developer/module/installing-a-powershell-module) guide for more specific instructions.
+See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerShell/scripting/developer/module/installing-a-PowerShell-module) guide for more specific instructions.
 
 1. Download the most [recent release](https://github.com/fbprogmbh/Audit-Test-Automation/releases/latest)
 
-2. Extract the archive, for example by using the following commands in Powershell or by using your favourite unzipping toolset.
+2. Extract the archive, for example by using the following commands in PowerShell or by using your favourite unzipping toolset.  
+When using PowerShell, please check correct version number with below code example.
 
-```Powershell
-Expand-Archive -Path ".\Audit TAP.zip" -DestinationPath "Audit TAP"
+```PowerShell
+Expand-Archive -Path ".\Audit-Test-Automation-5.1.zip" -DestinationPath "AuditTAP"
 ```
-3. Copy the `ATAPAuditor` and the `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
+3. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
 ### Installation from PS Gallery
-
-```Powershell
+Simple and straight-forward. Install AuditTAP with a single line of code.
+```PowerShell
 Install-Module -Name ATAPAuditor
 ```
 
 ### Installer
 
-Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps. Additionally to the modules, it also installs a shortcut to the menu based runner in the start menu.
+Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps to install the necessary modules, along with a convenient Start-menu shortcut.
 
 ### Linux
-For usage on Linux systems a Powershell installation is required. The neccessary steps depend on the type of Linux distribution and is documented [here](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux). Once Powershell is installed proceed with a [manual](#manual-installation) installation or using the [PS Gallery](#installation-from-ps-gallery).
+For usage on Linux systems a PowerShell installation is required. The necessary steps depend on the Linux distribution and is documented [here](https://docs.microsoft.com/en-us/PowerShell/scripting/install/installing-PowerShell-on-linux). Once PowerShell is installed proceed with a [manual](#manual-installation) installation or using [PS Gallery](#installation-from-ps-gallery).
 
 ## Usage
 
-Optionally, import the `ATAPAuditor` module:
+Optionally, import `ATAPAuditor` module:
 
-```Powershell
+```PowerShell
 Import-Module -Name ATAPAuditor
 ```
 
-By default the module creates a new report in the `Documents\ATAPReports` folder. You can create a report for any report named in the [above table](#reports). Just substitute the `ReportName` with the name of the benchmark.
+By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark.
 The force parameter creates the folder if it doesn't exist. For using an alternative Path, see [customization](#customization).
 
-```Powershell
+**Example:**
+```PowerShell
 Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
 Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
 ```
+Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut <ctrl> + <space> and all available parameters will be offered, allowing you to select a report with your arrow-keys.
 
 The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
 
@@ -131,16 +134,16 @@ The `ATAPAuditor` module also provides a simple menu based runner for reports. I
 
 * Make sure your execution policy is set to at least remoteSigned (the scripts are not digitally signed)
 
-```powershell
+```PowerShell
 Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 ```
 
-* The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
-* Some reports take more than a few seconds because hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs 😉
-* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
+* `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
+* Some reports take more than a few seconds because hundreds of individual settings and controls are checked. Please be patient, the result will satisfy your needs 😉
+* If you used old versions of AuditTAP you may want to clean up your modules. Be sure you have not integrated AuditTAP functionality in reporting processes. In order to accomplish this task you can use the following script.
 
-```Powershell
-# Remove all old Audit TAP Reports if available
+```PowerShell
+# Remove all old AuditTAP Reports if available
 $collection = @("ATAPHtmlReport","Excel2016Audit","GoogleChromeAudit","IIS8Audit","IIS10Audit","MicrosoftIE11Audit","MozillaFirefoxAudit","Outlook2016Audit","Powerpoint2016Audit","Skype4Business2016Audit","SQL2016Benchmarks","Windows10Audit","Windows10GDPRAudit","WindowsServer2016Audit","Word2016Audit")
 ForEach ($item in $collection)
 {
@@ -152,7 +155,7 @@ ForEach ($item in $collection)
   }
   else
   {
-    # Module not installed, so do nothing an take next item
+    # Module not installed, do nothing and take next item
   }
 }
 ```
@@ -164,29 +167,29 @@ You can find several sample reports in the "Samples" folder.
 ## Customization
 
 You can change the default folder for `Save-ATAPHtmlReport`, which is `Documents\ATAPReports`, by creating and later editing the environment variable `ATAPReportPath`. 
-Environment variables can bet set for different scopes - please choose the one that fits your needs. The following samples will set the default path to 'C:\ATAPReports'.
+Environment variables can be set for different scopes - please choose the one that fits your needs. The following samples will set the default path to 'C:\ATAPReports'.
 
 Temporary scope: CurrentSession
-```Powershell
+```PowerShell
 $env:ATAPReportPath = 'C:\ATAPReports'
 ```
 
 Permanent scope: CurrentUser
-```Powershell
+```PowerShell
 [System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::User)
 ```
 Permanent scope: Machine
-```Powershell
+```PowerShell
 [System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::Machine)
 ```
 
 ## Related links
 
-### Audit TAP information
+### AuditTAP information
 
-* Github-Link: https://github.com/fbprogmbh/Audit-Test-Automation
-* Audit TAP landing page: https://www.fb-pro.com/audit-tap-product-information
-* Youtube channel with more videos: https://www.youtube.com/channel/UCFolaYgClJ005glpn5owRUg
+* GitHub-Link: https://github.com/fbprogmbh/Audit-Test-Automation
+* AuditTAP landing page: https://www.fb-pro.com/audit-tap-product-information
+* YouTube channel with more videos: https://www.youtube.com/channel/UCFolaYgClJ005glpn5owRUg
 
 ### Hardening recommendations in general
 * #NoCodeHardening: https://www.nocodehardening.com
@@ -198,6 +201,5 @@ Permanent scope: Machine
  ## Questions, issues or project support
 Please check the [FAQ-section](https://github.com/fbprogmbh/Audit-Test-Automation/tree/master/FAQ) first before opening an issue or contacting us.
 
-*  For questions or issues regarding Audit TAP please use Github issue tracker.
+*  For questions or issues regarding AuditTAP please use GitHub issue tracker.
 *  For questions regarding project support please write a short mail to team@fb-pro.com 
-
