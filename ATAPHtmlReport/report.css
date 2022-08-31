@@ -670,3 +670,16 @@ button{
 	font-weight: bold;
 	display: inline;
 }
+
+#referencesContainer{
+	display: grid;
+	grid-template-rows: 400px;
+    grid-template-columns: repeat(2, 500px);
+}
+
+#referencesContainer div{
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
