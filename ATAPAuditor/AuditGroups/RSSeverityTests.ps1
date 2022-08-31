@@ -539,42 +539,6 @@
     }
 }
 [AuditTest] @{
-    Id = "1909.24"
-    Task = "Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for files' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\MicrosoftEdge\PhishingFilter" `
-                -Name "PreventOverrideAppRepUnknown" `
-                | Select-Object -ExpandProperty "PreventOverrideAppRepUnknown"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "7.9 A"
     Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 40/128)"
     Test = {
@@ -791,42 +755,6 @@
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
                 -Name "NoLMHash" `
                 | Select-Object -ExpandProperty "NoLMHash"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "1909.69"
-    Task = "Ensure 'Enforce drive encryption type on operating system drives' is set to 'Enabled' and 'Full encryption'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
-                -Name "OSEncryptionType" `
-                | Select-Object -ExpandProperty "OSEncryptionType"
         
             if ($regValue -ne 1) {
                 return @{
