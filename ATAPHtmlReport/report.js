@@ -156,7 +156,7 @@ function calcDotPosition(){
 
     let totalComplianceValue = Math.max(complianceValueQuantity, complianceValueSeverity);
     
-    let summary = "Current Risk score on tested System: ";
+    let summary = "Current Risk Score on tested System: ";
     let riskResult = document.createElement("p");
     riskResult.style.display = "contents";
     if(totalComplianceValue == 1){
