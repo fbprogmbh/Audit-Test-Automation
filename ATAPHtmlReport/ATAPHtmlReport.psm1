@@ -521,6 +521,8 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
+					$os = [System.Environment]::OSVersion.Platform
+
 					###  Risk Checks ###
 					# Quantity
 					$TotalAmountOfRules = $completionStatus.TotalCount;
@@ -535,7 +537,7 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-					if($Title -match "Win"){
+					if($os -match "Win32NT" -and $Title -match "Win"){
 						# percentage of compliance quantity
 						$QuantityCompliance = [math]::round(($AmountOfCompliantRules / $TotalAmountOfRules) * 100,2);	
 	
@@ -559,7 +561,7 @@ function Get-ATAPHtmlReport {
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark Compliance" }
-						if($Title -match "Win"){
+						if($os -match "Win32NT" -and $Title -match "Win"){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Settings Overview" }
@@ -570,6 +572,7 @@ function Get-ATAPHtmlReport {
 
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Settings Overview' }
+						htmlElement 'h2' @{} {"Table Of Content"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
@@ -642,7 +645,7 @@ function Get-ATAPHtmlReport {
 							}
 						}
 						htmlElement 'div' @{id='riskMatrixSummaryArea'}{
-							if($Title -match "Win"){
+							if($os -match "Win32NT" -and $Title -match "Win"){
 								htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System: "}
 								htmlElement 'h3' @{} {'For further information, please head to the tab "Risk Score".'}
 								htmlElement 'div' @{id ='riskMatrixSummary'}{
@@ -687,7 +690,7 @@ function Get-ATAPHtmlReport {
 							}
 							else{
 								htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System: N/A"}
-								htmlElement 'h3' @{} {'For further information, consider making a report on a Windows OS-System.'}
+								htmlElement 'h3' @{} {'Risk Score calculation implemented for Microsoft Windows OS for now.'}
 								htmlElement 'div' @{id ='riskMatrixSummary'}{
 									htmlElement 'div' @{id ='severity'} {
 										htmlElement 'p' @{id = 'severityArea'}{'Severity'}
@@ -966,7 +969,8 @@ function Get-ATAPHtmlReport {
 					}
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'references'}{
-						htmlElement 'h2' @{} {"About us: What makes FB Pro GmbH different"}
+						htmlElement 'h1' @{} {"About us"}
+						htmlElement 'h2' @{} {"What makes FB Pro GmbH different"}
 						htmlElement 'h3' @{} {"What do we want?"}
 						htmlElement 'p' @{} {"Protect our customers' data and information - and thus implicitly contribute to the safe use of the Internet."}
 						htmlElement 'h3' @{} {"How we achieve this? "}
