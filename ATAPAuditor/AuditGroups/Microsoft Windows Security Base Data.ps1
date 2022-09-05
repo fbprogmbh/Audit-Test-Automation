@@ -428,6 +428,9 @@ function win7NoTPMChipDetected {
 [AuditTest] @{
 	Id = "SBD-010"
 	Task = "Get the count of admin users on the system."
+	Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
 	Test = {	
 		try { 
 			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop).Count) {
