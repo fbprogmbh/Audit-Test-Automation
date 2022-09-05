@@ -429,28 +429,38 @@ function win7NoTPMChipDetected {
 	Id = "SBD-010"
 	Task = "Get the count of admin users on the system."
 	Test = {	
-		$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544").Count) {
-			{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
-				@{
-					Message = "Compliant"
-					Status = "True"
+		try { 
+			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction).Count) {
+				{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				{($PSItem -gt 2) -and ($PSItem -le 5)}{ # 3, 4, 5
+					@{
+						Message = "System has 3-5 admin users."
+						Status = "Warning"
+					}
+				}
+				{$PSItem -gt 5}{ # 6, ...
+					@{
+						Message = "System has 6 or more admin users."
+						Status = "False"
+					}
+				}
+				Default {
+					@{
+						Message = "Cannot determine the count of admin users"
+						Status = "Error"
+					}
 				}
 			}
-			{($PSItem -gt 2) -and ($PSItem -le 5)}{ # 3, 4, 5
+		} catch {
+			$theError = $_
+			if ($theError.Exception -like "*1789*") {
 				@{
-					Message = "System has 3-5 admin users."
-					Status = "Warning"
-				}
-			}
-			{$PSItem -gt 5}{ # 6, ...
-				@{
-					Message = "System has 6 or more admin users."
-					Status = "False"
-				}
-			}
-			Default {
-				@{
-					Message = "Cannot determine the count of admin users"
+			 		Message = "Central domain controller was not reachable at execution time"
 					Status = "Error"
 				}
 			}
