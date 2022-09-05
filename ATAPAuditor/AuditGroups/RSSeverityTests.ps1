@@ -64,6 +64,9 @@
 [AuditTest] @{
     Id   = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1126,42 +1129,6 @@
             if ($regValue -ne 60000) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 60000"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "21H1.124"
-    Task = "Ensure 'Enforce drive encryption type on operating system drives' is set to 'Enabled' and 'Full encryption'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
-                -Name "OSEncryptionType" `
-            | Select-Object -ExpandProperty "OSEncryptionType"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }

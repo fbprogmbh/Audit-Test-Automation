@@ -430,7 +430,7 @@ function win7NoTPMChipDetected {
 	Task = "Get the count of admin users on the system."
 	Test = {	
 		try { 
-			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction).Count) {
+			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop).Count) {
 				{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
 					@{
 						Message = "Compliant"
