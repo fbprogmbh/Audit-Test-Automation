@@ -43,7 +43,7 @@
         
         if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
             return @{
-                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 and x > 0"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 days and x > 0 days"
                 Status = "False"
             }
         }
@@ -71,7 +71,7 @@
         
         if (($setPolicy -lt 1)) {
             return @{
-                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1"
+                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1 days"
                 Status = "False"
             }
         }
@@ -183,7 +183,7 @@
         
         if (($setPolicy -lt 15)) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15 minutes"
                 Status = "False"
             }
         }
@@ -239,7 +239,7 @@
         
         if (($setPolicy -lt 15)) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15 minutes"
                 Status = "False"
             }
         }
