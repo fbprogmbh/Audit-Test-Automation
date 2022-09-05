@@ -8954,24 +8954,23 @@
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
-            try {
-                $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                    -Name "ExploitGuard_ASR_Rules" `
-                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-                
-                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                    -Name "ExploitGuard_ASR_Rules" `
-                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-    
-                if ($regValue -ne 1 -and $regValueTwo -ne 1) {
-                    return @{
-                        Message = "Registry value is '$regValue'. Expected: 1"
-                        Status = "False"
-                    }
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                -Name "ExploitGuard_ASR_Rules" `
+                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            
+            $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                -Name "ExploitGuard_ASR_Rules" `
+                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
                 }
             }
+        }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
                 Message = "Registry value not found."
@@ -9061,7 +9060,7 @@
             Message = "Compliant"
             Status = "True"
         }
-    }
+    }  
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 C"
