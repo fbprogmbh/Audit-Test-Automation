@@ -8501,11 +8501,16 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                -Name "ExploitGuard_ASR_Rules" `
+                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            
+            $regValueTwo = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
                 -Name "ExploitGuard_ASR_Rules" `
                 | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-        
-            if ($regValue -ne 1) {
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
