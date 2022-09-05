@@ -262,6 +262,7 @@ button{
 	left: 10%;
 	float: left;
 	margin-top: 50px;
+	text-align: center;
 }
 
 #riskMatrixContainer div{
@@ -540,6 +541,7 @@ button{
 }
 
 #riskMatrixSummary{
+	font-family: Arial, sans-serif;
 	display: grid;
 	position: relative;
 	grid-template-columns: 100px repeat(5,60px);
@@ -683,3 +685,17 @@ button{
 	margin-right: auto;
 }
 
+
+#settingsOverview section{
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+#invalidOS{
+	display: inline;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin: auto;
+    background-color: #777777;
+}
