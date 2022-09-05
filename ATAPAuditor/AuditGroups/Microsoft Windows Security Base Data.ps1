@@ -429,7 +429,7 @@ function win7NoTPMChipDetected {
 	Id = "SBD-010"
 	Task = "Get the count of admin users on the system."
 	Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation", "StandaloneWorkstation", "MemberServer", "StandaloneServer" }
     )
 	Test = {	
 		try { 
