@@ -82,7 +82,7 @@ Following the well-known phrase "A picture is worth a thousand words" we visuali
 The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
 
 <div align="center">
-   <a href="https://www.youtube.com/watch?v=5fJGdHCxqpM">
+   <a href="https://www.youtube-nocookie.com/embed/5fJGdHCxqpM">
      <img src="https://img.youtube.com/vi/5fJGdHCxqpM/0.jpg" 
       alt="How to get a transparent system hardening report?" 
      >
