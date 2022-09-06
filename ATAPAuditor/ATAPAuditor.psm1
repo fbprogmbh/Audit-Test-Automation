@@ -231,28 +231,16 @@ function Test-AuditGroup {
 			if ($currentRole -notin $domainRoles) {
 				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 				if($roleValue -eq 4 -or $roleValue -eq 5){
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = 'Not applicable. This audit only applies to Domain controllers.'
-						Status = [AuditInfoStatus]::None
-					})
+					$message = 'Not applicable. This audit only applies to Domain controllers.'
+					$status = [AuditInfoStatus]::None
 				}
 				if($roleValue -ne 4 -or $roleValue -ne 5){
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = 'Not applicable. This audit does not apply to Domain controllers.'
-						Status = [AuditInfoStatus]::None
-					})
+					$message = 'Not applicable. This audit does not apply to Domain controllers.'
+					$status = [AuditInfoStatus]::None
 				}
 				if($roleValue -eq 0 -or $roleValue -eq 2){
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = 'Not applicable. This audit does not apply to Standalone systems.'
-						Status = [AuditInfoStatus]::None
-					})
+					$message = 'Not applicable. This audit does not apply to Standalone systems.'
+					$status = [AuditInfoStatus]::None
 				}
 				# Write-Output ([AuditInfo]@{
 				# 	Id = $test.Id
@@ -270,7 +258,6 @@ function Test-AuditGroup {
 			if ($null -ne $innerResult) {
 				$message = $innerResult.Message
 				$status = [AuditInfoStatus]$innerResult.Status
-				
 			}
 		}
 		catch {
