@@ -1085,10 +1085,10 @@
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
-                -Name "LSAAnonymousNameLookup" `
-                | Select-Object -ExpandProperty "LSAAnonymousNameLookup"
+                -Name "TurnOffAnonymousBlock" `
+                | Select-Object -ExpandProperty "TurnOffAnonymousBlock"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
