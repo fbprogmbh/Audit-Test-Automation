@@ -577,36 +577,37 @@ function win7NoTPMChipDetected {
 		}
 	}
 }
-[AuditTest] @{
-	Id = "SBD-014"
-	Task = "Ensure the status of the Microsoft Defender for Endpoint service is 'Running'."
-	Test = {
-		try {
-			$obj = (Get-Service Sense -ErrorAction Stop).Status
-		}
-		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
-			return @{
-				Message = "Service does not exist (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
-				Status = "None"
-			}
-		}
-		$status = switch ($obj) {
-			"Running"{
-				@{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			default {
-				@{
-					Message = "Service is not 'Running' (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
-					Status = "False"
-				}
-			}
-		}
-		return $status
-	}
-}
+# Held in commentary in case a new SBD-014 is being implemented
+# [AuditTest] @{
+# 	Id = "SBD-014"
+# 	Task = "Ensure the status of the Microsoft Defender for Endpoint service is 'Running'."
+# 	Test = {
+# 		try {
+# 			$obj = (Get-Service Sense -ErrorAction Stop).Status
+# 		}
+# 		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
+# 			return @{
+# 				Message = "Service does not exist (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
+# 				Status = "None"
+# 			}
+# 		}
+# 		$status = switch ($obj) {
+# 			"Running"{
+# 				@{
+# 					Message = "Compliant"
+# 					Status = "True"
+# 				}
+# 			}
+# 			default {
+# 				@{
+# 					Message = "Service is not 'Running' (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
+# 					Status = "False"
+# 				}
+# 			}
+# 		}
+# 		return $status
+# 	}
+# }
 [AuditTest] @{
 	Id = "SBD-015"
 	Task = "Ensure the Windows Firewall is enabled on all profiles."
