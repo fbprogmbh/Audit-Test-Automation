@@ -1045,42 +1045,6 @@
     }
 }
 [AuditTest] @{
-    Id   = "18.9.48.11"
-    Task = "Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for files' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\MicrosoftEdge\PhishingFilter" `
-                -Name "PreventOverrideAppRepUnknown" `
-            | Select-Object -ExpandProperty "PreventOverrideAppRepUnknown"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id   = "18.9.58.3.10.1"
     Task = "(L2) Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"
     Test = {
