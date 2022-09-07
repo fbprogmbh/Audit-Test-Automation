@@ -551,7 +551,7 @@ function Get-ATAPHtmlReport {
 						htmlElement 'div' @{id="TotalAmountOfSeverityRules"} {"$($RSReport.RSSeverityReport.AuditInfos.Length)"}
 						$AmountOfFailedSeverityRules = 0;
 						foreach($rule in $RSReport.RSSeverityReport.AuditInfos){
-							if($rule.Status -ne "True"){
+							if($rule.Status -eq "False"){
 								$AmountOfFailedSeverityRules ++;
 							}
 						}
@@ -872,19 +872,19 @@ function Get-ATAPHtmlReport {
 									htmlElement 'th' @{}{'Risk Assessment'}
 								}
 								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'More than 85%'}
+									htmlElement 'td' @{}{'More than 80%'}
 									htmlElement 'td' @{}{'Low'}
 								}
 								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'Between 70% and 85%'}
+									htmlElement 'td' @{}{'Between 65% and 80%'}
 									htmlElement 'td' @{}{'Medium'}
 								}
 								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'Between 55% and 70%'}
+									htmlElement 'td' @{}{'Between 50% and 65%'}
 									htmlElement 'td' @{}{'High'}
 								}
 								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'Less than 55%'}
+									htmlElement 'td' @{}{'Less than 50%'}
 									htmlElement 'td' @{}{'Critical'}
 								}
 							}

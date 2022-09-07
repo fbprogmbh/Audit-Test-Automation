@@ -43,7 +43,6 @@ function startConditions(){
 
     AmountOfFailedSeverityRules = document.getElementById("AmountOfFailedSeverityRules").textContent;
     document.getElementById("AmountOfFailedSeverityRules").hidden = true;
-
     calcDotPosition();
     let severityComplianceCollapseBtn = document.getElementById("severityComplianceCollapse");
     severityComplianceCollapseBtn.addEventListener("click", ()=>{
@@ -57,8 +56,10 @@ function startConditions(){
 }
 
 
+let buttonNumber;
+
 function clickButton(value){
-    let buttonNumber = parseInt(value);
+    buttonNumber = parseInt(value);
 
     /* Disable all content */
     let tabContents = document.getElementsByClassName('tabContent');
@@ -105,6 +106,7 @@ Will be calleed, after the user has clicked on Risk Score Button
 */
 function calcDotPosition(){
 
+    
     let dotRiskScoreTab = document.getElementById("dotRiskScoreTab");
     let dotSummaryTab = document.getElementById("dotSummaryTab");
     QuantityCompliance = parseFloat(QuantityCompliance);
@@ -113,19 +115,19 @@ function calcDotPosition(){
     let complianceValueSeverity = 0;
 
     /*low quantity compliance*/
-    if(85 < QuantityCompliance){
+    if(80 < QuantityCompliance){
         dotRiskScoreTab.style.gridColumnStart = 3;
         dotSummaryTab.style.gridColumnStart = 3;
         complianceValueQuantity = 1;
     }
     /*medium quantity compliance*/
-    else if(70 < QuantityCompliance && QuantityCompliance < 85){
+    else if(65 < QuantityCompliance && QuantityCompliance < 80){
         dotRiskScoreTab.style.gridColumnStart = 4;
         dotSummaryTab.style.gridColumnStart = 4;
         complianceValueQuantity = 2;
     }
     /*high quantity compliance*/
-    else if(55 < QuantityCompliance && QuantityCompliance < 70){
+    else if(50 < QuantityCompliance && QuantityCompliance < 65){
         dotRiskScoreTab.style.gridColumnStart = 5;
         dotSummaryTab.style.gridColumnStart = 5;
         complianceValueQuantity = 3;
@@ -144,14 +146,28 @@ function calcDotPosition(){
         dotRiskScoreTab.style.gridRowStart = 4;
         dotSummaryTab.style.gridRowStart = 4;
         complianceValueSeverity = 1;
-        document.getElementById("complianceStatus").id = 'complianceStatusTrue';
+        
+
+        document.getElementById("complianceStatus").style.padding = "5px 10px";
+        document.getElementById("complianceStatus").style.borderRadius = "8px";
+        document.getElementById("complianceStatus").style.backgroundColor = "#33cca6";
+        document.getElementById("complianceStatus").style.color = "#fff";
+        document.getElementById("complianceStatus").style.marginLeft = "6%";
+        document.getElementById("complianceStatus").style.fontWeight = "bold";
+        document.getElementById("complianceStatus").style.display = "inline";
     }
     /*critical severity compliance*/
     else{
         dotRiskScoreTab.style.gridRowStart = 1;
         dotSummaryTab.style.gridRowStart = 1;
         complianceValueSeverity = 4;
-        document.getElementById("complianceStatus").id = 'complianceStatusFalse';
+        document.getElementById("complianceStatus").style.padding = "5px 10px";
+        document.getElementById("complianceStatus").style.borderRadius = "8px";
+        document.getElementById("complianceStatus").style.backgroundColor = "#cc0000";
+        document.getElementById("complianceStatus").style.color = "#fff";
+        document.getElementById("complianceStatus").style.marginLeft = "6%";
+        document.getElementById("complianceStatus").style.fontWeight = "bold";
+        document.getElementById("complianceStatus").style.display = "inline";
     }
 
     let totalComplianceValue = Math.max(complianceValueQuantity, complianceValueSeverity);
