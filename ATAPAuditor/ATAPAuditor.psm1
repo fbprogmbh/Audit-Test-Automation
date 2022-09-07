@@ -398,13 +398,7 @@ function Save-ATAPHtmlReport {
 
 	$parent = Split-Path $Path
 	if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
-		if ($Force) {
-			New-Item -ItemType Directory -Path $parent -Force | Out-Null
-		}
-		else {
-			Write-Error "Cannot save the report at $parent because the path does not exist."
-			return
-		}
+		New-Item -ItemType Directory -Path $parent -Force | Out-Null
 	}
 	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -DarkMode:$DarkMode
 }
