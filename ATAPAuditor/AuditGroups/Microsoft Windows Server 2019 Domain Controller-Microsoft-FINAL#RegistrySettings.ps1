@@ -1584,7 +1584,7 @@
 }
 [AuditTest] @{
     Id = "Registry-045"
-    Task = "Set registry value '\\*\NETLOGON' to RequireMutualAuthentication=1,RequireIntegrity=1."
+    Task = "Set registry value '\\*\NETLOGON' to RequireMutualAuthentication=1, RequireIntegrity=1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1592,7 +1592,7 @@
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1" -and $regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1,RequireIntegrity=1"
                     Status = "False"
@@ -1620,7 +1620,7 @@
 }
 [AuditTest] @{
     Id = "Registry-046"
-    Task = "Set registry value '\\*\SYSVOL' to RequireMutualAuthentication=1,RequireIntegrity=1."
+    Task = "Set registry value '\\*\SYSVOL' to RequireMutualAuthentication=1, RequireIntegrity=1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1628,7 +1628,7 @@
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1" -and $regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1,RequireIntegrity=1"
                     Status = "False"
