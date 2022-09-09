@@ -439,7 +439,7 @@ function win7NoTPMChipDetected {
         @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation", "StandaloneWorkstation", "MemberServer", "StandaloneServer" }
     )
 	Test = {	
-		$userAndGroups = Get-LocalGroupMember -SID "Administrators"
+		$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544"
 		$amountOfUserAndGroups = 0;
 		foreach($user in $userAndGroups){
 			if($user.PrincipalSource -eq "Local"){
