@@ -675,7 +675,7 @@ button{
 
 #referencesContainer{
 	display: grid;
-	grid-template-rows: 400px;
+	grid-template-rows: 280px;
     grid-template-columns: repeat(2, 500px);
 }
 
@@ -698,4 +698,21 @@ button{
     font-weight: bold;
     margin: auto;
     background-color: #777777;
+}
+
+#references p{
+	font-family: Arial, sans-serif;
+} 
+
+#contactUsButton{
+	background-color: #A81A1B;
+	border-radius: 4px;
+	padding: 20px;
+	color: #fff;
+	box-shadow: 2px 2px rgba(0,0,0,0.5);
+	display: inline-block;
+	margin-top: 20px;
+	text-transform: uppercase;
+	border-style: none;
+	cursor: pointer;
 }
