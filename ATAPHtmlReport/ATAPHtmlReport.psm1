@@ -572,12 +572,13 @@ function Get-ATAPHtmlReport {
 
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Settings Overview' }
-						htmlElement 'h2' @{} {"Table Of Content"}
+						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
-						# Report Sections Sections
+						htmlElement 'h2' @{} {"Benchmark Details"}
+						# Report Sections
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
@@ -915,13 +916,14 @@ function Get-ATAPHtmlReport {
 
 
 						htmlElement 'div' @{id ="severityCompliance"} {
-							htmlElement 'p' @{id="complianceStatus"}{'Severity Compliance'}
+							htmlElement 'p' @{id="complianceStatus"}{'Table Of Severity Rules'}
 							htmlElement 'span' @{class="sectionAction collapseButton"; id="severityComplianceCollapse"} {"-"}
 							htmlElement 'table' @{id = 'severityDetails'}{
 								htmlElement 'tr' @{}{
 									htmlElement 'th' @{}{'Id'}
 									htmlElement 'th' @{}{'Task'}
 									htmlElement 'th' @{}{'Status'}
+									htmlElement 'th' @{}{'Severity'}
 								}
 								foreach($info in $RSReport.RSSeverityReport.AuditInfos){
 									htmlElement 'tr' @{}{
@@ -953,6 +955,9 @@ function Get-ATAPHtmlReport {
 													"$($info.Status)"
 												}
 											}
+										}
+										htmlElement 'td' @{} {
+											htmlElement 'p' @{style="margin: 5px auto;"}{"Critical"}
 										}
 									}
 								}
