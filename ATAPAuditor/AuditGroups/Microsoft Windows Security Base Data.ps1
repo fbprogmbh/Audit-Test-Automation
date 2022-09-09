@@ -593,37 +593,33 @@ function win7NoTPMChipDetected {
 		}
 	}
 }
-# Held in commentary in case a new SBD-014 is being implemented
-# [AuditTest] @{
-# 	Id = "SBD-014"
-# 	Task = "Ensure the status of the Microsoft Defender for Endpoint service is 'Running'."
-# 	Test = {
-# 		try {
-# 			$obj = (Get-Service Sense -ErrorAction Stop).Status
-# 		}
-# 		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
-# 			return @{
-# 				Message = "Service does not exist (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
-# 				Status = "None"
-# 			}
-# 		}
-# 		$status = switch ($obj) {
-# 			"Running"{
-# 				@{
-# 					Message = "Compliant"
-# 					Status = "True"
-# 				}
-# 			}
-# 			default {
-# 				@{
-# 					Message = "Service is not 'Running' (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
-# 					Status = "False"
-# 				}
-# 			}
-# 		}
-# 		return $status
-# 	}
-# }
+[AuditTest] @{
+	Id = "SBD-014"
+	Task = "Ensure Windows Defender Application Guard is enabled."
+	Test = {
+		if (isWindows10OrNewer) {
+			$state = (Get-WindowsOptionalFeature -Online -FeatureName Windows-Defender-ApplicationGuard).State
+			if ($state -eq 'Enabled') {
+				return @{
+					Message = "Compliant"
+					Status = "True"
+				}
+			}
+			else {
+				return @{
+					Message = "Windows Defender Application Guard is not enabled."
+					Status = "False"
+				}
+			}
+		}
+		else {
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "None"
+			}
+		}
+	}
+}
 [AuditTest] @{
 	Id = "SBD-015"
 	Task = "Ensure the Windows Firewall is enabled on all profiles."
@@ -848,33 +844,6 @@ function win7NoTPMChipDetected {
 				}
 			}
 			return $status
-		}
-		else {
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
-			}
-		}
-	}
-}
-[AuditTest] @{
-	Id = "SBD-022"
-	Task = "Ensure Windows Defender Application Guard is enabled."
-	Test = {
-		if (isWindows10OrNewer) {
-			$state = (Get-WindowsOptionalFeature -Online -FeatureName Windows-Defender-ApplicationGuard).State
-			if ($state -eq 'Enabled') {
-				return @{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			else {
-				return @{
-					Message = "Windows Defender Application Guard is not enabled."
-					Status = "False"
-				}
-			}
 		}
 		else {
 			return @{
