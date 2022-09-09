@@ -111,12 +111,27 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-        
-            if ($regValue -ne 1) {
+            $regValue = 0;
+            $regValueTwo = 0;
+
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                    -Name "ExploitGuard_ASR_Rules" `
+                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            }
+            
+
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                    -Name "ExploitGuard_ASR_Rules" `
+                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -651,12 +666,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "E6DB77E5-3DF2-4CF1-B95A-636979351E5B" `
-                | Select-Object -ExpandProperty "E6DB77E5-3DF2-4CF1-B95A-636979351E5B"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
+                    | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "e6db77e5-3df2-4cf1-b95a-636979351e5b"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
+                    | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            }
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"

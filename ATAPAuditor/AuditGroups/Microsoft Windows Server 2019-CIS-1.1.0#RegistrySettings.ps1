@@ -9242,15 +9242,25 @@
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            $regValue = 0;
+            $regValueTwo = 0;
+
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                    -Name "ExploitGuard_ASR_Rules" `
+                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            }
             
-            $regValueTwo = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                    -Name "ExploitGuard_ASR_Rules" `
+                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            }
 
             if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{

@@ -8821,12 +8821,27 @@
     Task = "Set registry value 'ExploitGuard_ASR_Rules' to 1."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-        
-            if ($regValue -ne 1) {
+            $regValue = 0;
+            $regValueTwo = 0;
+
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                    -Name "ExploitGuard_ASR_Rules" `
+                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            }
+            
+
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
+                    -Name "ExploitGuard_ASR_Rules" `
+                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -8857,12 +8872,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
-                | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
+                    | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
+                    | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+            }
+
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -8893,12 +8921,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
-                | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "3b576869-a4ec-4529-8536-b80a7769e899"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
+                    | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "3b576869-a4ec-4529-8536-b80a7769e899"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
+                    | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
+            }
+
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -8929,12 +8970,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
-                | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
+                    | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "d4f940ab-401b-4efc-aadc-ad5f3c50688a"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
+                    | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -8965,12 +9019,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B" `
-                | Select-Object -ExpandProperty "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b" `
+                    | Select-Object -ExpandProperty "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b" `
+                    | Select-Object -ExpandProperty "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9001,12 +9068,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
-                | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
+                    | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "5beb7efe-fd9a-4556-801d-275e5ffc04cc"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
+                    | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
+            }
+    
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9037,12 +9117,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
-                | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "d3e037e1-3eb8-44c8-a917-57927947596d"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
+                    | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "d3e037e1-3eb8-44c8-a917-57927947596d"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
+                    | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
+            }
+
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9073,12 +9166,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
-                | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
+                    | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
+                    | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+            }
+
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9109,12 +9215,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
-                | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
+                    | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
+                    | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9145,12 +9264,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
-                | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
+                    | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
+                    | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9181,12 +9313,27 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
-                | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "26190899-1602-49e8-8b27-eb1d0a1ce869"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
+                    | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
+            }
+            
+
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "26190899-1602-49e8-8b27-eb1d0a1ce869"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
+                    | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
+            }
+
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9217,12 +9364,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
-                | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
+                    | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
+                    | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9289,12 +9449,25 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
-                | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
+                    | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "e6db77e5-3df2-4cf1-b95a-636979351e5b"    
+            if($check2 -eq "True"){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
+                    | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
