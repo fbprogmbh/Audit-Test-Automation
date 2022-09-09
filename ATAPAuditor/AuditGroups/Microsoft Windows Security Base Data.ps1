@@ -394,22 +394,29 @@ function win7NoTPMChipDetected {
 }
 [AuditTest] @{
 	Id = "SBD-009"
-	Task = "Get the count of local users on the system."
+	Task = "Get amount of active local users on system."
 	Test = {	
+		$users = Get-LocalUser;
+		$amountOfActiveUser = 0;
+		foreach($user in $users){
+			if($user.Enabled -eq $True){
+				$amountOfActiveUser ++;
+			}
+		}
 		$status = switch ((Get-LocalUser).Count) {
-			{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
+			{($amountOfActiveUser -ge 0) -and ($amountOfActiveUser -le 2)}{ # 0, 1, 2
 				@{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			{($PSItem -gt 2) -and ($PSItem -le 5)}{ # 3, 4, 5
+			{($amountOfActiveUser -gt 2) -and ($amountOfActiveUser -le 5)}{ # 3, 4, 5
 				@{
 					Message = "System has 3-5 local users."
 					Status = "Warning"
 				}
 			}
-			{$PSItem -gt 5}{ # 6, ...
+			{$amountOfActiveUser -gt 5}{ # 6, ...
 				@{
 					Message = "System has 6 or more local users."
 					Status = "False"
@@ -427,28 +434,37 @@ function win7NoTPMChipDetected {
 }
 [AuditTest] @{
 	Id = "SBD-010"
-	Task = "Get the count of admin users on the system."
+	Task = "Get amount of users and groups in administrators group on system."
 	Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation", "StandaloneWorkstation", "MemberServer", "StandaloneServer" }
     )
 	Test = {	
+		$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544"
+		$amountOfUserAndGroups = 0;
+		foreach($user in $userAndGroups){
+			if($user.PrincipalSource -eq "Local"){
+				$amountOfUserAndGroups ++;
+			}
+		}
+
+
 		try { 
 			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop).Count) {
-				{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
+				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
 						Message = "Compliant"
 						Status = "True"
 					}
 				}
-				{($PSItem -gt 2) -and ($PSItem -le 5)}{ # 3, 4, 5
+				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
 						Message = "System has 3-5 admin users."
 						Status = "Warning"
 					}
 				}
-				{$PSItem -gt 5}{ # 6, ...
+				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "System has 6 or more admin users."
+						Message = "System has 6 or more active users or groups in local administrators group."
 						Status = "False"
 					}
 				}
