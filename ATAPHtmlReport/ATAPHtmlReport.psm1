@@ -979,7 +979,7 @@ function Get-ATAPHtmlReport {
 						htmlElement 'h2' @{} {"What makes FB Pro GmbH different"}
 						htmlElement 'h3' @{} {"What do we want?"}
 						htmlElement 'p' @{} {"Protect our customers' data and information - and thus implicitly contribute to the safe use of the Internet."}
-						htmlElement 'h3' @{} {"How we achieve this? "}
+						htmlElement 'h3' @{} {"How do we achieve this? "}
 						htmlElement 'p' @{} {"We implement in-depth IT security for our customers. And we always do so in a state-of-the-art, efficient and automated manner."}
 						htmlElement 'div'@{id="referencesContainer"}{
 							htmlElement 'div'@{}{

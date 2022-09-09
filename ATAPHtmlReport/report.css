@@ -700,9 +700,12 @@ button{
     background-color: #777777;
 }
 
-#references p{
+#references p, #summary p, #settingsOverview p{
 	font-family: Arial, sans-serif;
 } 
+
+
+
 
 #contactUsButton{
 	background-color: #A81A1B;
