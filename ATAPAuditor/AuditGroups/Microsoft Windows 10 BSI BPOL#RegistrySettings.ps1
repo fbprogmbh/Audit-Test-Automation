@@ -1556,9 +1556,9 @@
                 -Name "NoAutoplayfornonVolume" `
                 | Select-Object -ExpandProperty "NoAutoplayfornonVolume"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
