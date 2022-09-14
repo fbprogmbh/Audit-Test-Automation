@@ -10,6 +10,14 @@ function isWindows10OrNewer {
 function win7NoTPMChipDetected {
 	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
 }
+function hasTPM {
+	try {
+		$obj = Get-Tpm.TpmPresent
+	} catch {
+		return $null
+	}
+	return $obj
+}
 [AuditTest] @{
 	Id = "SBD-001"
 	Task = "Ensure the system is booting in 'UEFI' mode."
@@ -123,6 +131,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-003"
 	Task = "Ensure the TPM Chip is 'present'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmPresent
 			if ($obj -isnot [Boolean]) {
@@ -167,6 +181,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-004"
 	Task = "Ensure the TPM Chip is 'ready'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmReady
 			if ($obj -isnot [Boolean]) {
@@ -210,6 +230,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-005"
 	Task = "Ensure the TPM Chip is 'enabled'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmEnabled
 			if ($obj -isnot [Boolean]) {
@@ -260,6 +286,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-006"
 	Task = "Ensure the TPM Chip is 'activated'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmActivated
 			if ($obj -isnot [Boolean]) {
@@ -310,6 +342,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-007"
 	Task = "Ensure the TPM Chip is 'owned'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmOwned
 			if ($obj -isnot [Boolean]) {
@@ -362,6 +400,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-008"
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		# get array of implemented spec versions
 		$obj = (Get-CimInstance -Class Win32_Tpm -Namespace root\CIMV2\Security\MicrosoftTpm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SpecVersion)
 		if ($obj -eq $null) {
