@@ -217,10 +217,10 @@
 					Title = 'Account Policies'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AccountPolicies"
 				}
-				[ReportSection] @{
-					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#SecurityOptions"
-				}
+				# [ReportSection] @{
+				# 	Title = 'Security Options'
+				# 	AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#SecurityOptions"
+				# }
 			)
 		}
 	)
