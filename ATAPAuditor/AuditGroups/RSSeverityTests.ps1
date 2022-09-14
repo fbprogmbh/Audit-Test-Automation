@@ -585,7 +585,7 @@
                 -Name "DisableRealtimeMonitoring" `
             | Select-Object -ExpandProperty "DisableRealtimeMonitoring"
         
-            if ($regValue -ne 0) {
+            if ($regValue -eq 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
