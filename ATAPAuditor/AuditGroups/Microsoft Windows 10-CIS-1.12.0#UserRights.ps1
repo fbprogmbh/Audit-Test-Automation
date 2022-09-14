@@ -530,7 +530,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.14 A"
-    Task = "(L1) Configure 'Create symbolic links'"
+    Task = "(L1) Configure 'Create symbolic links' (when Hyper-V feature is installed)"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -566,7 +566,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.14 B"
-    Task = "(L1) Configure 'Create symbolic links' (Hyper-V feature not installed)"
+    Task = "(L1) Configure 'Create symbolic links' (when Hyper-V feature is NOT installed)"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
