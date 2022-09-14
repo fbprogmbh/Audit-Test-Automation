@@ -9413,12 +9413,26 @@
     Task = "Ensure 'Configure Attack Surface Reduction rules' is configured (Use advanced protection against ransomware)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
-                | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+
+            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "c1db55ab-c21a-4637-bb3f-a12568109d35"
+            if($check1 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
+                    | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
+            }
+            
+            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "c1db55ab-c21a-4637-bb3f-a12568109d35"
+            if($check2 -eq "True"){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                    -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
+                    | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
