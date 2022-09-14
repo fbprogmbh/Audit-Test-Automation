@@ -584,7 +584,7 @@ function ConvertTo-NTAccountUser {
         if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
             return @{
                 Status = "None"
-                Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is not installed."
+                Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
             }
         }
         

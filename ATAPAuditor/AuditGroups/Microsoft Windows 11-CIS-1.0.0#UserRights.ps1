@@ -591,7 +591,7 @@ function ConvertTo-NTAccountUser {
     if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
         return @{
             Status = "None"
-            Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is not installed."
+            Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
         }
     }
 
@@ -1106,6 +1106,13 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
         $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+
+        if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
+            return @{
+                Status = "None"
+                Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
+            }
+        }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
@@ -1144,6 +1151,13 @@ function ConvertTo-NTAccountUser {
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+
+        if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
+            return @{
+                Status = "None"
+                Message = "Hyper-V not installed. Please refer to the corresponding benchmark when Hyper-V is not installed."
+            }
+        }
         
         if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
             $messages = @()
