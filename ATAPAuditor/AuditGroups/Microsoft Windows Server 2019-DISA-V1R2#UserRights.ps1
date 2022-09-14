@@ -590,14 +590,11 @@ function ConvertTo-NTAccountUser {
             "Guests"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyNetworkLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyNetworkLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -628,14 +625,11 @@ function ConvertTo-NTAccountUser {
             "Guests"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyBatchLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyBatchLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -665,14 +659,11 @@ function ConvertTo-NTAccountUser {
         $identityAccounts = @(
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -703,14 +694,11 @@ function ConvertTo-NTAccountUser {
             "Guests"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyInteractiveLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -741,14 +729,11 @@ function ConvertTo-NTAccountUser {
             "Guests"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyRemoteInteractiveLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
