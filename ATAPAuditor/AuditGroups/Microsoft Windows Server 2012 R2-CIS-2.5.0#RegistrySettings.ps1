@@ -5109,7 +5109,7 @@
         
             if ($null -eq $regValue -or 0 -eq $regValue) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1+"
+                    Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"
                 }
             }
