@@ -1256,7 +1256,7 @@
             
             $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "c1db55ab-c21a-4637-bb3f-a12568109d35"
             if($check2 -eq "True"){
-                $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
                     -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                     -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
                     | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
