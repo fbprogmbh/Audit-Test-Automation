@@ -3672,9 +3672,9 @@
                 -Name "fBlockNonDomain" `
                 | Select-Object -ExpandProperty "fBlockNonDomain"
         
-            if ($regValue -ne 1) {
+            if ($null -eq $regValue -or 0 -eq $regValue) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: 1+"
                     Status = "False"
                 }
             }
