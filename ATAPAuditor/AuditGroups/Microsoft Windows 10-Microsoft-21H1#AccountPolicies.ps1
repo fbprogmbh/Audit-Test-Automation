@@ -99,7 +99,7 @@
         
         if ($setPolicy -le 10) {
             return @{
-                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: 10"
+                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: 10 or lower"
                 Status = "False"
             }
         }
