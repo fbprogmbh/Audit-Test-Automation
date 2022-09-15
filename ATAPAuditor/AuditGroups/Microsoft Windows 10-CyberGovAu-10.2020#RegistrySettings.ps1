@@ -1,4 +1,7 @@
-﻿[AuditTest] @{
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+[AuditTest] @{
     Id = "1909.01"
     Task = "Ensure 'Deploy Windows Defender Application Control' is set to 'Enabled'"
     Test = {
@@ -113,22 +116,26 @@
         try {
             $regValue = 0;
             $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value = "ExploitGuard_ASR_Rules"
 
-            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"
-            if($check1 -eq "True"){
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
                 $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                    -Name "ExploitGuard_ASR_Rules" `
-                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
             }
-            
 
-            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR").PSObject.Properties.Name -contains "ExploitGuard_ASR_Rules"    
-            if($check2 -eq "True"){
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value2 = "ExploitGuard_ASR_Rules"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
                 $regValueTwo = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                    -Name "ExploitGuard_ASR_Rules" `
-                    | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
             }
 
             if ($regValue -ne 1 -and $regValueTwo -ne 1) {
@@ -452,21 +459,26 @@
         try {
             $regValue = 0;
             $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "c1db55ab-c21a-4637-bb3f-a12568109d35"
 
-            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "c1db55ab-c21a-4637-bb3f-a12568109d35"
-            if($check1 -eq "True"){
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
                 $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                    -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
-                    | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
             }
-            
-            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "c1db55ab-c21a-4637-bb3f-a12568109d35"
-            if($check2 -eq "True"){
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "c1db55ab-c21a-4637-bb3f-a12568109d35"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
                 $regValueTwo = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                    -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
-                    | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
             }
 
             if ($regValue -ne 1 -and $regValueTwo -ne 1) {
@@ -679,26 +691,32 @@
     Id = "1909.03.16"
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
-        try {
+            try {
             $regValue = 0;
             $regValueTwo = 0;
-            $check1 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "e6db77e5-3df2-4cf1-b95a-636979351e5b"
-            if($check1 -eq "True"){
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
                 $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                    -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
-                    | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
             }
-            
-            $check2 = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules").PSObject.Properties.Name -contains "e6db77e5-3df2-4cf1-b95a-636979351e5b"    
-            if($check2 -eq "True"){
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
                 $regValueTwo = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                    -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
-                    | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
             }
-        
-            if ($regValue -ne "1" -and $regValueTwo -ne "1") {
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
