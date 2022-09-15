@@ -97,7 +97,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -le 10) {
+        if ($setPolicy -gt 10) {
             return @{
                 Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: 10 or lower"
                 Status = "False"
