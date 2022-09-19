@@ -1,9 +1,9 @@
 ﻿[AuditTest] @{
-    Id = "AccountPolicy-216"
-    Task = "Ensure 'MinimumPasswordLength' is set to '14'."
+    Id = "0001"
+    Task = " Ensure 'Maximum password age' is set to between 1 and 42"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["MinimumPasswordLength"]
+        $setPolicy = $securityPolicy['System Access']["MaximumPasswordAge"]
         
         if ($null -eq $setPolicy) {
             return @{
@@ -13,9 +13,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 14) {
+        if (($setPolicy -gt 42 -or $setPolicy -lt 1)) {
             return @{
-                Message = "'MinimumPasswordLength' currently set to: $setPolicy. Expected: 14"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 42 and x >= 1"
                 Status = "False"
             }
         }
@@ -27,8 +27,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-217"
-    Task = "Ensure 'PasswordComplexity' is set to '1'."
+    Id = "0002"
+    Task = " Ensure 'Password must meet complexity requirements' is set to 'Enabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordComplexity"]
@@ -55,11 +55,11 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-218"
-    Task = "Ensure 'PasswordHistorySize' is set to '24'."
+    Id = "0100"
+    Task = " Ensure 'Reset account lockout counter after' is set greater or equal 15"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["PasswordHistorySize"]
+        $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
         
         if ($null -eq $setPolicy) {
             return @{
@@ -69,9 +69,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 24) {
+        if (($setPolicy -lt 15)) {
             return @{
-                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: 24"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
                 Status = "False"
             }
         }
@@ -83,8 +83,36 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-219"
-    Task = "Ensure 'LockoutBadCount' is set to '10'."
+    Id = "0102"
+    Task = " Ensure 'Account lockout duration' is set to '15 or more minute(s)'"
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
+        
+        if ($null -eq $setPolicy) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        $setPolicy = [long]$setPolicy
+        
+        if (($setPolicy -lt 15)) {
+            return @{
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "0103"
+    Task = "Ensure 'Account lockout threshold' is set greater or equal 1 and less or equal 10"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
@@ -111,11 +139,11 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-220"
-    Task = "Ensure 'ResetLockoutCount' is set to '15'."
+    Id = "0162"
+    Task = " Ensure 'Enforce password history' is set greater or equal 24"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
+        $setPolicy = $securityPolicy['System Access']["PasswordHistorySize"]
         
         if ($null -eq $setPolicy) {
             return @{
@@ -125,9 +153,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 15) {
+        if (($setPolicy -lt 24)) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: 15"
+                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x >= 24"
                 Status = "False"
             }
         }
@@ -139,11 +167,11 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-221"
-    Task = "Ensure 'LockoutDuration' is set to '15'."
+    Id = "0186"
+    Task = " Ensure 'Minimum password age' is set to greater or equal 1"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
+        $setPolicy = $securityPolicy['System Access']["MinimumPasswordAge"]
         
         if ($null -eq $setPolicy) {
             return @{
@@ -153,9 +181,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 15) {
+        if (($setPolicy -lt 1)) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: 15"
+                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1"
                 Status = "False"
             }
         }
@@ -167,11 +195,11 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-222"
-    Task = "Ensure 'ClearTextPassword' is set to '0'."
+    Id = "0187"
+    Task = " Ensure 'Minimum password length' is set to greater or equal 14"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]
+        $setPolicy = $securityPolicy['System Access']["MinimumPasswordLength"]
         
         if ($null -eq $setPolicy) {
             return @{
@@ -181,9 +209,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 0) {
+        if (($setPolicy -lt 14)) {
             return @{
-                Message = "'ClearTextPassword' currently set to: $setPolicy. Expected: 0"
+                Message = "'MinimumPasswordLength' currently set to: $setPolicy. Expected: x >= 14"
                 Status = "False"
             }
         }

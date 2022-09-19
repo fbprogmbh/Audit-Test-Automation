@@ -1,5 +1,5 @@
 ﻿[AuditTest] @{
-    Id = "AccountPolicy-216"
+    Id = "AccountPolicy-309"
     Task = "Ensure 'MinimumPasswordLength' is set to '14'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -13,9 +13,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 14) {
+        if (($setPolicy -ne 14)) {
             return @{
-                Message = "'MinimumPasswordLength' currently set to: $setPolicy. Expected: 14"
+                Message = "'MinimumPasswordLength' currently set to: $setPolicy. Expected: x == 14"
                 Status = "False"
             }
         }
@@ -27,7 +27,7 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-217"
+    Id = "AccountPolicy-310"
     Task = "Ensure 'PasswordComplexity' is set to '1'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -55,7 +55,7 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-218"
+    Id = "AccountPolicy-311"
     Task = "Ensure 'PasswordHistorySize' is set to '24'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -69,9 +69,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 24) {
+        if (($setPolicy -ne 24)) {
             return @{
-                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: 24"
+                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x == 24"
                 Status = "False"
             }
         }
@@ -83,7 +83,7 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-219"
+    Id = "AccountPolicy-312"
     Task = "Ensure 'LockoutBadCount' is set to '10'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -97,9 +97,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 10 -or $setPolicy -le 0)) {
+        if (($setPolicy -ne 10)) {
             return @{
-                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 10 and x > 0"
+                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x == 10"
                 Status = "False"
             }
         }
@@ -111,7 +111,7 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-220"
+    Id = "AccountPolicy-313"
     Task = "Ensure 'ResetLockoutCount' is set to '15'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -125,9 +125,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 15) {
+        if (($setPolicy -ne 15 minutes)) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: 15"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x == 15 minutes"
                 Status = "False"
             }
         }
@@ -139,7 +139,7 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-221"
+    Id = "AccountPolicy-314"
     Task = "Ensure 'LockoutDuration' is set to '15'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -153,9 +153,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 15) {
+        if (($setPolicy -ne 15 minutes)) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: 15"
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x == 15 minutes"
                 Status = "False"
             }
         }
@@ -167,7 +167,7 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-222"
+    Id = "AccountPolicy-315"
     Task = "Ensure 'ClearTextPassword' is set to '0'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"

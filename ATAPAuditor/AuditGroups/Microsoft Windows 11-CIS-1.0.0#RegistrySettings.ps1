@@ -6581,7 +6581,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($null -eq $regValue -or 0 -eq $regValue) {
+            if ($null -eq $regValue -or 0 -eq $regValue -or $regValue -gt 3) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"

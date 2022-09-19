@@ -587,9 +587,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "InactivityTimeoutSecs" `
                 | Select-Object -ExpandProperty "InactivityTimeoutSecs"
         
-            if (($regValue -gt 900 -or $regValue -eq 0)) {
+            if (($regValue -eq 0 -or $regValue -gt 900)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x <= 900 and x != 0"
+                    Message = "Registry value is '$regValue'. Expected: x != 0 and x <= 900"
                     Status = "False"
                 }
             }
@@ -1093,7 +1093,7 @@ $RootPath = Split-Path $RootPath -Parent
         
             if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
                     Status = "False"
                 }
             }
@@ -4017,7 +4017,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "9.1.5"
-    Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log'"
+    Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4025,9 +4025,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "LogFilePath" `
                 | Select-Object -ExpandProperty "LogFilePath"
         
-            if ($regValue -ne "%SYSTEMROOT%\System32\logfiles\firewall\domainfw.log") {
+            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\domainfw.log") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: %SYSTEMROOT%\System32\logfiles\firewall\domainfw.log"
+                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\domainfw.log"
                     Status = "False"
                 }
             }
@@ -6069,7 +6069,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.5.9.1 C"
-    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled'"
+    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (EnableLLTDIO),"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6112,6 +6112,150 @@ $RootPath = Split-Path $RootPath -Parent
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LLTD" `
                 -Name "ProhibitLLTDIOOnPrivateNet" `
                 | Select-Object -ExpandProperty "ProhibitLLTDIOOnPrivateNet"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.5.9.2 A"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (AllowRspndrOnDomain)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LLTD" `
+                -Name "AllowRspndrOnDomain" `
+                | Select-Object -ExpandProperty "AllowRspndrOnDomain"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.5.9.2 B"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (AllowRspndrOnPublicNet)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LLTD" `
+                -Name "AllowRspndrOnPublicNet" `
+                | Select-Object -ExpandProperty "AllowRspndrOnPublicNet"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.5.9.2 C"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (EnableRspndr)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LLTD" `
+                -Name "EnableRspndr" `
+                | Select-Object -ExpandProperty "EnableRspndr"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.5.9.2 D"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (ProhibitRspndrOnPrivateNet)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LLTD" `
+                -Name "ProhibitRspndrOnPrivateNet" `
+                | Select-Object -ExpandProperty "ProhibitRspndrOnPrivateNet"
         
             if ($regValue -ne 0) {
                 return @{
@@ -6285,7 +6429,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.5.14.1"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares'"
+    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\NETLOGON)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6437,7 +6581,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($null -eq $regValue -or 0 -eq $regValue) {
+            if ($null -eq $regValue -or 0 -eq $regValue -or $regValue -gt 3) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"
@@ -6473,7 +6617,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fBlockNonDomain" `
                 | Select-Object -ExpandProperty "fBlockNonDomain"
         
-            if ($regValue -eq 0) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -8845,7 +8989,7 @@ $RootPath = Split-Path $RootPath -Parent
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\policies\Microsoft\Windows\AdvertisingInfo" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" `
                 -Name "DisabledByGroupPolicy" `
                 | Select-Object -ExpandProperty "DisabledByGroupPolicy"
         
@@ -10857,7 +11001,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.14.1"
-    Task = "(L1) Ensure 'Turn off cloud consumer account state content' is  set to 'Enabled' "
+    Task = "(L1) Ensure 'Turn off cloud consumer account state content' is  set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11829,7 +11973,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.36.1"
-    Task = "Ensure 'Prevent the computer from joining a homegroup' set to 'Enalbed'."
+    Task = "(L1) Ensure 'Prevent the computer from joining a homegroup' set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12876,7 +13020,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "DisableRealtimeMonitoring" `
                 | Select-Object -ExpandProperty "DisableRealtimeMonitoring"
         
-            if ($regValue -eq 1) {
+            if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
@@ -13516,7 +13660,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.65.3.2.1"
-    Task = "Ensure 'Allow users to connect remotely by using Remote Desktop Services' set to 'Disabled'."
+    Task = "(L2) Ensure 'Allow users to connect remotely by using Remote Desktop Services' set to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -13552,7 +13696,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.65.3.3.1"
-    Task = "(L2) Ensure 'Allow UI Automation redirection' is set to  'Disabled' "
+    Task = "(L2) Ensure 'Allow UI Automation redirection' is set to  'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -13560,7 +13704,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "EnableUiaRedirection" `
                 | Select-Object -ExpandProperty "EnableUiaRedirection"
         
-            if ($regValue -ne 0) {
+            if (($regValue -ne 0)) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
@@ -14560,7 +14704,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.85.1.1 B"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (ShellSmartScreenLevel)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -14632,7 +14776,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.85.2.2"
-    Task = "(L1) Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for sites' is set to 'Enabled'"
+    Task = "(L1) Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for sites' is set to 'Enabled' (PreventOverride)."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -14812,7 +14956,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.90.2"
-    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled'"
+    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' (LocalMachine)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -15071,6 +15215,42 @@ $RootPath = Split-Path $RootPath -Parent
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client" `
                 -Name "AllowDigest" `
                 | Select-Object -ExpandProperty "AllowDigest"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.102.2.1"
+    Task = "(L1) Ensure 'Allow Basic authentication' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service" `
+                -Name "AllowBasic" `
+                | Select-Object -ExpandProperty "AllowBasic"
         
             if ($regValue -ne 0) {
                 return @{
@@ -15496,7 +15676,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.108.4.1"
-    Task = "(L1) Ensure 'Manage preview builds' is set to 'Enabled: Disable preview builds'"
+    Task = "(L1) Ensure 'Manage preview builds' is set to 'Disabled'  (Automated)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -15604,7 +15784,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.108.4.3 A"
-    Task = "(L1) Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
+    Task = "(L1) Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'. (DeferQualityUpdates)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -15676,7 +15856,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "19.7.8.5"
-    Task = "(L1) Ensure 'Turn off Spotlight collection on Desktop' is set to  'Enabled'"
+    Task = "(L1) Ensure 'Turn off Spotlight collection on Desktop' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

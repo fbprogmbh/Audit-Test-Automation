@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
         "Windows Server 2019 Security Technical Implementation Guide, Version: 1.5, Date: 2020-06-17"
-		"CIS Microsoft Windows Server 2019 Benchmark, Version: 1.2.1, Date: 2021-05-18"
+		"CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18"
 		"Microsoft Security baseline for Windows Server 2019, Version: FINAL, Date 2019-06-18"
 	)
 	Sections = @(
@@ -47,23 +47,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.3.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.3.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.3.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.3.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.2.1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-1.3.0#AuditPolicies"
 				}
 			)
 		}

@@ -1,6 +1,6 @@
 ﻿[AuditTest] @{
     Id = "AccountPolicy-001"
-    Task = "Ensure 'MinimumPasswordLength' is set to '14'."
+    Task = "Ensure 'MinimumPasswordLength' is set to '14' character(s)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MinimumPasswordLength"]
@@ -28,7 +28,7 @@
 }
 [AuditTest] @{
     Id = "AccountPolicy-002"
-    Task = "Ensure 'PasswordComplexity' is set to '1'."
+    Task = "Ensure 'PasswordComplexity' is set to '1' (Enabled)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordComplexity"]
@@ -56,7 +56,7 @@
 }
 [AuditTest] @{
     Id = "AccountPolicy-003"
-    Task = "Ensure 'PasswordHistorySize' is set to '24'."
+    Task = "Ensure 'PasswordHistorySize' is set to '24' password(s)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordHistorySize"]
@@ -84,7 +84,7 @@
 }
 [AuditTest] @{
     Id = "AccountPolicy-004"
-    Task = "Ensure 'LockoutBadCount' is set to '10'."
+    Task = "Ensure 'LockoutBadCount' is set to '10' invalid logon attempt(s)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
@@ -112,7 +112,7 @@
 }
 [AuditTest] @{
     Id = "AccountPolicy-005"
-    Task = "Ensure 'ResetLockoutCount' is set to '15'."
+    Task = "Ensure 'ResetLockoutCount' is set to '15' minute(s)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
@@ -140,7 +140,7 @@
 }
 [AuditTest] @{
     Id = "AccountPolicy-006"
-    Task = "Ensure 'LockoutDuration' is set to '15'."
+    Task = "Ensure 'LockoutDuration' is set to '15' minute(s)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
@@ -168,7 +168,7 @@
 }
 [AuditTest] @{
     Id = "AccountPolicy-007"
-    Task = "Ensure 'ClearTextPassword' is set to '0'."
+    Task = "Ensure 'ClearTextPassword' is set to 'Disabled' (Disabled)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]

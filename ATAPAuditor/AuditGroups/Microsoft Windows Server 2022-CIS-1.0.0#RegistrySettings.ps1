@@ -1271,7 +1271,7 @@ $RootPath = Split-Path $RootPath -Parent
         
             if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
                     Status = "False"
                 }
             }
@@ -1518,7 +1518,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "2.3.10.8"
-    Task = "(L1) Configure 'Network access: Remotely accessible registry paths' is configured"
+    Task = "(L1) Ensure 'Network access: Remotely accessible registry paths' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1558,8 +1558,57 @@ $RootPath = Split-Path $RootPath -Parent
     }
 }
 [AuditTest] @{
-    Id = "2.3.10.9"
-    Task = "(L1) Configure 'Network access: Remotely accessible registry paths and sub-paths' is configured"
+    Id = "2.3.10.9 A"
+    Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature and CA Role Service NOT installed]"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
+                -Name "Machine" `
+                | Select-Object -ExpandProperty "Machine"
+        
+            $reference = @(
+                "System\CurrentControlSet\Control\Print\Printers"
+                "System\CurrentControlSet\Services\Eventlog"
+                "Software\Microsoft\OLAP Server"
+                "Software\Microsoft\Windows NT\CurrentVersion\Print"
+                "Software\Microsoft\Windows NT\CurrentVersion\Windows"
+                "System\CurrentControlSet\Control\ContentIndex"
+                "System\CurrentControlSet\Control\Terminal Server"
+                "System\CurrentControlSet\Control\Terminal Server\UserConfig"
+                "System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration"
+                "Software\Microsoft\Windows NT\CurrentVersion\Perflib"
+                "System\CurrentControlSet\Services\SysmonLog"
+            )
+            if (-not (Test-ArrayEqual $regValue $reference)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: System\CurrentControlSet\Control\Print\Printers System\CurrentControlSet\Services\Eventlog Software\Microsoft\OLAP Server Software\Microsoft\Windows NT\CurrentVersion\Print Software\Microsoft\Windows NT\CurrentVersion\Windows System\CurrentControlSet\Control\ContentIndex System\CurrentControlSet\Control\Terminal Server System\CurrentControlSet\Control\Terminal Server\UserConfig System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration Software\Microsoft\Windows NT\CurrentVersion\Perflib System\CurrentControlSet\Services\SysmonLog"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.3.10.9 B"
+    Task = " (L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [CA Role Service installed]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1580,11 +1629,60 @@ $RootPath = Split-Path $RootPath -Parent
                 "Software\Microsoft\Windows NT\CurrentVersion\Perflib"
                 "System\CurrentControlSet\Services\SysmonLog"
                 "System\CurrentControlSet\Services\CertSvc"
+            )
+            if (-not (Test-ArrayEqual $regValue $reference)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: System\CurrentControlSet\Control\Print\Printers System\CurrentControlSet\Services\Eventlog Software\Microsoft\OLAP Server Software\Microsoft\Windows NT\CurrentVersion\Print Software\Microsoft\Windows NT\CurrentVersion\Windows System\CurrentControlSet\Control\ContentIndex System\CurrentControlSet\Control\Terminal Server System\CurrentControlSet\Control\Terminal Server\UserConfig System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration Software\Microsoft\Windows NT\CurrentVersion\Perflib System\CurrentControlSet\Services\SysmonLog System\CurrentControlSet\Services\CertSvc"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.3.10.9 C"
+    Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature installed]"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
+                -Name "Machine" `
+                | Select-Object -ExpandProperty "Machine"
+        
+            $reference = @(
+                "System\CurrentControlSet\Control\Print\Printers"
+                "System\CurrentControlSet\Services\Eventlog"
+                "Software\Microsoft\OLAP Server"
+                "Software\Microsoft\Windows NT\CurrentVersion\Print"
+                "Software\Microsoft\Windows NT\CurrentVersion\Windows"
+                "System\CurrentControlSet\Control\ContentIndex"
+                "System\CurrentControlSet\Control\Terminal Server"
+                "System\CurrentControlSet\Control\Terminal Server\UserConfig"
+                "System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration"
+                "Software\Microsoft\Windows NT\CurrentVersion\Perflib"
+                "System\CurrentControlSet\Services\SysmonLog"
                 "System\CurrentControlSet\Services\WINS"
             )
             if (-not (Test-ArrayEqual $regValue $reference)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: System\CurrentControlSet\Control\Print\Printers System\CurrentControlSet\Services\Eventlog Software\Microsoft\OLAP Server Software\Microsoft\Windows NT\CurrentVersion\Print Software\Microsoft\Windows NT\CurrentVersion\Windows System\CurrentControlSet\Control\ContentIndex System\CurrentControlSet\Control\Terminal Server System\CurrentControlSet\Control\Terminal Server\UserConfig System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration Software\Microsoft\Windows NT\CurrentVersion\Perflib System\CurrentControlSet\Services\SysmonLog System\CurrentControlSet\Services\CertSvc System\CurrentControlSet\Services\WINS"
+                    Message = "Registry value is '$regValue'. Expected: System\CurrentControlSet\Control\Print\Printers System\CurrentControlSet\Services\Eventlog Software\Microsoft\OLAP Server Software\Microsoft\Windows NT\CurrentVersion\Print Software\Microsoft\Windows NT\CurrentVersion\Windows System\CurrentControlSet\Control\ContentIndex System\CurrentControlSet\Control\Terminal Server System\CurrentControlSet\Control\Terminal Server\UserConfig System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration Software\Microsoft\Windows NT\CurrentVersion\Perflib System\CurrentControlSet\Services\SysmonLog System\CurrentControlSet\Services\WINS"
                     Status = "False"
                 }
             }
@@ -2474,7 +2572,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "5.1"
-    Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (DC only) "
+    Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (DC only)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5398,7 +5496,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($null -eq $regValue -or 0 -eq $regValue) {
+            if ($null -eq $regValue -or 0 -eq $regValue -or $regValue -gt 3) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"
@@ -5434,7 +5532,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fBlockNonDomain" `
                 | Select-Object -ExpandProperty "fBlockNonDomain"
         
-            if ($regValue -eq 0) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -7910,7 +8008,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.14.1"
-    Task = "(L1) Ensure 'Turn off cloud consumer account state content' is  set to 'Enabled' "
+    Task = "(L1) Ensure 'Turn off cloud consumer account state content' is  set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8238,11 +8336,11 @@ $RootPath = Split-Path $RootPath -Parent
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\DataCollection" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection" `
                 -Name "EnableOneSettingsAuditing" `
                 | Select-Object -ExpandProperty "EnableOneSettingsAuditing"
         
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: x == 1"
                     Status = "False"
@@ -10209,7 +10307,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.65.3.3.1"
-    Task = "(L2) Ensure 'Allow UI Automation redirection' is set to  'Disabled' "
+    Task = "(L2) Ensure 'Allow UI Automation redirection' is set to 'Disabled' "
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10317,7 +10415,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.65.3.3.4"
-    Task = "(L2) Ensure 'Do not allow location redirection' is set to  'Enabled'"
+    Task = "(L2) Ensure 'Do not allow location redirection' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11181,7 +11279,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.100.1"
-    Task = "(L1) Ensure 'Turn on PowerShell Script Block Logging' is set to  'Enabled'"
+    Task = "(L1) Ensure 'Turn on PowerShell Script Block Logging' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11945,9 +12043,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "ScreenSaveTimeOut" `
                 | Select-Object -ExpandProperty "ScreenSaveTimeOut"
         
-            if (($regValue -ne 900)) {
+            if (($regValue -le 900 -or $regValue -gt 0)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 900"
+                    Message = "Registry value is '$regValue'. Expected: value between 0 and 900"
                     Status = "False"
                 }
             }

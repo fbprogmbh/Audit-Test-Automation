@@ -38,7 +38,7 @@ function ConvertTo-NTAccountUser {
                 $name = $map[$name]
             }
 
-            # Identity doesn't exist on when Hyper-V isn't installed
+            # Identity doesn't exist when Hyper-V isn't installed
             if ($Name -eq "S-1-5-83-0" -and
                 (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State -ne "Enabled") {
                 return $null
@@ -677,7 +677,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.18 A"
-    Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\Virtual Machines' (MS only)[Hyper-V-Feature NOT installed]"
+    Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators [Hyper-V-Feature NOT installed] (MS only)"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -719,7 +719,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.18 B"
-    Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\Virtual Machines' (MS only)[Hyper-V-Feature installed]"
+    Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\Virtual Machines' [Hyper-V-Feature installed] (MS only)"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
