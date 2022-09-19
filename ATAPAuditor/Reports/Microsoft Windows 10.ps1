@@ -44,6 +44,10 @@
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#AuditPolicies"
 				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#SecurityOptions"
+				}
 			)
 		}
 		[ReportSection] @{

@@ -62,5 +62,31 @@
 				}
 			)
 		}
+		[ReportSection] @{
+			Title = "Microsoft Benchmarks"
+			Description = "This section contains all benchmarks from Microsoft"
+			SubSections = @(
+				[ReportSection] @{
+					Title = "Registry Settings/Group Policies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = "User Rights Assignment"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#UserRights"
+				}
+				[ReportSection] @{
+					Title = "Account Policies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = " Advanced Audit Policy Configuration"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = " Advanced Audit Policy Configuration"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#SecurityOptions"
+				}
+			)
+		}
 	)
 }

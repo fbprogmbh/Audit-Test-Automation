@@ -125,7 +125,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -ne 15 minutes)) {
+        if (($setPolicy -ne 15)) {
             return @{
                 Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x == 15 minutes"
                 Status = "False"
@@ -153,7 +153,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -ne 15 minutes)) {
+        if (($setPolicy -ne 15)) {
             return @{
                 Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x == 15 minutes"
                 Status = "False"
