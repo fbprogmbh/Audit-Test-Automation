@@ -2865,7 +2865,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "5.18"
-    Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (DC only)"
+    Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5313,7 +5313,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.3.6"
-    Task = "(L1) Set 'NetBIOS node type' to 'P-node' (Ensure NetBT Parameter 'NodeType' is set to '0x2 (2)') (MS Only)"
+    Task = "(L1) Set 'NetBIOS node type' to 'P-node' (Ensure NetBT Parameter 'NodeType' is set to '0x2 (2)')"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9057,7 +9057,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.8.53.1.2"
-    Task = "(L2) Ensure 'Enable Windows NTP Server' is set to 'Disabled' (MS only)"
+    Task = "(L2) Ensure 'Enable Windows NTP Server' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

@@ -1,6 +1,6 @@
 ﻿[AuditTest] @{
     Id = "2.3.1.1"
-    Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled' (MS only)"
+    Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableAdminAccount"]
@@ -26,7 +26,7 @@
 }
 [AuditTest] @{
     Id = "2.3.1.3"
-    Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only)"
+    Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableGuestAccount"]
