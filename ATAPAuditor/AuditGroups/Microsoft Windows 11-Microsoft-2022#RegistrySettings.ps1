@@ -1,6 +1,9 @@
-﻿[AuditTest] @{
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+[AuditTest] @{
     Id = "Registry-009"
-    Task = "Set registry value 'UseEnhancedPin' to 1."
+    Task = "Set registry value 'UseEnhancedPin' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -36,7 +39,7 @@
 }
 [AuditTest] @{
     Id = "Registry-010"
-    Task = "Set registry value 'RDVDenyCrossOrg' to 0."
+    Task = "Set registry value 'RDVDenyCrossOrg' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -72,7 +75,7 @@
 }
 [AuditTest] @{
     Id = "Registry-011"
-    Task = "Set registry value 'DisableExternalDMAUnderLock' to 1."
+    Task = "Set registry value 'DisableExternalDMAUnderLock' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -108,7 +111,7 @@
 }
 [AuditTest] @{
     Id = "Registry-012"
-    Task = "Set registry value 'DCSettingIndex' to 0."
+    Task = "Set registry value 'DCSettingIndex' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -144,7 +147,7 @@
 }
 [AuditTest] @{
     Id = "Registry-013"
-    Task = "Set registry value 'ACSettingIndex' to 0."
+    Task = "Set registry value 'ACSettingIndex' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -180,7 +183,7 @@
 }
 [AuditTest] @{
     Id = "Registry-014"
-    Task = "Set registry value 'DenyDeviceClasses' to 1."
+    Task = "Set registry value 'DenyDeviceClasses' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -216,7 +219,7 @@
 }
 [AuditTest] @{
     Id = "Registry-015"
-    Task = "Set registry value 'DenyDeviceClassesRetroactive' to 1."
+    Task = "Set registry value 'DenyDeviceClassesRetroactive' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -324,7 +327,7 @@
 }
 [AuditTest] @{
     Id = "Registry-018"
-    Task = "Set registry value 'PUAProtection' to 1."
+    Task = "Set registry value 'PUAProtection' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -360,7 +363,7 @@
 }
 [AuditTest] @{
     Id = "Registry-019"
-    Task = "Set registry value 'MpCloudBlockLevel' to 2."
+    Task = "Set registry value 'MpCloudBlockLevel' to 2. (High blocking level)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -468,7 +471,7 @@
 }
 [AuditTest] @{
     Id = "Registry-022"
-    Task = "Set registry value 'DisableScriptScanning' to 0."
+    Task = "Set registry value 'DisableScriptScanning' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -648,15 +651,34 @@
 }
 [AuditTest] @{
     Id = "Registry-027"
-    Task = "Set registry value 'ExploitGuard_ASR_Rules' to 1."
+    Task = "Set registry value 'ExploitGuard_ASR_Rules' to 'Enabled'."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-        
-            if ($regValue -ne 1) {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value = "ExploitGuard_ASR_Rules"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value2 = "ExploitGuard_ASR_Rules"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -684,15 +706,34 @@
 }
 [AuditTest] @{
     Id = "Registry-028"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
+    Task = "Set the state for each Attack Surface Reduction (ASR) rule (Block Office applications from injecting code into other processes)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
-                | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -720,15 +761,34 @@
 }
 [AuditTest] @{
     Id = "Registry-029"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office applications from creating executable content)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
-                | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "3b576869-a4ec-4529-8536-b80a7769e899"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "3b576869-a4ec-4529-8536-b80a7769e899"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -756,15 +816,34 @@
 }
 [AuditTest] @{
     Id = "Registry-030"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block all Office applications from creating child processes)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
-                | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -792,15 +871,34 @@
 }
 [AuditTest] @{
     Id = "Registry-031"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Win32 API calls from Office macros)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B" `
-                | Select-Object -ExpandProperty "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -828,15 +926,34 @@
 }
 [AuditTest] @{
     Id = "Registry-032"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block execution of potentially obfuscated scripts)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
-                | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -864,15 +981,34 @@
 }
 [AuditTest] @{
     Id = "Registry-033"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block JavaScript or VBScript from launching downloaded executable content)."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
-                | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
-        
-            if ($regValue -ne "1") {
+       try {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "d3e037e1-3eb8-44c8-a917-57927947596d"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "d3e037e1-3eb8-44c8-a917-57927947596d"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -900,15 +1036,34 @@
 }
 [AuditTest] @{
     Id = "Registry-034"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block executable content from email client and webmail)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
-                | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -936,15 +1091,34 @@
 }
 [AuditTest] @{
     Id = "Registry-035"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block credential stealing from the Windows local security authority subsystem (lsass.exe))."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
-                | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -972,15 +1146,34 @@
 }
 [AuditTest] @{
     Id = "Registry-036"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block untrusted and unsigned processes that run from USB)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
-                | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -1008,15 +1201,34 @@
 }
 [AuditTest] @{
     Id = "Registry-037"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office communication application from creating child processes)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
-                | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -1044,15 +1256,34 @@
 }
 [AuditTest] @{
     Id = "Registry-038"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Adobe Reader from creating child processes)."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
-                | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -1083,12 +1314,31 @@
     Task = "Use advanced protection against ransomware"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
-                | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
-        
-            if ($regValue -ne "1") {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "c1db55ab-c21a-4637-bb3f-a12568109d35"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "c1db55ab-c21a-4637-bb3f-a12568109d35"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -1116,15 +1366,34 @@
 }
 [AuditTest] @{
     Id = "Registry-040"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
+    Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block persistence through WMI event subscription)."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
-                | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
-        
-            if ($regValue -ne "1") {
+            try {
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -1152,7 +1421,7 @@
 }
 [AuditTest] @{
     Id = "Registry-041"
-    Task = "Set registry value 'EnableNetworkProtection' to 1."
+    Task = "Set registry value 'EnableNetworkProtection' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1296,7 +1565,7 @@
 }
 [AuditTest] @{
     Id = "Registry-045"
-    Task = "Set registry value 'HVCIMATRequired' to 1."
+    Task = "Set registry value 'HVCIMATRequired' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1368,7 +1637,7 @@
 }
 [AuditTest] @{
     Id = "Registry-047"
-    Task = "Set registry value 'ConfigureSystemGuardLaunch' to 1."
+    Task = "Set registry value 'ConfigureSystemGuardLaunch' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1440,7 +1709,7 @@
 }
 [AuditTest] @{
     Id = "Registry-049"
-    Task = "Set registry value 'NoToastApplicationNotificationOnLockScreen' to 1."
+    Task = "Set registry value 'NoToastApplicationNotificationOnLockScreen' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1476,7 +1745,7 @@
 }
 [AuditTest] @{
     Id = "Registry-050"
-    Task = "Set registry value 'AutoConnectAllowedOEM' to 0."
+    Task = "Set registry value 'AutoConnectAllowedOEM' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1584,7 +1853,7 @@
 }
 [AuditTest] @{
     Id = "Registry-053"
-    Task = "Set registry value 'NoWebServices' to 1."
+    Task = "Set registry value 'NoWebServices' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1728,7 +1997,7 @@
 }
 [AuditTest] @{
     Id = "Registry-057"
-    Task = "Set registry value 'LocalAccountTokenFilterPolicy' to 0."
+    Task = "Set registry value 'LocalAccountTokenFilterPolicy' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1764,7 +2033,7 @@
 }
 [AuditTest] @{
     Id = "Registry-058"
-    Task = "Set registry value 'AllowEncryptionOracle' to 0."
+    Task = "Set registry value 'AllowEncryptionOracle' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1800,7 +2069,7 @@
 }
 [AuditTest] @{
     Id = "Registry-059"
-    Task = "Set registry value 'EnhancedAntiSpoofing' to 1."
+    Task = "Set registry value 'EnhancedAntiSpoofing' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1944,7 +2213,7 @@
 }
 [AuditTest] @{
     Id = "Registry-063"
-    Task = "Set registry value 'LetAppsActivateWithVoiceAboveLock' to 2."
+    Task = "Set registry value 'LetAppsActivateWithVoiceAboveLock' to 2. (Force Deny)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2016,7 +2285,7 @@
 }
 [AuditTest] @{
     Id = "Registry-065"
-    Task = "Set registry value 'AllowProtectedCreds' to 1."
+    Task = "Set registry value 'AllowProtectedCreds' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2196,7 +2465,7 @@
 }
 [AuditTest] @{
     Id = "Registry-070"
-    Task = "Set registry value 'AllowGameDVR' to 0."
+    Task = "Set registry value 'AllowGameDVR' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2232,7 +2501,7 @@
 }
 [AuditTest] @{
     Id = "Registry-071"
-    Task = "Ensure 'Configure registry policy processing' is set to '0'."
+    Task = "Ensure 'Configure registry policy processing' is set to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2268,7 +2537,7 @@
 }
 [AuditTest] @{
     Id = "Registry-072"
-    Task = "Ensure 'Configure registry policy processing' is set to '0'."
+    Task = "Ensure 'Configure registry policy processing' is set to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2304,7 +2573,7 @@
 }
 [AuditTest] @{
     Id = "Registry-073"
-    Task = "Set registry value 'AlwaysInstallElevated' to 0."
+    Task = "Set registry value 'AlwaysInstallElevated' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2376,7 +2645,7 @@
 }
 [AuditTest] @{
     Id = "Registry-075"
-    Task = "Set registry value 'DeviceEnumerationPolicy' to 0."
+    Task = "Set registry value 'DeviceEnumerationPolicy' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2484,7 +2753,7 @@
 }
 [AuditTest] @{
     Id = "Registry-078"
-    Task = "Set registry value '\\*\SYSVOL' to RequireMutualAuthentication=1,RequireIntegrity=1."
+    Task = "Set registry value '\\*\SYSVOL' to RequireMutualAuthentication=1, RequireIntegrity=1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2492,7 +2761,7 @@
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1" -and $regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1,RequireIntegrity=1"
                     Status = "False"
@@ -2520,7 +2789,7 @@
 }
 [AuditTest] @{
     Id = "Registry-079"
-    Task = "Set registry value '\\*\NETLOGON' to RequireMutualAuthentication=1,RequireIntegrity=1."
+    Task = "Set registry value '\\*\NETLOGON' to RequireMutualAuthentication=1, RequireIntegrity=1."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2528,9 +2797,9 @@
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1,RequireIntegrity=1"
+                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
                     Status = "False"
                 }
             }
@@ -2556,7 +2825,7 @@
 }
 [AuditTest] @{
     Id = "Registry-080"
-    Task = "Set registry value 'NoLockScreenCamera' to 1."
+    Task = "Set registry value 'NoLockScreenCamera' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2592,7 +2861,7 @@
 }
 [AuditTest] @{
     Id = "Registry-081"
-    Task = "Set registry value 'NoLockScreenSlideshow' to 1."
+    Task = "Set registry value 'NoLockScreenSlideshow' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2878,7 +3147,7 @@
 }
 [AuditTest] @{
     Id = "Registry-089"
-    Task = "Set registry value 'AllowIndexingEncryptedStoresOrItems' to 0."
+    Task = "Set registry value 'AllowIndexingEncryptedStoresOrItems' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3166,7 +3435,7 @@
 }
 [AuditTest] @{
     Id = "Registry-097"
-    Task = "Set registry value 'DisableWebPnPDownload' to 1."
+    Task = "Set registry value 'DisableWebPnPDownload' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3202,7 +3471,7 @@
 }
 [AuditTest] @{
     Id = "Registry-098"
-    Task = "Set registry value 'RestrictDriverInstallationToAdministrators' to 1."
+    Task = "Set registry value 'RestrictDriverInstallationToAdministrators' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3310,7 +3579,7 @@
 }
 [AuditTest] @{
     Id = "Registry-101"
-    Task = "Set registry value 'fAllowToGetHelp' to 0."
+    Task = "Set registry value 'fAllowToGetHelp' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3484,7 +3753,7 @@
 }
 [AuditTest] @{
     Id = "Registry-106"
-    Task = "Set registry value 'fPromptForPassword' to 1."
+    Task = "Set registry value 'fPromptForPassword' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3520,7 +3789,7 @@
 }
 [AuditTest] @{
     Id = "Registry-107"
-    Task = "Set registry value 'fDisableCdm' to 1."
+    Task = "Set registry value 'fDisableCdm' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3556,7 +3825,7 @@
 }
 [AuditTest] @{
     Id = "Registry-108"
-    Task = "Set registry value 'DisablePasswordSaving' to 1."
+    Task = "Set registry value 'DisablePasswordSaving' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3592,7 +3861,7 @@
 }
 [AuditTest] @{
     Id = "Registry-109"
-    Task = "Set registry value 'fEncryptRPCTraffic' to 1."
+    Task = "Set registry value 'fEncryptRPCTraffic' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3700,7 +3969,7 @@
 }
 [AuditTest] @{
     Id = "Registry-112"
-    Task = "Domain: Set registry value 'DisableNotifications' to 1."
+    Task = "Set registry value 'DisableNotifications' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3772,7 +4041,7 @@
 }
 [AuditTest] @{
     Id = "Registry-114"
-    Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
+    Task = "Set registry value 'DefaultInboundAction' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3844,7 +4113,7 @@
 }
 [AuditTest] @{
     Id = "Registry-116"
-    Task = "Domain: Set registry value 'LogFileSize' to 16384."
+    Task = "Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3916,7 +4185,7 @@
 }
 [AuditTest] @{
     Id = "Registry-118"
-    Task = "Private: Set registry value 'EnableFirewall' to 1."
+    Task = "Set registry value 'EnableFirewall' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3988,7 +4257,7 @@
 }
 [AuditTest] @{
     Id = "Registry-120"
-    Task = "Private: Set registry value 'DefaultInboundAction' to 1."
+    Task = "Set registry value 'DefaultInboundAction' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4060,7 +4329,7 @@
 }
 [AuditTest] @{
     Id = "Registry-122"
-    Task = "Private: Set registry value 'LogSuccessfulConnections' to 1."
+    Task = "Set registry value 'LogSuccessfulConnections' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4132,7 +4401,7 @@
 }
 [AuditTest] @{
     Id = "Registry-124"
-    Task = "Private: Set registry value 'LogFileSize' to 16384."
+    Task = "Set registry value 'LogFileSize' to 16384."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4204,7 +4473,7 @@
 }
 [AuditTest] @{
     Id = "Registry-126"
-    Task = "Public: Set registry value 'EnableFirewall' to 1."
+    Task = "Set registry value 'EnableFirewall' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4276,7 +4545,7 @@
 }
 [AuditTest] @{
     Id = "Registry-128"
-    Task = "Public: Set registry value 'AllowLocalIPsecPolicyMerge' to 0."
+    Task = "Set registry value 'AllowLocalIPsecPolicyMerge' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4348,7 +4617,7 @@
 }
 [AuditTest] @{
     Id = "Registry-130"
-    Task = "Public: Set registry value 'DefaultInboundAction' to 1."
+    Task = "Set registry value 'DefaultInboundAction' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4420,7 +4689,7 @@
 }
 [AuditTest] @{
     Id = "Registry-132"
-    Task = "Public: Set registry value 'LogDroppedPackets' to 1."
+    Task = "Set registry value 'LogDroppedPackets' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4528,7 +4797,7 @@
 }
 [AuditTest] @{
     Id = "Registry-135"
-    Task = "Set registry value 'AdmPwdEnabled' to 1."
+    Task = "Set registry value 'AdmPwdEnabled' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4636,7 +4905,7 @@
 }
 [AuditTest] @{
     Id = "Registry-138"
-    Task = "Set registry value 'DriverLoadPolicy' to 3."
+    Task = "Set registry value 'DriverLoadPolicy' to 3. (Good, unknown and bad but critical)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4744,7 +5013,7 @@
 }
 [AuditTest] @{
     Id = "Registry-141"
-    Task = "Set registry value 'NoNameReleaseOnDemand' to 1."
+    Task = "Set registry value 'NoNameReleaseOnDemand' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4780,7 +5049,7 @@
 }
 [AuditTest] @{
     Id = "Registry-142"
-    Task = "Set registry value 'NodeType' to 2."
+    Task = "Set registry value 'NodeType' to 2. (P-node)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4816,7 +5085,7 @@
 }
 [AuditTest] @{
     Id = "Registry-143"
-    Task = "Set registry value 'EnableICMPRedirect' to 0."
+    Task = "Set registry value 'EnableICMPRedirect' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4852,7 +5121,7 @@
 }
 [AuditTest] @{
     Id = "Registry-144"
-    Task = "Set registry value 'DisableIPSourceRouting' to 2."
+    Task = "Set registry value 'DisableIPSourceRouting' to 2. (Highest protection, source routing is completely disabled)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4888,7 +5157,7 @@
 }
 [AuditTest] @{
     Id = "Registry-145"
-    Task = "Set registry value 'DisableIPSourceRouting' to 2."
+    Task = "Set registry value 'DisableIPSourceRouting' to 2. (Highest protection, source routing is completely disabled)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4924,7 +5193,7 @@
 }
 [AuditTest] @{
     Id = "Registry-146"
-    Task = "Set registry value 'ScRemoveOption' to 1."
+    Task = "Set registry value 'ScRemoveOption' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4996,7 +5265,7 @@
 }
 [AuditTest] @{
     Id = "Registry-148"
-    Task = "Set registry value 'NoLMHash' to 1."
+    Task = "Set registry value 'NoLMHash' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5032,7 +5301,7 @@
 }
 [AuditTest] @{
     Id = "Registry-149"
-    Task = "Set registry value 'EnablePlainTextPassword' to 0."
+    Task = "Set registry value 'EnablePlainTextPassword' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5068,7 +5337,7 @@
 }
 [AuditTest] @{
     Id = "Registry-150"
-    Task = "Set registry value 'LimitBlankPasswordUse' to 1."
+    Task = "Set registry value 'LimitBlankPasswordUse' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5104,7 +5373,7 @@
 }
 [AuditTest] @{
     Id = "Registry-151"
-    Task = "Set registry value 'RestrictAnonymousSAM' to 1."
+    Task = "Set registry value 'RestrictAnonymousSAM' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5140,7 +5409,7 @@
 }
 [AuditTest] @{
     Id = "Registry-152"
-    Task = "Set registry value 'RestrictAnonymous' to 1."
+    Task = "Set registry value 'RestrictAnonymous' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5176,7 +5445,7 @@
 }
 [AuditTest] @{
     Id = "Registry-153"
-    Task = "Set registry value 'RestrictNullSessAccess' to 1."
+    Task = "Set registry value 'RestrictNullSessAccess' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5212,7 +5481,7 @@
 }
 [AuditTest] @{
     Id = "Registry-154"
-    Task = "Set registry value 'SCENoApplyLegacyAuditPolicy' to 1."
+    Task = "Set registry value 'SCENoApplyLegacyAuditPolicy' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5284,7 +5553,7 @@
 }
 [AuditTest] @{
     Id = "Registry-156"
-    Task = "Set registry value 'LmCompatibilityLevel' to 5."
+    Task = "Set registry value 'LmCompatibilityLevel' to 5. (Send NTLMv2 response only. Refuse LM & NTLM.)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5320,7 +5589,7 @@
 }
 [AuditTest] @{
     Id = "Registry-157"
-    Task = "Set registry value 'allownullsessionfallback' to 0."
+    Task = "Set registry value 'allownullsessionfallback' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5392,7 +5661,7 @@
 }
 [AuditTest] @{
     Id = "Registry-159"
-    Task = "Set registry value 'requirestrongkey' to 1."
+    Task = "Set registry value 'requirestrongkey' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5428,7 +5697,7 @@
 }
 [AuditTest] @{
     Id = "Registry-160"
-    Task = "Set registry value 'RequireSecuritySignature' to 1."
+    Task = "Set registry value 'RequireSecuritySignature' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5464,7 +5733,7 @@
 }
 [AuditTest] @{
     Id = "Registry-161"
-    Task = "Set registry value 'sealsecurechannel' to 1."
+    Task = "Set registry value 'sealsecurechannel' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5500,7 +5769,7 @@
 }
 [AuditTest] @{
     Id = "Registry-162"
-    Task = "Set registry value 'requiresignorseal' to 1."
+    Task = "Set registry value 'requiresignorseal' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5536,7 +5805,7 @@
 }
 [AuditTest] @{
     Id = "Registry-163"
-    Task = "Set registry value 'signsecurechannel' to 1."
+    Task = "Set registry value 'signsecurechannel' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5572,7 +5841,7 @@
 }
 [AuditTest] @{
     Id = "Registry-164"
-    Task = "Set registry value 'requiresecuritysignature' to 1."
+    Task = "Set registry value 'requiresecuritysignature' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5608,7 +5877,7 @@
 }
 [AuditTest] @{
     Id = "Registry-165"
-    Task = "Set registry value 'ProtectionMode' to 1."
+    Task = "Set registry value 'ProtectionMode' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5644,7 +5913,7 @@
 }
 [AuditTest] @{
     Id = "Registry-166"
-    Task = "Set registry value 'ConsentPromptBehaviorAdmin' to 2."
+    Task = "Set registry value 'ConsentPromptBehaviorAdmin' to 2. (Prompt for consent on the secure desktop)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5680,7 +5949,7 @@
 }
 [AuditTest] @{
     Id = "Registry-167"
-    Task = "Set registry value 'EnableSecureUIAPaths' to 1."
+    Task = "Set registry value 'EnableSecureUIAPaths' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5716,7 +5985,7 @@
 }
 [AuditTest] @{
     Id = "Registry-168"
-    Task = "Set registry value 'EnableLUA' to 1."
+    Task = "Set registry value 'EnableLUA' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5752,7 +6021,7 @@
 }
 [AuditTest] @{
     Id = "Registry-169"
-    Task = "Set registry value 'ConsentPromptBehaviorUser' to 0."
+    Task = "Set registry value 'ConsentPromptBehaviorUser' to 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5788,7 +6057,7 @@
 }
 [AuditTest] @{
     Id = "Registry-170"
-    Task = "Set registry value 'EnableInstallerDetection' to 1."
+    Task = "Set registry value 'EnableInstallerDetection' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5824,7 +6093,7 @@
 }
 [AuditTest] @{
     Id = "Registry-171"
-    Task = "Set registry value 'FilterAdministratorToken' to 1."
+    Task = "Set registry value 'FilterAdministratorToken' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5860,7 +6129,7 @@
 }
 [AuditTest] @{
     Id = "Registry-172"
-    Task = "Set registry value 'EnableVirtualization' to 1."
+    Task = "Set registry value 'EnableVirtualization' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5896,7 +6165,7 @@
 }
 [AuditTest] @{
     Id = "Registry-173"
-    Task = "Set registry value 'LDAPClientIntegrity' to 1."
+    Task = "Set registry value 'LDAPClientIntegrity' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5968,7 +6237,7 @@
 }
 [AuditTest] @{
     Id = "Registry-222"
-    Task = "Set registry value 'FormSuggest Passwords' to 1."
+    Task = "Set registry value 'FormSuggest Passwords' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6328,7 +6597,7 @@
 }
 [AuditTest] @{
     Id = "Registry-232"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6364,7 +6633,7 @@
 }
 [AuditTest] @{
     Id = "Registry-234"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6400,7 +6669,7 @@
 }
 [AuditTest] @{
     Id = "Registry-235"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6436,7 +6705,7 @@
 }
 [AuditTest] @{
     Id = "Registry-237"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6472,7 +6741,7 @@
 }
 [AuditTest] @{
     Id = "Registry-238"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6508,7 +6777,7 @@
 }
 [AuditTest] @{
     Id = "Registry-240"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6544,7 +6813,7 @@
 }
 [AuditTest] @{
     Id = "Registry-241"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6580,7 +6849,7 @@
 }
 [AuditTest] @{
     Id = "Registry-242"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6616,7 +6885,7 @@
 }
 [AuditTest] @{
     Id = "Registry-244"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6652,7 +6921,7 @@
 }
 [AuditTest] @{
     Id = "Registry-246"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6688,7 +6957,7 @@
 }
 [AuditTest] @{
     Id = "Registry-247"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6724,7 +6993,7 @@
 }
 [AuditTest] @{
     Id = "Registry-249"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6760,7 +7029,7 @@
 }
 [AuditTest] @{
     Id = "Registry-251"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6796,7 +7065,7 @@
 }
 [AuditTest] @{
     Id = "Registry-252"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6832,7 +7101,7 @@
 }
 [AuditTest] @{
     Id = "Registry-253"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6868,7 +7137,7 @@
 }
 [AuditTest] @{
     Id = "Registry-254"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6904,7 +7173,7 @@
 }
 [AuditTest] @{
     Id = "Registry-255"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6940,7 +7209,7 @@
 }
 [AuditTest] @{
     Id = "Registry-256"
-    Task = "Set registry value 'PreventOverrideAppRepUnknown' to 1."
+    Task = "Set registry value 'PreventOverrideAppRepUnknown' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6976,7 +7245,7 @@
 }
 [AuditTest] @{
     Id = "Registry-257"
-    Task = "Set registry value 'PreventOverride' to 1."
+    Task = "Set registry value 'PreventOverride' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7048,7 +7317,7 @@
 }
 [AuditTest] @{
     Id = "Registry-259"
-    Task = "Set registry value 'NoCrashDetection' to 1."
+    Task = "Set registry value 'NoCrashDetection' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7192,7 +7461,7 @@
 }
 [AuditTest] @{
     Id = "Registry-263"
-    Task = "Set registry value 'Security_zones_map_edit' to 1."
+    Task = "Set registry value 'Security_zones_map_edit' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7228,7 +7497,7 @@
 }
 [AuditTest] @{
     Id = "Registry-264"
-    Task = "Set registry value 'Security_options_edit' to 1."
+    Task = "Set registry value 'Security_options_edit' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7264,7 +7533,7 @@
 }
 [AuditTest] @{
     Id = "Registry-265"
-    Task = "Set registry value 'Security_HKLM_only' to 1."
+    Task = "Set registry value 'Security_HKLM_only' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7372,7 +7641,7 @@
 }
 [AuditTest] @{
     Id = "Registry-268"
-    Task = "Set registry value 'WarnOnBadCertRecving' to 1."
+    Task = "Set registry value 'WarnOnBadCertRecving' to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

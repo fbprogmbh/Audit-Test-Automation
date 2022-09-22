@@ -728,12 +728,12 @@
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
+            if ($null -eq $regValue -or 0 -eq $regValue) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1-3"
+                        Status = "False"
+                    }
                 }
-            }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
@@ -764,9 +764,9 @@
                 -Name "fBlockNonDomain" `
                 | Select-Object -ExpandProperty "fBlockNonDomain"
         
-            if ($regValue -ne 1) {
+            if ($null -eq $regValue -or 0 -eq $regValue) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"
                 }
             }

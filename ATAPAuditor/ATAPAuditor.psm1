@@ -47,7 +47,38 @@ class Report {
 	[hashtable] $HostInformation
 	[string[]] $BasedOn
 	[ReportSection[]] $Sections
+	[RSFullReport] $RSReport
 }
+
+# RiskScore Classes
+enum RSEndResult {
+	Critical
+	High
+	Medium
+	Low
+	Unknown
+}
+
+class RSFullReport {
+	[RSSeverityReport] $RSSeverityReport
+	[RSQuantityReport] $RSQuantityReport
+}
+
+class RSSeverityReport {
+	[AuditInfo[]] $AuditInfos
+	[ResultTable[]] $ResultTable
+	[RSEndResult] $Endresult
+}
+
+class RSQuantityReport {
+
+}
+
+class ResultTable {
+	[int] $Success
+	[int] $Failed
+}
+
 #endregion
 
 #region helpers
@@ -99,6 +130,69 @@ function Get-DomainRole {
 	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 }
 
+
+# region for RiskScore functions
+# function that calls all RiskScore-Subfunctions and generates the RSFullReport
+function Get-RSFullReport {
+	[CmdletBinding()]
+	[OutputType([RSFullReport])]
+	
+	$severity = Get-RSSeverityReport
+
+	
+	return ([RSFullReport]@{
+		RSSeverityReport = $severity
+	})
+}
+# function to generate RiskSeverityReport
+function Get-RSSeverityReport {
+    [CmdletBinding()]
+    [OutputType([RSSeverityReport])]
+
+    # Initialization
+	[AuditInfo[]]$tests = Test-AuditGroup "RSSeverityTests"
+
+    # gather results of tests and save it in resultTable
+	$resultTable = [ResultTable]::new()
+    foreach ($test in $tests) {
+		if ($test.AuditInfoStatus -EQ "True") {
+			$resultTable.Success += 1
+		}
+        if ($test.AuditInfostatus -ne "True") {
+            $resultTable.Failed += 1
+        }
+    }
+
+    return ([RSSeverityReport]@{
+            AuditInfos  = $tests
+            ResultTable = $resultTable
+            Endresult   = Get-RSSeverityEndResult($resultTable)
+        })
+}
+
+# helper for EndResult of RiskScoreSeverity
+function Get-RSSeverityEndResult {
+    [CmdletBinding()]
+    [OutputType([RSEndResult])]
+
+    param (
+        [Parameter(Mandatory = $true)]
+        [ResultTable[]]
+        $resultTable
+    )
+
+    $result = "Unknown"
+
+    $f = $resultTable.Failed
+    if ($f -eq 0) {
+        $result = "Low"
+    }
+    if ($f -ge 1) {
+        $result = "Critical"
+    }
+    return $result
+}
+
 #endregion
 
 <#
@@ -137,28 +231,16 @@ function Test-AuditGroup {
 			if ($currentRole -notin $domainRoles) {
 				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 				if($roleValue -eq 4 -or $roleValue -eq 5){
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = 'Not applicable. This audit only applies to Domain controllers.'
-						Status = [AuditInfoStatus]::None
-					})
+					$message = 'Not applicable. This audit only applies to Domain controllers.'
+					$status = [AuditInfoStatus]::None
 				}
 				if($roleValue -ne 4 -or $roleValue -ne 5){
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = 'Not applicable. This audit does not apply to Domain controllers.'
-						Status = [AuditInfoStatus]::None
-					})
+					$message = 'Not applicable. This audit does not apply to Domain controllers.'
+					$status = [AuditInfoStatus]::None
 				}
 				if($roleValue -eq 0 -or $roleValue -eq 2){
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = 'Not applicable. This audit does not apply to Standalone systems.'
-						Status = [AuditInfoStatus]::None
-					})
+					$message = 'Not applicable. This audit does not apply to Standalone systems.'
+					$status = [AuditInfoStatus]::None
 				}
 				# Write-Output ([AuditInfo]@{
 				# 	Id = $test.Id
@@ -176,7 +258,6 @@ function Test-AuditGroup {
 			if ($null -ne $innerResult) {
 				$message = $innerResult.Message
 				$status = [AuditInfoStatus]$innerResult.Status
-				
 			}
 		}
 		catch {
@@ -271,6 +352,7 @@ function Invoke-ATAPReport {
 	$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 
 	[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
+	$report.RSReport = Get-RSFullReport
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }
@@ -316,13 +398,7 @@ function Save-ATAPHtmlReport {
 
 	$parent = Split-Path $Path
 	if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
-		if ($Force) {
-			New-Item -ItemType Directory -Path $parent -Force | Out-Null
-		}
-		else {
-			Write-Error "Cannot save the report at $parent because the path does not exist."
-			return
-		}
+		New-Item -ItemType Directory -Path $parent -Force | Out-Null
 	}
 	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -DarkMode:$DarkMode
 }

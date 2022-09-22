@@ -10,6 +10,14 @@ function isWindows10OrNewer {
 function win7NoTPMChipDetected {
 	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
 }
+function hasTPM {
+	try {
+		$obj = Get-Tpm.TpmPresent
+	} catch {
+		return $null
+	}
+	return $obj
+}
 [AuditTest] @{
 	Id = "SBD-001"
 	Task = "Ensure the system is booting in 'UEFI' mode."
@@ -123,6 +131,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-003"
 	Task = "Ensure the TPM Chip is 'present'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmPresent
 			if ($obj -isnot [Boolean]) {
@@ -167,6 +181,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-004"
 	Task = "Ensure the TPM Chip is 'ready'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmReady
 			if ($obj -isnot [Boolean]) {
@@ -210,6 +230,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-005"
 	Task = "Ensure the TPM Chip is 'enabled'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmEnabled
 			if ($obj -isnot [Boolean]) {
@@ -260,6 +286,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-006"
 	Task = "Ensure the TPM Chip is 'activated'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmActivated
 			if ($obj -isnot [Boolean]) {
@@ -310,6 +342,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-007"
 	Task = "Ensure the TPM Chip is 'owned'."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		if (isWindows8OrNewer) {
 			$obj = (Get-Tpm).TpmOwned
 			if ($obj -isnot [Boolean]) {
@@ -362,6 +400,12 @@ function win7NoTPMChipDetected {
 	Id = "SBD-008"
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
+		if (hasTPM -eq $null -or hasTPM -eq $false) {
+			return @{
+				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Status = "False"
+			}
+		}
 		# get array of implemented spec versions
 		$obj = (Get-CimInstance -Class Win32_Tpm -Namespace root\CIMV2\Security\MicrosoftTpm -ErrorAction SilentlyContinue | Select-Object -ExpandProperty SpecVersion)
 		if ($obj -eq $null) {
@@ -394,22 +438,29 @@ function win7NoTPMChipDetected {
 }
 [AuditTest] @{
 	Id = "SBD-009"
-	Task = "Get the count of local users on the system."
+	Task = "Get amount of active local users on system."
 	Test = {	
+		$users = Get-LocalUser;
+		$amountOfActiveUser = 0;
+		foreach($user in $users){
+			if($user.Enabled -eq $True){
+				$amountOfActiveUser ++;
+			}
+		}
 		$status = switch ((Get-LocalUser).Count) {
-			{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
+			{($amountOfActiveUser -ge 0) -and ($amountOfActiveUser -le 2)}{ # 0, 1, 2
 				@{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			{($PSItem -gt 2) -and ($PSItem -le 5)}{ # 3, 4, 5
+			{($amountOfActiveUser -gt 2) -and ($amountOfActiveUser -le 5)}{ # 3, 4, 5
 				@{
 					Message = "System has 3-5 local users."
 					Status = "Warning"
 				}
 			}
-			{$PSItem -gt 5}{ # 6, ...
+			{$amountOfActiveUser -gt 5}{ # 6, ...
 				@{
 					Message = "System has 6 or more local users."
 					Status = "False"
@@ -427,30 +478,52 @@ function win7NoTPMChipDetected {
 }
 [AuditTest] @{
 	Id = "SBD-010"
-	Task = "Get the count of admin users on the system."
+	Task = "Get amount of users and groups in administrators group on system."
+	Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation", "StandaloneWorkstation", "MemberServer", "StandaloneServer" }
+    )
 	Test = {	
-		$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544").Count) {
-			{($PSItem -ge 0) -and ($PSItem -le 2)}{ # 0, 1, 2
-				@{
-					Message = "Compliant"
-					Status = "True"
+		$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544"
+		$amountOfUserAndGroups = 0;
+		foreach($user in $userAndGroups){
+			if($user.PrincipalSource -eq "Local"){
+				$amountOfUserAndGroups ++;
+			}
+		}
+
+
+		try { 
+			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop).Count) {
+				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
+					@{
+						Message = "System has 3-5 admin users."
+						Status = "Warning"
+					}
+				}
+				{$amountOfUserAndGroups -gt 5}{ # 6, ...
+					@{
+						Message = "System has 6 or more active users or groups in local administrators group."
+						Status = "False"
+					}
+				}
+				Default {
+					@{
+						Message = "Cannot determine the count of admin users"
+						Status = "Error"
+					}
 				}
 			}
-			{($PSItem -gt 2) -and ($PSItem -le 5)}{ # 3, 4, 5
+		} catch {
+			$theError = $_
+			if ($theError.Exception -like "*1789*") {
 				@{
-					Message = "System has 3-5 admin users."
-					Status = "Warning"
-				}
-			}
-			{$PSItem -gt 5}{ # 6, ...
-				@{
-					Message = "System has 6 or more admin users."
-					Status = "False"
-				}
-			}
-			Default {
-				@{
-					Message = "Cannot determine the count of admin users"
+			 		Message = "Central domain controller was not reachable at execution time"
 					Status = "Error"
 				}
 			}
@@ -566,32 +639,29 @@ function win7NoTPMChipDetected {
 }
 [AuditTest] @{
 	Id = "SBD-014"
-	Task = "Ensure the status of the Microsoft Defender for Endpoint service is 'Running'."
+	Task = "Ensure Windows Defender Application Guard is enabled."
 	Test = {
-		try {
-			$obj = (Get-Service Sense -ErrorAction Stop).Status
-		}
-		catch [Microsoft.PowerShell.Commands.ServiceCommandException]{
-			return @{
-				Message = "Service does not exist (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
-				Status = "None"
-			}
-		}
-		$status = switch ($obj) {
-			"Running"{
-				@{
+		if (isWindows10OrNewer) {
+			$state = (Get-WindowsOptionalFeature -Online -FeatureName Windows-Defender-ApplicationGuard).State
+			if ($state -eq 'Enabled') {
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			default {
-				@{
-					Message = "Service is not 'Running' (<a href=""https://www.microsoft.com/en-us/security/business/threat-protection/endpoint-defender"">More info</a>)."
+			else {
+				return @{
+					Message = "Windows Defender Application Guard is not enabled."
 					Status = "False"
 				}
 			}
 		}
-		return $status
+		else {
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "None"
+			}
+		}
 	}
 }
 [AuditTest] @{
@@ -818,33 +888,6 @@ function win7NoTPMChipDetected {
 				}
 			}
 			return $status
-		}
-		else {
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
-			}
-		}
-	}
-}
-[AuditTest] @{
-	Id = "SBD-022"
-	Task = "Ensure Windows Defender Application Guard is enabled."
-	Test = {
-		if (isWindows10OrNewer) {
-			$state = (Get-WindowsOptionalFeature -Online -FeatureName Windows-Defender-ApplicationGuard).State
-			if ($state -eq 'Enabled') {
-				return @{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			else {
-				return @{
-					Message = "Windows Defender Application Guard is not enabled."
-					Status = "False"
-				}
-			}
 		}
 		else {
 			return @{
