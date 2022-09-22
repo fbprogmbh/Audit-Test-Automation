@@ -201,6 +201,7 @@
 				}
 			)
 		}
+		# TODO: Will be removed with version 5.3, if no crucial changes are necessary on these AuditGroups
 		# [ReportSection] @{
 		# 	Title = 'BSI Benchmarks BPOL'
 		# 	Description = 'This section contains the BSI Benchmark BPOL results.'
