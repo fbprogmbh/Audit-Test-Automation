@@ -144,10 +144,10 @@ Import-Module -Name ATAPAuditor
 
 By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark.
 
-**Example:**
+**Examples:**
 ```PowerShell
 Save-ATAPHtmlReport -ReportName "Microsoft IIS10"
-Save-ATAPHtmlReport -ReportName "Mozilla Firefox"
+Save-ATAPHtmlReport -ReportName "Google Chrome" -Path C:\Users\Public\Documents\ATAPReports\report_google_chrome.html
 ```
 Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut <ctrl> + <space> and all available parameters will be offered, allowing you to select a report with your arrow-keys.
 
