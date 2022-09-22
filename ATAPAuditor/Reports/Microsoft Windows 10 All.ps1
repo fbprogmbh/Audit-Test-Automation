@@ -201,28 +201,28 @@
 				}
 			)
 		}
-		[ReportSection] @{
-			Title = 'BSI Benchmarks BPOL'
-			Description = 'This section contains the BSI Benchmark BPOL results.'
-			SubSections = @(
-				[ReportSection] @{
-					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AccountPolicies"
-				}
-				# [ReportSection] @{
-				# 	Title = 'Security Options'
-				# 	AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#SecurityOptions"
-				# }
-			)
-		}
+		# [ReportSection] @{
+		# 	Title = 'BSI Benchmarks BPOL'
+		# 	Description = 'This section contains the BSI Benchmark BPOL results.'
+		# 	SubSections = @(
+		# 		[ReportSection] @{
+		# 			Title = 'Registry Settings/Group Policies'
+		# 			AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#RegistrySettings"
+		# 		}
+		# 		[ReportSection] @{
+		# 			Title = 'User Rights Assignment'
+		# 			AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#UserRights"
+		# 		}
+		# 		[ReportSection] @{
+		# 			Title = 'Account Policies'
+		# 			AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#AccountPolicies"
+		# 		}
+		# 		# [ReportSection] @{
+		# 		# 	Title = 'Security Options'
+		# 		# 	AuditInfos = Test-AuditGroup "Microsoft Windows 10 BSI BPOL#SecurityOptions"
+		# 		# }
+		# 	)
+		# }
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHus-BSI'
 			Description = 'This section contains the BSI Benchmark results.'
@@ -234,7 +234,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SiSyPHus-BSI'
+			Title = 'BSI Benchmarks SiSyPHus-BSI Bundespolizei'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
