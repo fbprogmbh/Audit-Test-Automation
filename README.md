@@ -142,7 +142,7 @@ Optionally, import `ATAPAuditor` module:
 Import-Module -Name ATAPAuditor
 ```
 
-By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark.
+By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark. Append `-Path` to specify output folder.
 
 **Examples:**
 ```PowerShell
