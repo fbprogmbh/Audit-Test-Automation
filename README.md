@@ -70,7 +70,7 @@ Short explanation for BSI (see related links):
  * Increased protection needs domain member (HD)
  * Logging and forensics for all profiles (Logging)
 
-## Installation
+## How to install
 We offer several ways of how you can use our free of charge AuditTAP. 
 Find several detailed explanations below and use them as follows:
 
@@ -126,12 +126,11 @@ Import-Module -Name ATAPAuditor
 ```
 
 By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark.
-The force parameter creates the folder if it doesn't exist. For using an alternative Path, see [customization](#customization).
 
 **Example:**
 ```PowerShell
-Save-ATAPHtmlReport -ReportName "Microsoft IIS10" -Force
-Save-ATAPHtmlReport -ReportName "Mozilla Firefox" -Force
+Save-ATAPHtmlReport -ReportName "Microsoft IIS10"
+Save-ATAPHtmlReport -ReportName "Mozilla Firefox"
 ```
 Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut <ctrl> + <space> and all available parameters will be offered, allowing you to select a report with your arrow-keys.
 
