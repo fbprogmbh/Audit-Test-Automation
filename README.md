@@ -1,11 +1,28 @@
 # Audit Test Automation Package
 
-ATAPHtmlReport:\
+<table>
+ <tr>
+		<th>Powershell Gallery</th>
+		<th>Direct download</th>
+ 	</tr>
+	<tr>
+		<td>
+
+  ATAPHtmlReport:\
 [![ataphtmlreportshield](https://img.shields.io/powershellgallery/v/ATAPHtmlReport)](https://www.powershellgallery.com/packages/ATAPHtmlReport)
 
 ATAPAuditor:\
 [![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
- 	
+
+  </td>
+		<td>
+  
+  AuditTAP Release 5.2:\
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.2.zip)
+  </tD>
+ 	</tr>
+</table>
+	
 ## Overview
 
 Our Audit Test Automation Package enables you to get an overview about the compliance
