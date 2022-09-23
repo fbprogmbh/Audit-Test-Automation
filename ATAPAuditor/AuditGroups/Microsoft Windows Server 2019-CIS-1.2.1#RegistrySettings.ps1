@@ -8506,7 +8506,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8568,7 +8568,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8630,7 +8630,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8692,7 +8692,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8754,7 +8754,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8816,7 +8816,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8878,7 +8878,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -8940,7 +8940,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -9002,7 +9002,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -9064,7 +9064,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -9181,7 +9181,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
@@ -9243,7 +9243,7 @@ $RootPath = Split-Path $RootPath -Parent
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 return @{
-                    Message = "Windefender is active: ASR Rules are inactive"
+                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
                 }
             }                     
