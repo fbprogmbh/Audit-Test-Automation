@@ -2865,7 +2865,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "5.18"
-    Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled'"
+    Task = "(L2) Ensure 'Print Spooler (Spooler)' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
