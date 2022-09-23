@@ -12,7 +12,7 @@ function win7NoTPMChipDetected {
 }
 function hasTPM {
 	try {
-		$obj = Get-Tpm.TpmPresent
+		$obj = (Get-Tpm).TpmPresent
 	} catch {
 		return $null
 	}
@@ -133,7 +133,7 @@ function hasTPM {
 	Test = {
 		if (hasTPM -eq $null -or hasTPM -eq $false) {
 			return @{
-				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Meesage = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -183,7 +183,7 @@ function hasTPM {
 	Test = {
 		if (hasTPM -eq $null -or hasTPM -eq $false) {
 			return @{
-				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Meesage = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -232,7 +232,7 @@ function hasTPM {
 	Test = {
 		if (hasTPM -eq $null -or hasTPM -eq $false) {
 			return @{
-				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Meesage = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -288,7 +288,7 @@ function hasTPM {
 	Test = {
 		if (hasTPM -eq $null -or hasTPM -eq $false) {
 			return @{
-				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Meesage = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -344,7 +344,7 @@ function hasTPM {
 	Test = {
 		if (hasTPM -eq $null -or hasTPM -eq $false) {
 			return @{
-				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Meesage = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -402,7 +402,7 @@ function hasTPM {
 	Test = {
 		if (hasTPM -eq $null -or hasTPM -eq $false) {
 			return @{
-				Meesage = "TPM does not exist. Therefore the test cannot be made."
+				Meesage = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -506,7 +506,7 @@ function hasTPM {
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group"
+						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group."
 						Status = "False"
 					}
 				}
