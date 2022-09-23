@@ -131,7 +131,8 @@ function hasTPM {
 	Id = "SBD-003"
 	Task = "Ensure the TPM Chip is 'present'."
 	Test = {
-		if (hasTPM -eq $null -or hasTPM -eq $false) {
+		$hasTpm = hasTPM
+		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
 				Meesage = "No TPM Chip detected."
 				Status = "False"
@@ -180,8 +181,9 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-004"
 	Task = "Ensure the TPM Chip is 'ready'."
-	Test = {
-		if (hasTPM -eq $null -or hasTPM -eq $false) {
+No TPM Chip detected.	Test = {
+		$hasTpm = hasTPM
+		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
 				Meesage = "No TPM Chip detected."
 				Status = "False"
@@ -229,8 +231,9 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-005"
 	Task = "Ensure the TPM Chip is 'enabled'."
-	Test = {
-		if (hasTPM -eq $null -or hasTPM -eq $false) {
+No TPM Chip detected.	Test = {
+		$hasTpm = hasTPM
+		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
 				Meesage = "No TPM Chip detected."
 				Status = "False"
@@ -285,8 +288,9 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-006"
 	Task = "Ensure the TPM Chip is 'activated'."
-	Test = {
-		if (hasTPM -eq $null -or hasTPM -eq $false) {
+No TPM Chip detected.	Test = {
+		$hasTpm = hasTPM
+		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
 				Meesage = "No TPM Chip detected."
 				Status = "False"
@@ -341,8 +345,9 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-007"
 	Task = "Ensure the TPM Chip is 'owned'."
-	Test = {
-		if (hasTPM -eq $null -or hasTPM -eq $false) {
+No TPM Chip detected.	Test = {
+		$hasTpm = hasTPM
+		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
 				Meesage = "No TPM Chip detected."
 				Status = "False"
@@ -399,8 +404,9 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-008"
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
-	Test = {
-		if (hasTPM -eq $null -or hasTPM -eq $false) {
+No TPM Chip detected.	Test = {
+		$hasTpm = hasTPM
+		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
 				Meesage = "No TPM Chip detected."
 				Status = "False"
