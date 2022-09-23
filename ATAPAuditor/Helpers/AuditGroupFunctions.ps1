@@ -20,7 +20,7 @@ function Test-ASRRules {
             $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
             if ($defStatus.AMRunningMode -ne "Normal") {
                 # TODO: Eventlog
-                Write-Host "Windefender is off, checking ASR rules is redundant."
+                Write-Host "ASR rules require Windows Defender Antivirus to be enabled."
                 return $false
             }
             if (Test-Path -Path $Path) {
