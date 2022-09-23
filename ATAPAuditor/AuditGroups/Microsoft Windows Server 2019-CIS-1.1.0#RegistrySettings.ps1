@@ -9245,6 +9245,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"

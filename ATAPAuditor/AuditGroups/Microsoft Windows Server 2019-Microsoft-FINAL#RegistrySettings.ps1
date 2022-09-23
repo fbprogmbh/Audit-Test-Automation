@@ -4974,6 +4974,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Set registry value 'ExploitGuard_ASR_Rules' to 1."
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
@@ -5029,6 +5036,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from injecting code into other processes)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5084,6 +5098,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating executable content)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5139,6 +5160,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5194,6 +5222,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Win32 API calls from Office macro)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5249,6 +5284,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5304,6 +5346,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5359,6 +5408,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block executable content from email client and webmail)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5414,6 +5470,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5469,6 +5532,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5524,6 +5594,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application from creating child processes)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -5579,6 +5656,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Adobe Reader from creating child processes)"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"

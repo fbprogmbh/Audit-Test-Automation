@@ -114,6 +114,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
@@ -457,6 +464,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules' is configured (Use advanced protection against ransomware)."
     Test = {
         try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -692,6 +706,13 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
             try {
+            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+            if ($defStatus.AMRunningMode -ne "Normal") {
+                return @{
+                    Message = "Windefender is active: ASR Rules are inactive"
+                    Status = "False"
+                }
+            }                     
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
