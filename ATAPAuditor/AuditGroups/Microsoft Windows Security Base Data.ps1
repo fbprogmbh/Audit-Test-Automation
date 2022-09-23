@@ -167,7 +167,7 @@ function hasTPM {
 			if (win7NoTPMChipDetected) {
 				return @{
 					Message = "No TPM Chip detected."
-					Status = "None"
+					Status = "False"
 				}
 			} else {
 				return @{
@@ -217,7 +217,7 @@ function hasTPM {
 			if (win7NoTPMChipDetected) {
 				return @{
 					Message = "No TPM Chip detected."
-					Status = "None"
+					Status = "False"
 				}
 			} else {
 				return @{
@@ -267,7 +267,7 @@ function hasTPM {
 			if (win7NoTPMChipDetected) {
 				return @{
 					Message = "No TPM Chip detected."
-					Status = "None"
+					Status = "False"
 				}
 			}
 			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsEnabled_InitialValue) {
@@ -324,7 +324,7 @@ function hasTPM {
 			if (win7NoTPMChipDetected) {
 				return @{
 					Message = "No TPM Chip detected."
-					Status = "None"
+					Status = "False"
 				}
 			}
 			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) {
@@ -382,7 +382,7 @@ function hasTPM {
 			if (win7NoTPMChipDetected) {
 				return @{
 					Message = "No TPM Chip detected."
-					Status = "None"
+					Status = "False"
 				}
 			}
 			if (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsOwned_InitialValue) {
