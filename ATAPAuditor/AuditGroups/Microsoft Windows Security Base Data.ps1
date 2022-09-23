@@ -181,7 +181,7 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-004"
 	Task = "Ensure the TPM Chip is 'ready'."
-No TPM Chip detected.	Test = {
+	Test = {
 		$hasTpm = hasTPM
 		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
@@ -231,7 +231,7 @@ No TPM Chip detected.	Test = {
 [AuditTest] @{
 	Id = "SBD-005"
 	Task = "Ensure the TPM Chip is 'enabled'."
-No TPM Chip detected.	Test = {
+	Test = {
 		$hasTpm = hasTPM
 		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
@@ -288,7 +288,7 @@ No TPM Chip detected.	Test = {
 [AuditTest] @{
 	Id = "SBD-006"
 	Task = "Ensure the TPM Chip is 'activated'."
-No TPM Chip detected.	Test = {
+	Test = {
 		$hasTpm = hasTPM
 		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
@@ -345,7 +345,7 @@ No TPM Chip detected.	Test = {
 [AuditTest] @{
 	Id = "SBD-007"
 	Task = "Ensure the TPM Chip is 'owned'."
-No TPM Chip detected.	Test = {
+	Test = {
 		$hasTpm = hasTPM
 		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
@@ -404,7 +404,7 @@ No TPM Chip detected.	Test = {
 [AuditTest] @{
 	Id = "SBD-008"
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
-No TPM Chip detected.	Test = {
+	Test = {
 		$hasTpm = hasTPM
 		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
 			return @{
