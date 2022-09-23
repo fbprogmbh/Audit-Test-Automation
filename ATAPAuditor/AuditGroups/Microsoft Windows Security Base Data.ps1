@@ -483,32 +483,30 @@ function hasTPM {
         @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation", "StandaloneWorkstation", "MemberServer", "StandaloneServer" }
     )
 	Test = {	
-		$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544"
-		$amountOfUserAndGroups = 0;
-		foreach($user in $userAndGroups){
-			if($user.PrincipalSource -eq "Local"){
-				$amountOfUserAndGroups ++;
-			}
-		}
-
-
 		try { 
+			$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544"
+			$amountOfUserAndGroups = 0;
+			foreach($user in $userAndGroups){
+				if($user.PrincipalSource -eq "Local"){
+					$amountOfUserAndGroups ++;
+				}
+			}
 			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop).Count) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Compliant"
+						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "System has 3-5 admin users."
+						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "System has 6 or more active users or groups in local administrators group."
+						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group"
 						Status = "False"
 					}
 				}
@@ -523,7 +521,7 @@ function hasTPM {
 			$theError = $_
 			if ($theError.Exception -like "*1789*") {
 				@{
-			 		Message = "Central domain controller was not reachable at execution time"
+			 		Message = "Not all users could be enumerated, please manually check members of administrators group"
 					Status = "Error"
 				}
 			}
