@@ -6825,7 +6825,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.8.3.1"
-    Task = "(L1) Ensure 'Include command line in process creation events' is set to 'Disabled'"
+    Task = "(L1) Ensure 'Include command line in process creation events' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6833,7 +6833,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "ProcessCreationIncludeCmdLine_Enabled" `
                 | Select-Object -ExpandProperty "ProcessCreationIncludeCmdLine_Enabled"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
@@ -11041,7 +11041,7 @@ $RootPath = Split-Path $RootPath -Parent
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\DNSClient" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableConsumerAccountStateContent" `
                 | Select-Object -ExpandProperty "DisableConsumerAccountStateContent"
         
@@ -14824,7 +14824,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.85.1.1 B"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (ShellSmartScreenLevel)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -14832,9 +14832,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "ShellSmartScreenLevel" `
                 | Select-Object -ExpandProperty "ShellSmartScreenLevel"
         
-            if (($regValue -ne 1)) {
+            if ($regValue -ne "Block") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: Block"
                     Status = "False"
                 }
             }
