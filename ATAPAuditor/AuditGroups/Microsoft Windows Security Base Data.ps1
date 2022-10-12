@@ -132,9 +132,9 @@ function hasTPM {
 	Task = "Ensure the TPM Chip is 'present'."
 	Test = {
 		$hasTpm = hasTPM
-		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
+		if (($null -eq $hasTpm) -or ($false -eq $hasTpm)) {
 			return @{
-				Meesage = "No TPM Chip detected."
+				Message = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -183,9 +183,9 @@ function hasTPM {
 	Task = "Ensure the TPM Chip is 'ready'."
 	Test = {
 		$hasTpm = hasTPM
-		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
+		if (($null -eq $hasTpm) -or ($false -eq $hasTpm)) {
 			return @{
-				Meesage = "No TPM Chip detected."
+				Message = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -233,9 +233,9 @@ function hasTPM {
 	Task = "Ensure the TPM Chip is 'enabled'."
 	Test = {
 		$hasTpm = hasTPM
-		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
+		if (($null -eq $hasTpm) -or ($false -eq $hasTpm)) {
 			return @{
-				Meesage = "No TPM Chip detected."
+				Message = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -290,9 +290,9 @@ function hasTPM {
 	Task = "Ensure the TPM Chip is 'activated'."
 	Test = {
 		$hasTpm = hasTPM
-		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
+		if (($null -eq $hasTpm) -or ($false -eq $hasTpm)) {
 			return @{
-				Meesage = "No TPM Chip detected."
+				Message = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -347,9 +347,9 @@ function hasTPM {
 	Task = "Ensure the TPM Chip is 'owned'."
 	Test = {
 		$hasTpm = hasTPM
-		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
+		if (($null -eq $hasTpm) -or ($false -eq $hasTpm)) {
 			return @{
-				Meesage = "No TPM Chip detected."
+				Message = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
@@ -406,9 +406,9 @@ function hasTPM {
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
 		$hasTpm = hasTPM
-		if ($hasTpm -eq $null -or $hasTpm -eq $false) {
+		if (($null -eq $hasTpm) -or ($false -eq $hasTpm)) {
 			return @{
-				Meesage = "No TPM Chip detected."
+				Message = "No TPM Chip detected."
 				Status = "False"
 			}
 		}
