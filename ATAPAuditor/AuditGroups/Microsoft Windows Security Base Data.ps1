@@ -490,35 +490,71 @@ function hasTPM {
     )
 	Test = {	
 		try { 
-			$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544"
-			$amountOfUserAndGroups = 0;
-			foreach($user in $userAndGroups){
-				if($user.PrincipalSource -eq "Local"){
-					$amountOfUserAndGroups ++;
+			try{
+				$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop
+				foreach($user in $userAndGroups){
+					if($user.PrincipalSource -eq "Local"){
+						$amountOfUserAndGroups ++;
+					}
 				}
+				$status = switch ($amountOfUserAndGroups.Count) {
+					{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
+						@{
+							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
+							Status = "True"
+						}
+					}
+					{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
+						@{
+							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
+							Status = "Warning"
+						}
+					}
+					{$amountOfUserAndGroups -gt 5}{ # 6, ...
+						@{
+							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
+							Status = "False"
+						}
+					}
+					Default {
+						@{
+							Message = "Cannot determine the count of admin users. Please check manually."
+							Status = "Error"
+						}
+					}
+				}
+				return $status
 			}
-			$status = switch ((Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop).Count) {
+			catch{
+				#List all groups 
+				$group = Get-LocalGroup -sid "S-1-5-32-544"
+				$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
+				$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
+				$amountOfUserAndGroups = 0;
+				$amountOfUserAndGroups = $group_members.Count;
+			}
+			$status = switch ($amountOfUserAndGroups.Count) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group"
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group"
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "System has $amountOfUserAndGroups or more active users or groups in local administrators group."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
 						Status = "False"
 					}
 				}
 				Default {
 					@{
-						Message = "Cannot determine the count of admin users"
+						Message = "Cannot determine the count of admin users. Please check manually."
 						Status = "Error"
 					}
 				}

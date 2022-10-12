@@ -19,7 +19,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = "Microsoft Benchmarks"
+			Title = "Microsoft Benchmarks Domain Controller"
 			Description = "This section contains all benchmarks from Microsoft"
 			SubSections = @(
 				[ReportSection] @{
