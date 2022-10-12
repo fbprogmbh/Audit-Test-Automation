@@ -417,7 +417,7 @@ function hasTPM {
 		if ($obj -eq $null) {
 			return @{
 				Message = "No TPM Chip detected."
-				Status = "None"
+				Status = "False"
 			}
 		}
 		# get main spec version (first element)
