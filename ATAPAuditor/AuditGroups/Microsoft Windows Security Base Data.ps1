@@ -462,13 +462,13 @@ function hasTPM {
 			}
 			{($amountOfActiveUser -gt 2) -and ($amountOfActiveUser -le 5)}{ # 3, 4, 5
 				@{
-					Message = "System has 3-5 local users."
+					Message = "System has $($amountOfActiveUser) local users."
 					Status = "Warning"
 				}
 			}
 			{$amountOfActiveUser -gt 5}{ # 6, ...
 				@{
-					Message = "System has 6 or more local users."
+					Message = "System has 6 or more local users. (Currently $($amountOfActiveUser) users.)"
 					Status = "False"
 				}
 			}
@@ -894,7 +894,7 @@ function hasTPM {
 }
 [AuditTest] @{
 	Id = "SBD-021"
-	Task = "Ensure the Attack Surface Reduction (ASR) rules are enabled."
+	Task = "Ensure Attack Surface Reduction (ASR) rules are enabled."
 	Test = {
 		if (isWindows10OrNewer) {
 			$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
@@ -910,13 +910,13 @@ function hasTPM {
 			$status = switch ($countEnabled) {
 				{$PSItem -ge 12}{
 					@{
-						Message = "Compliant (12+ rules enabled). For more information on the ASR rules, check corresponding benchmarks."
+						Message = "Compliant ($($countEnabled) rules enabled). For more information on ASR rules, check corresponding benchmarks."
 						Status = "True"
 					}
 				}
 				{($PSItem -ge 1) -and ($PSItem -lt 12)}{
 					@{
-						Message = "$countEnabled ASR rules are activated. For more information on the ASR rules, check corresponding benchmarks."
+						Message = "$($countEnabled) ASR rules are activated. For more information on ASR rules, check corresponding benchmarks."
 						Status = "Warning"
 					}
 				}
