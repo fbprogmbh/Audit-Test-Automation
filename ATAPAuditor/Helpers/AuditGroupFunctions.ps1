@@ -28,3 +28,7 @@ function Test-ASRRules {
     }
 
 }
+
+function CheckHyperVStatus {
+    return (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State
+}
