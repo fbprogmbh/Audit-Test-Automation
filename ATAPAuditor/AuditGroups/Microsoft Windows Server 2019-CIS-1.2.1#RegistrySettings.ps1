@@ -2533,14 +2533,16 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
-        $key = "LogFilePath"
-        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\domainfw.log";
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $expectedValue = (Get-NetFirewallProfile -Name Domain).LogFileName;
+        if($null -eq $expectedValue){
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
         return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -2653,14 +2655,16 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.5"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
-        $key = "LogFilePath"
-        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\privatefw.log";
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $expectedValue = (Get-NetFirewallProfile -Name Private).LogFileName;
+        if($null -eq $expectedValue){
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
         return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -2803,14 +2807,16 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.7"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
-        $key = "LogFilePath"
-        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\publicfw.log";
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $expectedValue = (Get-NetFirewallProfile -Name Public).LogFileName;
+        if($null -eq $expectedValue){
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
         return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }

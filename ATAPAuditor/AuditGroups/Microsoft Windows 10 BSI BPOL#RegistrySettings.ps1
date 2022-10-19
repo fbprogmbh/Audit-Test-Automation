@@ -4118,16 +4118,17 @@ $RootPath = Split-Path $RootPath -Parent
             Message = $($result.Message)
             Status = $($result.Status)
         }
+    }
 }
 [AuditTest] @{
     Id = "0254"
     Task = "Ensure 'Windows Firewall: Domain: Display a notification' set to 'Disabled'."
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
-        $key = "DisableNotifications"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";    
+        $key = "DisableNotifications";
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue;
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4138,14 +4139,16 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "0279"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' set to '%windir%\system32\logfiles\firewall\domainfirewall.log'."
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
-        $key = "LogFilePath"
-        $expectedValue = "%windir%\system32\logfiles\firewall\domainfirewall.log";
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $expectedValue = $(Get-NetFirewallProfile -Name Domain).LogFileName;
+        if($null -eq $expectedValue){
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
         return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }

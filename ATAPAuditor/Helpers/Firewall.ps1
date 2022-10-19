@@ -88,7 +88,7 @@ function CheckTwoPaths {
                         #Go here if both rules are not set correctly
                         else {
                             return @{
-                                Message = "Registry value is '$regValue'. Expected: 1"
+                                Message = "Registry value is '$regValue'. Expected: $($expectedValue)"
                                 Status  = "False"
                             }
                         }
@@ -119,7 +119,7 @@ function CheckTwoPaths {
             #Go here if both rules are not set correctly
             else {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: $($expectedValue)"
                     Status  = "False"
                 }
             }           

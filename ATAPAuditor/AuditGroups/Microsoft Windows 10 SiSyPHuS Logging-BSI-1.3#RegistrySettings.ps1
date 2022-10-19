@@ -77,32 +77,13 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.1"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogFilePath" `
-                | Select-Object -ExpandProperty "LogFilePath"
-        
-            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\domainfw.log") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\domainfw.log"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+        $expectedValue = (Get-NetFirewallProfile -Name Domain).LogFileName;
+        if($null -eq $expectedValue){
             return @{
                 Message = "Registry key not found."
-                Status = "False"
+                Status  = "False"
             }
         }
-        
         return @{
             Message = "Compliant"
             Status = "True"
@@ -113,35 +94,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.2"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogFileSize" `
-                | Select-Object -ExpandProperty "LogFileSize"
-        
-            if (($regValue -lt 16384)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 16384"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -149,35 +109,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.3"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogDroppedPackets" `
-                | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -221,32 +160,13 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.2.1"
     Task = "Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogFilePath" `
-                | Select-Object -ExpandProperty "LogFilePath"
-        
-            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\privatefw.log") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\privatefw.log"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+        $expectedValue = (Get-NetFirewallProfile -Name Private).LogFileName;
+        if($null -eq $expectedValue){
             return @{
                 Message = "Registry key not found."
-                Status = "False"
+                Status  = "False"
             }
         }
-        
         return @{
             Message = "Compliant"
             Status = "True"
@@ -395,32 +315,13 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.3.3"
     Task = "Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogFilePath" `
-                | Select-Object -ExpandProperty "LogFilePath"
-        
-            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\publicfw.log") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\publicfw.log"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+        $expectedValue = (Get-NetFirewallProfile -Name Public).LogFileName;
+        if($null -eq $expectedValue){
             return @{
                 Message = "Registry key not found."
-                Status = "False"
+                Status  = "False"
             }
         }
-        
         return @{
             Message = "Compliant"
             Status = "True"
