@@ -1,4 +1,7 @@
-﻿[AuditTest] @{
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\Firewall.ps1"
+[AuditTest] @{
     Id = "4.1.1"
     Task = "Ensure 'Audit: Shut down system immediately if unable to log security audits' is set to 'Disabled'"
     Test = {
@@ -362,35 +365,14 @@
     Id = "4.2.3.1"
     Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "AllowLocalPolicyMerge" `
-                | Select-Object -ExpandProperty "AllowLocalPolicyMerge"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "AllowLocalPolicyMerge"
+        $expectedValue = 0;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -398,35 +380,14 @@
     Id = "4.2.3.2"
     Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "AllowLocalIPsecPolicyMerge" `
-                | Select-Object -ExpandProperty "AllowLocalIPsecPolicyMerge"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "AllowLocalIPsecPolicyMerge"
+        $expectedValue = 0;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }

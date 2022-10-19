@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+. "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "Registry-001"
     Task = "Ensure 'Remove `"Run this time`" button for outdated ActiveX controls in Internet Explorer ' is set to 'Enabled'."
@@ -6375,35 +6376,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-179"
     Task = "Private: Set registry value 'EnableFirewall' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -6411,35 +6391,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-180"
     Task = "Private: Set registry value 'DefaultInboundAction' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -6447,35 +6406,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-181"
     Task = "Private: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -6483,35 +6421,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-182"
     Task = "Public: Set registry value 'EnableFirewall' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -6519,35 +6436,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-183"
     Task = "Public: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -6555,35 +6451,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-184"
     Task = "Public: Set registry value 'DefaultInboundAction' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -11410,35 +11285,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-378"
     Task = "Private: Set registry value 'EnableFirewall' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -11446,35 +11300,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-379"
     Task = "Private: Set registry value 'DefaultInboundAction' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -11482,35 +11315,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-380"
     Task = "Private: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -11518,35 +11330,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-381"
     Task = "Public: Set registry value 'EnableFirewall' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -11554,35 +11345,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-382"
     Task = "Public: Set registry value 'DefaultOutboundAction' to 0."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -11590,35 +11360,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "Registry-383"
     Task = "Public: Set registry value 'DefaultInboundAction' to 1."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }

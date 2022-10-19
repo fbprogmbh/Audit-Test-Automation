@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+. "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "1.1.6"
     Task = "(L1) Ensure 'Relax minimum password length limits' is set to 'Enabled'"
@@ -2646,35 +2647,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.1"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+                $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
+        $key = "EnableFirewall";
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2682,35 +2662,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.2"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2718,35 +2677,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.3"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2754,35 +2692,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.4"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "DisableNotifications" `
-                | Select-Object -ExpandProperty "DisableNotifications"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "DisableNotifications"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2790,35 +2707,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogFilePath" `
-                | Select-Object -ExpandProperty "LogFilePath"
-        
-            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\domainfw.log") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\domainfw.log"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
+        $key = "LogFilePath"
+        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\domainfw.log";
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2826,35 +2722,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.6"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogFileSize" `
-                | Select-Object -ExpandProperty "LogFileSize"
-        
-            if (($regValue -lt 16384)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 16384"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2862,35 +2737,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogDroppedPackets" `
-                | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2898,35 +2752,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogSuccessfulConnections" `
-                | Select-Object -ExpandProperty "LogSuccessfulConnections"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
+        $key = "LogSuccessfulConnections"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2934,35 +2767,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.1"
     Task = "(L1) Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -2970,35 +2782,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.2"
     Task = "(L1) Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3006,35 +2797,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.3"
     Task = "(L1) Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3042,35 +2812,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.4"
     Task = "(L1) Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DisableNotifications" `
-                | Select-Object -ExpandProperty "DisableNotifications"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DisableNotifications"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3078,35 +2827,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.5"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogFilePath" `
-                | Select-Object -ExpandProperty "LogFilePath"
-        
-            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\privatefw.log") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\privatefw.log"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
+        $key = "LogFilePath"
+        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\privatefw.log";
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3114,35 +2842,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.6"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogFileSize" `
-                | Select-Object -ExpandProperty "LogFileSize"
-        
-            if (($regValue -lt 16384)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 16384"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3150,35 +2857,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.7"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogDroppedPackets" `
-                | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3186,35 +2872,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.8"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogSuccessfulConnections" `
-                | Select-Object -ExpandProperty "LogSuccessfulConnections"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
+        $key = "LogSuccessfulConnections"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3222,35 +2887,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.1"
     Task = "(L1) Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "EnableFirewall" `
-                | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3258,35 +2902,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.2"
     Task = "(L1) Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultInboundAction" `
-                | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3294,35 +2917,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.3"
     Task = "(L1) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultOutboundAction" `
-                | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3330,35 +2932,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.4"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DisableNotifications" `
-                | Select-Object -ExpandProperty "DisableNotifications"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DisableNotifications"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3366,35 +2947,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.5"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "AllowLocalPolicyMerge" `
-                | Select-Object -ExpandProperty "AllowLocalPolicyMerge"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "AllowLocalPolicyMerge"
+        $expectedValue = 0;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3402,35 +2962,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.6"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "AllowLocalIPsecPolicyMerge" `
-                | Select-Object -ExpandProperty "AllowLocalIPsecPolicyMerge"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "AllowLocalIPsecPolicyMerge"
+        $expectedValue = 0;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3438,35 +2977,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.7"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogFilePath" `
-                | Select-Object -ExpandProperty "LogFilePath"
-        
-            if ($regValue -ne "%SystemRoot%\System32\logfiles\firewall\publicfw.log") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: %SystemRoot%\System32\logfiles\firewall\publicfw.log"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogFilePath"
+        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\publicfw.log";
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3474,35 +2992,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.8"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogFileSize" `
-                | Select-Object -ExpandProperty "LogFileSize"
-        
-            if (($regValue -lt 16384)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 16384"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3510,35 +3007,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.9"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogDroppedPackets" `
-                | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3546,35 +3022,14 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.10"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogSuccessfulConnections" `
-                | Select-Object -ExpandProperty "LogSuccessfulConnections"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogSuccessfulConnections"
+        $expectedValue = 1;
+        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
