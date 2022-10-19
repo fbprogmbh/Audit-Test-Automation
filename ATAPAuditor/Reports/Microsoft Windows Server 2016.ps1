@@ -24,10 +24,6 @@
 			Description = "This section contains all recommendations from the Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27"
 			SubSections = @(
 				[ReportSection] @{
-					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#UserRights"
-				},
-				[ReportSection] @{
 					Title = "Account Policies"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#AccountPolicies"
 				},
