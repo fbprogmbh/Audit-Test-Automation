@@ -149,7 +149,7 @@ By default the module creates a new report in `Documents\ATAPReports` folder. A 
 Save-ATAPHtmlReport -ReportName "Microsoft IIS10"
 Save-ATAPHtmlReport -ReportName "Google Chrome" -Path C:\Users\Public\Documents\ATAPReports\report_google_chrome.html
 ```
-Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut <ctrl> + <space> and all available parameters will be offered, allowing you to select a report with your arrow-keys.
+Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters and select the desired  report using arrow-keys.
 
 The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
 
