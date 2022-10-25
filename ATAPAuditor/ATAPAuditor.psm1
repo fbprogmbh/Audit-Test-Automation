@@ -248,9 +248,38 @@ function Test-AuditGroup {
 				# 	Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
 				# 	Status = [AuditInfoStatus]::None
 				# })
+				#continue
+			}
+		}
+
+		$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
+		if($test.Task -match "(DC only)"){
+			if($role.domainRole -ne 4 -and $role.domainRole -ne 5){
+				$message = 'Not applicable. This audit does not apply to Member Server systems.'
+				$status = [AuditInfoStatus]::None
+				Write-Output ([AuditInfo]@{
+					Id = $test.Id
+					Task = $test.Task
+					Message = $message
+					Status = $status
+				})
 				continue
 			}
 		}
+		if($test.Task -match "(MS only)"){
+			if($role.domainRole -ne 2 -and $role.domainRole -ne 3){
+				$message = 'Not applicable. This audit does not apply to Domain Controller systems.'
+				$status = [AuditInfoStatus]::None
+				Write-Output ([AuditInfo]@{
+					Id = $test.Id
+					Task = $test.Task
+					Message = $message
+					Status = $status
+				})
+				continue
+			}
+		}
+
 
 		try {
 			$innerResult = & $test.Test
