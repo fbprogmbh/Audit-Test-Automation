@@ -15,12 +15,14 @@ function startConditions(){
     document.getElementById("summary").style.display = "block";
     
     /* Default-Value: Disable all other tabs at the beginning */
+    document.getElementById("foundationData").style.display = "none";
     document.getElementById("riskScore").style.display = "none";
     document.getElementById("references").style.display = "none";
     document.getElementById("settingsOverview").style.display = "none";
 
 
     document.getElementById("summaryBtn").style.backgroundColor= '#ff9933';
+    document.getElementById("foundationDataBtn").style.backgroundColor = 'transparent';
     document.getElementById("riskScoreBtn").style.backgroundColor= 'transparent';
     document.getElementById("referenceBtn").style.backgroundColor= 'transparent';
     document.getElementById("settingsOverviewBtn").style.backgroundColor= 'transparent';
@@ -93,6 +95,10 @@ function clickButton(value){
         case 4:
             document.getElementById("settingsOverview").style.display = "block";
             document.getElementById("settingsOverviewBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 5:
+            document.getElementById("foundationData").style.display = "block";
+            document.getElementById("foundationDataBtn").style.backgroundColor= '#ff9933';
         break;
     }
 

@@ -241,7 +241,7 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(4,160px);
+	grid-template-columns: repeat(5,160px);
 }
 button{
 	margin-left: 10px;

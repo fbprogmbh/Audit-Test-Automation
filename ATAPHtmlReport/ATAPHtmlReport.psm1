@@ -143,6 +143,73 @@ function Convert-SectionTitleToHtmlId {
 	return ([char[]]$Title | ForEach-Object $charMap) -join ''
 }
 
+function CreateToc{
+	param(
+		[Parameter(Mandatory = $true)]
+		$title
+	)
+	htmlElement 'li' @{} {
+		htmlElement 'a' @{ href = "#$($title)" } {"$($title)" }
+	}
+}
+
+function CreateReportContent{
+	param(
+		[Parameter(Mandatory = $true)]
+		$tests,
+		[Parameter(Mandatory = $true)]
+		$title
+	)
+	$amountOfFailedTests = 0
+	foreach($test in $tests){
+		if($test.Status -eq 'False'){
+			$amountOfFailedTests ++
+		}
+	}
+	#if at least one test is failed
+	if($amountOfFailedTests -gt 0){
+		htmlElement 'h2' @{ id="$($title)"; style="padding: 5px 10px; border-radius: 8px; color:white; background-color: #cc0000; display: inline;"}{"$($title)"}
+	}
+	else{
+		htmlElement 'h2' @{ id="$($title)"; style="padding: 5px 10px; border-radius: 8px; color:white; background-color: #33cca6; display: inline;"}{"$($title)"}
+	}
+	htmlElement 'table' @{class = 'audit-info'; style = 'margin-bottom: 50px; margin-top: 20px;'} {
+		htmlElement 'tbody' @{}{
+			htmlElement 'tr' @{}{
+				htmlElement 'th' @{} {"Id"}
+				htmlElement 'th' @{} {"Task"}
+				htmlElement 'th' @{} {"Message"}
+				htmlElement 'th' @{} {"Status"}
+			}
+			foreach($test in $tests){
+				htmlElement 'tr' @{}{
+					htmlElement 'td' @{} { "$($test.Id)"}
+					htmlElement 'td' @{} { "$($test.Task)"}
+					htmlElement 'td' @{} { "$($test.Message)"}
+					htmlElement 'td' @{} { 
+						if($test.Status -eq 'False'){
+							htmlElement 'span' @{class="severityResultFalse"}{
+								"$($test.Status)"
+							}
+						}
+						elseif($test.Status -eq 'True'){
+							htmlElement 'span' @{class="severityResultTrue"}{
+								"$($test.Status)"
+							}
+						}
+						elseif($test.Status -eq 'None'){
+							htmlElement 'span' @{class="severityResultNone"}{
+								"$($test.Status)"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 function Get-HtmlTableRow {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -561,17 +628,18 @@ function Get-ATAPHtmlReport {
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark Compliance" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Foundation Data" }
 						if($os -match "Win32NT" -and $Title -match "Win"){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
-						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Settings Overview" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
 					}
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
 
 						# Table of Contents
-						htmlElement 'h1' @{ id = 'toc' } { 'Settings Overview' }
+						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
 						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
@@ -805,18 +873,40 @@ function Get-ATAPHtmlReport {
 								}
 							}
 						}
-
-
-						# # Table of Contents
-						# htmlElement 'h1' @{ id = 'toc' } { 'Table of Contents' }
-						# htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
-						# htmlElement 'ul' @{} {
-						# 	foreach ($section in $Sections) { $section | Get-HtmlToc }
-						# }
-						# # Report Sections Sections
-						# foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 
+
+					#Tab: Foundation Data
+					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
+						htmlElement 'h1' @{} {"System based Settings"}
+						htmlElement 'p' @{} {"This section provides foundation data about general settings on tested system."}
+						htmlElement 'h2' @{} {"Table Of Contents"}
+						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+						htmlElement 'ul' @{} {
+							CreateToc "Microsoft Windows Security Base Data"
+							CreateToc "PowerShell Security"
+							CreateToc "Connectivity Secure Settings"
+							CreateToc "Application Control Settings"
+						}
+						htmlElement 'section' @{style= "width: 75%; margin-left: auto; margin-right: auto;"}{
+							#Security Base Data
+							$tests = Test-AuditGroup "Microsoft Windows Security Base Data"
+							CreateReportContent $tests "Microsoft Windows Security Base Data"
+
+							#PowerShell Security
+							$tests = Test-AuditGroup "PowerShell Security"
+							CreateReportContent $tests "PowerShell Security"
+
+							#Connectivity Secure Settings
+							$tests = Test-AuditGroup "Connectivity Secure Settings"
+							CreateReportContent $tests "Connectivity Secure Settings"
+
+							#Application Control Settings
+							$tests = Test-AuditGroup "Application Control Settings"
+							CreateReportContent $tests "Application Control Settings"
+
+						}
+					}
 
 					
 					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
