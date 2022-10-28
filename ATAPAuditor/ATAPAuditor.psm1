@@ -242,13 +242,13 @@ function Test-AuditGroup {
 					$message = 'Not applicable. This audit does not apply to Standalone systems.'
 					$status = [AuditInfoStatus]::None
 				}
-				# Write-Output ([AuditInfo]@{
-				# 	Id = $test.Id
-				# 	Task = $test.Task
-				# 	Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
-				# 	Status = [AuditInfoStatus]::None
-				# })
-				#continue
+				Write-Output ([AuditInfo]@{
+					Id = $test.Id
+					Task = $test.Task
+					Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
+					Status = [AuditInfoStatus]::None
+				})
+				continue
 			}
 		}
 
