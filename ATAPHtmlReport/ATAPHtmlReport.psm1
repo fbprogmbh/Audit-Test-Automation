@@ -202,6 +202,16 @@ function CreateReportContent{
 								"$($test.Status)"
 							}
 						}
+						elseif($test.Status -eq 'Warning'){
+							htmlElement 'span' @{class="severityResultWarning"}{
+								"$($test.Status)"
+							}
+						}
+						elseif($test.Status -eq 'Error'){
+							htmlElement 'span' @{class="severityResultError"}{
+								"$($test.Status)"
+							}
+						}
 					}
 				}
 			}
