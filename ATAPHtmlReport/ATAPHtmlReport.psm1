@@ -898,6 +898,7 @@ function Get-ATAPHtmlReport {
 							CreateToc "Connectivity Secure Settings"
 							CreateToc "Application Control Settings"
 						}
+						htmlElement 'h2' @{} {"Benchmark Details"}
 						htmlElement 'section' @{style= "width: 75%; margin-left: auto; margin-right: auto;"}{
 							#Security Base Data
 							$tests = Test-AuditGroup "Microsoft Windows Security Base Data"
