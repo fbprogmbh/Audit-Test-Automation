@@ -524,6 +524,10 @@ function Get-ATAPHtmlReport {
 		[RSFullReport[]]
 		$RSReport,
 
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[FoundationReport]
+		$FoundationReport,
+
 		[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
@@ -647,7 +651,6 @@ function Get-ATAPHtmlReport {
 					}
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
-
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
 						htmlElement 'h2' @{} {"Table Of Contents"}
@@ -885,40 +888,20 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-
 					#Tab: Foundation Data
+					$Sections = $FoundationReport.Sections
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
-						htmlElement 'h1' @{} {"System based Settings"}
-						htmlElement 'p' @{} {"This section provides foundation data about general settings on tested system."}
+						htmlElement 'h1' @{} {"Foundation Data"}
 						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
-							CreateToc "Microsoft Windows Security Base Data"
-							CreateToc "PowerShell Security"
-							CreateToc "Connectivity Secure Settings"
-							CreateToc "Application Control Settings"
+							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
-						htmlElement 'h2' @{} {"Benchmark Details"}
-						htmlElement 'section' @{style= "width: 75%; margin-left: auto; margin-right: auto;"}{
-							#Security Base Data
-							$tests = Test-AuditGroup "Microsoft Windows Security Base Data"
-							CreateReportContent $tests "Microsoft Windows Security Base Data"
-
-							#PowerShell Security
-							$tests = Test-AuditGroup "PowerShell Security"
-							CreateReportContent $tests "PowerShell Security"
-
-							#Connectivity Secure Settings
-							$tests = Test-AuditGroup "Connectivity Secure Settings"
-							CreateReportContent $tests "Connectivity Secure Settings"
-
-							#Application Control Settings
-							$tests = Test-AuditGroup "Application Control Settings"
-							CreateReportContent $tests "Application Control Settings"
-
-						}
+						htmlElement 'h2' @{} {"Security Base Data Details"}
+						# Report Sections
+						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
-
+					
 					
 					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 						htmlElement 'h1'@{} {"Risk Score"}

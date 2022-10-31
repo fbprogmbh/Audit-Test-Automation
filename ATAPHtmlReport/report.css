@@ -704,8 +704,10 @@ button{
 	font-family: Arial, sans-serif;
 } 
 
-
-
+#foundationData section{
+	margin-left: 5%;
+	margin-right: 5%;
+}
 
 #contactUsButton{
 	background-color: #A81A1B;

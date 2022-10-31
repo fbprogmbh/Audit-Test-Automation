@@ -48,7 +48,14 @@ class Report {
 	[string[]] $BasedOn
 	[ReportSection[]] $Sections
 	[RSFullReport] $RSReport
+	[FoundationReport] $FoundationReport
 }
+
+### Begin Foundation Classes ###
+class FoundationReport {
+	[ReportSection[]] $Sections
+}
+### End Foundation Classes
 
 # RiskScore Classes
 enum RSEndResult {
@@ -128,6 +135,40 @@ function Test-ArrayEqual {
 # 5 {"Primary Domain Controller"}
 function Get-DomainRole {
 	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+}
+
+### begin Foundation functions ###
+function Get-FoundationReport {
+	[CmdletBinding()]
+	[OutputType([FoundationReport])]
+	
+	$Sections = @(
+		[ReportSection] @{
+			Title = "Foundation Data"
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Microsoft Windows Security Base Data'
+					AuditInfos = Test-AuditGroup "Microsoft Windows Security Base Data"
+				}
+				[ReportSection] @{
+					Title = 'PowerShell Security'
+					AuditInfos = Test-AuditGroup "PowerShell Security"
+				}
+				[ReportSection] @{
+					Title = 'Connectivity Secure Settings'
+					AuditInfos = Test-AuditGroup "Connectivity Secure Settings"
+				}
+				[ReportSection] @{
+					Title = 'Application Control Settings'
+					AuditInfos = Test-AuditGroup "Application Control Settings"
+				}
+			)
+		}
+	)
+
+	return ([FoundationReport]@{
+		Sections = $Sections
+	})
 }
 
 
@@ -382,6 +423,7 @@ function Invoke-ATAPReport {
 
 	[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
 	$report.RSReport = Get-RSFullReport
+	$report.FoundationReport = Get-FoundationReport
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }
