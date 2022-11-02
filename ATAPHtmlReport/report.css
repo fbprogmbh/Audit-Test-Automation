@@ -99,6 +99,7 @@ th, td {
 table.audit-info {
 	margin-left: 8%;
 	margin-right: 8%;
+	width: 90%;
 }
 
 table.audit-info th, table.audit-info td {
