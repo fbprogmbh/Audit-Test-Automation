@@ -536,10 +536,6 @@ button{
 	background-color: #efefef;
 }
 
-#summaryTable{
-	float: left;
-
-}
 
 #riskMatrixSummary{
 	font-family: Arial, sans-serif;
@@ -562,7 +558,7 @@ button{
 }
 
 #systemData{
-	float: left;
+	float:right;
     text-align: left;
 }
 
