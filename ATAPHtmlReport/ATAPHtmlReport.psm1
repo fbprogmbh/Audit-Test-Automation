@@ -528,6 +528,9 @@ function Get-ATAPHtmlReport {
 		[FoundationReport]
 		$FoundationReport,
 
+		[Parameter(Mandatory = $false)]
+		[switch] $RiskScore,
+
 		[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
@@ -605,45 +608,45 @@ function Get-ATAPHtmlReport {
 					$os = [System.Environment]::OSVersion.Platform
 
 					###  Risk Checks ###
-					# Quantity
-					$TotalAmountOfRules = $completionStatus.TotalCount;
-					$AmountOfCompliantRules = 0;
-					$AmountOfNonCompliantRules = 0;
-					foreach ($value in $StatusValues) {
-						if($value -eq 'True'){
-							$AmountOfCompliantRules = $completionStatus[$value].Count
-						}
-						if($value -eq 'False'){
-							$AmountOfNonCompliantRules = $completionStatus[$value].Count
-						}
-					}
-
-					if($os -match "Win32NT" -and $Title -match "Win"){
-						# percentage of compliance quantity
-						$QuantityCompliance = [math]::round(($AmountOfCompliantRules / $TotalAmountOfRules) * 100,2);	
-	
-						# Variables, which will be evaluated in report.js
-						htmlElement 'div' @{id="AmountOfNonCompliantRules"} {"$($AmountOfNonCompliantRules)"}
-						htmlElement 'div' @{id="AmountOfCompliantRules"} {"$($AmountOfCompliantRules)"}
-						htmlElement 'div' @{id="TotalAmountOfRules"} {"$($TotalAmountOfRules)"}
-						htmlElement 'div' @{id="QuantityCompliance"} {"$($QuantityCompliance)"}
-	
-						# Severity
-						htmlElement 'div' @{id="TotalAmountOfSeverityRules"} {"$($RSReport.RSSeverityReport.AuditInfos.Length)"}
-						$AmountOfFailedSeverityRules = 0;
-						foreach($rule in $RSReport.RSSeverityReport.AuditInfos){
-							if($rule.Status -eq "False"){
-								$AmountOfFailedSeverityRules ++;
+					if($RiskScore){
+						# Quantity
+						$TotalAmountOfRules = $completionStatus.TotalCount;
+						$AmountOfCompliantRules = 0;
+						$AmountOfNonCompliantRules = 0;
+						foreach ($value in $StatusValues) {
+							if($value -eq 'True'){
+								$AmountOfCompliantRules = $completionStatus[$value].Count
+							}
+							if($value -eq 'False'){
+								$AmountOfNonCompliantRules = $completionStatus[$value].Count
 							}
 						}
-						htmlElement 'div' @{id="AmountOfFailedSeverityRules"} {"$($AmountOfFailedSeverityRules)"}
+						if($os -match "Win32NT" -and $Title -match "Win"){
+							# percentage of compliance quantity
+							$QuantityCompliance = [math]::round(($AmountOfCompliantRules / $TotalAmountOfRules) * 100,2);	
+		
+							# Variables, which will be evaluated in report.js
+							htmlElement 'div' @{id="AmountOfNonCompliantRules"} {"$($AmountOfNonCompliantRules)"}
+							htmlElement 'div' @{id="AmountOfCompliantRules"} {"$($AmountOfCompliantRules)"}
+							htmlElement 'div' @{id="TotalAmountOfRules"} {"$($TotalAmountOfRules)"}
+							htmlElement 'div' @{id="QuantityCompliance"} {"$($QuantityCompliance)"}
+		
+							# Severity
+							htmlElement 'div' @{id="TotalAmountOfSeverityRules"} {"$($RSReport.RSSeverityReport.AuditInfos.Length)"}
+							$AmountOfFailedSeverityRules = 0;
+							foreach($rule in $RSReport.RSSeverityReport.AuditInfos){
+								if($rule.Status -eq "False"){
+									$AmountOfFailedSeverityRules ++;
+								}
+							}
+							htmlElement 'div' @{id="AmountOfFailedSeverityRules"} {"$($AmountOfFailedSeverityRules)"}
+						}
 					}
-
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark Compliance" }
-						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Foundation Data" }
-						if($os -match "Win32NT" -and $Title -match "Win"){
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Security Base Data" }
+						if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
@@ -688,7 +691,7 @@ function Get-ATAPHtmlReport {
 						}
 						
 						htmlElement 'div' @{id='riskMatrixSummaryArea'}{
-							if($os -match "Win32NT" -and $Title -match "Win"){
+							if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 								htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System: "}
 								htmlElement 'h3' @{} {'For further information, please head to the tab "Risk Score".'}
 								htmlElement 'div' @{id ='riskMatrixSummary'}{
@@ -732,46 +735,48 @@ function Get-ATAPHtmlReport {
 								}
 							}
 							else{
-								htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System:"}
-								htmlElement 'h2' @{id = 'invalidOS'} {"N/A"}
-								htmlElement 'h3' @{} {'Risk Score calculation implemented for Microsoft Windows OS for now.'}
-								htmlElement 'div' @{id ='riskMatrixSummary'}{
-									htmlElement 'div' @{id ='severity'} {
-										htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+								if($RiskScore){
+									htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System:"}
+									htmlElement 'h2' @{id = 'invalidOS'} {"N/A"}
+									htmlElement 'h3' @{} {'Risk Score calculation implemented for Microsoft Windows OS for now.'}
+									htmlElement 'div' @{id ='riskMatrixSummary'}{
+										htmlElement 'div' @{id ='severity'} {
+											htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+										}
+										htmlElement 'div' @{id ='quantity'} {
+											htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
+										}
+										htmlElement 'div' @{id ='severityCritical'}{"Critical"}
+										htmlElement 'div' @{id ='severityHigh'}{"High"}
+										htmlElement 'div' @{id ='severityMedium'}{"Medium"}
+										htmlElement 'div' @{id ='severityLow'}{"Low"}
+			
+										htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
+										htmlElement 'div' @{id ='quantityHigh'}{"High"}
+										htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
+										htmlElement 'div' @{id ='quantityLow'}{"Low"}
+			
+										#colored areas
+										htmlElement 'div' @{id ='critical_low'}{}
+										htmlElement 'div' @{id ='high_low'}{}
+										htmlElement 'div' @{id ='medium_low'}{}
+										htmlElement 'div' @{id ='low_low'}{}
+			
+										htmlElement 'div' @{id ='critical_medium'}{}
+										htmlElement 'div' @{id ='high_medium'}{}
+										htmlElement 'div' @{id ='medium_medium'}{}
+										htmlElement 'div' @{id ='low_medium'}{}
+			
+										htmlElement 'div' @{id ='critical_high'}{}
+										htmlElement 'div' @{id ='high_high'}{}
+										htmlElement 'div' @{id ='medium_high'}{}
+										htmlElement 'div' @{id ='low_high'}{}
+			
+										htmlElement 'div' @{id ='critical_critical'}{}
+										htmlElement 'div' @{id ='high_critical'}{}
+										htmlElement 'div' @{id ='medium_critical'}{}
+										htmlElement 'div' @{id ='low_critical'}{}
 									}
-									htmlElement 'div' @{id ='quantity'} {
-										htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
-									}
-									htmlElement 'div' @{id ='severityCritical'}{"Critical"}
-									htmlElement 'div' @{id ='severityHigh'}{"High"}
-									htmlElement 'div' @{id ='severityMedium'}{"Medium"}
-									htmlElement 'div' @{id ='severityLow'}{"Low"}
-		
-									htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
-									htmlElement 'div' @{id ='quantityHigh'}{"High"}
-									htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
-									htmlElement 'div' @{id ='quantityLow'}{"Low"}
-		
-									#colored areas
-									htmlElement 'div' @{id ='critical_low'}{}
-									htmlElement 'div' @{id ='high_low'}{}
-									htmlElement 'div' @{id ='medium_low'}{}
-									htmlElement 'div' @{id ='low_low'}{}
-		
-									htmlElement 'div' @{id ='critical_medium'}{}
-									htmlElement 'div' @{id ='high_medium'}{}
-									htmlElement 'div' @{id ='medium_medium'}{}
-									htmlElement 'div' @{id ='low_medium'}{}
-		
-									htmlElement 'div' @{id ='critical_high'}{}
-									htmlElement 'div' @{id ='high_high'}{}
-									htmlElement 'div' @{id ='medium_high'}{}
-									htmlElement 'div' @{id ='low_high'}{}
-		
-									htmlElement 'div' @{id ='critical_critical'}{}
-									htmlElement 'div' @{id ='high_critical'}{}
-									htmlElement 'div' @{id ='medium_critical'}{}
-									htmlElement 'div' @{id ='low_critical'}{}
 								}
 							}
 						}
@@ -852,7 +857,7 @@ function Get-ATAPHtmlReport {
 					#Tab: Foundation Data
 					$Sections = $FoundationReport.Sections
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
-						htmlElement 'h1' @{} {"Foundation Data"}
+						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
 							htmlElement 'h2' @{style="margin-top: 0px;"} {'System information'}
 							htmlElement 'table' @{id='summaryTable'} {
@@ -907,159 +912,161 @@ function Get-ATAPHtmlReport {
 					}
 					
 					
-					htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
-						htmlElement 'h1'@{} {"Risk Score"}
-						htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
-						htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk Score on tested System: "}
-
-						htmlElement 'div' @{id ='riskMatrixContainer'}{
-							htmlElement 'div' @{id='dotRiskScoreTab'}{}
-							htmlElement 'div' @{id ='severity'} {
-								htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+					if($RiskScore){
+						htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
+							htmlElement 'h1'@{} {"Risk Score"}
+							htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
+							htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk Score on tested System: "}
+	
+							htmlElement 'div' @{id ='riskMatrixContainer'}{
+								htmlElement 'div' @{id='dotRiskScoreTab'}{}
+								htmlElement 'div' @{id ='severity'} {
+									htmlElement 'p' @{id = 'severityArea'}{'Severity'}
+								}
+								htmlElement 'div' @{id ='quantity'} {
+									htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
+								}
+								htmlElement 'div' @{id ='severityCritical'}{"Critical"}
+								htmlElement 'div' @{id ='severityHigh'}{"High"}
+								htmlElement 'div' @{id ='severityMedium'}{"Medium"}
+								htmlElement 'div' @{id ='severityLow'}{"Low"}
+	
+								htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
+								htmlElement 'div' @{id ='quantityHigh'}{"High"}
+								htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
+								htmlElement 'div' @{id ='quantityLow'}{"Low"}
+	
+								#colored areas
+								htmlElement 'div' @{id ='critical_low'}{}
+								htmlElement 'div' @{id ='high_low'}{}
+								htmlElement 'div' @{id ='medium_low'}{}
+								htmlElement 'div' @{id ='low_low'}{}
+	
+								htmlElement 'div' @{id ='critical_medium'}{}
+								htmlElement 'div' @{id ='high_medium'}{}
+								htmlElement 'div' @{id ='medium_medium'}{}
+								htmlElement 'div' @{id ='low_medium'}{}
+	
+								htmlElement 'div' @{id ='critical_high'}{}
+								htmlElement 'div' @{id ='high_high'}{}
+								htmlElement 'div' @{id ='medium_high'}{}
+								htmlElement 'div' @{id ='low_high'}{}
+	
+								htmlElement 'div' @{id ='critical_critical'}{}
+								htmlElement 'div' @{id ='high_critical'}{}
+								htmlElement 'div' @{id ='medium_critical'}{}
+								htmlElement 'div' @{id ='low_critical'}{}
 							}
-							htmlElement 'div' @{id ='quantity'} {
-								htmlElement 'p' @{id = 'quantityArea'}{'Quantity'}
-							}
-							htmlElement 'div' @{id ='severityCritical'}{"Critical"}
-							htmlElement 'div' @{id ='severityHigh'}{"High"}
-							htmlElement 'div' @{id ='severityMedium'}{"Medium"}
-							htmlElement 'div' @{id ='severityLow'}{"Low"}
-
-							htmlElement 'div' @{id ='quantityCritical'}{"Critical"}
-							htmlElement 'div' @{id ='quantityHigh'}{"High"}
-							htmlElement 'div' @{id ='quantityMedium'}{"Medium"}
-							htmlElement 'div' @{id ='quantityLow'}{"Low"}
-
-							#colored areas
-							htmlElement 'div' @{id ='critical_low'}{}
-							htmlElement 'div' @{id ='high_low'}{}
-							htmlElement 'div' @{id ='medium_low'}{}
-							htmlElement 'div' @{id ='low_low'}{}
-
-							htmlElement 'div' @{id ='critical_medium'}{}
-							htmlElement 'div' @{id ='high_medium'}{}
-							htmlElement 'div' @{id ='medium_medium'}{}
-							htmlElement 'div' @{id ='low_medium'}{}
-
-							htmlElement 'div' @{id ='critical_high'}{}
-							htmlElement 'div' @{id ='high_high'}{}
-							htmlElement 'div' @{id ='medium_high'}{}
-							htmlElement 'div' @{id ='low_high'}{}
-
-							htmlElement 'div' @{id ='critical_critical'}{}
-							htmlElement 'div' @{id ='high_critical'}{}
-							htmlElement 'div' @{id ='medium_critical'}{}
-							htmlElement 'div' @{id ='low_critical'}{}
-						}
-
-						htmlElement 'div' @{id='calculationTables'} {
-							htmlElement 'h3' @{class = 'calculationTablesText'} {"Risk Score Calculation"}
-							htmlElement 'p' @{class = 'calculationTablesText'} {"The calculation of the Risk Score is based on the set of compliant rules at the quantity level and also at the severity level."}
-							htmlElement 'table' @{id='quantityTable'}{
-								htmlElement 'tr' @{}{
-									htmlElement 'th' @{}{'Compliance to Benchmarks (Quantity)'}
-									htmlElement 'th' @{}{'Risk Assessment'}
+	
+							htmlElement 'div' @{id='calculationTables'} {
+								htmlElement 'h3' @{class = 'calculationTablesText'} {"Risk Score Calculation"}
+								htmlElement 'p' @{class = 'calculationTablesText'} {"The calculation of the Risk Score is based on the set of compliant rules at the quantity level and also at the severity level."}
+								htmlElement 'table' @{id='quantityTable'}{
+									htmlElement 'tr' @{}{
+										htmlElement 'th' @{}{'Compliance to Benchmarks (Quantity)'}
+										htmlElement 'th' @{}{'Risk Assessment'}
+									}
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{}{'More than 80%'}
+										htmlElement 'td' @{}{'Low'}
+									}
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{}{'Between 65% and 80%'}
+										htmlElement 'td' @{}{'Medium'}
+									}
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{}{'Between 50% and 65%'}
+										htmlElement 'td' @{}{'High'}
+									}
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{}{'Less than 50%'}
+										htmlElement 'td' @{}{'Critical'}
+									}
 								}
-								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'More than 80%'}
-									htmlElement 'td' @{}{'Low'}
-								}
-								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'Between 65% and 80%'}
-									htmlElement 'td' @{}{'Medium'}
-								}
-								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'Between 50% and 65%'}
-									htmlElement 'td' @{}{'High'}
-								}
-								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'Less than 50%'}
-									htmlElement 'td' @{}{'Critical'}
+		
+								htmlElement 'table' @{id='severityTable'}{
+									htmlElement 'tr' @{}{
+										htmlElement 'th' @{}{'Compliance to Benchmarks (Severity)'}
+										htmlElement 'th' @{}{'Risk Assessment'}
+									}
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{}{'All critical settings compliant'}
+										htmlElement 'td' @{}{'Low'}
+									}
+									# htmlElement 'tr' @{}{
+									# 	htmlElement 'td' @{}{'70% < X < 85%'}
+									# 	htmlElement 'td' @{}{'Medium'}
+									# }
+									# htmlElement 'tr' @{}{
+									# 	htmlElement 'td' @{}{'55% < X < 70%'}
+									# 	htmlElement 'td' @{}{'High'}
+									# }
+									htmlElement 'tr' @{}{
+										htmlElement 'td' @{}{'1 or more incompliant setting(s)'}
+										htmlElement 'td' @{}{'Critical'}
+									}
 								}
 							}
 	
-							htmlElement 'table' @{id='severityTable'}{
-								htmlElement 'tr' @{}{
-									htmlElement 'th' @{}{'Compliance to Benchmarks (Severity)'}
-									htmlElement 'th' @{}{'Risk Assessment'}
-								}
-								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'All critical settings compliant'}
-									htmlElement 'td' @{}{'Low'}
-								}
-								# htmlElement 'tr' @{}{
-								# 	htmlElement 'td' @{}{'70% < X < 85%'}
-								# 	htmlElement 'td' @{}{'Medium'}
-								# }
-								# htmlElement 'tr' @{}{
-								# 	htmlElement 'td' @{}{'55% < X < 70%'}
-								# 	htmlElement 'td' @{}{'High'}
-								# }
-								htmlElement 'tr' @{}{
-									htmlElement 'td' @{}{'1 or more incompliant setting(s)'}
-									htmlElement 'td' @{}{'Critical'}
-								}
-							}
-						}
-
-
-						htmlElement 'div' @{id ="severityCompliance"} {
-							htmlElement 'p' @{id="complianceStatus"}{'Table Of Severity Rules'}
-							htmlElement 'span' @{class="sectionAction collapseButton"; id="severityComplianceCollapse"} {"-"}
-							htmlElement 'table' @{id = 'severityDetails'}{
-								htmlElement 'tr' @{}{
-									htmlElement 'th' @{}{'Id'}
-									htmlElement 'th' @{}{'Task'}
-									htmlElement 'th' @{}{'Status'}
-									htmlElement 'th' @{}{'Severity'}
-								}
-								foreach($info in $RSReport.RSSeverityReport.AuditInfos){
+	
+							htmlElement 'div' @{id ="severityCompliance"} {
+								htmlElement 'p' @{id="complianceStatus"}{'Table Of Severity Rules'}
+								htmlElement 'span' @{class="sectionAction collapseButton"; id="severityComplianceCollapse"} {"-"}
+								htmlElement 'table' @{id = 'severityDetails'}{
 									htmlElement 'tr' @{}{
-										htmlElement 'td' @{} {"$($info.Id)"}
-										htmlElement 'td' @{} {"$($info.Task)"}
-										htmlElement 'td' @{} {
-											if($info.Status -eq 'False'){
-												htmlElement 'span' @{class="severityResultFalse"}{
-													"$($info.Status)"
+										htmlElement 'th' @{}{'Id'}
+										htmlElement 'th' @{}{'Task'}
+										htmlElement 'th' @{}{'Status'}
+										htmlElement 'th' @{}{'Severity'}
+									}
+									foreach($info in $RSReport.RSSeverityReport.AuditInfos){
+										htmlElement 'tr' @{}{
+											htmlElement 'td' @{} {"$($info.Id)"}
+											htmlElement 'td' @{} {"$($info.Task)"}
+											htmlElement 'td' @{} {
+												if($info.Status -eq 'False'){
+													htmlElement 'span' @{class="severityResultFalse"}{
+														"$($info.Status)"
+													}
+												}
+												elseif($info.Status -eq 'True'){
+													htmlElement 'span' @{class="severityResultTrue"}{
+														"$($info.Status)"
+													}
+												}
+												elseif($info.Status -eq 'None'){
+													htmlElement 'span' @{class="severityResultNone"}{
+														"$($info.Status)"
+													}
+												}
+												elseif($info.Status -eq 'Warning'){
+													htmlElement 'span' @{class="severityResultWarning"}{
+														"$($info.Status)"
+													}
+												}
+												elseif($info.Status -eq 'Error'){
+													htmlElement 'span' @{class="severityResultError"}{
+														"$($info.Status)"
+													}
 												}
 											}
-											elseif($info.Status -eq 'True'){
-												htmlElement 'span' @{class="severityResultTrue"}{
-													"$($info.Status)"
-												}
+											htmlElement 'td' @{} {
+												htmlElement 'p' @{style="margin: 5px auto;"}{"Critical"}
 											}
-											elseif($info.Status -eq 'None'){
-												htmlElement 'span' @{class="severityResultNone"}{
-													"$($info.Status)"
-												}
-											}
-											elseif($info.Status -eq 'Warning'){
-												htmlElement 'span' @{class="severityResultWarning"}{
-													"$($info.Status)"
-												}
-											}
-											elseif($info.Status -eq 'Error'){
-												htmlElement 'span' @{class="severityResultError"}{
-													"$($info.Status)"
-												}
-											}
-										}
-										htmlElement 'td' @{} {
-											htmlElement 'p' @{style="margin: 5px auto;"}{"Critical"}
 										}
 									}
 								}
 							}
+	
+							
+	
+	
+							# htmlElement 'h2' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success }
+							# htmlElement 'h2' @{} {'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed }
+							# htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
+	
+							# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
 						}
-
-						
-
-
-						# htmlElement 'h2' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success }
-						# htmlElement 'h2' @{} {'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed }
-						# htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
-
-						# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
 					}
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'references'}{

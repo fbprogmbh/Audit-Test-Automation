@@ -144,23 +144,27 @@ function Get-FoundationReport {
 	
 	$Sections = @(
 		[ReportSection] @{
-			Title = "Foundation Data"
+			Title = "Security Base Data"
 			SubSections = @(
 				[ReportSection] @{
-					Title = 'Microsoft Windows Security Base Data'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Security Base Data"
+					Title = 'Platform Security'
+					AuditInfos = Test-AuditGroup "Platform Security"
+				}
+				[ReportSection] @{
+					Title = 'Windows Base Security'
+					AuditInfos = Test-AuditGroup "Windows Base Security"
 				}
 				[ReportSection] @{
 					Title = 'PowerShell Security'
 					AuditInfos = Test-AuditGroup "PowerShell Security"
 				}
 				[ReportSection] @{
-					Title = 'Connectivity Secure Settings'
-					AuditInfos = Test-AuditGroup "Connectivity Secure Settings"
+					Title = 'Connectivity Security'
+					AuditInfos = Test-AuditGroup "Connectivity Security"
 				}
 				[ReportSection] @{
-					Title = 'Application Control Settings'
-					AuditInfos = Test-AuditGroup "Application Control Settings"
+					Title = 'Application Control'
+					AuditInfos = Test-AuditGroup "Application Control"
 				}
 			)
 		}
@@ -459,6 +463,10 @@ function Save-ATAPHtmlReport {
 		[string]
 		$Path = ($script:atapReportsPath | Join-Path -ChildPath "$($ReportName)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"),
 
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$RiskScore,
+
 		[switch]
 		$DarkMode,
 
@@ -471,7 +479,7 @@ function Save-ATAPHtmlReport {
 	if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
 		New-Item -ItemType Directory -Path $parent -Force | Out-Null
 	}
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -DarkMode:$DarkMode
+	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -DarkMode:$DarkMode
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
