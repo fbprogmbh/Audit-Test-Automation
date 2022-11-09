@@ -1171,12 +1171,15 @@ function Get-ATAPHtmlReport {
 			</style>
 		</head>
 		"
-
+	
+		if(Test-Path -Path $Path -PathType Container){
+			$Title = $Title -replace " Audit Report",""
+			$Path += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
+		}
 
 		if (Test-Path -Path $path) {
 			Write-Warning "$path already exists. $path will be overridden!"
 		}
-
 		#Create Report file
 		New-Item $path -ItemType File -Force
 		$html | Out-File -FilePath $path -Encoding utf8
