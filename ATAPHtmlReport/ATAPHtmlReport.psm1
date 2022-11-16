@@ -365,7 +365,7 @@ function Get-ATAPHostInformation {
 		}
 		$freeMemory = ($infos.FreePhysicalMemory /1024) / 1024;
 		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
-
+		$uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime
 		$v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
 		return @{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
@@ -376,6 +376,7 @@ function Get-ATAPHostInformation {
 			"Installation Language"     = ((Get-UICulture).DisplayName)
 			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
 			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
+			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
 		} 
 	}
 }
@@ -858,6 +859,7 @@ function Get-ATAPHtmlReport {
 
 					#Tab: Foundation Data
 					$Sections = $FoundationReport.Sections
+
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
@@ -867,38 +869,43 @@ function Get-ATAPHtmlReport {
 									$hostInformation = Get-ATAPHostInformation;
 									#Hostname
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[7] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[7] }
 									}
 									#Domain Role
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
 									}
 									#Operating System
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[5] }
 									}
-									#InstallationLanguage
+									#Installation Language
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
+									}
+									#System uptime
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[0] }
 									}
 									#Free disk space
 									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
-									}
-									#Free physical memody
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
 									}
 								}
 							}
