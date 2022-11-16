@@ -348,8 +348,8 @@ function Get-ATAPHostInformation {
 			"Operating System"          = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
 			"Installation Language"     = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
 			"Kernel Version"            = uname -r
-			"Free physical memory (GB)" = "{0:N1}" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
-			"Free disk space (GB)"      = "{0:N1}" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
+			"Free physical memory" = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
+			"Free disk space"      = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
 		}
 	}
  else {
@@ -365,15 +365,17 @@ function Get-ATAPHostInformation {
 		}
 		$freeMemory = ($infos.FreePhysicalMemory /1024) / 1024;
 		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
-		
+
+		$v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
 		return @{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
 			"Domain role"               = $role
 			"Operating System"          = $infos.Caption
-			"Build Number"              = $infos.BuildNumber
+			# format output
+			"Build Number"              = 'Version {0} (Build {1}.{2})' -f $v.DisplayVersion, $v.CurrentBuildNumber, $v.UBR
 			"Installation Language"     = ((Get-UICulture).DisplayName)
-			"Free disk space (GB)"      = "{0:N1}" -f ($disk.FreeSpace / 1GB)
-			"Free physical memory (GB)" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
+			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
+			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
 		} 
 	}
 }
@@ -865,38 +867,38 @@ function Get-ATAPHtmlReport {
 									$hostInformation = Get-ATAPHostInformation;
 									#Hostname
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
 									}
 									#Domain Role
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
 									}
 									#Operating System
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[5] }
 									}
-									#Installation Language
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
-									}
-									#Free disk space (GB)
+									#InstallationLanguage
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[0] }
 									}
-									#Free physical memory (GB)
+									#Free disk space
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
+									}
+									#Free physical memody
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
 									}
 								}
 							}
