@@ -136,6 +136,11 @@ The `ATAPAuditor` module also provides a simple menu based runner for reports. I
 Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 ```
 
+* You can extend your AuditReports with a RiskScore by adding the RiskScore-Switch parameter (currently only available for Windows Reports):
+```powershell
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -Force -RiskScore
+```
+
 * The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
 * Some reports take more than a few seconds because hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs 😉
 * If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
