@@ -102,6 +102,13 @@ function hasTPM {
 				return $status
 			}
 			catch{
+				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+				if($roleValue -eq 4 -or $roleValue -eq 5){
+					return @{
+						Message = "Not applicable. This audit only applies to Domain controllers."
+						Status = "None"
+					}
+				}
 				#List all groups 
 				$group = Get-LocalGroup -sid "S-1-5-32-544"
 				$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
