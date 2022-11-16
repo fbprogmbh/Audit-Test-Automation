@@ -194,8 +194,23 @@ function hasTPM {
 					Status = "False"
 				}
 			}
-			$volumes = (Get-Bitlockervolume).Count
-			$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
+			try{
+				$volumes = (Get-Bitlockervolume).Count
+				$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
+			}
+			catch [System.Runtime.InteropServices.COMException]{
+				try{
+					$volumes = (Get-Bitlockervolume).Count
+					$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
+					continue
+				}
+				catch{
+					return @{
+						Message = "Bitlocker status is unknown."
+						Status = "Error"
+					}
+				}
+			}
 		} else {
 			$volumes = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Measure-Object).Count
 			$volumes_fullenc = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Where-Object {$_.ProtectionStatus -eq 1} | Measure-Object).Count
