@@ -269,9 +269,12 @@ function Test-AuditGroup {
 		Write-Verbose "Testing $($test.Id)"
 		$message = "Test not implemented yet."
 		$status = [AuditInfoStatus]::None
+		#if audit test contains datatype "Constraints", proceed
 		if ($test.Constraints) {
 			$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
+			#get domain role of system
 			$currentRole = Get-DomainRole
+			#get domain roles, which are listed in AuditTest
 			$domainRoles = $DomainRoleConstraint.Values
 			if ($currentRole -notin $domainRoles) {
 				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
@@ -475,6 +478,12 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
+	$pathCheck = Test-Path -Path $Path -PathType Container
+	if($pathCheck){
+		Write-Warning "Could not find Path. Please make sure to give a valid path and try it again."
+		return;
+	}
+	
 	$parent = Split-Path $Path
 	if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
 		New-Item -ItemType Directory -Path $parent -Force | Out-Null

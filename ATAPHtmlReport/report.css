@@ -45,7 +45,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 li a {
+
 	/*display: block;*/
+	font-family: Arial, sans-serif;
 }
 
 li a:hover {
@@ -701,6 +703,10 @@ button{
 #references p, #summary p, #settingsOverview p{
 	font-family: Arial, sans-serif;
 } 
+
+#foundationData p{
+	font-family: Arial, sans-serif;
+}
 
 #foundationData section{
 	margin-left: 5%;
