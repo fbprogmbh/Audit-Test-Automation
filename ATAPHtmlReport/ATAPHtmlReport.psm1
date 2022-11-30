@@ -350,6 +350,7 @@ function Get-ATAPHostInformation {
 			"Kernel Version"            = uname -r
 			"Free physical memory" = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space"      = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
+			"System Uptime"				= uptime -p
 		}
 	}
  else {
@@ -648,9 +649,7 @@ function Get-ATAPHtmlReport {
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark Compliance" }
-						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Security Base Data" }
-						}
+						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Security Base Data" }
 						if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
@@ -862,65 +861,65 @@ function Get-ATAPHtmlReport {
 					#Tab: Foundation Data (Only works for Windows OS!)
 					if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
 						$Sections = $FoundationReport.Sections
-						htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
-							htmlElement 'h1' @{} {"Security Base Data"}
-							htmlElement 'div' @{id="systemData"} {
-								htmlElement 'h2' @{style="margin-top: 0px;"} {'System information'}
-								htmlElement 'table' @{id='summaryTable'} {
-									htmlElement 'tbody' @{} {
-										$hostInformation = Get-ATAPHostInformation;
-										#Hostname
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[7] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[7] }
-										}
-										#Domain Role
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[2] }
-										}
-										#Operating System
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[1] }
-										}
-										#Build Number
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[5] }
-										}
-										#Installation Language
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[4] }
-										}
-										#System uptime
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[0] }
-										}
-										#Free disk space
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[3] }
-										}
-										#Free physical memory
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
-											htmlElement 'td' @{} { $($hostInformation.Values)[6] }
-										}
+					}
+					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
+						htmlElement 'h1' @{} {"Security Base Data"}
+						htmlElement 'div' @{id="systemData"} {
+							htmlElement 'h2' @{style="margin-top: 0px;"} {'System information'}
+							htmlElement 'table' @{id='summaryTable'} {
+								htmlElement 'tbody' @{} {
+									$hostInformation = Get-ATAPHostInformation;
+									#Hostname
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[7] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[7] }
+									}
+									#Domain Role
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
+									}
+									#Operating System
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
+									}
+									#Build Number
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[5] }
+									}
+									#Installation Language
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
+									}
+									#System uptime
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[0] }
+									}
+									#Free disk space
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
 									}
 								}
 							}
-							htmlElement 'h2' @{} {"Table Of Contents"}
-							htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
-							htmlElement 'ul' @{} {
-								foreach ($section in $Sections) { $section | Get-HtmlToc }
-							}
-							htmlElement 'h2' @{} {"Security Base Data Details"}
-							# Report Sections
-							foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 						}
+						htmlElement 'h2' @{} {"Table Of Contents"}
+						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+						htmlElement 'ul' @{} {
+							foreach ($section in $Sections) { $section | Get-HtmlToc }
+						}
+						htmlElement 'h2' @{} {"Security Base Data Details"}
+						# Report Sections
+						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 					
 					
