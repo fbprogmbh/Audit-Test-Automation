@@ -1118,7 +1118,8 @@ function ConvertTo-NTAccountUser {
         }
     }
 }
-if(Get-Module -Name ADFS){
+$adfsModule = Get-Module -Name ADFS
+if($null -eq $adfsModule){
     [AuditTest] @{
         Id = "2.2.30 A"
         Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE'"
