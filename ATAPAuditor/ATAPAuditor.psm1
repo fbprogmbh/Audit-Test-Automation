@@ -260,96 +260,107 @@ function Test-AuditGroup {
 		$GroupName
 	)
 
-	$tests = . "$RootPath\AuditGroups\$($GroupName).ps1"
-
-	$i = 1
-	foreach ($test in $tests) {
-		[int]$p = $i++ / $tests.Count * 100
-		Write-Progress -Activity "Testing Report for '$GroupName'" -Status "Progress:" -PercentComplete $p
-		Write-Verbose "Testing $($test.Id)"
-		$message = "Test not implemented yet."
-		$status = [AuditInfoStatus]::None
-		#if audit test contains datatype "Constraints", proceed
-		if ($test.Constraints) {
-			$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
-			#get domain role of system
-			$currentRole = Get-DomainRole
-			#get domain roles, which are listed in AuditTest
-			$domainRoles = $DomainRoleConstraint.Values
-			if ($currentRole -notin $domainRoles) {
-				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-				if($roleValue -eq 4 -or $roleValue -eq 5){
-					$message = 'Not applicable. This audit only applies to Domain controllers.'
-					$status = [AuditInfoStatus]::None
-				}
-				if($roleValue -ne 4 -or $roleValue -ne 5){
-					$message = 'Not applicable. This audit does not apply to Domain controllers.'
-					$status = [AuditInfoStatus]::None
-				}
-				if($roleValue -eq 0 -or $roleValue -eq 2){
-					$message = 'Not applicable. This audit does not apply to Standalone systems.'
-					$status = [AuditInfoStatus]::None
-				}
-				Write-Output ([AuditInfo]@{
-					Id = $test.Id
-					Task = $test.Task
-					Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
-					Status = [AuditInfoStatus]::None
-				})
-				continue
-			}
-		}
-
-		$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
-		if($test.Task -match "(DC only)"){
-			if($role.domainRole -ne 4 -and $role.domainRole -ne 5){
-				$message = 'Not applicable. This audit does not apply to Member Server systems.'
-				$status = [AuditInfoStatus]::None
-				Write-Output ([AuditInfo]@{
-					Id = $test.Id
-					Task = $test.Task
-					Message = $message
-					Status = $status
-				})
-				continue
-			}
-		}
-		if($test.Task -match "(MS only)"){
-			if($role.domainRole -ne 2 -and $role.domainRole -ne 3){
-				$message = 'Not applicable. This audit does not apply to Domain Controller systems.'
-				$status = [AuditInfoStatus]::None
-				Write-Output ([AuditInfo]@{
-					Id = $test.Id
-					Task = $test.Task
-					Message = $message
-					Status = $status
-				})
-				continue
-			}
-		}
-
-
-		try {
-			$innerResult = & $test.Test
-
-			if ($null -ne $innerResult) {
-				$message = $innerResult.Message
-				$status = [AuditInfoStatus]$innerResult.Status
-			}
-		}
-		catch {
-			Write-Error $_
-			$message = "An error occured!"
-			$status = [AuditInfoStatus]::Error
-		}
-
-		Write-Output ([AuditInfo]@{
-			Id = $test.Id
-			Task = $test.Task
-			Message = $message
-			Status = $status
-		})
+	#Windows OS
+	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+		$tests = . "$RootPath\AuditGroups\$($GroupName).ps1"
 	}
+	#Linux OS
+	else{
+		$tests = . "$RootPath/AuditGroups/$($GroupName).ps1"
+	}
+
+
+		$i = 1
+		foreach ($test in $tests) {
+			[int]$p = $i++ / $tests.Count * 100
+			Write-Progress -Activity "Testing Report for '$GroupName'" -Status "Progress:" -PercentComplete $p
+			Write-Verbose "Testing $($test.Id)"
+			$message = "Test not implemented yet."
+			$status = [AuditInfoStatus]::None
+			#if audit test contains datatype "Constraints", proceed
+			if ($test.Constraints) {
+				$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
+				#get domain role of system
+				$currentRole = Get-DomainRole
+				#get domain roles, which are listed in AuditTest
+				$domainRoles = $DomainRoleConstraint.Values
+				if ($currentRole -notin $domainRoles) {
+					$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+					if($roleValue -eq 4 -or $roleValue -eq 5){
+						$message = 'Not applicable. This audit only applies to Domain controllers.'
+						$status = [AuditInfoStatus]::None
+					}
+					if($roleValue -ne 4 -or $roleValue -ne 5){
+						$message = 'Not applicable. This audit does not apply to Domain controllers.'
+						$status = [AuditInfoStatus]::None
+					}
+					if($roleValue -eq 0 -or $roleValue -eq 2){
+						$message = 'Not applicable. This audit does not apply to Standalone systems.'
+						$status = [AuditInfoStatus]::None
+					}
+					Write-Output ([AuditInfo]@{
+						Id = $test.Id
+						Task = $test.Task
+						Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
+						Status = [AuditInfoStatus]::None
+					})
+					continue
+				}
+			}
+
+			#Windows OS
+			if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+				$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
+				if($test.Task -match "(DC only)"){
+					if($role.domainRole -ne 4 -and $role.domainRole -ne 5){
+						$message = 'Not applicable. This audit does not apply to Member Server systems.'
+						$status = [AuditInfoStatus]::None
+						Write-Output ([AuditInfo]@{
+							Id = $test.Id
+							Task = $test.Task
+							Message = $message
+							Status = $status
+						})
+						continue
+					}
+				}
+			}
+			if($test.Task -match "(MS only)"){
+				if($role.domainRole -ne 2 -and $role.domainRole -ne 3){
+					$message = 'Not applicable. This audit does not apply to Domain Controller systems.'
+					$status = [AuditInfoStatus]::None
+					Write-Output ([AuditInfo]@{
+						Id = $test.Id
+						Task = $test.Task
+						Message = $message
+						Status = $status
+					})
+					continue
+				}
+			}
+
+
+			try {
+				$innerResult = & $test.Test
+
+				if ($null -ne $innerResult) {
+					$message = $innerResult.Message
+					$status = [AuditInfoStatus]$innerResult.Status
+				}
+			}
+			catch {
+				Write-Error $_
+				$message = "An error occured!"
+				$status = [AuditInfoStatus]::Error
+			}
+
+			Write-Output ([AuditInfo]@{
+				Id = $test.Id
+				Task = $test.Task
+				Message = $message
+				Status = $status
+			})
+		}
 }
 
 <#
@@ -370,12 +381,23 @@ function Get-AuditResource {
 		[string]
 		$Name
 	)
-
-	if ($null -eq $script:loadedResources) {
-		return & "$RootPath\Resources\$($Name).ps1"
+	#Windows OS
+	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+		if ($null -eq $script:loadedResources) {
+			return & "$RootPath\Resources\$($Name).ps1"
+		}
+		if (-not $script:loadedResources.ContainsKey($Name)) {
+			$script:loadedResources[$Name] = (& "$RootPath\Resources\$($Name).ps1")
+		}
 	}
-	if (-not $script:loadedResources.ContainsKey($Name)) {
-		$script:loadedResources[$Name] = (& "$RootPath\Resources\$($Name).ps1")
+	#Linuxs OS
+	else{
+		if ($null -eq $script:loadedResources) {
+			return & "$RootPath/Resources/$($Name).ps1"
+		}
+		if (-not $script:loadedResources.ContainsKey($Name)) {
+			$script:loadedResources[$Name] = (& "$RootPath/Resources/$($Name).ps1")
+		}
 	}
 	return $script:loadedResources[$Name]
 }
@@ -398,8 +420,12 @@ function Get-ATAPReport {
 		[string]
 		$ReportName = "*"
 	)
-
-	return Get-ChildItem "$RootPath\Reports\$ReportName.ps1" | Select-Object -Property BaseName
+	#Windows OS
+	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+		return Get-ChildItem "$RootPath\Reports\$ReportName.ps1" | Select-Object -Property BaseName
+	}
+	#Linux OS
+	return Get-ChildItem "$RootPath/Reports/$ReportName.ps1" | Select-Object -Property BaseName
 }
 
 <#
@@ -426,11 +452,19 @@ function Invoke-ATAPReport {
 
 	$script:loadedResources = @{}
 	# Load the module manifest
-	$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 
-	[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
-	$report.RSReport = Get-RSFullReport
-	$report.FoundationReport = Get-FoundationReport
+	#Windows OS
+	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+		$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
+		[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
+		$report.RSReport = Get-RSFullReport
+		$report.FoundationReport = Get-FoundationReport
+	}
+	#Linux OS
+	else{
+		$moduleInfo = Import-PowerShellDataFile -Path "$RootPath/ATAPAuditor.psd1"
+		[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
+	}
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }
