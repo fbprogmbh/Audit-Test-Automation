@@ -344,7 +344,6 @@ function Get-ATAPHostInformation {
 	if ($unixOS) {
 		return @{
 			"Hostname"                  = hostname
-			"Domain role"               = $role
 			"Operating System"          = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
 			"Installation Language"     = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
 			"Kernel Version"            = uname -r
@@ -1183,16 +1182,14 @@ function Get-ATAPHtmlReport {
 		</head>
 		"
 	
+		#If Path exists to a folder exists
 		if(Test-Path -Path $Path -PathType Container){
 			$Title = $Title -replace " Audit Report",""
-			$Path += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
+			$auditReport += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
 		}
 
-		if (Test-Path -Path $path) {
-			Write-Warning "$path already exists. $path will be overridden!"
-		}
 		#Create Report file
-		New-Item $path -ItemType File -Force
-		$html | Out-File -FilePath $path -Encoding utf8
+		New-Item -Path $Path -Name $auditReport -ItemType File -Value $html  -Force 
+		#$html | Out-File -FilePath $auditReport -Encoding utf8
 	}
 }
