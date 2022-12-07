@@ -40,36 +40,6 @@
 			)
 		}
 		[ReportSection] @{
-			Title = "DISA Recommendations"
-			Description = "This section contains the DISA STIG results."
-			SubSections = @(
-				[ReportSection] @{
-					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#UserRights"
-				}
-				[ReportSection] @{
-					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = "Windows Features"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#WindowsOptionalFeatures"
-				}
-				[ReportSection] @{
-					Title = "File System Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#FileSystemPermissions"
-				}
-				[ReportSection] @{
-					Title = "Registry Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#RegistryPermissions"
-				}
-			)
-		}
-		[ReportSection] @{
 			Title = 'Microsoft Benchmarks'
 			Description = 'This section contains the Microsoft Benchmark results.'
 			SubSections = @(
@@ -168,6 +138,36 @@
 				[ReportSection] @{
 					Title = 'Security Options'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#SecurityOptions"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = "DISA Recommendations"
+			Description = "This section contains the DISA STIG results."
+			SubSections = @(
+				[ReportSection] @{
+					Title = "Registry Settings/Group Policies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = "User Rights Assignment"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#UserRights"
+				}
+				[ReportSection] @{
+					Title = "Account Policies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = "Windows Features"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#WindowsOptionalFeatures"
+				}
+				[ReportSection] @{
+					Title = "File System Permissions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#FileSystemPermissions"
+				}
+				[ReportSection] @{
+					Title = "Registry Permissions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#RegistryPermissions"
 				}
 			)
 		}
