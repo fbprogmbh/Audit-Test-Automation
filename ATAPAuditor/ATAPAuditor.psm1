@@ -511,12 +511,17 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$Force
 	)
-	
-	$pathCheck = Test-Path -Path $Path -PathType Container
-	if($pathCheck -eq $False){
-		Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
-		$Path = $script:atapReportsPath
-		#return;
+
+
+	$pathOnly = Split-Path -Path $Path
+	#if input path is not default one
+	if($pathOnly -ne $script:atapReportsPath){
+		$pathCheck = Test-Path -Path $Path -PathType Container
+		#if path doesn't exist
+		if($pathCheck -eq $False){
+			Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
+			$Path = $script:atapReportsPath
+		}
 	}
 	
 	$parent = Split-Path $Path
