@@ -51,7 +51,7 @@ Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS 1.3 | -
-Microsoft Windows 10 All | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
+Microsoft Windows 10 Complete | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
 Microsoft Windows 11 | - | 1.0.0 | 20H2 | SiM-08202, SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 R2 | 2.19 | 2.5.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 1.2.0 | FINAL | - | -
