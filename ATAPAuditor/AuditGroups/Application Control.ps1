@@ -20,7 +20,7 @@ function hasTPM {
 }
 function isWindows10Enterprise {
     $os = Get-ComputerInfo OsName
-    if($os -match "Windows 10 Enterprise"){
+    if($os -match "Windows 10 Enterprise" -or $os -match "Windows 11 Enterprise"){
         return $true
     }
     return $false
