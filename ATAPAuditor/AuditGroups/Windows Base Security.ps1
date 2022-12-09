@@ -187,20 +187,26 @@ function hasTPM {
 	Id = "SBD-012"
 	Task = "Ensure that Bitlocker is activated on all volumes."
 	Test = {
-		if (isWindows8OrNewer) {
-			if ((Get-WindowsOptionalFeature -Online -FeatureName Bitlocker).State -eq 'Disabled') {
-				return @{
-					Message = "Bitlocker feature is not installed."
-					Status = "False"
+		try {
+			if (isWindows8OrNewer) {
+				if ((Get-WindowsOptionalFeature -Online -FeatureName Bitlocker).State -eq 'Disabled') {
+					return @{
+						Message = "Bitlocker feature is not installed."
+						Status = "False"
+					}
 				}
+				$volumes = (Get-Bitlockervolume -ErrorAction Stop).Count
+				$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
+			} else {
+				$volumes = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Measure-Object).Count
+				$volumes_fullenc = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Where-Object {$_.ProtectionStatus -eq 1} | Measure-Object).Count
 			}
-			$volumes = (Get-Bitlockervolume).Count
-			$volumes_fullenc = (Get-Bitlockervolume | Where-Object {$_.VolumeStatus -eq "FullyEncrypted"}).Count
-		} else {
-			$volumes = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Measure-Object).Count
-			$volumes_fullenc = (Get-CimInstance -Class Win32_EncryptableVolume -namespace Root\CIMV2\Security\MicrosoftVolumeEncryption | Where-Object {$_.ProtectionStatus -eq 1} | Measure-Object).Count
+		} catch [System.Runtime.InteropServices.COMException] {
+			return @{
+				Message = "Bitlocker status is unknown."
+				Status = "Error"
+			}
 		}
-
 		if ($volumes -lt 1) {
 			return @{
 				Message = "Bitlocker status is unknown."
