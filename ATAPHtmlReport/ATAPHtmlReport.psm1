@@ -620,6 +620,9 @@ function Get-ATAPHtmlReport {
 							if($value -eq 'True'){
 								$AmountOfCompliantRules = $completionStatus[$value].Count
 							}
+							if($value -eq 'None'){
+								$AmountOfCompliantRules = $completionStatus[$value].Count
+							}
 							if($value -eq 'False'){
 								$AmountOfNonCompliantRules = $completionStatus[$value].Count
 							}
