@@ -616,21 +616,23 @@ function Get-ATAPHtmlReport {
 						$TotalAmountOfRules = $completionStatus.TotalCount;
 						$AmountOfCompliantRules = 0;
 						$AmountOfNonCompliantRules = 0;
+						$None_Rules = 0;
 						foreach ($value in $StatusValues) {
 							if($value -eq 'True'){
 								$AmountOfCompliantRules = $completionStatus[$value].Count
 							}
+							#exclude Rules, which are set to None, to make an independent calculation between Compliant and non Compliant
 							if($value -eq 'None'){
-								$AmountOfCompliantRules = $completionStatus[$value].Count
+								$None_Rules = $completionStatus[$value].Count
 							}
 							if($value -eq 'False'){
 								$AmountOfNonCompliantRules = $completionStatus[$value].Count
 							}
 						}
+						$TotalAmountOfRules = $TotalAmountOfRules - $None_Rules
 						if($os -match "Win32NT" -and $Title -match "Win"){
 							# percentage of compliance quantity
 							$QuantityCompliance = [math]::round(($AmountOfCompliantRules / $TotalAmountOfRules) * 100,2);	
-		
 							# Variables, which will be evaluated in report.js
 							htmlElement 'div' @{id="AmountOfNonCompliantRules"} {"$($AmountOfNonCompliantRules)"}
 							htmlElement 'div' @{id="AmountOfCompliantRules"} {"$($AmountOfCompliantRules)"}
@@ -974,6 +976,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{id='calculationTables'} {
 								htmlElement 'h3' @{class = 'calculationTablesText'} {"Risk Score Calculation"}
 								htmlElement 'p' @{class = 'calculationTablesText'} {"The calculation of the Risk Score is based on the set of compliant rules at the quantity level and also at the severity level."}
+								htmlElement 'p' @{class = 'calculationTablesText'} {"Note: The Risk Rcore is calculated by dividing all compliant rules with the total number (minus none-compliant) of rules."}
 								htmlElement 'table' @{id='quantityTable'}{
 									htmlElement 'tr' @{}{
 										htmlElement 'th' @{}{'Compliance to Benchmarks (Quantity)'}
