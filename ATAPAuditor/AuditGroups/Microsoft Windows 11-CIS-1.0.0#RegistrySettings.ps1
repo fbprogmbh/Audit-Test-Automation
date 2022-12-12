@@ -3880,7 +3880,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
         $key = "EnableFirewall";
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -3895,7 +3896,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
         $key = "DefaultInboundAction"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -3910,7 +3912,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
         $key = "DefaultOutboundAction"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -3925,7 +3928,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
         $key = "DisableNotifications"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -3936,17 +3940,15 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Test = {
-        $expectedValue = (Get-NetFirewallProfile -Name Domain).LogFileName;
-        if($null -eq $expectedValue){
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "LogFilePath"
+        $expectedValue = "%windir%\system32\logfiles\firewall\domainfirewall.log";
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -3958,7 +3960,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
         $key = "LogFileSize"
         $expectedValue = 16384;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -3973,7 +3976,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
         $key = "LogDroppedPackets"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -3988,7 +3992,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
         $key = "LogSuccessfulConnections"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4003,7 +4008,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "EnableFirewall"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4018,7 +4024,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "DefaultInboundAction"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4033,7 +4040,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "DefaultOutboundAction"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4048,7 +4056,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "DisableNotifications"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4059,17 +4068,15 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.2.5"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'"
     Test = {
-        $expectedValue = (Get-NetFirewallProfile -Name Private).LogFileName;
-        if($null -eq $expectedValue){
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PrivateProfile"       
+        $key = "LogFilePath"
+        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\privatefw.log";
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -4081,7 +4088,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
         $key = "LogFileSize"
         $expectedValue = 16384;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4096,7 +4104,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
         $key = "LogDroppedPackets"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4111,7 +4120,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
         $key = "LogSuccessfulConnections"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4126,7 +4136,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "EnableFirewall"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4141,7 +4152,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "DefaultInboundAction"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4156,7 +4168,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "DefaultOutboundAction"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4171,7 +4184,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "DisableNotifications"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4186,7 +4200,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "AllowLocalPolicyMerge"
         $expectedValue = 0;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4201,7 +4216,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "AllowLocalIPsecPolicyMerge"
         $expectedValue = 0;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4212,17 +4228,15 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "9.3.7"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'"
     Test = {
-        $expectedValue = (Get-NetFirewallProfile -Name Public).LogFileName;
-        if($null -eq $expectedValue){
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "LogFilePath"
+        $expectedValue = "%SystemRoot%\System32\logfiles\firewall\publicfw.log";
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = $($result.Message)
+            Status = $($result.Status)
         }
     }
 }
@@ -4234,7 +4248,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogFileSize"
         $expectedValue = 16384;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4249,7 +4264,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogDroppedPackets"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
@@ -4264,7 +4280,8 @@ $RootPath = Split-Path $RootPath -Parent
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogSuccessfulConnections"
         $expectedValue = 1;
-        $result = CheckTwoPaths $path1 $path2 $key $expectedValue
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)

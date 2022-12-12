@@ -2,7 +2,8 @@
 Function Test-RegistryValue ($regkey, $name) {
     if (Get-ItemProperty -Path $regkey -Name $name -ErrorAction Ignore) {
         $true
-    } else {
+    }
+    else {
         $false
     }
 }
@@ -21,10 +22,12 @@ function Test-ASRRules {
         try {
             if (Test-Path -Path $Path) {
                 return Test-RegistryValue $Path $Value
-            } else {
+            }
+            else {
                 return $false
             }
-        } catch {
+        }
+        catch {
 
         }
     }
