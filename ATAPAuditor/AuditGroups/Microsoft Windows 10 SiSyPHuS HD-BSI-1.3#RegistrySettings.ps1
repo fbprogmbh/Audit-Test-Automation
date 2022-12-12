@@ -11961,7 +11961,7 @@ $RootPath = Split-Path $RootPath -Parent
         $key = "EnableFirewall"
         $expectedValue = 1;
         $profileType = "Private"
-        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType -ProfileType $profileType
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
             Status = $($result.Status)
