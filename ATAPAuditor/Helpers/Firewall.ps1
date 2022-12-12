@@ -25,13 +25,15 @@ function Test-FirewallPaths {
             -Path $Path `
             -Name $Key `
         | Select-Object -ExpandProperty "$($Key)"
-        
-        if (($regValue -eq $ExpectedValue)) {
+        # if regValue == expectedValue OR if the LogFilePath ends with .log
+        if (($regValue -eq $ExpectedValue) -or (($Key -eq "LogFilePath") -and ($regValue -match ".log"))) {
             $Result = @{
                 Message = "Compliant"
                 Status  = "True"
             }
         }
+        # if regValue isnot empty AND regValue isnot expectedValue AND result is not True (yet)
+        # This result is ranked #2 below "Compliant" and above "Registry value not found"
         if (($null -ne $regValue) -and ($regValue -ne $ExpectedValue) -and ($Result.Status -ne "True")) {
             $Result = @{
                 Message = "Registry value is '$regValue'. Expected: $ExpectedValue"
