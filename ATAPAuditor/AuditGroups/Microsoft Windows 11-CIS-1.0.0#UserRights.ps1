@@ -591,7 +591,7 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-    if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
+    if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
         return @{
             Status = "None"
             Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
