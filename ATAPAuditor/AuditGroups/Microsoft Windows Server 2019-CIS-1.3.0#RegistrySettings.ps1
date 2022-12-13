@@ -759,7 +759,7 @@ $RootPath = Split-Path $RootPath -Parent
     Test = {
         try {
             $regValue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
-            if ($regValue.legalnoticetext -notmatch ".+" -or [string]::IsNullOrWhiteSpace($regValue.legalnoticetext) -or [string]::IsNullOrEmpty($regValue.legalnoticetext)) {
+            if ($regValue.legalnoticetext -notmatch ".+" -or [string]::IsNullOrWhiteSpace($regValue.legalnoticetext) -or [string]::IsNullOrEmpty($regValue.legalnoticetext) -or ($regValue.legalnoticetext.length -eq "1")) {
                 return @{
                     Message = "Registry value is '$($regValue.legalnoticetext)'. Expected: Matching expression '.+'"
                     Status = "False"
