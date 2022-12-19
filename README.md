@@ -112,14 +112,22 @@ The first half of the video guides through the process of manual installation, t
 See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerShell/scripting/developer/module/installing-a-PowerShell-module) guide for more specific instructions.
 
 1. Download the most [recent release](https://github.com/fbprogmbh/Audit-Test-Automation/releases/latest)
+2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
-2. Extract the archive, for example by using the following commands in PowerShell or by using your favourite unzipping toolset.  
+```PowerShell
+Unblock-File -Path .\Audit-Test-Automation-5.3.zip -Verbose
+```
+The following screenshot shows the output:
+
+![grafik](https://user-images.githubusercontent.com/35689334/208451043-e183cb31-629c-493c-a46b-97d14c002e70.png)
+
+3. Extract the archive, for example by using the following commands in PowerShell or by using your favourite unzipping toolset.  
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.1.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.3.zip" -DestinationPath "AuditTAP"
 ```
-3. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
+4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
 ### Installation from PS Gallery
 Simple and straight-forward. Install AuditTAP with a single line of code.
@@ -146,8 +154,11 @@ By default the module creates a new report in `Documents\ATAPReports` folder. A 
 
 **Examples:**
 ```PowerShell
-Save-ATAPHtmlReport -ReportName "Microsoft IIS10"
-Save-ATAPHtmlReport -ReportName "Google Chrome" -Path C:\Users\Public\Documents\ATAPReports\report_google_chrome.html
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 Complete" -RiskScore -Path C:\Temp\report.html -DarkMode
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 BSI" -RiskScore -Path C:\Temp -DarkMode 
+Save-ATAPHtmlReport -ReportName "Microsoft Windows Server 2022" -Path C:\Temp -DarkMode 
+Save-ATAPHtmlReport -ReportName "Google Chrome"
+Save-ATAPHtmlReport -ReportName "Ubuntu 20.04" -DarkMode
 ```
 Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters and select the desired  report using arrow-keys.
 
