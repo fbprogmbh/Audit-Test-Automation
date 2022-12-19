@@ -1,4 +1,7 @@
-﻿# Common
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+# Common
 function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
 	[OutputType([hashtable])]
@@ -537,7 +540,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.14 A"
-    Task = "(L1) Configure 'Create symbolic links' (when Hyper-V feature is installed)"
+    Task = "(L1) Configure 'Create symbolic links' [Hyper-V-Feature NOT installed]"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -580,7 +583,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.14 B"
-    Task = "(L1) Configure 'Create symbolic links' (when Hyper-V feature is NOT installed)"
+    Task = "(L1) Configure 'Create symbolic links' [Hyper-V-Feature installed]"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -588,7 +591,7 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-    if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
+    if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
         return @{
             Status = "None"
             Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
@@ -1099,85 +1102,81 @@ function ConvertTo-NTAccountUser {
         }
     }
 }
-[AuditTest] @{
-    Id = "2.2.29 A"
-    Task = "(L2) Configure 'Log on as a service' (when the Hyper-V feature is NOT installed)"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
-        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+if(CheckHyperVStatus -ne "Enabled"){
+    [AuditTest] @{
+        Id = "2.2.29"
+        Task = "(L2) Configure 'Log on as a service' (when the Hyper-V feature is NOT installed)"
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
+            $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
 
-        if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-            return @{
-                Status = "None"
-                Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
+            if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
+                return @{
+                    Status = "None"
+                    Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
+                }
             }
-        }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
+            
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+            
             if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
+                $messages = @()
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status = "False"
+                    Message = $message
+                }
             }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status = "False"
-                Message = $message
+                Status = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
         }
     }
 }
-[AuditTest] @{
-    Id = "2.2.29 B"
-    Task = "(L2) Configure 'Log on as a service' (when the Hyper-V feature is installed)"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
-        $identityAccounts = @(
-            "S-1-5-83-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-
-        if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-            return @{
-                Status = "None"
-                Message = "Hyper-V not installed. Please refer to the corresponding benchmark when Hyper-V is not installed."
+else{
+    [AuditTest] @{
+        Id = "2.2.29"
+        Task = "(L2) Configure 'Log on as a service' (when the Hyper-V feature is installed)"
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
+            $identityAccounts = @(
+                "S-1-5-83-0"
+            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+            
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+    
+            if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
+                return @{
+                    Status = "None"
+                    Message = "Hyper-V not installed. Please refer to the corresponding benchmark when Hyper-V is not installed."
+                }
             }
-        }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
+            
             if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
+                $messages = @()
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status = "False"
+                    Message = $message
+                }
             }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status = "False"
-                Message = $message
+                Status = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
         }
     }
 }

@@ -45,7 +45,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 li a {
-	display: block;
+
+	/*display: block;*/
+	font-family: Arial, sans-serif;
 }
 
 li a:hover {
@@ -99,6 +101,7 @@ th, td {
 table.audit-info {
 	margin-left: 8%;
 	margin-right: 8%;
+	width: 90%;
 }
 
 table.audit-info th, table.audit-info td {
@@ -241,7 +244,7 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(4,160px);
+	grid-template-columns: repeat(5,160px);
 }
 button{
 	margin-left: 10px;
@@ -535,10 +538,6 @@ button{
 	background-color: #efefef;
 }
 
-#summaryTable{
-	float: left;
-
-}
 
 #riskMatrixSummary{
 	font-family: Arial, sans-serif;
@@ -561,7 +560,8 @@ button{
 }
 
 #systemData{
-	float: left;
+	float:right;
+	margin-right: 30%;
     text-align: left;
 }
 
@@ -704,8 +704,14 @@ button{
 	font-family: Arial, sans-serif;
 } 
 
+#foundationData p{
+	font-family: Arial, sans-serif;
+}
 
-
+#foundationData section{
+	margin-left: 5%;
+	margin-right: 5%;
+}
 
 #contactUsButton{
 	background-color: #A81A1B;

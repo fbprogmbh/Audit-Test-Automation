@@ -11,48 +11,54 @@ let SeverityCompliance;
 
 
 function startConditions(){
+    let isRiskScoreValue = document.getElementById("riskScore");
+
     /* Default-Value: Display summary always at the beginning */
     document.getElementById("summary").style.display = "block";
     
     /* Default-Value: Disable all other tabs at the beginning */
-    document.getElementById("riskScore").style.display = "none";
+    document.getElementById("foundationData").style.display = "none";
     document.getElementById("references").style.display = "none";
     document.getElementById("settingsOverview").style.display = "none";
 
 
     document.getElementById("summaryBtn").style.backgroundColor= '#ff9933';
-    document.getElementById("riskScoreBtn").style.backgroundColor= 'transparent';
+    document.getElementById("foundationDataBtn").style.backgroundColor = 'transparent';
     document.getElementById("referenceBtn").style.backgroundColor= 'transparent';
     document.getElementById("settingsOverviewBtn").style.backgroundColor= 'transparent';
-
-    /* Initialize necessary variables */
-    AmountOfNonCompliantRules = document.getElementById("AmountOfNonCompliantRules").textContent;
-    document.getElementById("AmountOfNonCompliantRules").hidden = true;
-
-    AmountOfCompliantRules = document.getElementById("AmountOfCompliantRules").textContent;
-    document.getElementById("AmountOfCompliantRules").hidden = true;
-
-    TotalAmountOfRules = document.getElementById("TotalAmountOfRules").textContent;
-    document.getElementById("TotalAmountOfRules").hidden = true;
-
-    QuantityCompliance = document.getElementById("QuantityCompliance").textContent;
-    document.getElementById("QuantityCompliance").hidden = true;
-
-    TotalAmountOfSeverityRules = document.getElementById("TotalAmountOfSeverityRules").textContent;
-    document.getElementById("TotalAmountOfSeverityRules").hidden = true;
-
-    AmountOfFailedSeverityRules = document.getElementById("AmountOfFailedSeverityRules").textContent;
-    document.getElementById("AmountOfFailedSeverityRules").hidden = true;
-    calcDotPosition();
-    let severityComplianceCollapseBtn = document.getElementById("severityComplianceCollapse");
-    severityComplianceCollapseBtn.addEventListener("click", ()=>{
-        if(document.getElementById("severityDetails").style.display == "none"){
-            document.getElementById("severityDetails").style.display = "block";
-        }
-        else{
-            document.getElementById("severityDetails").style.display = "none";
-        }
-    })
+    
+    if(isRiskScoreValue != null){
+        document.getElementById("riskScore").style.display = "none";
+        document.getElementById("riskScoreBtn").style.backgroundColor= 'transparent';
+        /* Initialize necessary variables */
+        AmountOfNonCompliantRules = document.getElementById("AmountOfNonCompliantRules").textContent;
+        document.getElementById("AmountOfNonCompliantRules").hidden = true;
+    
+        AmountOfCompliantRules = document.getElementById("AmountOfCompliantRules").textContent;
+        document.getElementById("AmountOfCompliantRules").hidden = true;
+    
+        TotalAmountOfRules = document.getElementById("TotalAmountOfRules").textContent;
+        document.getElementById("TotalAmountOfRules").hidden = true;
+    
+        QuantityCompliance = document.getElementById("QuantityCompliance").textContent;
+        document.getElementById("QuantityCompliance").hidden = true;
+    
+        TotalAmountOfSeverityRules = document.getElementById("TotalAmountOfSeverityRules").textContent;
+        document.getElementById("TotalAmountOfSeverityRules").hidden = true;
+    
+        AmountOfFailedSeverityRules = document.getElementById("AmountOfFailedSeverityRules").textContent;
+        document.getElementById("AmountOfFailedSeverityRules").hidden = true;
+        calcDotPosition();
+        let severityComplianceCollapseBtn = document.getElementById("severityComplianceCollapse");
+        severityComplianceCollapseBtn.addEventListener("click", ()=>{
+            if(document.getElementById("severityDetails").style.display == "none"){
+                document.getElementById("severityDetails").style.display = "block";
+            }
+            else{
+                document.getElementById("severityDetails").style.display = "none";
+            }
+        })
+    }
 }
 
 
@@ -93,6 +99,10 @@ function clickButton(value){
         case 4:
             document.getElementById("settingsOverview").style.display = "block";
             document.getElementById("settingsOverviewBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 5:
+            document.getElementById("foundationData").style.display = "block";
+            document.getElementById("foundationDataBtn").style.backgroundColor= '#ff9933';
         break;
     }
 

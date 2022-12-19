@@ -33,15 +33,22 @@ function commandExists {
 	Id = "DSBD-002"
 	Task = "Ensure the system is using SecureBoot."
 	Test = {
-		if ($(mokutil --sb-state) -eq "SecureBoot enabled") {
-			$status = @{
-						Message = "Compliant"
-						Status = "True"
+		if (Test-Path -Path /sys/firmware/efi) {
+			if ($(mokutil --sb-state) -eq "SecureBoot enabled") {
+				$status = @{
+							Message = "Compliant"
+							Status = "True"
+				}
+			} else {
+				$status = @{
+					Message = "System is not booting using UEFI mode."
+					Status = "False"
+				}
 			}
 		} else {
 			$status = @{
-				Message = "System is not booting using UEFI mode."
-				Status = "False"
+				Message = "SecureBoot is only supported on UEFI."
+				Status= "False"
 			}
 		}
 		return $status
