@@ -4547,7 +4547,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0292"
-    Task = "Ensure 'Turn on SmartScreen Filter scan' set to 'Enabled'."
+    Task = "Ensure 'Turn on SmartScreen Filter scan' set to 'Enabled'. [Lockdown_Zones\3]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
