@@ -703,33 +703,24 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-188"
-    Task = "Ensure 'SeDebugPrivilege' is set to 'S-1-5-32-544'"
+    Task = "Ensure 'Debug programs' is set to 'Administrators'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDebugPrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeDebugPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
-        
             return @{
                 Status = "False"
                 Message = $message
             }
-        }
-        
+        }        
         return @{
             Status = "True"
             Message = "Compliant"

@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
 # Common
 function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
@@ -258,18 +259,10 @@ function ConvertTo-NTAccountUser {
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeRemoteInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeRemoteInteractiveLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeRemoteInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
-        
             return @{
                 Status = "False"
                 Message = $message
@@ -625,26 +618,17 @@ function ConvertTo-NTAccountUser {
         $identityAccounts = @(
             "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeDebugPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
-        
             return @{
                 Status = "False"
                 Message = $message
             }
-        }
-        
+        } 
         return @{
             Status = "True"
             Message = "Compliant"
@@ -1096,7 +1080,7 @@ function ConvertTo-NTAccountUser {
         }
     }
 }
-if(CheckHyperVStatus -ne "Enabled"){
+if($hyperVStatus -ne "Enabled"){
     [AuditTest] @{
         Id = "2.2.29"
         Task = "(L2) Configure 'Log on as a service' [Hyper-V-Feature NOT installed]"
@@ -1106,25 +1090,16 @@ if(CheckHyperVStatus -ne "Enabled"){
             $identityAccounts = @(
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
             
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }    
+            if ($unexpectedUsers.Count -gt 0) {
                 $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
+                $messages += "The user right 'SeServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
                 $message = $messages -join [System.Environment]::NewLine
-            
                 return @{
                     Status = "False"
                     Message = $message
                 }
             }
-            
             return @{
                 Status = "True"
                 Message = "Compliant"
