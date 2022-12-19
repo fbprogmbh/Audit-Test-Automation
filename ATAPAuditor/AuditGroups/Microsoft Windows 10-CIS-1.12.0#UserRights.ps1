@@ -535,25 +535,12 @@ if($hyperVStatus -ne "Enabled"){
                 "S-1-5-32-544"
                 "S-1-5-83-0"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-            
-            if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-                return @{
-                    Status = "None"
-                    Message = "Hyper-V not installed. Please refer to the corresponding benchmark when Hyper-V is not installed."
-                }
-            }
 
             $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
             
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            if ($unexpectedUsers.Count -gt 0) {
                 $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeCreateSymbolicLinkPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
+                $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
                 $message = $messages -join [System.Environment]::NewLine
             
                 return @{
@@ -579,25 +566,12 @@ else{
             $identityAccounts = @(
                 "S-1-5-32-544"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-    
-            if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-                return @{
-                    Status = "None"
-                    Message = "Hyper-V installed. Please refer to the corresponding benchmark when Hyper-V is installed."
-                }
-            }
             
             $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
             
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            if ($unexpectedUsers.Count -gt 0) {
                 $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeCreateSymbolicLinkPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
+                $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
                 $message = $messages -join [System.Environment]::NewLine
             
                 return @{
