@@ -6,7 +6,7 @@
         Test = {
             try {
                 $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
                     -Name "AllowTelemetry" `
                     | Select-Object -ExpandProperty "AllowTelemetry"
             
@@ -64,7 +64,7 @@ else{
         Test = {
             try {
                 $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
                     -Name "AllowTelemetry" `
                     | Select-Object -ExpandProperty "AllowTelemetry"
             
@@ -169,7 +169,7 @@ else{
 }
 [AuditTest] @{
     Id = "3.1.3.1.1"
-    Task = "Deactivation of telemetry according to Microsoft - Windows Update"
+    Task = "Deactivation of telemetry according to Microsoft - Disable Windows Update Service"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

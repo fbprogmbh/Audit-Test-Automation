@@ -540,7 +540,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "0057"
-    Task = " Ensure 'SeDebugPrivilege' is set to 'Administrator'"
+    Task = "Ensure 'Debug programs' is set to 'Administrators'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDebugPrivilege"]

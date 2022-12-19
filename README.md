@@ -54,21 +54,21 @@ Fedora 35 | - | - | - | - | -
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
 Microsoft Edge | - | - | 99 | - | -
-Microsoft Internet Explorer 11 | V1R16 | 1.1.0 | 2004 | - | -
+Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
 Microsoft IIS10 | - | 1.1.1 | - | - | -
 Microsoft Office 2016 Excel | V1R2 | - | - | - | -
 Microsoft Office 2016 Outlook | V1R2 | - | - | - | -
 Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
 Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
-Microsoft Office 2016 | - | 1.1.0 | - | - | -
+Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS 1.3 | -
-Microsoft Windows 10 All | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
-Microsoft Windows 11 | - | 1.0.0 | FINAL, RTLFB 21H2 | - | -
+Microsoft Windows 10 Complete | V1R16 | 1.12.0 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
+Microsoft Windows 11 | - | 1.0.0 | 20H2 | SiM-08202, SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 R2 | 2.19 | 2.5.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
@@ -161,6 +161,15 @@ The `ATAPAuditor` module also provides a simple menu based runner for reports. I
 Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 ```
 
+* You can extend your AuditReports with a RiskScore by adding the RiskScore-Switch parameter (currently only available for Windows Reports):
+```powershell
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -Force -RiskScore
+```
+
+* The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
+* Some reports take more than a few seconds because hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs 😉
+* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
+=======
 * `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
 * Some reports take more than a few seconds because hundreds of individual settings and controls are checked. Please be patient, the result will satisfy your needs 😉
 * If you used old versions of AuditTAP you may want to clean up your modules. Be sure you have not integrated AuditTAP functionality in reporting processes. In order to accomplish this task you can use the following script.
