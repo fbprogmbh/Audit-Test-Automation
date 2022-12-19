@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 RootModule = 'ATAPHtmlReport.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.8'
+ModuleVersion = '1.9'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
