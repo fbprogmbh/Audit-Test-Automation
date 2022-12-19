@@ -242,9 +242,9 @@ function Get-RSSeverityEndResult {
 
 <#
 .SYNOPSIS
-	Runs the tests of an AuditGroup.
+	Tests a single AuditGroup.
 .DESCRIPTION
-	Runs the tests of an AuditGroup file.
+	This cmdlet tests a single AuditGroup from folder "AuditGroups". All tests are printed on the console. Can be combined to create own report.
 .EXAMPLE
 	PS C:\> Test-AuditGroup "Google Chrome-CIS-2.0.0#RegistrySettings"
 	This runs tests defined in the AuditGroup file called 'Google Chrome-CIS-2.0.0#RegistrySettings'.
@@ -473,14 +473,24 @@ function Invoke-ATAPReport {
 .SYNOPSIS
 	Saves an ATAPHtmlReport
 .DESCRIPTION
-	Runs the specified ATAPReport and creates a report.
+	This cmdlet creates a report based on settings of this system. Select from a list of given reports (e.g. "Microsoft Windows 10 Complete")
+	and the AuditTAP will test this system on the basis of recommendations from publishers like Microsoft, CIS, DISA, BSI and more.
+	To show a RiskScore on this report, enable it via adding switch "-RiskScore" at the end of this command (NOTE: This only works for Windows OS).
 .EXAMPLE
 	PS C:\> Save-ATAPHtmlReport -ReportName "Google Chrome"
 	This runs the 'Google Chrome' report and stores the resulting html file (by default) under ~\Documents\ATAPReports
+.EXAMPLE
+	PS C:\> Save-ATAPHtmlReport -ReportName "Ubuntu 20.04" -DarkMode
+	This runs the 'Ubuntu 20.04' report, turns it into dark mode and stores the resulting html file (by default) under ~\Documents\ATAPReports
+.EXAMPLE
+	PS C:\> Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 Complete" -RiskScore -Path C:\Temp -DarkMode
+	This runs the 'Microsoft Windows 10 Complete' report, adding RiskScore to it, turns it into dark mode and stores the resulting html file under C:\Temp	
 .PARAMETER ReportName
-	The name of the report.
+	Determine, which OS shall be tested.
 .PARAMETER Path
 	The path where the result html document should be stored.
+.PARAMETER RiskScore
+	Add a RiskScore-Matrix to report (works only on Windows OS)
 .PARAMETER DarkMode
 	By default the report is displayed in light mode. If specified the report will be displayed in dark mode.
 .PARAMETER Force
