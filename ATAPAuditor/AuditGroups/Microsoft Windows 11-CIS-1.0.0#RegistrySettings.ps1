@@ -2581,34 +2581,26 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(L1) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LxssManager" `
-                -Name "Start" `
-                | Select-Object -ExpandProperty "Start"
-        
-            if ($regValue -ne 4) {
+            $result = Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux
+            $state = $result.State            
+            if($state -eq "Disabled" -or $state -eq "Not Installed"){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 4"
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            else{
+                return @{
+                    Message = "Registry value is '$state'. Expected: 'Disabled' or 'Not Installed'"
                     Status = "False"
                 }
             }
         }
-        catch [System.Management.Automation.PSArgumentException] {
+        catch [System.Management.Automation.PSArgumentException]{
             return @{
-                Message = "Compliant. Registry value not found."
-                Status = "True"
+                Message = "Value not found."
+                Status = "Error"
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Compliant. Registry key not found."
-                Status = "True"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
         }
     }
 }
