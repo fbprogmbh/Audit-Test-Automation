@@ -416,7 +416,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-180"
-    Task = "Ensure 'SeNetworkLogonRight' is set to 'S-1-5-32-544, S-1-5-32-555'"
+    Task = "Ensure 'Access this computer from the network' is set to 'Administrator, Remote Desktop Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
@@ -426,16 +426,10 @@ function ConvertTo-NTAccountUser {
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeNetworkLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeNetworkLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeNetworkLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
