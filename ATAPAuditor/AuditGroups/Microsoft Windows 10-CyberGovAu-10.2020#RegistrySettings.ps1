@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "1909.01"
     Task = "Ensure 'Deploy Windows Defender Application Control' is set to 'Enabled'"
@@ -801,7 +802,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.05.1"
-    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
+    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled' [EnableVirtualizationBasedSecurity]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -837,7 +838,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.05.2"
-    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
+    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled' [RequirePlatformSecurityFeatures]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -873,7 +874,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.05.3"
-    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
+    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled' [LsaCfgFlags]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -909,7 +910,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.06.1"
-    Task = "Ensure 'Configure allowed applications' is set to 'Enabled'"
+    Task = "Ensure 'Configure allowed applications' is set to 'Enabled' [ExploitGuard_ControlledFolderAccess_AllowedApplications]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -945,7 +946,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.06.2"
-    Task = "Ensure 'Configure allowed applications' is set to 'Enabled'"
+    Task = "Ensure 'Configure allowed applications' is set to 'Enabled' [16]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1016,44 +1017,8 @@ $RootPath = Split-Path $RootPath -Parent
     }
 }
 [AuditTest] @{
-    Id = "1909.07.2"
-    Task = "Ensure 'Configure Controlled folder access' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access" `
-                -Name "EnableControlledFolderAccess" `
-                | Select-Object -ExpandProperty "EnableControlledFolderAccess"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "1909.08.1"
-    Task = "Ensure 'Configure protected folders' is set to 'Enabled'"
+    Task = "Ensure 'Configure protected folders' is set to 'Enabled' [ExploitGuard_ControlledFolderAccess_ProtectedFolders]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1089,7 +1054,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.08.2"
-    Task = "Ensure 'Configure protected folders' is set to 'Enabled'"
+    Task = "Ensure 'Configure protected folders' is set to 'Enabled' [17]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1989,7 +1954,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.38.1"
-    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
+    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled' [NoAutoUpdate]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2025,7 +1990,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.38.2"
-    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
+    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled' [AUOptions]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2061,7 +2026,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.38.3"
-    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
+    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled' [ScheduledInstallDay]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2097,7 +2062,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.38.4"
-    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
+    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled' [AllowMUUpdateService]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3825,7 +3790,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.86.1"
-    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'"
+    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled' [DenyDeviceIDs]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3861,7 +3826,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.86.2"
-    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'"
+    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled' [18]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3897,7 +3862,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.86.3"
-    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'"
+    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled' [19]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3933,7 +3898,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.86.4"
-    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'"
+    Task = "Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled' [DenyDeviceIDsRetroactive]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4905,7 +4870,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.110.1"
-    Task = "Ensure 'Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)' is set to 'Enabled'"
+    Task = "Ensure 'Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)' is set to 'Enabled' [EncryptionMethodWithXtsOs]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4941,7 +4906,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.110.2"
-    Task = "Ensure 'Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)' is set to 'Enabled'"
+    Task = "Ensure 'Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)' is set to 'Enabled' [EncryptionMethodWithXtsFdv]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4977,7 +4942,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.110.3"
-    Task = "Ensure 'Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)' is set to 'Enabled'"
+    Task = "Ensure 'Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)' is set to 'Enabled' [EncryptionMethodWithXtsRdv]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5049,7 +5014,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.112.1"
-    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled' [FDVRecovery]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5085,7 +5050,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.112.2"
-    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled' [FDVManageDRA]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5121,7 +5086,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.112.3"
-    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled' [FDVHideRecoveryPage]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5157,7 +5122,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.112.4"
-    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled' [FDVActiveDirectoryBackup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5193,7 +5158,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.112.5"
-    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled' [FDVActiveDirectoryInfoToStore]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5229,7 +5194,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.112.6"
-    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled' [FDVRequireActiveDirectoryBackup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5265,7 +5230,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.113.1"
-    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled' [FDVPassphrase]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5301,7 +5266,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.113.2"
-    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled' [FDVEnforcePassphrase]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5337,7 +5302,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.113.3"
-    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled' [FDVPassphraseComplexity]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5373,7 +5338,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.113.4"
-    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for fixed data drives' is set to 'Enabled' [FDVPassphraseLength]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5625,7 +5590,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.120.1"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled' [OSRecovery]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5661,7 +5626,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.120.2"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled' [OSManageDRA]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5697,7 +5662,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.120.3"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled' [OSHideRecoveryPage]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5733,7 +5698,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.120.4"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled' [OSActiveDirectoryBackup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5769,7 +5734,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.120.5"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled' [OSActiveDirectoryInfoToStore]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5805,7 +5770,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.120.6"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled' [OSRequireActiveDirectoryBackup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5877,7 +5842,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.122.1"
-    Task = "Ensure 'Configure use of passwords for operating system drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for operating system drives' is set to 'Enabled' [OSPassphrase]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5913,7 +5878,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.122.2"
-    Task = "Ensure 'Configure use of passwords for operating system drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for operating system drives' is set to 'Enabled' [OSPassphraseComplexity]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5949,7 +5914,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.122.3"
-    Task = "Ensure 'Configure use of passwords for operating system drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for operating system drives' is set to 'Enabled' [OSPassphraseLength]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6057,7 +6022,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.125.1"
-    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled'"
+    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled' [UseAdvancedStartup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6093,7 +6058,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.125.2"
-    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled'"
+    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled' [EnableBDEWithNoTPM]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6129,7 +6094,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.125.3"
-    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled'"
+    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled' [UseTPM]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6165,7 +6130,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.125.4"
-    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled'"
+    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled' [UseTPMPIN]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6201,7 +6166,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.125.5"
-    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled'"
+    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled' [UseTPMKey]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6237,7 +6202,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.125.6"
-    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled'"
+    Task = "Ensure 'Require additional authentication at startup' is set to 'Enabled' [UseTPMKeyPIN]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6309,7 +6274,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.1"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVRecovery]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6345,7 +6310,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.2"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVManageDRA]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6381,7 +6346,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.3"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVRecoveryPassword]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6417,7 +6382,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.4"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVRecoveryKey]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6453,7 +6418,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.5"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVHideRecoveryPage]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6489,7 +6454,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.6"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVActiveDirectoryBackup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6525,7 +6490,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.7"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVActiveDirectoryInfoToStore]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6561,7 +6526,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.127.8"
-    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to 'Enabled' [RDVRequireActiveDirectoryBackup]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6597,7 +6562,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.128.1"
-    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled' [RDVPassphrase]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6633,7 +6598,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.128.2"
-    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled' [RDVEnforcePassphrase]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6669,7 +6634,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.128.3"
-    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled' [RDVPassphraseComplexity]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6705,7 +6670,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.128.4"
-    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled'"
+    Task = "Ensure 'Configure use of passwords for removable data drives' is set to 'Enabled' [RDVPassphraseLength]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6741,7 +6706,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.129.1"
-    Task = "Ensure 'Control use of BitLocker on removable drives' is set to 'Enabled'"
+    Task = "Ensure 'Control use of BitLocker on removable drives' is set to 'Enabled' [RDVConfigureBDE]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6777,7 +6742,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.129.2"
-    Task = "Ensure 'Control use of BitLocker on removable drives' is set to 'Enabled'"
+    Task = "Ensure 'Control use of BitLocker on removable drives' is set to 'Enabled' [RDVAllowBDE]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8721,7 +8686,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.182.1"
-    Task = "Ensure 'Configure Corporate Windows Error Reporting' is set to 'Enabled'"
+    Task = "Ensure 'Configure Corporate Windows Error Reporting' is set to 'Enabled' [CorporateWerServer]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8757,7 +8722,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.182.2"
-    Task = "Ensure 'Configure Corporate Windows Error Reporting' is set to 'Enabled'"
+    Task = "Ensure 'Configure Corporate Windows Error Reporting' is set to 'Enabled' [CorporateWerUseSSL]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8793,7 +8758,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "1909.182.3"
-    Task = "Ensure 'Configure Corporate Windows Error Reporting' is set to 'Enabled'"
+    Task = "Ensure 'Configure Corporate Windows Error Reporting' is set to 'Enabled' [CorporateWerPortNumber]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

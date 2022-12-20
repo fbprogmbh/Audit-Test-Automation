@@ -651,8 +651,8 @@ $RootPath = Split-Path $RootPath -Parent
     }
 }
 [AuditTest] @{
-    Id = "24_2"
-    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`"."
+    Id = "24 B"
+    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`". [\\*\SYSVOL]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7933,34 +7933,26 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LxssManager" `
-                -Name "Start" `
-                | Select-Object -ExpandProperty "Start"
-        
-            if ($regValue -ne 4) {
+            $result = Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux
+            $state = $result.State            
+            if($state -eq "Disabled" -or $state -eq "Not Installed"){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 4"
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            else{
+                return @{
+                    Message = "Registry value is '$state'. Expected: 'Disabled' or 'Not Installed'"
                     Status = "False"
                 }
             }
         }
-        catch [System.Management.Automation.PSArgumentException] {
+        catch [System.Management.Automation.PSArgumentException]{
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Value not found."
+                Status = "Error"
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
         }
     }
 }

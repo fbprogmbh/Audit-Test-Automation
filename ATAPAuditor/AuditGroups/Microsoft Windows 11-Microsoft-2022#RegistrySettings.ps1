@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "Registry-009"
@@ -7314,7 +7315,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-274"
-    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'."
+    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'. [Lockdown_Zones\3]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7350,7 +7351,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-275"
-    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'."
+    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'. [Lockdown_Zones\4]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8754,7 +8755,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-314"
-    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'."
+    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'. [Zones\3]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10086,7 +10087,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-351"
-    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'."
+    Task = "Ensure 'Turn on SmartScreen Filter scan' is set to 'Enable'. [Zones\4]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

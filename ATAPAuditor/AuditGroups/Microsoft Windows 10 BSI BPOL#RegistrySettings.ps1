@@ -219,7 +219,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0038"
-    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'."
+    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'. [OSAllowSecureBootForIntegrity]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -255,7 +255,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0039"
-    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'."
+    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'. [DeferUpgradePeriod]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4475,7 +4475,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0290"
-    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'."
+    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'. [Internet Explorer\PhishingFilter\EnabledV9]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4511,7 +4511,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0291"
-    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'."
+    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'. [MicrosoftEdge\PhishingFilter\EnabledV9]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4547,7 +4547,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0292"
-    Task = "Ensure 'Turn on SmartScreen Filter scan' set to 'Enabled'."
+    Task = "Ensure 'Turn on SmartScreen Filter scan' set to 'Enabled'. [Lockdown_Zones\3]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

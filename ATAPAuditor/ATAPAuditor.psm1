@@ -471,20 +471,26 @@ function Invoke-ATAPReport {
 
 <#
 .SYNOPSIS
-	Saves an ATAPHtmlReport
+	The Audit Test Automation Package creates transparents reports about hardening compliance status
 .DESCRIPTION
-	This cmdlet creates a report based on settings of this system. Select from a list of given reports (e.g. "Microsoft Windows 10 Complete")
-	and the AuditTAP will test this system on the basis of recommendations from publishers like Microsoft, CIS, DISA, BSI and more.
-	To show a RiskScore on this report, enable it via adding switch "-RiskScore" at the end of this command (NOTE: This only works for Windows OS).
+	The Audit Test Automation Package gives you the ability to get an overview about the compliance status of several systems. 
+	You can easily create HTML-reports and have a transparent overview over compliance and non-compliance of explicit setttings 
+	and configurations in comparison to industry standards and hardening guides. 
+.EXAMPLE
+	PS C:\> Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 Complete" -RiskScore -Path C:\Temp\report.html -DarkMode
+	This runs the 'Microsoft Windows 10 Complete' report, adding RiskScore to it, turns it into dark mode and stores the resulting html file under C:\Temp using the file name report.html
+.EXAMPLE
+	PS C:\> Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 BSI" -RiskScore -Path C:\Temp -DarkMode 
+	This runs the 'Microsoft Windows 10 BSI' report, adding RiskScore to it, turns it into dark mode and stores the resulting html file under C:\Temp using the standard naming convention for file names <ReportName_Date_Time>.html
+.EXAMPLE
+	PS C:\> Save-ATAPHtmlReport -ReportName "Microsoft Windows Server 2022" -Path C:\Temp -DarkMode 
+	This runs the 'Microsoft Windows Server 2022' report, without adding RiskScore to it, turns it into dark mode and stores the resulting html file under C:\Temp using the standard naming convention for file names <ReportName_Date_Time>.html
 .EXAMPLE
 	PS C:\> Save-ATAPHtmlReport -ReportName "Google Chrome"
 	This runs the 'Google Chrome' report and stores the resulting html file (by default) under ~\Documents\ATAPReports
 .EXAMPLE
 	PS C:\> Save-ATAPHtmlReport -ReportName "Ubuntu 20.04" -DarkMode
 	This runs the 'Ubuntu 20.04' report, turns it into dark mode and stores the resulting html file (by default) under ~\Documents\ATAPReports
-.EXAMPLE
-	PS C:\> Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 Complete" -RiskScore -Path C:\Temp -DarkMode
-	This runs the 'Microsoft Windows 10 Complete' report, adding RiskScore to it, turns it into dark mode and stores the resulting html file under C:\Temp	
 .PARAMETER ReportName
 	Determine, which OS shall be tested.
 .PARAMETER Path
