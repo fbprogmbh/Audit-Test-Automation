@@ -4475,7 +4475,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0290"
-    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'."
+    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'. [Internet Explorer\PhishingFilter\EnabledV9]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4511,7 +4511,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0291"
-    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'."
+    Task = "Ensure 'Prevent managing SmartScreen Filter' set to 'Enabled: On'. [MicrosoftEdge\PhishingFilter\EnabledV9]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

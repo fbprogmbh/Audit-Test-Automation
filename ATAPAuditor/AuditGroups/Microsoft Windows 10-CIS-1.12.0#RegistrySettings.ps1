@@ -5902,7 +5902,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.5.14.1 A"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares'"
+    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' [\\*\NETLOGON]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5938,7 +5938,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.5.14.1 B"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares'"
+    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' [\\*\SYSVOL]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7558,7 +7558,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.8.22.1.14 A"
-    Task = "(L2) Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
+    Task = "(L2) Ensure 'Turn off Windows Error Reporting' is set to 'Enabled' [Disabled]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7594,7 +7594,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.8.22.1.14 B"
-    Task = "(L2) Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'"
+    Task = "(L2) Ensure 'Turn off Windows Error Reporting' is set to 'Enabled' [DoReport]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -14304,7 +14304,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.85.1.1 A"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' [EnableSmartScreen]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -14340,7 +14340,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "18.9.85.1.1 B"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (ShellSmartScreenLevel)"
+    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' [ShellSmartScreenLevel]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

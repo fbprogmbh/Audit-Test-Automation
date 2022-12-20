@@ -651,8 +651,8 @@ $RootPath = Split-Path $RootPath -Parent
     }
 }
 [AuditTest] @{
-    Id = "24_2"
-    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`"."
+    Id = "24 B"
+    Task = "(ND, NE) Ensure 'Hardened UNC Paths' is set to `"Require Mutual Authentication=1, `"Require Integrity=1`" for the value names `"\\*\NETLOGON`" und `"\\*\SYSVOL`". [\\*\SYSVOL]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

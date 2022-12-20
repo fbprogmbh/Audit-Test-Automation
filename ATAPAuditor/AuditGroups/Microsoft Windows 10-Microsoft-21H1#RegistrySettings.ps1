@@ -2492,7 +2492,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-061"
-    Task = "Ensure 'Specify the maximum log file size (KB)' is set to '32768'."
+    Task = "Ensure 'Specify the maximum log file size (KB)' is set to '32768'. [Application\MaxSize]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2564,7 +2564,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-063"
-    Task = "Ensure 'Specify the maximum log file size (KB)' is set to '32768'."
+    Task = "Ensure 'Specify the maximum log file size (KB)' is set to '32768'. [System\MaxSize]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2672,7 +2672,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-066"
-    Task = "Ensure 'Configure registry policy processing' is set to '0'."
+    Task = "Ensure 'Configure registry policy processing' is set to '0'. [NoGPOListChanges]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2708,7 +2708,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-067"
-    Task = "Ensure 'Configure registry policy processing' is set to '0'."
+    Task = "Ensure 'Configure registry policy processing' is set to '0'. [NoBackgroundPolicy]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4796,7 +4796,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-138"
-    Task = "Set registry value 'DisableIPSourceRouting' to 2."
+    Task = "Set registry value 'DisableIPSourceRouting' to 2. [Tcpip\Parameters\DisableIPSourceRouting]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4832,7 +4832,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-139"
-    Task = "Set registry value 'DisableIPSourceRouting' to 2."
+    Task = "Set registry value 'DisableIPSourceRouting' to 2. [Tcpip6\Parameters\DisableIPSourceRouting]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6344,7 +6344,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-235"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_DISABLE_MK_PROTOCOL\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6380,7 +6380,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-236"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_DISABLE_MK_PROTOCOL\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6416,7 +6416,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-237"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_DISABLE_MK_PROTOCOL\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6452,7 +6452,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-238"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_MIME_HANDLING\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6488,7 +6488,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-239"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_MIME_HANDLING\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6524,7 +6524,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-240"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_MIME_HANDLING\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6560,7 +6560,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-241"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_MIME_SNIFFING\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6596,7 +6596,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-242"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_MIME_SNIFFING\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6632,7 +6632,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-243"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_MIME_SNIFFING\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6668,7 +6668,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-244"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_RESTRICT_ACTIVEXINSTALL\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6704,7 +6704,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-245"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_RESTRICT_ACTIVEXINSTALL\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6740,7 +6740,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-246"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_RESTRICT_ACTIVEXINSTALL\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6776,7 +6776,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-247"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_RESTRICT_FILEDOWNLOAD\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6812,7 +6812,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-248"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_RESTRICT_FILEDOWNLOAD\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6848,7 +6848,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-249"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_RESTRICT_FILEDOWNLOAD\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6884,7 +6884,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-250"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_SECURITYBAND\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6920,7 +6920,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-251"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_SECURITYBAND\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6956,7 +6956,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-252"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_SECURITYBAND\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6992,7 +6992,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-253"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_WINDOW_RESTRICTIONS\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7028,7 +7028,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-254"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_WINDOW_RESTRICTIONS\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7064,7 +7064,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-255"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_WINDOW_RESTRICTIONS\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7100,7 +7100,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-256"
-    Task = "Set registry value '(Reserved)' to 1."
+    Task = "Set registry value '(Reserved)' to 1. [FEATURE_ZONE_ELEVATION\(Reserved)]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7136,7 +7136,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-257"
-    Task = "Set registry value 'explorer.exe' to 1."
+    Task = "Set registry value 'explorer.exe' to 1. [FEATURE_ZONE_ELEVATION\explorer.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7172,7 +7172,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-258"
-    Task = "Set registry value 'iexplore.exe' to 1."
+    Task = "Set registry value 'iexplore.exe' to 1. [FEATURE_ZONE_ELEVATION\iexplore.exe]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8144,7 +8144,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-285"
-    Task = "Ensure 'Java permissions' is set to 'High safety'."
+    Task = "Ensure 'Java permissions' is set to 'High safety'. [Zones\1\1C00]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8180,7 +8180,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "Registry-286"
-    Task = "Ensure 'Java permissions' is set to 'High safety'."
+    Task = "Ensure 'Java permissions' is set to 'High safety'. [Zones\2\1C00]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
