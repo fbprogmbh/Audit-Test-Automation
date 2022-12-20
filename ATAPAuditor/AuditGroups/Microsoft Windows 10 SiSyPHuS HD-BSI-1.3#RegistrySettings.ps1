@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "1"
@@ -10488,26 +10489,18 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "326"
     Task = "(ND, NE) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'."
     Test = {
-        try {
-            $result = Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux
-            $state = $result.State            
-            if($state -eq "Disabled" -or $state -eq "Not Installed"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            else{
-                return @{
-                    Message = "Registry value is '$state'. Expected: 'Disabled' or 'Not Installed'"
-                    Status = "False"
-                }
+        $result = Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux
+        $state = $result.State            
+        if($state -eq "Disabled" -or $state -eq "Not Installed"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.PSArgumentException]{
+        else{
             return @{
-                Message = "Value not found."
-                Status = "Error"
+                Message = "Registry value is '$state'. Expected: 'Disabled' or 'Not Installed'"
+                Status = "False"
             }
         }
     }

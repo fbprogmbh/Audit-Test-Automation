@@ -1,6 +1,7 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "1909.01"
     Task = "Ensure 'Deploy Windows Defender Application Control' is set to 'Enabled'"
