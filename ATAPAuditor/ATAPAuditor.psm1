@@ -453,18 +453,23 @@ function Invoke-ATAPReport {
 	$script:loadedResources = @{}
 	# Load the module manifest
 
-	#Windows OS
-	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-		$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
-		[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
-		$report.RSReport = Get-RSFullReport
-		$report.FoundationReport = Get-FoundationReport
-	}
-	#Linux OS
-	else{
-		$moduleInfo = Import-PowerShellDataFile -Path "$RootPath/ATAPAuditor.psd1"
-		[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
-	}
+	try {
+		#Windows OS
+		if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
+			[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
+			$report.RSReport = Get-RSFullReport
+			$report.FoundationReport = Get-FoundationReport
+		}
+		#Linux OS
+		else{
+			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath/ATAPAuditor.psd1"
+			[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
+		}
+	} catch [System.Management.Automation.CommandNotFoundException] {
+		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
+		break
+	} 
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }
