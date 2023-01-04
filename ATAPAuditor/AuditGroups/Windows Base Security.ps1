@@ -215,13 +215,13 @@ function hasTPM {
 		}
 		$enc_ratio = $volumes_fullenc / $volumes
 		$status = switch ($enc_ratio) {
-			{$PSItem -ge 1}{
+			{$enc_ratio -ge 1}{
 				@{
 					Message = "Compliant"
 					Status = "True"
 				}
 			}
-			{$PSItem -lt 1}{
+			{$enc_ratio -lt 1}{
 				@{
 					Message = "Bitlocker is not activated on all volumes."
 					Status = "False"
