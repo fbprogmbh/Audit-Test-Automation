@@ -124,71 +124,89 @@
 				}
 			)
 		}
-		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS HD'
-			Description = 'This section contains the BSI Benchmark results.'
-			SubSections = @(
-				[ReportSection] @{
-					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
-				}
-			)
+		try {
+			# Get domain role
+			# 0 {"Standalone Workstation"}
+			# 1 {"Member Workstation"}
+			# 2 {"Standalone Server"}
+			# 3 {"Member Server"}
+			# 4 {"Backup Domain Controller"}
+			# 5 {"Primary Domain Controller"}
+			$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+		} catch {
+			$domainRole = 99
 		}
-		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS ND'
-			Description = 'This section contains the BSI Benchmark results.'
-			SubSections = @(
-				[ReportSection] @{
-					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
-				}
-			)
+		# if system is Standalone Workstation
+		if ($domainRole -eq 0) {
+			[ReportSection] @{
+				Title = 'BSI Benchmarks SySiPHuS NE'
+				Description = 'This section contains the BSI Benchmark results.'
+				SubSections = @(
+					[ReportSection] @{
+						Title = 'Registry Settings/Group Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#RegistrySettings"
+					}
+					[ReportSection] @{
+						Title = 'User Rights Assignment'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#UserRights"
+					}
+					[ReportSection] @{
+						Title = 'Account Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#AccountPolicies"
+					}
+					[ReportSection] @{
+						Title = 'Security Options'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#SecurityOptions"
+					}
+				)
+			}	
 		}
-		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS NE'
-			Description = 'This section contains the BSI Benchmark results.'
-			SubSections = @(
-				[ReportSection] @{
-					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#SecurityOptions"
-				}
-			)
+		# if system is Member Workstation
+		if ($domainRole -eq 1) {
+			[ReportSection] @{
+				Title = 'BSI Benchmarks SySiPHuS HD'
+				Description = 'This section contains the BSI Benchmark results.'
+				SubSections = @(
+					[ReportSection] @{
+						Title = 'Registry Settings/Group Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#RegistrySettings"
+					}
+					[ReportSection] @{
+						Title = 'User Rights Assignment'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#UserRights"
+					}
+					[ReportSection] @{
+						Title = 'Account Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AccountPolicies"
+					}
+					[ReportSection] @{
+						Title = 'Security Options'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
+					}
+				)
+			}
+			[ReportSection] @{
+				Title = 'BSI Benchmarks SySiPHuS ND'
+				Description = 'This section contains the BSI Benchmark results.'
+				SubSections = @(
+					[ReportSection] @{
+						Title = 'Registry Settings/Group Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
+					}
+					[ReportSection] @{
+						Title = 'User Rights Assignment'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
+					}
+					[ReportSection] @{
+						Title = 'Account Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
+					}
+					[ReportSection] @{
+						Title = 'Security Options'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
+					}
+				)
+			}
 		}
 		# TODO: Will be removed with version 5.3, if no crucial changes are necessary on these AuditGroups
 		# [ReportSection] @{
