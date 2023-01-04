@@ -134,7 +134,16 @@ function Test-ArrayEqual {
 # 4 {"Backup Domain Controller"}
 # 5 {"Primary Domain Controller"}
 function Get-DomainRole {
-	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+	$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+	switch ($domainRole) {
+		0 { $result = "Standalone Workstation" }
+		1 { $result = "Member Workstation"}
+		2 { $result = "Standalone Server" }
+		3 { $result = "Member Server"}
+		4 { $result = "Backup Domain Controller" }
+		5 { $result = "Primary Domain Controller"}
+	}
+	return $result
 }
 
 ### begin Foundation functions ###
@@ -301,8 +310,8 @@ function Test-AuditGroup {
 					Write-Output ([AuditInfo]@{
 						Id = $test.Id
 						Task = $test.Task
-						Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
-						Status = [AuditInfoStatus]::None
+						Message = $message
+						Status = $status
 					})
 					continue
 				}
