@@ -14,27 +14,27 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R6#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#RegistrySettings"
 				},
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R6#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#UserRights"
 				},
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R6#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#AccountPolicies"
 				},
 				[ReportSection] @{
 					Title = "Windows Features"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R6#WindowsFeatures"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#WindowsFeatures"
 				},
 				[ReportSection] @{
 					Title = "File System Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R6#FileSystemPermissions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#FileSystemPermissions"
 				},
 				[ReportSection] @{
 					Title = "Registry Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R6#RegistryPermissions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#RegistryPermissions"
 				}#,
 				# [ReportSection] @{
 				# 	Title = "Other"
