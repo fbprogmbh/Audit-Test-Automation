@@ -203,6 +203,8 @@ ForEach ($item in $collection)
 }
 ```
 
+* For the installer we are using the free Inno Setup for Windows provided by Jordan Russell and Martijn Laan. https://jrsoftware.org/isinfo.php
+
 ## Sample reports
 
 You can find several sample reports in the "Samples" folder.
