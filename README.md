@@ -203,7 +203,6 @@ ForEach ($item in $collection)
 }
 ```
 
-* For the installer we are using the free Inno Setup for Windows provided by Jordan Russell and Martijn Laan. https://jrsoftware.org/isinfo.php
 
 ## Sample reports
 
@@ -235,6 +234,7 @@ Permanent scope: Machine
 * GitHub-Link: https://github.com/fbprogmbh/Audit-Test-Automation
 * AuditTAP landing page: https://www.fb-pro.com/audit-tap-product-information
 * YouTube channel with more videos: https://www.youtube.com/channel/UCFolaYgClJ005glpn5owRUg
+* For the installer we are using the free Inno Setup for Windows provided by Jordan Russell and Martijn Laan. https://jrsoftware.org/isinfo.php
 
 ### Hardening recommendations in general
 * #NoCodeHardening: https://www.nocodehardening.com
