@@ -236,7 +236,7 @@ Permanent scope: Machine
 
 ### Hardening recommendations in general
 * #NoCodeHardening: https://www.nocodehardening.com
-* BSI SiSyPHus: https://www.bsi.bund.de/EN/Topics/Cyber-Security/Recommendations/SiSyPHuS_Win10/SiSyPHuS_node.html
+* BSI SiSyPHus: [https://www.bsi.bund.de/EN/Topics/Cyber-Security/Recommendations/SiSyPHuS_Win10/SiSyPHuS_node.html](https://www.bsi.bund.de/EN/Service-Navi/Publikationen/Studien/SiSyPHuS_Win10/SiSyPHuS.html)
 * Center for Internet Security: https://www.cisecurity.org/
 * DISA STIGs: https://public.cyber.mil/stigs/
 * Microsoft Security baselines: https://techcommunity.microsoft.com/t5/microsoft-security-baselines/bg-p/Microsoft-Security-Baselines
