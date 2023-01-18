@@ -228,15 +228,19 @@ function Get-HtmlTableRow {
 
 	process {
 		# $properties = $Audit | Get-Member -MemberType Property
-
-		htmlElement 'tr' @{} {
-			foreach ($property in $AuditProperties) {
-				$value = $Audit | Select-Object -ExpandProperty $property.Name
-				if ($Property.Name -eq 'Status') {
-					$class = Get-HtmlClassFromStatus $Audit.Status
-					$value = htmlElement 'span' @{ class = "auditstatus $class" } { $value }
+		Write-Host $Audit.Status
+		if($Audit.Status -ne "None"){
+			$class = Get-HtmlClassFromStatus $Audit.Status
+			if($class -ne ""){
+				htmlElement 'tr' @{} {
+					foreach ($property in $AuditProperties) {
+						$value = $Audit | Select-Object -ExpandProperty $property.Name
+						if ($Property.Name -eq 'Status') {
+							$value = htmlElement 'span' @{ class = "auditstatus $class" } { $value }
+						}
+						htmlElement 'td' @{} { $value }
+					}
 				}
-				htmlElement 'td' @{} { $value }
 			}
 		}
 	}
@@ -325,7 +329,8 @@ function Get-HtmlReportSection {
 							}
 						}
 						foreach ($configAudit in $ConfigAudits) {
-							$configAudit | Get-HtmlTableRow
+							
+							$configAudit | Get-HtmlTableRow 
 						}
 					}
 				}
