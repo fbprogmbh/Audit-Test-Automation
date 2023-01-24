@@ -38,3 +38,14 @@ function Test-ASRRules {
 function CheckHyperVStatus {
     return (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State
 }
+
+function IsInstalled-WindowsDefender {
+    $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+    if ($defStatus.AMRunningMode -eq "Normal") {
+        return $true
+    }      
+    if ((Get-WindowsFeature -Name Windows-Defender -ErrorAction Ignore).installed) {
+        return $true
+    }
+    return $false
+}
