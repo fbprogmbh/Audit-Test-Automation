@@ -228,7 +228,6 @@ function Get-HtmlTableRow {
 
 	process {
 		# $properties = $Audit | Get-Member -MemberType Property
-		Write-Host $Audit.Status
 		if($Audit.Status -ne "None"){
 			$class = Get-HtmlClassFromStatus $Audit.Status
 			if($class -ne ""){
@@ -394,6 +393,9 @@ function Get-CompletionStatus {
 		[array]$Sections
 	)
 
+
+    $Statuses = $Statuses | Where-Object { $_ –ne "None" }
+
 	$totalCount = $Statuses.Count
 	$status = @{
 		TotalCount = $totalCount
@@ -401,10 +403,12 @@ function Get-CompletionStatus {
 
 	#Total completion status
 	foreach ($value in $StatusValues) {
-		$count = ($Statuses | Where-Object { $_ -eq $value }).Count
-		$status[$value] = @{
-			Count   = $count
-			Percent = (100 * ($count / $totalCount)).ToString("0.00", [cultureinfo]::InvariantCulture)
+		if($value -ne 'None'){
+			$count = ($Statuses | Where-Object { $_ -eq $value }).Count
+			$status[$value] = @{
+				Count   = $count
+				Percent = (100 * ($count / $totalCount)).ToString("0.00", [cultureinfo]::InvariantCulture)
+			}
 		}
 	}
 
@@ -800,30 +804,34 @@ function Get-ATAPHtmlReport {
 								$completionStatus.TotalCount
 							)
 						}
-
+							
 						# Status percentage gauge
 						htmlElement 'div' @{ class = 'gauge' } {
 							foreach ($value in $StatusValues) {
-								$count = $completionStatus[$value].Count
-								$htmlClass = Get-HtmlClassFromStatus $value
-								$percent = $completionStatus[$value].Percent
+								if($value -ne "None"){
+									$count = $completionStatus[$value].Count
+									$htmlClass = Get-HtmlClassFromStatus $value
+									$percent = $completionStatus[$value].Percent
 
-								htmlElement 'div' @{
-									class = "gauge-meter $htmlClass"
-									style = "width: $($percent)%"
-									title = "$value $count test(s), $($percent)%"
-								} { }
+									htmlElement 'div' @{
+										class = "gauge-meter $htmlClass"
+										style = "width: $($percent)%"
+										title = "$value $count test(s), $($percent)%"
+									} { }
+								}
 							}
 						}
 						htmlElement 'ol' @{ class = 'gauge-info' } {
 							foreach ($value in $StatusValues) {
-								$count = $completionStatus[$value].Count
-								$htmlClass = Get-HtmlClassFromStatus $value
-								$percent = $completionStatus[$value].Percent
+								if($value -ne "None"){
+									$count = $completionStatus[$value].Count
+									$htmlClass = Get-HtmlClassFromStatus $value
+									$percent = $completionStatus[$value].Percent
 
-								htmlElement 'li' @{ class = 'gauge-info-item' } {
-									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
-									" $count test(s) &#x2259; $($percent)%"
+									htmlElement 'li' @{ class = 'gauge-info-item' } {
+										htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
+										" $count test(s) &#x2259; $($percent)%"
+									}
 								}
 							}
 
@@ -841,26 +849,30 @@ function Get-ATAPHtmlReport {
 							# Status percentage gauge for sections
 							htmlElement 'div' @{ class = 'gauge' } {
 								foreach ($value in $StatusValues) {
-									$count = $sectionCountHash[$section.Title + $value + "Count"]
-									$htmlClass = Get-HtmlClassFromStatus $value
-									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+									if($value -ne "None"){
+										$count = $sectionCountHash[$section.Title + $value + "Count"]
+										$htmlClass = Get-HtmlClassFromStatus $value
+										$percent = $sectionCountHash[$section.Title + $value + "Percent"]
 
-									htmlElement 'div' @{
-										class = "gauge-meter $htmlClass"
-										style = "width: $($percent)%"
-										title = "$value $count test(s), $($percent)%"
-									} { }
+										htmlElement 'div' @{
+											class = "gauge-meter $htmlClass"
+											style = "width: $($percent)%"
+											title = "$value $count test(s), $($percent)%"
+										} { }
+									}
 								}
 							}
 							htmlElement 'ol' @{ class = 'gauge-info' } {
 								foreach ($value in $StatusValues) {
-									$count = $sectionCountHash[$section.Title + $value + "Count"]
-									$htmlClass = Get-HtmlClassFromStatus $value
-									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
+									if($value -ne "None"){
+										$count = $sectionCountHash[$section.Title + $value + "Count"]
+										$htmlClass = Get-HtmlClassFromStatus $value
+										$percent = $sectionCountHash[$section.Title + $value + "Percent"]
 
-									htmlElement 'li' @{ class = 'gauge-info-item' } {
-										htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
-										" $count test(s) &#x2259; $($percent)%"
+										htmlElement 'li' @{ class = 'gauge-info-item' } {
+											htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
+											" $count test(s) &#x2259; $($percent)%"
+										}
 									}
 								}
 							}
