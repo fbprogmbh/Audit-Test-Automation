@@ -8533,8 +8533,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8595,8 +8595,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8657,8 +8657,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating  executable content' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8719,8 +8719,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block execution of potentially obfuscated scripts' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8781,8 +8781,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8843,8 +8843,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Adobe Reader from creating child processes' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8905,8 +8905,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -8967,8 +8967,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -9029,8 +9029,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -9091,8 +9091,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block executable content from email client and webmail' is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -9153,8 +9153,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block JavaScript or VBScript from launching downloaded executable content' is configured"
     Test = {
        try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -9215,8 +9215,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating child processes'  is configured"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -9277,8 +9277,8 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block persistence through WMI event subscription' is configured"
     Test = {
             try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"

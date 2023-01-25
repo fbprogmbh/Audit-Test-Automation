@@ -4183,8 +4183,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'."
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4245,8 +4245,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is 'configured'."
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4307,8 +4307,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4369,8 +4369,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4431,8 +4431,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4493,8 +4493,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4555,8 +4555,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4617,8 +4617,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4679,8 +4679,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4741,8 +4741,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4803,8 +4803,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
        try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
@@ -4865,8 +4865,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(ND, NE) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
-            $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-            if ($defStatus.AMRunningMode -ne "Normal") {
+            $windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
                     Status = "False"
