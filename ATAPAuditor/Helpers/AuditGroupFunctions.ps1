@@ -40,12 +40,30 @@ function CheckHyperVStatus {
 }
 
 function IsInstalled-WindowsDefender {
-    $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
-    if ($defStatus.AMRunningMode -eq "Normal") {
-        return $true
-    }      
-    if ((Get-WindowsFeature -Name Windows-Defender -ErrorAction Ignore).installed) {
-        return $true
+    try {
+        if ((Get-MpPreference -ErrorAction Ignore).Disablerealtimemonitoring) {
+            return $false;
+        }
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+    }
+    try {
+        $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
+        if ($defStatus.AMRunningMode -eq "Normal") {
+            return $true
+        }      
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+    }
+    try {
+        if ((Get-WindowsFeature -Name Windows-Defender -ErrorAction Ignore).installed) {
+            return $true
+        }
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
     }
     return $false
 }

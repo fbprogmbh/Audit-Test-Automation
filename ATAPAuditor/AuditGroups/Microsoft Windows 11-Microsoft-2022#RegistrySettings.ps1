@@ -660,9 +660,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
@@ -722,9 +722,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
@@ -765,9 +765,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -827,9 +827,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
@@ -870,9 +870,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -932,9 +932,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
@@ -975,9 +975,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }     
+            }  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1037,9 +1037,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
@@ -1080,9 +1080,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1142,9 +1142,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
@@ -1185,9 +1185,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1247,9 +1247,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
@@ -1290,9 +1290,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1352,9 +1352,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }       
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `

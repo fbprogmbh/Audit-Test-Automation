@@ -8537,9 +8537,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
@@ -8599,9 +8599,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -8661,9 +8661,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -8723,9 +8723,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -8785,9 +8785,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -8847,9 +8847,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -8909,9 +8909,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -8971,9 +8971,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -9033,9 +9033,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -9095,9 +9095,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -9157,9 +9157,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }     
+            }  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -9219,9 +9219,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -9281,9 +9281,9 @@ $hyperVStatus = CheckHyperVStatus
             if (-not $windefenderstatus) {
                 return @{
                     Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
+                    Status = "None"
                 }
-            }                     
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
