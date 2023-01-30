@@ -9465,14 +9465,10 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
-                -Name "DisableRealtimeMonitoring" `
-                | Select-Object -ExpandProperty "DisableRealtimeMonitoring"
-        
-            if ($regValue -ne 0) {
+            $status = Get-MpComputerStatus
+            if ($status.RealTimeProtectionEnabled -ne $true) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Real-time protection is not activated."
                     Status = "False"
                 }
             }
