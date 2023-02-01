@@ -4,7 +4,7 @@ This section is dedicated to an ever-growing list of frequently asked questions
 ### Table of contents
 
 
-  1. [an I keep formatting when printing AuditTAP HTML report as PDF?](#when-printing-html-to-pdf-color-scheme-formatting-is-lost)
+  1. [Can I keep formatting when printing AuditTAP HTML report as PDF?](#when-printing-html-to-pdf-color-scheme-formatting-is-lost)
   2. [Can we add specific exclusions to be more compliant?](#can-we-add-specific-exclusions-to-be-more-compliant)
   3. [When downloading my anti virus scanner detects malicious behavior. What does that mean?](#when-downloading-my-anti-virus-scanner-detects-malicious-behavior-what-does-that-mean)
 
@@ -26,6 +26,6 @@ At this point of time it is not possible to add ecxlusions or rationals. AuditTA
 
 #### When downloading my anti virus scanner detects malicious behavior. What does that mean?
 
-For the AuditTAP we are using an open source installer called 'Inno Setup' provided by Jordan Russell. This installer can be detected as a malicious file, which is not the case. This is a common problem which happened to other software providers as well. Here is a link to a stackoverflow question about this topic: 
+For AuditTAP we are using an open source installer called 'Inno Setup' provided by Jordan Russell. This installer can be detected as a malicious file, which is not the case. This is a common problem which happened to other software providers as well. Here is a link to a stackoverflow question about this topic: 
 https://stackoverflow.com/questions/68834409/program-installed-with-inno-setup-seen-as-trojan-wacatac-bml   
 If you don't trust this installer at all, you can of course install our tool via PowerShell Gallery or by importing both modules via PowerShell.
