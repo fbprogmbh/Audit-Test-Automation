@@ -1,7 +1,8 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
-$hyperVStatus = CheckHyperVStatus
+$avstatus = CheckForActiveAV
+$windefrunning = CheckWindefRunning
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "Registry-009"
@@ -332,6 +333,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Set registry value 'PUAProtection' to 'Enabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender" `
                 -Name "PUAProtection" `
@@ -368,6 +377,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Set registry value 'MpCloudBlockLevel' to 2. (High blocking level)"
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\MpEngine" `
                 -Name "MpCloudBlockLevel" `
@@ -404,6 +421,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Ensure 'Scan all downloaded files and attachments' is set to 'Enabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableIOAVProtection" `
@@ -440,6 +465,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Ensure 'Turn off real-time protection' is set to 'Disabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableRealtimeMonitoring" `
@@ -476,6 +509,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Set registry value 'DisableScriptScanning' to 'Disabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableScriptScanning" `
@@ -512,6 +553,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Ensure 'Scan removable drives' is set to 'Enabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableRemovableDriveScanning" `
@@ -548,6 +597,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Ensure 'Send file samples when further analysis is required' is set to 'Send safe samples'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SubmitSamplesConsent" `
@@ -584,6 +641,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Ensure 'Join Microsoft MAPS' is set to 'Advanced MAPS'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
@@ -620,6 +685,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Ensure 'Configure the 'Block at First Sight' feature' is set to 'Enabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "DisableBlockAtFirstSeen" `
@@ -656,13 +729,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Set registry value 'ExploitGuard_ASR_Rules' to 'Enabled'."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }                       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
@@ -718,13 +792,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Set the state for each Attack Surface Reduction (ASR) rule (Block Office applications from injecting code into other processes)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
@@ -761,13 +836,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office applications from creating executable content)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }                       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -823,13 +899,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block all Office applications from creating child processes)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
@@ -866,13 +943,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Win32 API calls from Office macros)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }                       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -928,13 +1006,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block execution of potentially obfuscated scripts)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
@@ -971,13 +1050,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block JavaScript or VBScript from launching downloaded executable content)."
     Test = {
        try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1033,13 +1113,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block executable content from email client and webmail)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
@@ -1076,13 +1157,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block credential stealing from the Windows local security authority subsystem (lsass.exe))."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }                       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1138,13 +1220,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block untrusted and unsigned processes that run from USB)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
@@ -1181,13 +1264,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Office communication application from creating child processes)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }                       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1243,13 +1327,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block Adobe Reader from creating child processes)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
@@ -1286,13 +1371,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Use advanced protection against ransomware"
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }                       
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }                  
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1348,13 +1434,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "(L1) Set the state for each Attack Surface Reduction (ASR) rule (Block persistence through WMI event subscription)."
     Test = {
         try {
-            $windefrunning = CheckWindefRunning
-            if ((-not $windefrunning)) {
-                return @{
-                    Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "None"
-                }
-            }         
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }    
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
                 -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
@@ -1391,6 +1478,14 @@ $hyperVStatus = CheckHyperVStatus
     Task = "Set registry value 'EnableNetworkProtection' to 'Enabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" `
                 -Name "EnableNetworkProtection" `
