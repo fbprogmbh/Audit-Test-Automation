@@ -1,4 +1,9 @@
-﻿[AuditTest] @{
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$avstatus = CheckForActiveAV
+$windefrunning = CheckWindefRunning
+[AuditTest] @{
     Id = "3.1.1 A"
     Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
     Test = {
@@ -183,6 +188,14 @@
     Task = "Deactivation of telemetry according to Microsoft - Cloud-Based-Protection: disable MAPS"
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
@@ -219,6 +232,14 @@
     Task = "Deactivation of telemetry according to Microsoft - Cloud-Based-Protection: never send sample files"
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SubmitSamplesConsent" `
