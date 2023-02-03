@@ -74,7 +74,7 @@ Microsoft Windows Server 2016 | 1.12 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.2.0 | FINAL | - | -
 Microsoft Windows Server 2019 | 1.5 | 1.3.0 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
-Microsoft Windows Server 2022 | - | 1.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
 Red Hat Enterprise Linux 8 | - | - | - | - | -
 Ubuntu 20.04 | - | - | - | - | -
 
