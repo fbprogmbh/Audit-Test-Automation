@@ -7,7 +7,7 @@ This section is dedicated to an ever-growing list of frequently asked questions
 
 2. [Can we add specific exclusions to be more compliant?](https://github.com/fbprogmbh/Audit-Test-Automation/edit/master/FAQ/readme.md#Can-we-add-specific-exclusions-to-be-more-compliant)
 
-3. 2. [PowerShell console states commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor". What to do now?](https://github.com/fbprogmbh/Audit-Test-Automation/edit/master/FAQ/readme.md#owerShell console states commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor". What to do now?)
+3. [PowerShell console states commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor". What to do now?](https://github.com/fbprogmbh/Audit-Test-Automation/edit/master/FAQ/readme.md#owerShell console states commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor". What to do now?)
 
 
 #### When printing html to PDF, color-scheme-formatting is lost
