@@ -20,3 +20,15 @@ The following screenshot shows this for Firefox browser.
 
 The scenario often described is as follows: Customer uses another antimalware tool than Microsoft Defender. So all Defender related rules will be non compliant as Microsoft Defender is not in "active mode". This leads to higher "non compliance value". 
 At this point of time it is not possible to add ecxlusions or rationals. AuditTAP was designed to be easy to handle and create fast, transparent reports. We are thinking about enhancing the product in this direction - but this is not a short term feature change.
+
+#### PowerShell console states commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor". What to do now? 
+
+This  happens in case PowerShell "Constrained Language Mode" is activated and execution policy is set to "AllSigned". A simple change of execution policy will help here. We recommend to change it only for the single PowerShell session and not permanent for system or user. The following PowerShell will do the trick:
+
+```
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+```
+
+The following Screenshot shows error and solution: 
+![image](https://user-images.githubusercontent.com/23223285/216938169-b92200d4-645b-442c-8d00-de46328e75a0.png)
+
