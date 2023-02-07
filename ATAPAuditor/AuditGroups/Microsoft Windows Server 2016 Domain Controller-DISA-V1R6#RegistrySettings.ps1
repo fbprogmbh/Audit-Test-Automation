@@ -507,7 +507,6 @@
     Task = "Credential Guard must be running on domain-joined member servers."
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
     )
     Test = {
         try {
