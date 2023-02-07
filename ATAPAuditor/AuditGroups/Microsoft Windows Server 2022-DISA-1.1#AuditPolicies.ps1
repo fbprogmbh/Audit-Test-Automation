@@ -817,8 +817,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "V-254319 + V-254320"
-    Task = "Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change successes. Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change failures."
+    Id = "V-254319"
+    Task = "Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change successes."
     Test = {
         # Get the audit policy for the subcategory Audit Audit Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
@@ -860,16 +860,83 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
+        if (
+            $setting -eq "Success and Failure" -or 
+            $setting -eq "Erfolg und Fehler" -or
+            $setting -eq "Success" -or
+            $setting -eq "Erfolg" 
+        ) {
             return @{
-                Status = "False"
-                Message = "Set to: $setting"
+                Status = "True"
+                Message = "Compliant"
+            }
+        }
+
+        return @{
+            Status = "False"
+            Message = "Set to: $setting"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-254320"
+    Task = "Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change failures."
+    Test = {
+        # Get the audit policy for the subcategory Audit Audit Policy Change
+        $subCategoryGUID = "{0CCE922F-69AE-11D9-BED3-505054503030}"#Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
+        
+        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
+            return @{
+                Message = "Cannot get Subcategory 'Audit Audit Policy Change'"
+                Status = "None"
             }
         }
         
+        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+        
+        # auditpol does not throw exceptions, so test the results and throw if needed
+        if ($LASTEXITCODE -ne 0) {
+            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+            throw [System.ArgumentException] $errorString
+            Write-Error -Message $errorString
+        }
+        
+        if ($null -eq $auditPolicyString) {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting. Auditpol returned nothing."
+            }
+        }
+        
+        # Remove empty lines and headers
+        $line = $auditPolicyString `
+            | Where-Object { $_ } `
+            | Select-Object -Skip 3
+        
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting."
+            }
+        }
+        
+        $setting = $Matches[0]
+
+        if (
+            $setting -eq "Success and Failure" -or 
+            $setting -eq "Erfolg und Fehler" -or
+            $setting -eq "Failure" -or
+            $setting -eq "Fehler" 
+        ) {
+            return @{
+                Status = "True"
+                Message = "Compliant"
+            }
+        }
+
         return @{
-            Status = "True"
-            Message = "Compliant"
+            Status = "False"
+            Message = "Set to: $setting"
         }
     }
 }
