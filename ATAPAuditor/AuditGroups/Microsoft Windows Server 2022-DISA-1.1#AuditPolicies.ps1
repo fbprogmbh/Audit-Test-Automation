@@ -821,7 +821,7 @@ function Get-AuditPolicySubcategoryGUID {
     Task = "Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change successes. Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change failures."
     Test = {
         # Get the audit policy for the subcategory Audit Audit Policy Change
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Audit Policy Change"
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{

@@ -1801,10 +1801,10 @@
 [AuditTest] @{
     Id = "V-254416"
     Task = "Windows Server 2022 domain controllers must require LDAP access signing."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
-        Constraints = @(
-            @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
-        )
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters" `
@@ -1840,10 +1840,10 @@
 [AuditTest] @{
     Id = "V-254417"
     Task = "Windows Server 2022 domain controllers must be configured to allow reset of machine account passwords."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+    )
     Test = {
-        Constraints = @(
-            @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
-        )
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
