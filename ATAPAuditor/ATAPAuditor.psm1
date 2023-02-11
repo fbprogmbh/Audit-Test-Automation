@@ -545,7 +545,6 @@ function Save-ATAPHtmlReport {
 	$parent = $path
 	if ($Path -match ".html") {
 		$parent = Split-Path -Path $Path
-		Write-Host "Split in 548 parent: $parent"
 	}
 
 	#if input path is not default one
@@ -562,7 +561,7 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-	
+
 	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -DarkMode:$DarkMode
 }
 
