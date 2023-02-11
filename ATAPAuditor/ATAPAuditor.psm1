@@ -542,22 +542,27 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
+	$parent = $path
+	if ($Path -match ".html") {
+		$parent = Split-Path -Path $Path
+		Write-Host "Split in 548 parent: $parent"
+	}
 
-	$pathOnly = Split-Path -Path $Path
 	#if input path is not default one
-	if($pathOnly -ne $script:atapReportsPath){
-		$pathCheck = Test-Path -Path $Path -PathType Container
+	if($parent -ne $script:atapReportsPath){
+		$pathCheck = Test-Path -Path $parent -PathType Container
 		#if path doesn't exist
 		if($pathCheck -eq $False){
-			Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
-			$Path = $script:atapReportsPath
+			if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
+				New-Item -ItemType Directory -Path $parent -Force | Out-Null
+				Write-Warning "Could not find Path. Path will be created: $parent"
+			} else {
+				Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
+				$Path = $($script:atapReportsPath)
+			}
 		}
 	}
 	
-	$parent = Split-Path $Path
-	if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
-		New-Item -ItemType Directory -Path $parent -Force | Out-Null
-	}
 	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -DarkMode:$DarkMode
 }
 
