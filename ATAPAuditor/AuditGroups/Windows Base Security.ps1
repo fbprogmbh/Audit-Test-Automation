@@ -519,10 +519,37 @@ function hasTPM {
 			return $status
 		}
 		else {
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
+			$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
+			$ruleactions = (Get-MpPreference).AttackSurfaceReductionRules_Actions
+			$RuleTable = for ($i = 0; $i -lt $ruleids.Count; $i++) {
+				[PSCustomObject]@{
+					RuleId = $ruleids[$i]
+					RuleAction = $ruleactions[$i]
+				}
 			}
+			$countEnabled = ($RuleTable | Where-Object {$_.RuleAction -eq 1} | Measure-Object).Count
+			
+			$status = switch ($countEnabled) {
+				{$PSItem -ge 9}{
+					@{
+						Message = "Compliant ($($countEnabled) rules enabled). For more information on ASR rules, check corresponding benchmarks."
+						Status = "True"
+					}
+				}
+				{($PSItem -ge 1) -and ($PSItem -lt 9)}{
+					@{
+						Message = "$($countEnabled) ASR rules are activated. For more information on ASR rules, check corresponding benchmarks."
+						Status = "Warning"
+					}
+				}
+				Default {
+					@{
+						Message = "ASR rules are not enabled."
+						Status = "False"
+					}
+				}
+			}
+			return $status
 		}
 	}
 }
