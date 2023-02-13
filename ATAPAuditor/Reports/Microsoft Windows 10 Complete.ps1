@@ -8,6 +8,7 @@
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
         "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -260,6 +261,20 @@
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10-BSI-Bundespolizei#AuditPolicies"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'FB Pro recommendations'
+			Description = 'This section contains the FB Pro recommendations.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Ciphers Suites and Hashes'
+					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.1.0#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'Enhanced security settings'
+					AuditInfos = Test-AuditGroup "Enhanced security settings-FBPro-1.0#UserRights"
 				}
 			)
 		}

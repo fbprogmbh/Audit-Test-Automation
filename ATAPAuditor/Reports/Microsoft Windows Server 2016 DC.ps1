@@ -6,6 +6,7 @@
 		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: V1R6, Date: 2018-10-26"
 		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.1.0, Date: 2018-10-15"
 		"Microsoft Security baseline for Windows Server 2016 Domain Controller, Version: FINAL, Date 2016-10-17"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -87,6 +88,20 @@
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#AuditPolicies"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'FB Pro recommendations'
+			Description = 'This section contains the FB Pro recommendations.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Ciphers Suites and Hashes'
+					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.1.0#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'Enhanced security settings'
+					AuditInfos = Test-AuditGroup "Enhanced security settings-FBPro-1.0#UserRights"
 				}
 			)
 		}
