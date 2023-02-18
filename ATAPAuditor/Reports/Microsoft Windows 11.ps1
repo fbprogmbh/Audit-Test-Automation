@@ -2,13 +2,40 @@
 	Title = "Windows 11 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"Security baseline for Microsoft Windows 11, Version: 20H2, Date: 2020-12-17"
+		"CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15"
 		"CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14"
+		"Security baseline for Microsoft Windows 11, Version: 20H2, Date: 2020-12-17"
 		#"Restricted Traffic Limited Functionality Baseline for Microsoft Windows 11, Version: 21H2, Date: 2022-06-18"
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
         "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
     )
 	Sections = @(
+		[ReportSection] @{
+			Title = "CIS Stand-alone Benchmarks"
+			Description = "This section contains all benchmarks from CIS"
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#SecurityOptions"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#UserRights"
+				}
+			)
+		}
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
 			Description = "This section contains all benchmarks from CIS"

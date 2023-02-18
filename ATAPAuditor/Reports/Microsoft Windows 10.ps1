@@ -2,6 +2,7 @@
 	Title = "Windows 10 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
+		"CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08"
 		"CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
 		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R16, Date: 2019-10-25"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
@@ -9,6 +10,32 @@
         "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 	)
 	Sections = @(
+		[ReportSection] @{
+			Title = 'CIS Stand-alone Benchmarks'
+			Description = 'This section contains the CIS Benchmark results.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#SecurityOptions"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#UserRights"
+				}
+			)
+		}
 		[ReportSection] @{
 			Title = 'CIS Benchmarks'
 			Description = 'This section contains the CIS Benchmark results.'
@@ -165,27 +192,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = "Windows Features"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#WindowsOptionalFeatures"
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#AuditPolicies"
 				}
 				[ReportSection] @{
-					Title = "File System Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#FileSystemPermissions"
-				}
-				[ReportSection] @{
-					Title = "Registry Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R16#RegistryPermissions"
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#SecurityOptions"
 				}
 			)
 		}

@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: 1.12, Date: 2020-06-17"
-		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.1.0, Date: 2018-10-15"
+		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.4.0, Date: 2022-04-21"
 		"Microsoft Security baseline for Windows Server 2016, Version: FINAL, Date 2016-10-17"
 	)
 	Sections = @(
@@ -37,27 +37,27 @@
 		}
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
-			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.2.0 - 14-05-2020. WARNING: Tests in this version haven't been fully tested yet."
+			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607)"
 			SubSections = @(
 				[ReportSection] @{
+					Title = "Account Policies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = " Advanced Audit Policy Configuration"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#AuditPolicies"
+				}
+				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.2.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = "Security Options"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.2.0#UserRights"
-				}
-				[ReportSection] @{
-					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.2.0#AccountPolicies"
-				}
-				# [ReportSection] @{
-				# 	Title = "Windows Firewall with Advanced Security"
-				# 	AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.1.0#FirewallProfileSettings"
-				# }
-				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.2.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#UserRights"
 				}
 			)
 		}
