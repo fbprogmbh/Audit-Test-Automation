@@ -205,8 +205,12 @@
 				Description = 'This section contains the FB Pro recommendations.'
 				SubSections = @(
 					[ReportSection] @{
-						Title = 'Registry Settings/Group Policies'
+						Title = 'Ciphers Suites and Hashes'
 						AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.1.0#RegistrySettings"
+					}
+					[ReportSection] @{
+						Title = 'Enhanced security settings'
+						AuditInfos = Test-AuditGroup "Enhanced security settings-FBPro-1.0#UserRights"
 					}
 				)
 			}
