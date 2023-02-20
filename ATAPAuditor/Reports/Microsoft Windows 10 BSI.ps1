@@ -6,6 +6,7 @@
         "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"SiSyPHuS Recommendations for Telemetry Components: Version 1.1, Date: 2019-07-31"
 		"Sicherheitsmodul Richtlinie Bundespolizei SiM-08202: Version 1.0, Date: 2017-09-13"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -117,24 +118,16 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SiSyPHus-BSI Bundespolizei'
-			Description = 'This section contains the BSI Benchmark results.'
+			Title = 'FB Pro recommendations'
+			Description = 'This section contains the FB Pro recommendations.'
 			SubSections = @(
 				[ReportSection] @{
-					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-BSI-Bundespolizei#RegistrySettings"
+					Title = 'Ciphers Suites and Hashes'
+					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.1.0#RegistrySettings"
 				}
 				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-BSI-Bundespolizei#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-BSI-Bundespolizei#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-BSI-Bundespolizei#AuditPolicies"
+					Title = 'Enhanced security settings'
+					AuditInfos = Test-AuditGroup "Enhanced security settings-FBPro-1.0#UserRights"
 				}
 			)
 		}
