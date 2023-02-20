@@ -61,9 +61,6 @@ function hasTPM {
 [AuditTest] @{
 	Id = "SBD-010"
 	Task = "Get amount of users and groups in administrators group on system."
-	Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation", "StandaloneWorkstation", "MemberServer", "StandaloneServer" }
-    )
 	Test = {	
 		try { 
 			try{

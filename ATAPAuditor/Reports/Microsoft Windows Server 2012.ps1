@@ -3,13 +3,13 @@
 	Title = "Windows Server 2012 Audit Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Microsoft Windows Server 2012 R2 Benchmark, Version: 2.6.0, Date: 2022-05-018",
+		"CIS Microsoft Windows Server 2012 R2 Benchmark, Version: 2.6.0, Date: 2022-05-18",
 		"DISA Microsoft Windows Server 2012 R2 Benchmark, Version: 2.19, Date: 2020-07-17"
 	)
 	Sections = @(
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
-			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM"
+			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2012 v2.6.0 - 2022-05-18. WARNING: Tests in this version haven't been fully tested yet."
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"

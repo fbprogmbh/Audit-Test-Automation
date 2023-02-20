@@ -76,8 +76,8 @@ function Get-AuditPolicySubcategoryGUID {
 
 # Tests
 [AuditTest] @{
-    Id = "17.1.1"
-    Task = "(L1) Ensure 'Audit Credential Validation' is set to 'Success and Failure'"
+    Id = "V-254300 + V-254301"
+    Task = "Windows Server 2022 must be configured to audit Account Logon - Credential Validation successes. Windows Server 2022 must be configured to audit Account Logon - Credential Validation failures."
     Test = {
         # Get the audit policy for the subcategory Credential Validation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Credential Validation"
@@ -133,293 +133,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.1.2"
-    Task = "(L1) Ensure 'Audit Kerberos Authentication Service' is set to 'Success and Failure' (DC Only)"
-    Test = {
-        # Get the audit policy for the subcategory Kerberos Authentication Service
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Kerberos Authentication Service"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Kerberos Authentication Service'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.1.3"
-    Task = "(L1) Ensure 'Audit Kerberos Service Ticket Operations' is set to 'Success and Failure' (DC Only)"
-    Test = {
-        # Get the audit policy for the subcategory Kerberos Service Ticket Operations
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Kerberos Service Ticket Operations"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Kerberos Service Ticket Operations'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.2.1"
-    Task = "(L1) Ensure 'Audit Application Group Management' is set to 'Success and Failure'"
-    Test = {
-        # Get the audit policy for the subcategory Application Group Management
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Application Group Management"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Application Group Management'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.2.2"
-    Task = "(L1) Ensure 'Audit Computer Account Management' is set to include 'Success' (DC only)"
-    Test = {
-        # Get the audit policy for the subcategory Computer Account Management
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Computer Account Management"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Computer Account Management'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.2.3"
-    Task = "(L1) Ensure 'Audit Distribution Group Management' is set to include 'Success' (DC only)"
-    Test = {
-        # Get the audit policy for the subcategory Distribution Group Management
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Distribution Group Management"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Distribution Group Management'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.2.4"
-    Task = "(L1) Ensure 'Audit Other Account Management Events' is set to include 'Success' (DC only)"
+    Id = "V-254302"
+    Task = "Windows Server 2022 must be configured to audit Account Management - Other Account Management Events successes."
     Test = {
         # Get the audit policy for the subcategory Other Account Management Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Account Management Events"
@@ -475,8 +190,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.2.5"
-    Task = "(L1) Ensure 'Audit Security Group Management' is set to include 'Success'"
+    Id = "V-254303"
+    Task = "Windows Server 2022 must be configured to audit Account Management - Security Group Management successes."
     Test = {
         # Get the audit policy for the subcategory Security Group Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security Group Management"
@@ -532,8 +247,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.2.6"
-    Task = "(L1) Ensure 'Audit User Account Management' is set to 'Success and Failure'"
+    Id = "V-254304 + V-254305"
+    Task = "Windows Server 2022 must be configured to audit Account Management - User Account Management successes. Windows Server 2022 must be configured to audit Account Management - User Account Management failures."
     Test = {
         # Get the audit policy for the subcategory User Account Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "User Account Management"
@@ -589,8 +304,65 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.3.1"
-    Task = "(L1) Ensure 'Audit Process Creation' is set to include 'Success'"
+    Id = "V-254306"
+    Task = "Windows Server 2022 must be configured to audit Detailed Tracking - Plug and Play Events successes."
+    Test = {
+        # Get the audit policy for the subcategory Plug and Play Events
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
+        
+        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
+            return @{
+                Message = "Cannot get Subcategory 'Plug and Play Events'"
+                Status = "None"
+            }
+        }
+        
+        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+        
+        # auditpol does not throw exceptions, so test the results and throw if needed
+        if ($LASTEXITCODE -ne 0) {
+            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+            throw [System.ArgumentException] $errorString
+            Write-Error -Message $errorString
+        }
+        
+        if ($null -eq $auditPolicyString) {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting. Auditpol returned nothing."
+            }
+        }
+        
+        # Remove empty lines and headers
+        $line = $auditPolicyString `
+            | Where-Object { $_ } `
+            | Select-Object -Skip 3
+        
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting."
+            }
+        }
+        
+        $setting = $Matches[0]
+        
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
+            return @{
+                Status = "False"
+                Message = "Set to: $setting"
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-254307"
+    Task = "Windows Server 2022 must be configured to audit Detailed Tracking - Process Creation successes."
     Test = {
         # Get the audit policy for the subcategory Process Creation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Process Creation"
@@ -646,15 +418,15 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.4.1"
-    Task = "(L1) Ensure 'Audit Directory Service Access' is set to include 'Failure' (DC only)"
+    Id = "V-254308 + V-254309"
+    Task = "Windows Server 2022 must be configured to audit Logon/Logoff - Account Lockout successes. Windows Server 2022 must be configured to audit Logon/Logoff - Account Lockout failures."
     Test = {
-        # Get the audit policy for the subcategory Directory Service Access
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Directory Service Access"
+        # Get the audit policy for the subcategory Account Lockout
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Account Lockout"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Directory Service Access'"
+                Message = "Cannot get Subcategory 'Account Lockout'"
                 Status = "None"
             }
         }
@@ -689,7 +461,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -703,15 +475,15 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.4.2"
-    Task = "(L1) Ensure 'Audit Directory Service Changes' is set to include 'Success' (DC only)"
+    Id = "V-254310"
+    Task = "Windows Server 2022 must be configured to audit Logon/Logoff - Group Membership successes."
     Test = {
-        # Get the audit policy for the subcategory Directory Service Changes
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Directory Service Changes"
+        # Get the audit policy for the subcategory Group Membership
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Group Membership"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Directory Service Changes'"
+                Message = "Cannot get Subcategory 'Group Membership'"
                 Status = "None"
             }
         }
@@ -760,65 +532,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.5.1"
-    Task = "(L1) Ensure 'Audit Account Lockout' is set to include 'Failure'"
-    Test = {
-        # Get the audit policy for the subcategory Account Lockout
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Account Lockout"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Account Lockout'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.5.2"
-    Task = "(L1) Ensure 'Audit Logoff' is set to include 'Success'"
+    Id = "V-254311"
+    Task = "Windows Server 2022 must be configured to audit logoff successes."
     Test = {
         # Get the audit policy for the subcategory Logoff
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logoff"
@@ -874,8 +589,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.5.3"
-    Task = "(L1) Ensure 'Audit Logon' is set to 'Success and Failure'"
+    Id = "V-254312 + V-254313"
+    Task = "Windows Server 2022 must be configured to audit logon successes. Windows Server 2022 must be configured to audit logon failures."
     Test = {
         # Get the audit policy for the subcategory Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logon"
@@ -931,65 +646,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.5.4"
-    Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
-    Test = {
-        # Get the audit policy for the subcategory Other Logon/Logoff Events
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Other Logon/Logoff Events'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.5.5"
-    Task = "(L1) Ensure 'Audit Special Logon' is set to include 'Success'"
+    Id = "V-254314"
+    Task = "Windows Server 2022 must be configured to audit Logon/Logoff - Special Logon successes."
     Test = {
         # Get the audit policy for the subcategory Special Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Special Logon"
@@ -1045,122 +703,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.6.1"
-    Task = "(L1) Ensure 'Audit Detailed File Share' is set to include 'Failure'"
-    Test = {
-        # Get the audit policy for the subcategory Detailed File Share
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Detailed File Share"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Detailed File Share'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.6.2"
-    Task = "(L1) Ensure 'Audit File Share' is set to 'Success and Failure'"
-    Test = {
-        # Get the audit policy for the subcategory File Share
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "File Share"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'File Share'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.6.3"
-    Task = "(L1) Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'"
+    Id = "V-254315 + V-254316"
+    Task = "Windows Server 2022 must be configured to audit Object Access - Other Object Access Events successes. Windows Server 2022 must be configured to audit Object Access - Other Object Access Events failures."
     Test = {
         # Get the audit policy for the subcategory Other Object Access Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Object Access Events"
@@ -1216,8 +760,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.6.4"
-    Task = "(L1) Ensure 'Audit Removable Storage' is set to 'Success and Failure'"
+    Id = "V-254317 + V-254318"
+    Task = "Windows Server 2022 must be configured to audit Object Access - Removable Storage successes. Windows Server 2022 must be configured to audit Object Access - Removable Storage failures."
     Test = {
         # Get the audit policy for the subcategory Removable Storage
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Removable Storage"
@@ -1273,15 +817,15 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.7.1"
-    Task = "(L1) Ensure 'Audit Audit Policy Change' is set to include 'Success'"
+    Id = "V-254319 + V-254320"
+    Task = "Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change successes. Windows Server 2022 must be configured to audit Policy Change - Audit Policy Change failures."
     Test = {
-        # Get the audit policy for the subcategory Audit Policy Change
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
+        # Get the audit policy for the subcategory Audit Audit Policy Change
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Audit Policy Change"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Audit Policy Change'"
+                Message = "Cannot get Subcategory 'Audit Audit Policy Change'"
                 Status = "None"
             }
         }
@@ -1316,7 +860,7 @@ function Get-AuditPolicySubcategoryGUID {
         
         $setting = $Matches[0]
         
-        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
                 Status = "False"
                 Message = "Set to: $setting"
@@ -1330,8 +874,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.7.2"
-    Task = "(L1) Ensure 'Audit Authentication Policy Change' is set to include 'Success'"
+    Id = "V-254321"
+    Task = "Windows Server 2022 must be configured to audit Policy Change - Authentication Policy Change successes."
     Test = {
         # Get the audit policy for the subcategory Authentication Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Authentication Policy Change"
@@ -1387,8 +931,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.7.3"
-    Task = "(L1) Ensure 'Audit Authorization Policy Change' is set to include 'Success'"
+    Id = "V-254322"
+    Task = "Windows Server 2022 must be configured to audit Policy Change - Authorization Policy Change successes."
     Test = {
         # Get the audit policy for the subcategory Authorization Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Authorization Policy Change"
@@ -1444,122 +988,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.7.4"
-    Task = "(L1) Ensure 'Audit MPSSVC Rule-Level Policy Change' is set to 'Success and Failure'"
-    Test = {
-        # Get the audit policy for the subcategory Mpssvc Rule-Level Policy Change
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Mpssvc Rule-Level Policy Change"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Mpssvc Rule-Level Policy Change'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.7.5"
-    Task = "(L1) Ensure 'Audit Other Policy Change Events' is set to include 'Failure'"
-    Test = {
-        # Get the audit policy for the subcategory Other Policy Change Events
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Policy Change Events"
-        
-        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
-            return @{
-                Message = "Cannot get Subcategory 'Other Policy Change Events'"
-                Status = "None"
-            }
-        }
-        
-        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
-        # auditpol does not throw exceptions, so test the results and throw if needed
-        if ($LASTEXITCODE -ne 0) {
-            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
-            throw [System.ArgumentException] $errorString
-            Write-Error -Message $errorString
-        }
-        
-        if ($null -eq $auditPolicyString) {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting. Auditpol returned nothing."
-            }
-        }
-        
-        # Remove empty lines and headers
-        $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
-        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
-            return @{
-                Status = "Warning"
-                Message = "Couldn't get setting."
-            }
-        }
-        
-        $setting = $Matches[0]
-        
-        if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
-            return @{
-                Status = "False"
-                Message = "Set to: $setting"
-            }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "17.8.1"
-    Task = "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'"
+    Id = "V-254323 + V-254324"
+    Task = "Windows Server 2022 must be configured to audit Privilege Use - Sensitive Privilege Use successes. Windows Server 2022 must be configured to audit Privilege Use - Sensitive Privilege Use failures."
     Test = {
         # Get the audit policy for the subcategory Sensitive Privilege Use
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Sensitive Privilege Use"
@@ -1615,15 +1045,15 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.9.1"
-    Task = "(L1) Ensure 'Audit IPsec Driver' is set to 'Success and Failure'"
+    Id = "V-254325 + V-254326"
+    Task = "Windows Server 2022 must be configured to audit System - IPsec Driver successes. Windows Server 2022 must be configured to audit System - IPsec Driver failures."
     Test = {
-        # Get the audit policy for the subcategory Ipsec Driver
-        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Ipsec Driver"
+        # Get the audit policy for the subcategory IPsec Driver
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "IPsec Driver"
         
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
-                Message = "Cannot get Subcategory 'Ipsec Driver'"
+                Message = "Cannot get Subcategory 'IPsec Driver'"
                 Status = "None"
             }
         }
@@ -1672,8 +1102,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.9.2"
-    Task = "(L1) Ensure 'Audit Other System Events' is set to 'Success and Failure'"
+    Id = "V-254327 + V-254328"
+    Task = "Windows Server 2022 must be configured to audit System - Other System Events successes. Windows Server 2022 must be configured to audit System - Other System Events failures."
     Test = {
         # Get the audit policy for the subcategory Other System Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other System Events"
@@ -1729,8 +1159,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.9.3"
-    Task = "(L1) Ensure 'Audit Security State Change' is set to include 'Success'"
+    Id = "V-254329"
+    Task = "Windows Server 2022 must be configured to audit System - Security State Change successes."
     Test = {
         # Get the audit policy for the subcategory Security State Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security State Change"
@@ -1786,8 +1216,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.9.4"
-    Task = "(L1) Ensure 'Audit Security System Extension' is set to include 'Success'"
+    Id = "V-254330"
+    Task = "Windows Server 2022 must be configured to audit System - Security System Extension successes."
     Test = {
         # Get the audit policy for the subcategory Security System Extension
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security System Extension"
@@ -1843,8 +1273,8 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "17.9.5"
-    Task = "(L1) Ensure 'Audit System Integrity' is set to 'Success and Failure'"
+    Id = "V-254331 + V-254332"
+    Task = "Windows Server 2022 must be configured to audit System - System Integrity successes. Windows Server 2022 must be configured to audit System - System Integrity failures."
     Test = {
         # Get the audit policy for the subcategory System Integrity
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "System Integrity"
@@ -1852,6 +1282,177 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'System Integrity'"
+                Status = "None"
+            }
+        }
+        
+        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+        
+        # auditpol does not throw exceptions, so test the results and throw if needed
+        if ($LASTEXITCODE -ne 0) {
+            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+            throw [System.ArgumentException] $errorString
+            Write-Error -Message $errorString
+        }
+        
+        if ($null -eq $auditPolicyString) {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting. Auditpol returned nothing."
+            }
+        }
+        
+        # Remove empty lines and headers
+        $line = $auditPolicyString `
+            | Where-Object { $_ } `
+            | Select-Object -Skip 3
+        
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting."
+            }
+        }
+        
+        $setting = $Matches[0]
+        
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
+            return @{
+                Status = "False"
+                Message = "Set to: $setting"
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-254407"
+    Task = "Windows Server 2022 must be configured to audit Account Management - Computer Account Management successes."
+    Test = {
+        # Get the audit policy for the subcategory Computer Account Management
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Computer Account Management"
+        
+        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
+            return @{
+                Message = "Cannot get Subcategory 'Computer Account Management'"
+                Status = "None"
+            }
+        }
+        
+        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+        
+        # auditpol does not throw exceptions, so test the results and throw if needed
+        if ($LASTEXITCODE -ne 0) {
+            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+            throw [System.ArgumentException] $errorString
+            Write-Error -Message $errorString
+        }
+        
+        if ($null -eq $auditPolicyString) {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting. Auditpol returned nothing."
+            }
+        }
+        
+        # Remove empty lines and headers
+        $line = $auditPolicyString `
+            | Where-Object { $_ } `
+            | Select-Object -Skip 3
+        
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting."
+            }
+        }
+        
+        $setting = $Matches[0]
+        
+        if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
+            return @{
+                Status = "False"
+                Message = "Set to: $setting"
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-254408 + V-254409"
+    Task = "Windows Server 2022 must be configured to audit DS Access - Directory Service Access successes. Windows Server 2022 must be configured to audit DS Access - Directory Service Access failures."
+    Test = {
+        # Get the audit policy for the subcategory Directory Service Access
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Directory Service Access"
+        
+        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
+            return @{
+                Message = "Cannot get Subcategory 'Directory Service Access'"
+                Status = "None"
+            }
+        }
+        
+        $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
+        
+        # auditpol does not throw exceptions, so test the results and throw if needed
+        if ($LASTEXITCODE -ne 0) {
+            $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
+            throw [System.ArgumentException] $errorString
+            Write-Error -Message $errorString
+        }
+        
+        if ($null -eq $auditPolicyString) {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting. Auditpol returned nothing."
+            }
+        }
+        
+        # Remove empty lines and headers
+        $line = $auditPolicyString `
+            | Where-Object { $_ } `
+            | Select-Object -Skip 3
+        
+        if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
+            return @{
+                Status = "Warning"
+                Message = "Couldn't get setting."
+            }
+        }
+        
+        $setting = $Matches[0]
+        
+        if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
+            return @{
+                Status = "False"
+                Message = "Set to: $setting"
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-254410 + V-254411"
+    Task = "Windows Server 2022 must be configured to audit DS Access - Directory Service Changes successes. Windows Server 2022 must be configured to audit DS Access - Directory Service Changes failures."
+    Test = {
+        # Get the audit policy for the subcategory Directory Service Changes
+        $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Directory Service Changes"
+        
+        if ([string]::IsNullOrEmpty($subCategoryGUID)) {
+            return @{
+                Message = "Cannot get Subcategory 'Directory Service Changes'"
                 Status = "None"
             }
         }
