@@ -1,6 +1,90 @@
 ﻿[AuditTest] @{
-    Id = "1.1.1"
-    Task = "(L1) Ensure 'Enforce password history' is set to '24 or more password(s)'"
+    Id = "V-63405"
+    Task = "Windows 10 account lockout duration must be configured to 15 minutes or greater."
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
+        
+        if ($null -eq $setPolicy) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        $setPolicy = [long]$setPolicy
+        
+        if (($setPolicy -lt 15) -and ($setPolicy -ne 0)) {
+            return @{
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15 or x == 0"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-63409"
+    Task = "The number of allowed bad logon attempts must be configured to 3 or less."
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
+        
+        if ($null -eq $setPolicy) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        $setPolicy = [long]$setPolicy
+        
+        if (($setPolicy -lt 3 -or $setPolicy -eq 0)) {
+            return @{
+                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x >= 3 and x != 0"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-63413"
+    Task = "The period of time before the bad logon counter is reset must be configured to 15 minutes."
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
+        
+        if ($null -eq $setPolicy) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        $setPolicy = [long]$setPolicy
+        
+        if (($setPolicy -lt 15)) {
+            return @{
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-63415"
+    Task = "The password history must be configured to 24 passwords remembered."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordHistorySize"]
@@ -27,8 +111,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.2"
-    Task = "(L1) Ensure 'Maximum password age' is set to '365 or fewer days, but not 0'"
+    Id = "V-63419"
+    Task = "The maximum password age must be configured to 60 days or less."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MaximumPasswordAge"]
@@ -41,9 +125,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
+        if (($setPolicy -gt 60 -or $setPolicy -eq 0)) {
             return @{
-                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 and x > 0"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 60 and x != 0"
                 Status = "False"
             }
         }
@@ -55,8 +139,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.3"
-    Task = "(L1) Ensure 'Minimum password age' is set to '1 or more day(s)'"
+    Id = "V-63421"
+    Task = "The minimum password age must be configured to at least 1 day."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MinimumPasswordAge"]
@@ -83,8 +167,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.4"
-    Task = "(L1) Ensure 'Minimum password length' is set to '14 or more character(s)'"
+    Id = "V-63423"
+    Task = "Passwords must, at a minimum, be 14 characters."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MinimumPasswordLength"]
@@ -111,8 +195,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.5"
-    Task = "(L1) Ensure 'Password must meet complexity requirements' is set to 'Enabled'"
+    Id = "V-63427"
+    Task = "The built-in Microsoft password complexity filter must be enabled."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordComplexity"]
@@ -139,8 +223,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.6"
-    Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
+    Id = "V-63429"
+    Task = "Reversible password encryption must be disabled."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]
@@ -156,90 +240,6 @@
         if ($setPolicy -ne 0) {
             return @{
                 Message = "'ClearTextPassword' currently set to: $setPolicy. Expected: 0"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "1.2.1"
-    Task = "(L1) Ensure 'Account lockout duration' is set to '15 or more minute(s)'"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
-        
-        if ($null -eq $setPolicy) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        $setPolicy = [long]$setPolicy
-        
-        if (($setPolicy -lt 15)) {
-            return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "1.2.2"
-    Task = "(L1) Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0'"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
-        
-        if ($null -eq $setPolicy) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        $setPolicy = [long]$setPolicy
-        
-        if (($setPolicy -gt 5 -or $setPolicy -le 0)) {
-            return @{
-                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 5 and x > 0"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "1.2.3"
-    Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
-        
-        if ($null -eq $setPolicy) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        $setPolicy = [long]$setPolicy
-        
-        if (($setPolicy -lt 15)) {
-            return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
                 Status = "False"
             }
         }
