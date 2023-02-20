@@ -534,7 +534,7 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
-		[switch] $DarkMode,
+		#[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
 	)
@@ -551,7 +551,7 @@ function Get-ATAPHtmlReport {
 			htmlElement 'title' @{} { "$Title [$(Get-Date)]" }
 			htmlElement 'style' @{} {
 				$cssEnding = ''
-				if ($DarkMode) { $cssEnding = '.dark' }
+				#if ($DarkMode) { $cssEnding = '.dark' }
 				$cssPath = $ScriptRoot | Join-path -ChildPath "/report$($cssEnding).css"
 				Get-Content $cssPath
 				Get-OverallComplianceCSS $completionStatus

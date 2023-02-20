@@ -534,8 +534,8 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$RiskScore,
 
-		[switch]
-		$DarkMode,
+		# [switch]
+		# $DarkMode,
 
 		[Parameter()]
 		[switch]
@@ -562,7 +562,7 @@ function Save-ATAPHtmlReport {
 		}
 	}
 
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -DarkMode:$DarkMode
+	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore #-DarkMode:$DarkMode
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
