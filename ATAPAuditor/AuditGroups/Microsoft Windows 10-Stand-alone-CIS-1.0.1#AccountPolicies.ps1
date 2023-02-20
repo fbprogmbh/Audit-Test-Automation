@@ -139,7 +139,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.6"
+    Id = "1.1.7"
     Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -209,7 +209,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 5 -or $setPolicy -le 0)) {
+        if ($setPolicy -gt 5 -or $setPolicy -le 0) {
             return @{
                 Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 5 and x > 0"
                 Status = "False"

@@ -139,7 +139,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.6"
+    Id = "1.1.7"
     Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
