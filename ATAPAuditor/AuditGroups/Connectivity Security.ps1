@@ -1219,3 +1219,49 @@ function isWindows10Enterprise {
         }
     }
 }
+[AuditTest] @{
+    Id = "SBD-069"
+    Task = "Check NETBIOS-Status for all active NICs"
+    Test = {
+        try{
+            $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetbiosOptions
+            $nonCompliantCards = @()
+            
+            for($i = 0; $i -lt $networkCards.Count; $i++){
+                 if($networkCards[$i].TcpipNetbiosOptions -ne 0){
+                        $nonCompliantCards += $networkCards[$i]
+                 }
+            }
+            
+            if($nonCompliantCards.Count -eq 0){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            if($nonCompliantCards.Count -eq $networkCards.Count){
+                return @{
+                    Message = "All network cards have NETBIOS enabled."
+                    Status = "False"
+                }
+            }
+            $message = "Following network cards have NETBIOS enabled: " + $nonCompliantCards.Description
+            return @{
+                Message = $message
+                Status = "Warning"
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Value not found."
+                Status = "Error"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Value not found."
+                Status = "Error"
+            }
+        }
+    }
+}

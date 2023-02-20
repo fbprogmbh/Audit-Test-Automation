@@ -27,7 +27,7 @@ function isWindows10Enterprise {
 }
 
 [AuditTest] @{
-	Id = "SBD-069"
+	Id = "SBD-070"
 	Task = "Ensure Windows Defender Application Control (WDAC) is available."
 	Test = {
         if(isWindows10Enterprise -eq $true){
@@ -43,7 +43,7 @@ function isWindows10Enterprise {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-070"
+	Id = "SBD-071"
 	Task = "Ensure Windows Defender Application ID Service is running."
 	Test = {
         if((Get-Service -Name APPIDSvc).Status -eq "Running"){
