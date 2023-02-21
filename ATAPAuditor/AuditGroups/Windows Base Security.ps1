@@ -519,13 +519,13 @@ function hasTPM {
 			return $status
 		}
 		else {
-			$windefenderstatus = IsInstalled-WindowsDefender
-            if (-not $windefenderstatus) {
+			$windefrunning = CheckWindefRunning
+			if ((-not $windefrunning)) {
 				return @{
-					Message = "ASR rules require Windows Defender Antivirus to be enabled."
-                    Status = "False"
-                }
-            }                     
+					Message = "This rule requires Windows Defender Antivirus to be enabled."
+					Status = "None"
+				}
+			}                           
 			$countEnabled = 0
 			$Rule1 = @{
 				Path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
