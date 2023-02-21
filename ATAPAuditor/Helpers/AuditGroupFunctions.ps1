@@ -49,3 +49,48 @@ function IsInstalled-WindowsDefender {
     }
     return $false
 }
+
+function Test-MultiplePaths {
+    [CmdletBinding()]
+    [OutputType([Object])]
+    param (
+        [Parameter(Mandatory = $True, ValueFromPipeline)]
+        [String]
+        $Path,
+        [Parameter(Mandatory = $True)]
+        [String]
+        $Key,
+        [Parameter(Mandatory = $True)]
+        [Object]
+        $ExpectedValue,
+        [PSCustomObject]
+        $Result = @{
+            Message = "Registry value not found."
+            Status  = "False"
+        }
+    )
+    PROCESS {
+        $regValue = Get-ItemProperty -ErrorAction SilentlyContinue `
+            -Path $Path `
+            -Name $Key `
+        | Select-Object -ExpandProperty "$($Key)"
+        # if regValue == expectedValue
+        if (($regValue -eq $ExpectedValue)) {
+            $Result = @{
+                Message = "Compliant"
+                Status  = "True"
+            }
+        }
+        # if regValue isnot empty AND regValue isnot expectedValue AND result is not True (yet)
+        # This result is ranked #2 below "Compliant" and above "Registry value not found"
+        if (($null -ne $regValue) -and ($regValue -ne $ExpectedValue) -and ($Result.Status -ne "True")) {
+            $Result = @{
+                Message = "Registry value is '$regValue'. Expected: $ExpectedValue"
+                Status  = "False"
+            }
+        }
+    }
+    END {
+        return $Result
+    }
+}

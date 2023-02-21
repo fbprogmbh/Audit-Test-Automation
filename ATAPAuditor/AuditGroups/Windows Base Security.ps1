@@ -1,3 +1,6 @@
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
 function isWindows8OrNewer {
 	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
 }
@@ -519,16 +522,96 @@ function hasTPM {
 			return $status
 		}
 		else {
-			$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
-			$ruleactions = (Get-MpPreference).AttackSurfaceReductionRules_Actions
-			$RuleTable = for ($i = 0; $i -lt $ruleids.Count; $i++) {
-				[PSCustomObject]@{
-					RuleId = $ruleids[$i]
-					RuleAction = $ruleactions[$i]
-				}
+			$windefenderstatus = IsInstalled-WindowsDefender
+            if (-not $windefenderstatus) {
+				return @{
+					Message = "ASR rules require Windows Defender Antivirus to be enabled."
+                    Status = "False"
+                }
+            }                     
+			$countEnabled = 0
+			$Rule1 = @{
+				Path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+				Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+				Value = "ExploitGuard_ASR_Rules"
+			};
+			$bool = $($Rule1.Path1), $($Rule1.Path2) | Test-MultiplePaths -Key $($Rule1.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
 			}
-			$countEnabled = ($RuleTable | Where-Object {$_.RuleAction -eq 1} | Measure-Object).Count
-			
+			$Rule2 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+			};
+			$bool = $($Rule2.Path1), $($Rule2.Path2) | Test-MultiplePaths -Key $($Rule2.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule3 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "3b576869-a4ec-4529-8536-b80a7769e899"
+			};
+			$bool = $($Rule3.Path1), $($Rule3.Path2) | Test-MultiplePaths -Key $($Rule3.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule4 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+			};
+			$bool = $($Rule4.Path1), $($Rule4.Path2) | Test-MultiplePaths -Key $($Rule4.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule5 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+			};
+			$bool = $($Rule5.Path1), $($Rule5.Path2) | Test-MultiplePaths -Key $($Rule5.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule6 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+			};
+			$bool = $($Rule6.Path1), $($Rule6.Path2) | Test-MultiplePaths -Key $($Rule6.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule7 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+			};
+			$bool = $($Rule7.Path1), $($Rule7.Path2) | Test-MultiplePaths -Key $($Rule7.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule8 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+			};
+			$bool = $($Rule8.Path1), $($Rule8.Path2) | Test-MultiplePaths -Key $($Rule8.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+			$Rule9 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+			};
+			$bool = $($Rule9.Path1), $($Rule9.Path2) | Test-MultiplePaths -Key $($Rule9.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
+
 			$status = switch ($countEnabled) {
 				{$PSItem -ge 9}{
 					@{
@@ -549,6 +632,7 @@ function hasTPM {
 					}
 				}
 			}
+
 			return $status
 		}
 	}
