@@ -1,5 +1,8 @@
 ﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$avstatus = CheckForActiveAV
+$windefrunning = CheckWindefRunning
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "0003"
@@ -219,7 +222,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0038"
-    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'."
+    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'. [OSAllowSecureBootForIntegrity]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -255,7 +258,7 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
     Id = "0039"
-    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'."
+    Task = "Ensure 'Allow Secure Boot for integrity validation' is set 'Enabled'. [DeferUpgradePeriod]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -866,7 +869,7 @@ $RootPath = Split-Path $RootPath -Parent
     }
 }
 [AuditTest] @{
-    Id = "0121"
+    Id = "82020121"
     Task = "Ensure 'Allow Microsoft accounts to be optional' is set to 'Enabled'."
     Test = {
         try {
@@ -2675,9 +2678,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($regValue -ne 3) {
+            if ($null -eq $regValue -or 0 -eq $regValue) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 3"
+                    Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"
                 }
             }
@@ -2999,7 +3002,7 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "fBlockNonDomain" `
                 | Select-Object -ExpandProperty "fBlockNonDomain"
         
-            if ($regValue -ne 1) {
+            if ($regValue -eq 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -4109,8 +4112,8 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "0253"
     Task = "Ensure 'Windows Firewall: Domain: Apply local firewall rules' set to 'Disabled'."
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"  
         $key = "AllowLocalIPsecPolicyMerge"
         $expectedValue = 0;
         $profileType = "Domain"
@@ -4126,7 +4129,7 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Windows Firewall: Domain: Display a notification' set to 'Disabled'."
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile" 
         $key = "DisableNotifications"
         $expectedValue = 1;
         $profileType = "Domain"
@@ -4141,8 +4144,8 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "0279"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' set to '%windir%\system32\logfiles\firewall\domainfirewall.log'."
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
         $key = "LogFilePath"
         $expectedValue = "%windir%\system32\logfiles\firewall\domainfirewall.log";
         $profileType = "Domain"
@@ -4157,8 +4160,8 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "0280"
     Task = "Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' set to '16,384'."
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"    
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"  
         $key = "LogFileSize"
         $expectedValue = 16384;
         $profileType = "Public"
@@ -4298,6 +4301,14 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "Ensure 'Join Microsoft MAPS' set to 'Disabled'."
     Test = {
         try {
+            if($avstatus){
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "DisablePasswordReveal" `
@@ -5275,9 +5286,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "FDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
-            if ($regValue -ne "") {
+            if ($regValue -ne "<none>") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: <none>"
                     Status = "False"
                 }
             }
@@ -5311,9 +5322,9 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
-            if ($regValue -ne "") {
+            if ($regValue -ne "<none>") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: <none>"
                     Status = "False"
                 }
             }
@@ -5842,7 +5853,7 @@ $RootPath = Split-Path $RootPath -Parent
     }
 }
 [AuditTest] @{
-    Id = "0342"
+    Id = "82020342"
     Task = "Ensure 'Choose how BitLocker-protected fixed drives can be recovered' set to 'Save BitLocker recovery information to AD DS for fixed data drives'."
     Test = {
         try {

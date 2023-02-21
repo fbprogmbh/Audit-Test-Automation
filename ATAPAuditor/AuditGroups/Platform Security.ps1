@@ -240,28 +240,18 @@ function hasTPM {
 			}
 		}
 		if (isWindows8OrNewer) {
-			$obj = (Get-Tpm).TpmEnabled
-			if ($obj -isnot [Boolean]) {
+			
+			$state =  Get-WmiObject -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
+			if ($state.IsEnabled_InitialValue -eq $true) {
 				return @{
-					Message = "Cannot get 'enabled' status of TPM."
-					Status = "Error"
+					Message = "Compliant"
+					Status = "True"
 				}
 			}
-			$status = switch ($obj) {
-				$true {
-					@{
-						Message = "Compliant"
-						Status = "True"
-					}
-				}
-				$false {
-					@{
-						Message = "The TPM Chip is not 'enabled'."
-						Status = "False"
-					}
-				}
+			return @{
+				Message = "The TPM Chip is not 'enabled'."
+				Status = "False"
 			}
-			return $status
 		}
 		else {
 			if (win7NoTPMChipDetected) {
@@ -297,28 +287,17 @@ function hasTPM {
 			}
 		}
 		if (isWindows8OrNewer) {
-			$obj = (Get-Tpm).TpmActivated
-			if ($obj -isnot [Boolean]) {
+			$state =  Get-WmiObject -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
+			if ($state.IsActivated_InitialValue -eq $true) {
 				return @{
-					Message = "Cannot get 'activated' status of TPM."
-					Status = "Error"
+					Message = "Compliant"
+					Status = "True"
 				}
 			}
-			$status = switch ($obj) {
-				$true {
-					@{
-						Message = "Compliant"
-						Status = "True"
-					}
-				}
-				$false {
-					@{
-						Message = "The TPM Chip is not 'activated'."
-						Status = "False"
-					}
-				}
+			return @{
+				Message = "The TPM Chip is not 'enabled'."
+				Status = "False"
 			}
-			return $status
 		}
 		else {
 			if (win7NoTPMChipDetected) {
@@ -354,29 +333,17 @@ function hasTPM {
 			}
 		}
 		if (isWindows8OrNewer) {
-			$obj = (Get-Tpm).TpmOwned
-			if ($obj -isnot [Boolean]) {
+			$state =  Get-WmiObject -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
+			if ($state.IsOwned_InitialValue -eq $true) {
 				return @{
-					Message = "Cannot get 'owned' status of TPM."
-					Status = "Error"
+					Message = "Compliant"
+					Status = "True"
 				}
 			}
-
-			$status = switch ($obj) {
-				$true {
-					@{
-						Message = "Compliant"
-						Status = "True"
-					}
-				}
-				$false {
-					@{
-						Message = "The TPM Chip is not 'owned'."
-						Status = "False"
-					}
-				}
+			return @{
+				Message = "The TPM Chip is not 'enabled'."
+				Status = "False"
 			}
-			return $status
 		}
 		else {
 			if (win7NoTPMChipDetected) {
