@@ -99,3 +99,39 @@ function ConvertTo-NTAccountUser {
         }
     }
 }
+[AuditTest] @{
+    Id = "2.1"
+    Task = "(L1) Ensure 'Allow gnubby authentication for remote access hosts' is set to 'Disabled'."
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Ole\AppCompat" `
+                -Name "RequireIntegrityActivationAuthenticationLevel" `
+                | Select-Object -ExpandProperty "RequireIntegrityActivationAuthenticationLevel"
+        
+            if ($regValue -ne 0x00000000) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0x00000001"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
