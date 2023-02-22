@@ -101,7 +101,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.1"
-    Task = "(L1) Ensure 'Allow gnubby authentication for remote access hosts' is set to 'Disabled'."
+    Task = "(L1) Ensure 'Enable DCOM Hardening' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -109,9 +109,45 @@ function ConvertTo-NTAccountUser {
                 -Name "RequireIntegrityActivationAuthenticationLevel" `
                 | Select-Object -ExpandProperty "RequireIntegrityActivationAuthenticationLevel"
         
-            if ($regValue -ne 0x00000000) {
+            if ($regValue -ne 0x00000001) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0x00000001"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.2"
+    Task = "(L1) Ensure 'Raise Authentication Level' is set to 'Raise the authentication level for all non-anonymous activation requests from Windows-based DCOM clients'."
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Ole\AppCompat" `
+                -Name "RaiseActivationAuthenticationLevel" `
+                | Select-Object -ExpandProperty "RaiseActivationAuthenticationLevel"
+        
+            if ($regValue -ne 0x00000002) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0x00000002"
                     Status = "False"
                 }
             }
