@@ -64,7 +64,7 @@ Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
 Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R23 | 1.12.0, Stand-alone 1.0.1 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
+Microsoft Windows 10 | V1R23 | 1.12.0, Stand-alone 1.0.1 | 21H1 | SiSyPHuS 1.3 | 10.2021
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiM-08202, SiSyPHuS 1.3 | -
 Microsoft Windows 10 Complete | V1R23 | 1.12.0, Stand-alone 1.0.1 | 21H1 | SiM-08202, SiSyPHuS 1.3 | 10.2021
