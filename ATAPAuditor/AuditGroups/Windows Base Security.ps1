@@ -332,56 +332,72 @@ function hasTPM {
 	Id = "SBD-016"
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
-		$tdiff = New-TimeSpan -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate -End (Get-Date)
-		$status = switch ($tdiff.Hours) {
-			{($PSItem -ge 0) -and ($PSItem -le 24)}{
-				@{
-					Message = "Compliant"
-					Status = "True"
+		try {
+			$tdiff = New-TimeSpan -ErrorAction Stop -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate -End (Get-Date)
+			$status = switch ($tdiff.Hours) {
+				{($PSItem -ge 0) -and ($PSItem -le 24)}{
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				{($PSItem -gt 24) -and ($PSItem -le 24*5)}{
+					@{
+						Message = "Last search for updates was within 5 days."
+						Status = "Warning"
+					}
+				}
+				Default {
+					@{
+						Message = "Last search for updates was more than 5 days ago."
+						Status = "False"
+					}
 				}
 			}
-			{($PSItem -gt 24) -and ($PSItem -le 24*5)}{
-				@{
-					Message = "Last search for updates was within 5 days."
-					Status = "Warning"
-				}
-			}
-			Default {
-				@{
-					Message = "Last search for updates was more than 5 days ago."
-					Status = "False"
-				}
-			}
+			return $status
 		}
-		return $status
+        catch {
+            return @{
+                Message = "Not supported on this system."
+                Status = "None"
+            }
+        }
 	}
 }
 [AuditTest] @{
 	Id = "SBD-017"
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
-		$tdiff = New-TimeSpan -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate -End (Get-Date)
-		$status = switch ($tdiff.Hours) {
-			{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
-				@{
-					Message = "Compliant"
-					Status = "True"
+		try{
+			$tdiff = New-TimeSpan -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate -End (Get-Date)
+			$status = switch ($tdiff.Hours) {
+				{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
+				}
+				{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
+					@{
+						Message = "Last installation of updates was within the last month."
+						Status = "Warning"
+					}
+				}
+				Default {
+					@{
+						Message = "Last installation of updates was more than a month ago."
+						Status = "False"
+					}
 				}
 			}
-			{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
-				@{
-					Message = "Last installation of updates was within the last month."
-					Status = "Warning"
-				}
-			}
-			Default {
-				@{
-					Message = "Last installation of updates was more than a month ago."
-					Status = "False"
-				}
-			}
+			return $status
 		}
-		return $status
+		catch {
+            return @{
+                Message = "Not supported on this system."
+                Status = "None"
+            }
+        }
 	}
 }
 [AuditTest] @{
