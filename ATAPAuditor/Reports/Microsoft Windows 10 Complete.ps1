@@ -5,10 +5,10 @@
 		"CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08"
 		"CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
 		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R23, Date: 2020-06-17"
-		"CYBERGOVAU Hardening Microsoft Windows 10 version 21H1 Workstations, Version: 10.2020, Date 2020-10-01"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
 		"BSI SiM-08202 Client unter Windows 10, Version: 1, Date: 2017-09-13"
         "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
+		"Hardening Microsoft Windows 10 version 21H1 Workstations, Version: 10.2021, Date 2021-10-01"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 	)
 	Sections = @(
@@ -87,28 +87,6 @@
 				[ReportSection] @{
 					Title = 'Security Options'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#SecurityOptions"
-				}
-			)
-		}
-		[ReportSection] @{
-			Title = 'CyberGovAu Benchmarks'
-			Description = 'This section contains the CyberGovAu Benchmark results.'
-			SubSections = @(
-				[ReportSection] @{
-					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#UserRights"
-				}
-				[ReportSection] @{
-					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CyberGovAu-10.2020#AuditPolicies"
 				}
 			)
 		}
@@ -284,6 +262,32 @@
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10-BSI-Bundespolizei#AuditPolicies"
+				}
+			)
+		}
+		[ReportSection] @{
+			Title = 'ACSC Benchmarks'
+			Description = 'This section contains the ACSC Benchmark results.'
+			SubSections = @(
+				[ReportSection] @{
+					Title = 'Account Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#AccountPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Advanced Audit Policy Configuration'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = 'Registry Settings/Group Policies'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'User Rights Assignment'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#SecurityOptions"
+				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#UserRights"
 				}
 			)
 		}
