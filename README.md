@@ -155,11 +155,13 @@ By default the module creates a new report in `Documents\ATAPReports` folder. A 
 
 **Examples:**
 ```PowerShell
-Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 Complete" -RiskScore -Path C:\Temp\report.html -DarkMode
-Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 BSI" -RiskScore -Path C:\Temp -DarkMode 
-Save-ATAPHtmlReport -ReportName "Microsoft Windows Server 2022" -Path C:\Temp -DarkMode 
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 11 stand-alone" -RiskScore -Path C:\Temp\report.html
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -RiskScore -Path C:\Temp\report.html
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 11" -Path C:\Temp\report.html
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 BSI" -RiskScore -Path C:\Temp
+Save-ATAPHtmlReport -ReportName "Microsoft Windows Server 2022" -Path C:\Temp
 Save-ATAPHtmlReport -ReportName "Google Chrome"
-Save-ATAPHtmlReport -ReportName "Ubuntu 20.04" -DarkMode
+Save-ATAPHtmlReport -ReportName "Ubuntu 20.04"
 ```
 Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters and select the desired  report using arrow-keys.
 
