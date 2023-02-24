@@ -7,6 +7,7 @@
 		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.4.0, Date: 2022-04-21"
 		"Microsoft Security baseline for Windows Server 2016 Domain Controller, Version: FINAL, Date 2016-10-17"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
 	Sections = @(
 		[ReportSection] @{

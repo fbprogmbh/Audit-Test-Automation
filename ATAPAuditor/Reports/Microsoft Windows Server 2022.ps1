@@ -7,6 +7,7 @@
 		"CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14"
 		"DISA Windows Server 2022, Version: V1R1, Date 2022-09-28"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
 	Sections = @(
 		[ReportSection] @{

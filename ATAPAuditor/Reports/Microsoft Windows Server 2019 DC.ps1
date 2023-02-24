@@ -7,6 +7,7 @@
 		"CIS Microsoft Windows Server 2019 Benchmark, Version: 1.1.0, Date: 2020-01-10"
 		"Microsoft Security baseline for Windows Server 2019 Domain Controller, Version: FINAL, Date 2019-06-18"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
 	Sections = @(
 		[ReportSection] @{

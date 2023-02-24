@@ -7,6 +7,7 @@
 		"SiSyPHuS Recommendations for Telemetry Components: Version 1.1, Date: 2019-07-31"
 		"Sicherheitsmodul Richtlinie Bundespolizei SiM-08202: Version 1.0, Date: 2017-09-13"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
 	Sections = @(
 		[ReportSection] @{

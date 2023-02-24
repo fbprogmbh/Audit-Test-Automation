@@ -5,6 +5,7 @@
 	BasedOn = @(
 		"Security baseline for Microsoft Windows Server 2022, Version: FINAL, Date 2021-09-27"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
 	Sections = @(
 		[ReportSection] @{
