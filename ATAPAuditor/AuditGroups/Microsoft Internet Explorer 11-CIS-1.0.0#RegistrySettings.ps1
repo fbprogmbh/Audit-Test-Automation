@@ -179,6 +179,42 @@
     }
 }
 [AuditTest] @{
+    Id = "1.6"
+    Task = "Set 'Disable Save this program to disk option' to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Internet Explorer\Restrictions" `
+                -Name "NoSelectDownloadDir" `
+                | Select-Object -ExpandProperty "NoSelectDownloadDir"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "2.1"
     Task = "Set 'Prevent per-user installation of ActiveX controls' to 'Enabled'"
     Test = {
@@ -5513,6 +5549,42 @@
                 -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Internet Explorer\Control Panel" `
                 -Name "FormSuggest" `
                 | Select-Object -ExpandProperty "FormSuggest"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "9.14"
+    Task = "Set 'Turn on the auto-complete feature for user names and passwords on forms' to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Internet Explorer\Control Panel" `
+                -Name "FormSuggest Passwords" `
+                | Select-Object -ExpandProperty "FormSuggest Passwords"
         
             if ($regValue -ne 1) {
                 return @{

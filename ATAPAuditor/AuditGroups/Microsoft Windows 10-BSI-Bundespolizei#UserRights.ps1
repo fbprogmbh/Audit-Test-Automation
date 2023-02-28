@@ -1,4 +1,8 @@
-﻿# Common
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
+# Common
 function ConvertTo-NTAccountUser {
 	[CmdletBinding()]
 	[OutputType([hashtable])]
@@ -39,8 +43,7 @@ function ConvertTo-NTAccountUser {
             }
 
             # Identity doesn't exist on when Hyper-V isn't installed
-            if ($Name -eq "S-1-5-83-0" -and
-                (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State -ne "Enabled") {
+            if ($Name -eq "S-1-5-83-0" -and $hyperVStatus -ne "Enabled") {
                 return $null
             }
 
@@ -51,9 +54,16 @@ function ConvertTo-NTAccountUser {
             else {
                 $sidAccount = ([System.Security.Principal.NTAccount]$Name).Translate([System.Security.Principal.SecurityIdentifier])
             }
-            return @{
-                Account = $sidAccount.Translate([System.Security.Principal.NTAccount])
-                Sid = $sidAccount.Value
+            if ($sidAccount.Translate([System.Security.Principal.NTAccount]) -eq "NULL SID") {
+                return @{
+                    Account = $null
+                    Sid = $sidAccount.Value
+                }
+            } else {
+                return @{
+                    Account = $sidAccount.Translate([System.Security.Principal.NTAccount])
+                    Sid = $sidAccount.Value
+                }
             }
         }
         catch {
@@ -68,25 +78,16 @@ function ConvertTo-NTAccountUser {
 # Tests
 [AuditTest] @{
     Id = "0044"
-    Task = " Ensure 'SeTrustedCredManAccessPrivilege' is set to 'Enabled'"
+    Task = " Ensure 'Access Credential Manager as a trusted caller' is set to 'Enabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTrustedCredManAccessPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeTrustedCredManAccessPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeTrustedCredManAccessPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeTrustedCredManAccessPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -143,21 +144,13 @@ function ConvertTo-NTAccountUser {
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTcbPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeTcbPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeTcbPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeTcbPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -174,7 +167,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "0047"
-    Task = " Ensure  'Adjust memory quotas for a process' set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE'"
+    Task = " Ensure  ’Adjust memory quotas for a process’ set to ’Administrators, LOCAL SERVICE, NETWORK SERVICE’"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeIncreaseQuotaPrivilege"]
@@ -390,25 +383,17 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "0053"
-    Task = " Ensure 'SeCreateTokenPrivilege' is set to 'None'"
+    Task = " Ensure 'Create a token object' is set to 'No one'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateTokenPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeCreateTokenPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeCreateTokenPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeCreateTokenPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -467,21 +452,13 @@ function ConvertTo-NTAccountUser {
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePermanentPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeCreatePermanentPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeCreatePermanentPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeCreatePermanentPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -533,7 +510,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "0057"
-    Task = " Ensure 'SeDebugPrivilege' is set to 'Administrator'"
+    Task = "Ensure 'Debug programs' is set to 'Administrators'."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDebugPrivilege"]
@@ -542,16 +519,10 @@ function ConvertTo-NTAccountUser {
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeDebugPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -568,25 +539,17 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "0064"
-    Task = " Ensure 'SeEnableDelegationPrivilege' is set to 'None'"
+    Task = " Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No one'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeEnableDelegationPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeEnableDelegationPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeEnableDelegationPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -746,25 +709,17 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "0085"
-    Task = " Ensure 'SeRelabelPrivilege' is set to 'None'"
+    Task = " Ensure 'Modify an object label' is set to 'None'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRelabelPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeRelabelPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeRelabelPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeRelabelPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -1037,14 +992,10 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyNetworkLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyNetworkLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -1072,14 +1023,10 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyBatchLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyBatchLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -1107,14 +1054,10 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -1142,14 +1085,10 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyInteractiveLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -1178,14 +1117,10 @@ function ConvertTo-NTAccountUser {
             "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
         $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if (($missingUsers.Count -gt 0)) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeDenyRemoteInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
             if ($missingUsers.Count -gt 0) {
                 $messages += "The user 'SeDenyRemoteInteractiveLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
             }
@@ -1244,21 +1179,13 @@ function ConvertTo-NTAccountUser {
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLockMemoryPrivilege"]
-        $identityAccounts = @(
-            "S-1-0-0"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        $identityAccounts = @() | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeLockMemoryPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeLockMemoryPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeLockMemoryPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
@@ -1315,20 +1242,13 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeServiceLogonRight"]
         $identityAccounts = @(
-            "S-1-0-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
         
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+        if ($unexpectedUsers.Count -gt 0) {
             $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-            }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeServiceLogonRight' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
+            $messages += "The user right 'SeServiceLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
         
             return @{

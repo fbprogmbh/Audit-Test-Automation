@@ -28,7 +28,7 @@
 }
 [AuditTest] @{
     Id = "1.1.2"
-    Task = "(L1) Ensure 'Maximum password age' is set to '60 or fewer days, but not 0'"
+    Task = "(L1) Ensure 'Maximum password age' is set to '365 or fewer days, but not 0'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MaximumPasswordAge"]
@@ -41,9 +41,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 60 -or $setPolicy -le 0)) {
+        if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
             return @{
-                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 60 and x > 0"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 and x > 0"
                 Status = "False"
             }
         }
@@ -139,7 +139,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.6"
+    Id = "1.1.7"
     Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -196,7 +196,7 @@
 }
 [AuditTest] @{
     Id = "1.2.2"
-    Task = "(L1) Ensure 'Account lockout threshold' is set to '10 or fewer invalid logon attempt(s), but not 0'"
+    Task = "(L1) Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
@@ -209,9 +209,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 10 -or $setPolicy -le 0)) {
+        if ($setPolicy -gt 5 -or $setPolicy -le 0) {
             return @{
-                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 10 and x > 0"
+                Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 5 and x > 0"
                 Status = "False"
             }
         }

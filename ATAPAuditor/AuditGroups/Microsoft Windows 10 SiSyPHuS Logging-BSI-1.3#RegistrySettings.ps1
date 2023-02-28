@@ -76,6 +76,9 @@ $RootPath = Split-Path $RootPath -Parent
 [AuditTest] @{
     Id = "4.2.1.1"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
@@ -92,6 +95,9 @@ $RootPath = Split-Path $RootPath -Parent
 [AuditTest] @{
     Id = "4.2.1.2"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
@@ -108,6 +114,9 @@ $RootPath = Split-Path $RootPath -Parent
 [AuditTest] @{
     Id = "4.2.1.3"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"    
@@ -124,6 +133,9 @@ $RootPath = Split-Path $RootPath -Parent
 [AuditTest] @{
     Id = "4.2.1.4"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      

@@ -534,7 +534,7 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
-		[switch] $DarkMode,
+		#[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
 	)
@@ -551,7 +551,7 @@ function Get-ATAPHtmlReport {
 			htmlElement 'title' @{} { "$Title [$(Get-Date)]" }
 			htmlElement 'style' @{} {
 				$cssEnding = ''
-				if ($DarkMode) { $cssEnding = '.dark' }
+				#if ($DarkMode) { $cssEnding = '.dark' }
 				$cssPath = $ScriptRoot | Join-path -ChildPath "/report$($cssEnding).css"
 				Get-Content $cssPath
 				Get-OverallComplianceCSS $completionStatus
@@ -1189,13 +1189,17 @@ function Get-ATAPHtmlReport {
 		"
 	
 		#If Path exists to a folder exists
-		if(Test-Path -Path $Path -PathType Container){
+		if($Path -match ".html"){
+			$name = Split-Path -Path $Path -Leaf
+			$Path = Split-Path -Path $Path -Parent
+			New-Item -Path $Path -Name $name -ItemType File -Value $html -Force 
+		} else {
 			$Title = $Title -replace " Audit Report",""
 			$auditReport += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
+			New-Item -Path $Path -Name $auditReport -ItemType File -Value $html -Force 
 		}
 
 		#Create Report file
-		New-Item -Path $Path -Name $auditReport -ItemType File -Value $html  -Force 
 		#$html | Out-File -FilePath $auditReport -Encoding utf8
 	}
 }
