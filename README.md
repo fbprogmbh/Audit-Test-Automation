@@ -92,11 +92,17 @@ Short explanation for BSI (see related links):
 We offer several ways of how you can use our free of charge AuditTAP. 
 Find several detailed explanations below and use them as follows:
 
-* Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
 * Installation via PSGallery - just install our package directly from PowerShell Gallery.
+* Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
 * New::star:Use our installer to install or update AuditTAP :star:
 
-### Video tutorial
+### Installation from PS Gallery
+Simple and straight-forward. Install AuditTAP with a single line of code.
+```PowerShell
+Install-Module -Name ATAPAuditor
+```
+
+### Video tutorial for manual installation
 Following the well-known phrase "A picture is worth a thousand words" we visualized AuditTAP-installation in a roughly three minute video.
 The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
 
@@ -108,15 +114,13 @@ The first half of the video guides through the process of manual installation, t
    </a>
 </div>
 
-### Manual Installation
-
 See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerShell/scripting/developer/module/installing-a-PowerShell-module) guide for more specific instructions.
 
 1. Download the most [recent release](https://github.com/fbprogmbh/Audit-Test-Automation/releases/latest)
 2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.3.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.4.zip -Verbose
 ```
 The following screenshot shows the output:
 
@@ -126,15 +130,10 @@ The following screenshot shows the output:
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.3.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.4.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
-### Installation from PS Gallery
-Simple and straight-forward. Install AuditTAP with a single line of code.
-```PowerShell
-Install-Module -Name ATAPAuditor
-```
 
 ### Installer
 
@@ -155,7 +154,7 @@ By default the module creates a new report in `Documents\ATAPReports` folder. A 
 
 **Examples:**
 ```PowerShell
-Save-ATAPHtmlReport -ReportName "Microsoft Windows 11 stand-alone" -RiskScore -Path C:\Temp\report.html
+Save-ATAPHtmlReport -ReportName "Microsoft Windows 11 Stand-alone" -RiskScore -Path C:\Temp\report.html
 Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -RiskScore -Path C:\Temp\report.html
 Save-ATAPHtmlReport -ReportName "Microsoft Windows 11" -Path C:\Temp\report.html
 Save-ATAPHtmlReport -ReportName "Microsoft Windows 10 BSI" -RiskScore -Path C:\Temp
