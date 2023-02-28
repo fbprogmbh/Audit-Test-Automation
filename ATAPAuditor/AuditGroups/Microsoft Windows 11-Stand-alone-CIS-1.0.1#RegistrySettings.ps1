@@ -11771,8 +11771,8 @@
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
