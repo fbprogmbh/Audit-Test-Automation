@@ -1009,6 +1009,9 @@
 [AuditTest] @{
     Id = "V-93273"
     Task = "Windows Server 2019 domain controllers must be configured to allow reset of machine account passwords."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2269,6 +2272,9 @@
 [AuditTest] @{
     Id = "V-93453"
     Task = "Windows Server 2019 must restrict unauthenticated Remote Procedure Call (RPC) clients from connecting to the RPC server on domain-joined member servers and standalone systems."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "MemberWorkstation", "Standalone Server", "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3061,6 +3067,9 @@
 [AuditTest] @{
     Id = "V-93545"
     Task = "Windows Server 2019 domain controllers must require LDAP access signing."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

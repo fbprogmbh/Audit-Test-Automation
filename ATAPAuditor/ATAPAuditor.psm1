@@ -134,7 +134,16 @@ function Test-ArrayEqual {
 # 4 {"Backup Domain Controller"}
 # 5 {"Primary Domain Controller"}
 function Get-DomainRole {
-	[DomainRole](Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+	$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+	switch ($domainRole) {
+		0 { $result = "Standalone Workstation" }
+		1 { $result = "Member Workstation"}
+		2 { $result = "Standalone Server" }
+		3 { $result = "Member Server"}
+		4 { $result = "Backup Domain Controller" }
+		5 { $result = "Primary Domain Controller"}
+	}
+	return $result
 }
 
 ### begin Foundation functions ###
@@ -301,8 +310,8 @@ function Test-AuditGroup {
 					Write-Output ([AuditInfo]@{
 						Id = $test.Id
 						Task = $test.Task
-						Message = 'Not applicable. This audit applies only to {0}.' -f ($DomainRoleConstraint.Values -join ' and ')
-						Status = [AuditInfoStatus]::None
+						Message = $message
+						Status = $status
 					})
 					continue
 				}
@@ -453,18 +462,23 @@ function Invoke-ATAPReport {
 	$script:loadedResources = @{}
 	# Load the module manifest
 
-	#Windows OS
-	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-		$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
-		[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
-		$report.RSReport = Get-RSFullReport
-		$report.FoundationReport = Get-FoundationReport
-	}
-	#Linux OS
-	else{
-		$moduleInfo = Import-PowerShellDataFile -Path "$RootPath/ATAPAuditor.psd1"
-		[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
-	}
+	try {
+		#Windows OS
+		if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
+			[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
+			$report.RSReport = Get-RSFullReport
+			$report.FoundationReport = Get-FoundationReport
+		}
+		#Linux OS
+		else{
+			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath/ATAPAuditor.psd1"
+			[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
+		}
+	} catch [System.Management.Automation.CommandNotFoundException] {
+		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
+		break
+	} 
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }
@@ -520,31 +534,35 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$RiskScore,
 
-		[switch]
-		$DarkMode,
+		# [switch]
+		# $DarkMode,
 
 		[Parameter()]
 		[switch]
 		$Force
 	)
 
+	$parent = $path
+	if ($Path -match ".html") {
+		$parent = Split-Path -Path $Path
+	}
 
-	$pathOnly = Split-Path -Path $Path
 	#if input path is not default one
-	if($pathOnly -ne $script:atapReportsPath){
-		$pathCheck = Test-Path -Path $Path -PathType Container
+	if($parent -ne $script:atapReportsPath){
+		$pathCheck = Test-Path -Path $parent -PathType Container
 		#if path doesn't exist
 		if($pathCheck -eq $False){
-			Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
-			$Path = $script:atapReportsPath
+			if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
+				New-Item -ItemType Directory -Path $parent -Force | Out-Null
+				Write-Warning "Could not find Path. Path will be created: $parent"
+			} else {
+				Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
+				$Path = $($script:atapReportsPath)
+			}
 		}
 	}
-	
-	$parent = Split-Path $Path
-	if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
-		New-Item -ItemType Directory -Path $parent -Force | Out-Null
-	}
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -DarkMode:$DarkMode
+
+	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore #-DarkMode:$DarkMode
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
