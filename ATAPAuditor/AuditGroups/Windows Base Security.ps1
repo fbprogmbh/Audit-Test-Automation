@@ -63,32 +63,36 @@ function hasTPM {
 }
 [AuditTest] @{
 	Id = "SBD-010"
-	Task = "Get amount of users and groups in administrators group on system."
+	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
 	Test = {	
 		try { 
 			try{
-				$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop
-				foreach($user in $userAndGroups){
-					if($user.PrincipalSource -eq "Local"){
-						$amountOfUserAndGroups ++;
-					}
+				#List all groups 
+				$group = Get-LocalGroup -sid "S-1-5-32-544"
+				$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
+				$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
+				$message = ""
+				foreach($member in $group_members){
+					$message += "$($member) "
 				}
+				$amountOfUserAndGroups = $group_members.Count
+				
 				$status = switch ($amountOfUserAndGroups.Count) {
 					{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
+							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 							Status = "True"
 						}
 					}
 					{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
+							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 							Status = "Warning"
 						}
 					}
 					{$amountOfUserAndGroups -gt 5}{ # 6, ...
 						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
+							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 							Status = "False"
 						}
 					}
