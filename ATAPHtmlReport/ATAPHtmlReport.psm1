@@ -153,6 +153,21 @@ function CreateToc{
 	}
 }
 
+Function Get-MD5Hash { 
+    param
+    (
+        [String] $String
+    )
+    $Hash = New-Object System.Text.StringBuilder 
+    $([System.Security.Cryptography.HashAlgorithm]::Create('MD5')).ComputeHash([System.Text.Encoding]::UTF8.GetBytes($String)) | 
+    ForEach-Object { 
+        $null = $Hash.Append($_.ToString("x2")) 
+    } 
+    return $Hash.ToString().ToUpper()
+}
+
+
+
 function CreateReportContent{
 	param(
 		[Parameter(Mandatory = $true)]
@@ -670,6 +685,20 @@ function Get-ATAPHtmlReport {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
 						htmlElement 'h2' @{} {"Benchmark Details"}
+
+						$auditInfoList = @()
+						foreach ($section in $Sections) 
+						{
+							$auditInfoList += $section.SubSections.AuditInfos
+						}
+						$currentHash = ""
+						foreach($info in $auditInfoList){
+
+							$statusHash = (Get-MD5Hash -string $info.Status)
+							$currentHash += $statusHash
+							$currentHash = (Get-MD5Hash -string $currentHash)
+						}
+						htmlElement 'p' @{} { "Hash value of all settings tests: $currentHash" }
 						# Report Sections
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
