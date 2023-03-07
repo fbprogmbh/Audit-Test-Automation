@@ -8425,6 +8425,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "Registry-375"
     Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -8441,6 +8444,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "Registry-376"
     Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -8457,6 +8463,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "Registry-377"
     Task = "Domain: Set registry value 'EnableFirewall' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
