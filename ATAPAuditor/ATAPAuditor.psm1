@@ -567,47 +567,35 @@ function Save-ATAPHtmlReport {
 
 	#hashes for each recommendation
 	$hashList_sha256 = @()
-	$hashList_sha512 = @()
+	$hash_sha256 = ""
 	foreach($recommendation in $report.Sections){
 		foreach($section in $recommendation.SubSections){
 			$hash_sha256 = ""
-			$hash_sha512 = ""
 			foreach($test in $section.AuditInfos){
+				#hash each test status
 				$statusHash_sha256 = (Get-SHA256Hash $test.Status)
 				$hash_sha256 += $statusHash_sha256
+				#hash combination of tests
 				$hash_sha256 = (Get-SHA256Hash $hash_sha256)
-				
-				$statusHash_sha512 = (Get-SHA512Hash $test.Status)
-				$hash_sha512 += $statusHash_sha512
-				$hash_sha512 = (Get-SHA512Hash $hash_sha512)
-				#hash 512 to 256 due to it's length
-				$hash_sha512 = (Get-SHA256Hash $hash_sha512)
 			}
+			#add final hash to hashlist
 			$hashList_sha256 += $hash_sha256
-			$hashList_sha512 += $hash_sha512
 		}
 	}
-
+	Write-Host $hashList_sha256.Length
+	
 	#checksum hash for overal check
 	$overallHash_sha256 = ""
 	foreach($hash in $hashList_sha256){
-		$curretHash_sha256 = (Get-SHA256Hash $hash)
-		$overallHash_sha256 += $curretHash_sha256
+		#add recommendation hash to overall hash
+		$overallHash_sha256 += $hash
+		#hash this value again
 		$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
 	}
-	$overallHash_sha512 = ""
-	foreach($hash in $hashList_sha512){
-		$curretHash_sha512 = (Get-SHA512Hash $hash)
-		$overallHash_sha512 += $curretHash_sha512
-		$overallHash_sha512 = (Get-SHA512Hash $overallHash_sha512)
-	}
-	#hash 512 to 256 due to it's length
-	$overallHash_sha512 = (Get-SHA256Hash $overallHash_sha512)
 	
 	$hashList_sha256 += $overallHash_sha256
-	$hashList_sha512 += $overallHash_sha512
 
-	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashList_sha256:$hashList_sha256 -hashList_sha512:$hashList_sha512 #-DarkMode:$DarkMode 
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashList_sha256:$hashList_sha256 #-DarkMode:$DarkMode 
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport

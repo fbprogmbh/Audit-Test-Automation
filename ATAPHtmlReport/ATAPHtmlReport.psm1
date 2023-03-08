@@ -156,47 +156,45 @@ function CreateToc{
 
 
 function CreateHashTable{
-
-	htmlElement 'table'@{ id="hashTable"}{
-		htmlElement 'thead' @{}{
-			htmlElement 'tr' @{}{
-				htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Scope"}
-				htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Hash-Type"}
-				htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Checksum"}
-			}
-		}
-		htmlElement 'tbody' @{}{
-			htmlElement 'tr' @{}{
-				#Scope
-				htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;vertical-align: middle;" } {"Overall integrity"}
-				#HashType
-				htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
-					htmlElement 'p' @{} {"SHA 256"}
-					htmlElement 'p' @{} {"SHA 512"}
-				}
-				#Checksum
-				htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
-					htmlElement 'p' @{} {"$($hashList_sha256[$hashList_sha256.Length-1])"}
-					htmlElement 'p' @{} {"$($hashList_sha512[$hashList_sha512.Length-1])"}
+	htmlElement 'div'@{id="hashTableDiv"}{
+		htmlElement 'h2' @{style="margin-top: 0;"}{"Overall integrity"}
+		htmlElement 'table'@{ id="hashTable"}{
+			htmlElement 'thead' @{}{
+				htmlElement 'tr' @{}{
+					htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Scope"}
+					htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Hash-Type"}
+					htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Checksum"}
 				}
 			}
-			$index = 0
-			foreach($section in $Sections){
-				htmlElement 'tr'  @{style="border: 1px solid black; border-collapse: collapse;" }{
+			htmlElement 'tbody' @{}{
+				htmlElement 'tr' @{}{
 					#Scope
-					htmlElement 'td'  @{style="border: 1px solid black; border-collapse:; vertical-align: middle;" } {$section.Title}
+					htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;vertical-align: middle;" } {"Overall integrity check"}
 					#HashType
-					htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
+					htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
 						htmlElement 'p' @{} {"SHA 256"}
-						htmlElement 'p' @{} {"SHA 512"}
 					}
 					#Checksum
-					htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
-						htmlElement 'p' @{} {"$($hashList_sha256[$index])"}
-						htmlElement 'p' @{} {"$($hashList_sha512[$index])"}
+					htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
+						htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$hashList_sha256.Length-1])"}
 					}
 				}
-				$index += 1
+				$index = 0
+				foreach($section in $Sections){
+					htmlElement 'tr'  @{style="border: 1px solid black; border-collapse: collapse;" }{
+						#Scope
+						htmlElement 'td'  @{style="border: 1px solid black; border-collapse:; vertical-align: middle;" } { "Integrity check for $($section.Title)"}
+						#HashType
+						htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
+							htmlElement 'p' @{} {"SHA 256"}
+						}
+						#Checksum
+						htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
+							htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
+						}
+					}
+					$index += 1
+				}
 			}
 		}
 	}
@@ -585,10 +583,6 @@ function Get-ATAPHtmlReport {
 		[array]
 		$hashList_sha256,
 
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[array]
-		$hashList_sha512,
-
 		#[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
@@ -717,9 +711,9 @@ function Get-ATAPHtmlReport {
 					}
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
-						CreateHashTable
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
+						CreateHashTable
 						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {

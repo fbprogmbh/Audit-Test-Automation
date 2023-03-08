@@ -726,6 +726,9 @@ button{
 	cursor: pointer;
 }
 
-#hashTable{
+/* #hashTable{
+	float: right;
+} */
+#hashTableDiv{
 	float: right;
 }
