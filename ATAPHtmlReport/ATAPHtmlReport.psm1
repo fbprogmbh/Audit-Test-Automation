@@ -153,34 +153,54 @@ function CreateToc{
 	}
 }
 
-function Get-SHA256Hash { 
-	Param (
-		[Parameter(Mandatory=$true)]
-		[string]
-		$ClearString
-	)
-	
-	$hasher = [System.Security.Cryptography.HashAlgorithm]::Create('sha256')
-	$hash = $hasher.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($ClearString))
-	
-	$hashString = [System.BitConverter]::ToString($hash)
-	$hashString.Replace('-', '')
-}
 
-function Get-SHA512Hash { 
-	Param (
-		[Parameter(Mandatory=$true)]
-		[string]
-		$ClearString
-	)
-	
-	$hasher = [System.Security.Cryptography.HashAlgorithm]::Create('sha512')
-	$hash = $hasher.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($ClearString))
-	
-	$hashString = [System.BitConverter]::ToString($hash)
-	$hashString.Replace('-', '')
-}
 
+function CreateHashTable{
+
+	htmlElement 'table'@{ id="hashTable"}{
+		htmlElement 'thead' @{}{
+			htmlElement 'tr' @{}{
+				htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Scope"}
+				htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Hash-Type"}
+				htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Checksum"}
+			}
+		}
+		htmlElement 'tbody' @{}{
+			htmlElement 'tr' @{}{
+				#Scope
+				htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;vertical-align: middle;" } {"Overall integrity"}
+				#HashType
+				htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
+					htmlElement 'p' @{} {"SHA 256"}
+					htmlElement 'p' @{} {"SHA 512"}
+				}
+				#Checksum
+				htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
+					htmlElement 'p' @{} {"$($hashList_sha256[$hashList_sha256.Length-1])"}
+					htmlElement 'p' @{} {"$($hashList_sha512[$hashList_sha512.Length-1])"}
+				}
+			}
+			$index = 0
+			foreach($section in $Sections){
+				htmlElement 'tr'  @{style="border: 1px solid black; border-collapse: collapse;" }{
+					#Scope
+					htmlElement 'td'  @{style="border: 1px solid black; border-collapse:; vertical-align: middle;" } {$section.Title}
+					#HashType
+					htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
+						htmlElement 'p' @{} {"SHA 256"}
+						htmlElement 'p' @{} {"SHA 512"}
+					}
+					#Checksum
+					htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
+						htmlElement 'p' @{} {"$($hashList_sha256[$index])"}
+						htmlElement 'p' @{} {"$($hashList_sha512[$index])"}
+					}
+				}
+				$index += 1
+			}
+		}
+	}
+}
 
 function CreateReportContent{
 	param(
@@ -338,24 +358,6 @@ function Get-HtmlReportSection {
 				htmlElement 'a' @{ href = '#toc'; class = 'sectionAction' } {
 					htmlElement 'span' @{ style = "font-size: 75%;" } { '&uarr;' }
 				}
-			}
-			#hashes generating here
-			if($Subsections.AuditInfos -ne $null){
-				$hash_sha256 = ""
-				$hash_sha512 = ""
-				foreach($info in $Subsections){
-					foreach($test in $info.AuditInfos){
-						$statusHash_sha256 = (Get-SHA256Hash $test.Status)
-						$hash_sha256 += $statusHash_sha256
-						$hash_sha256 = (Get-SHA256Hash $hash_sha256)
-						
-						$statusHash_sha512 = (Get-SHA512Hash $test.Status)
-						$hash_sha512 += $statusHash_sha512
-						$hash_sha512 = (Get-SHA512Hash $hash_sha512)
-					}
-				}
-				htmlElement 'p' @{style="width: 90%;"} { "Integrity check / checksum (SHA256): $hash_sha256" }
-				htmlElement 'p' @{style="width: 90%;"} { "Integrity check / checksum (SHA512): $hash_sha512" }
 			}
 				
 			if ($null -ne $Description) {
@@ -579,6 +581,14 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$hashList_sha256,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[array]
+		$hashList_sha512,
+
 		#[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
@@ -707,6 +717,7 @@ function Get-ATAPHtmlReport {
 					}
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
+						CreateHashTable
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
 						htmlElement 'h2' @{} {"Table Of Contents"}
@@ -714,32 +725,13 @@ function Get-ATAPHtmlReport {
 						htmlElement 'ul' @{} {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
-
-						$auditInfoList = @()
-						foreach ($section in $Sections) 
-						{
-							$auditInfoList += $section.SubSections.AuditInfos
-						}
-						$hash_sha256 = ""
-						$hash_sha512 = ""
-						foreach($info in $auditInfoList){
-
-							$statusHash256 = (Get-SHA256Hash $info.Status)
-							$hash_sha256 += $statusHash256
-							$hash_sha256 = (Get-SHA256Hash $hash_sha256)
-
-							$statusHash512 = (Get-SHA512Hash $info.Status)
-							$hash_sha512 += $statusHash512
-							$hash_sha512 = (Get-SHA512Hash $hash_sha512)
-						}
-
 						htmlElement 'h2' @{} {"Benchmark Details"}
-						htmlElement 'p' @{} { "Overall integrity check / checksum (SHA-256): $hash_sha256" }
-						htmlElement 'p' @{} { "Overall integrity check / checksum (SHA-512): $hash_sha512" }
-
 
 						# Report Sections
-						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+						foreach ($section in $Sections) {
+							$section | Get-HtmlReportSection 
+						}
+
 					}
 
 

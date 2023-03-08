@@ -3,6 +3,7 @@ using namespace Microsoft.PowerShell.Commands
 #region Initialization
 
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+. "$RootPath\Helpers\HashHelper.ps1"
 
 $script:atapReportsPath = $env:ATAPReportPath
 if (-not $script:atapReportsPath) {
@@ -562,7 +563,51 @@ function Save-ATAPHtmlReport {
 		}
 	}
 
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore #-DarkMode:$DarkMode
+	$report = Invoke-ATAPReport -ReportName $ReportName 
+
+	#hashes for each recommendation
+	$hashList_sha256 = @()
+	$hashList_sha512 = @()
+	foreach($recommendation in $report.Sections){
+		foreach($section in $recommendation.SubSections){
+			$hash_sha256 = ""
+			$hash_sha512 = ""
+			foreach($test in $section.AuditInfos){
+				$statusHash_sha256 = (Get-SHA256Hash $test.Status)
+				$hash_sha256 += $statusHash_sha256
+				$hash_sha256 = (Get-SHA256Hash $hash_sha256)
+				
+				$statusHash_sha512 = (Get-SHA512Hash $test.Status)
+				$hash_sha512 += $statusHash_sha512
+				$hash_sha512 = (Get-SHA512Hash $hash_sha512)
+				#hash 512 to 256 due to it's length
+				$hash_sha512 = (Get-SHA256Hash $hash_sha512)
+			}
+			$hashList_sha256 += $hash_sha256
+			$hashList_sha512 += $hash_sha512
+		}
+	}
+
+	#checksum hash for overal check
+	$overallHash_sha256 = ""
+	foreach($hash in $hashList_sha256){
+		$curretHash_sha256 = (Get-SHA256Hash $hash)
+		$overallHash_sha256 += $curretHash_sha256
+		$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
+	}
+	$overallHash_sha512 = ""
+	foreach($hash in $hashList_sha512){
+		$curretHash_sha512 = (Get-SHA512Hash $hash)
+		$overallHash_sha512 += $curretHash_sha512
+		$overallHash_sha512 = (Get-SHA512Hash $overallHash_sha512)
+	}
+	#hash 512 to 256 due to it's length
+	$overallHash_sha512 = (Get-SHA256Hash $overallHash_sha512)
+	
+	$hashList_sha256 += $overallHash_sha256
+	$hashList_sha512 += $overallHash_sha512
+
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashList_sha256:$hashList_sha256 -hashList_sha512:$hashList_sha512 #-DarkMode:$DarkMode 
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport

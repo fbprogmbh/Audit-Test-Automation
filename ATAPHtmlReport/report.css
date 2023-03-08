@@ -725,3 +725,7 @@ button{
 	border-style: none;
 	cursor: pointer;
 }
+
+#hashTable{
+	float: right;
+}
