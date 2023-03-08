@@ -377,6 +377,12 @@ function Get-ATAPHostInformation {
 			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
 			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
 			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
+			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
+			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
+			"System Type"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
+			"System SKU"				= (GWMI -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
+			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
+			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
 		} 
 	}
 }
@@ -912,6 +918,36 @@ function Get-ATAPHtmlReport {
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[8] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[8] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[9] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[9] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[10] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[10] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[11] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[11] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[12] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[12] }
+									}
+									#Free physical memory
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[13] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[13] }
 									}
 								}
 							}
