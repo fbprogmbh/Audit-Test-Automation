@@ -153,19 +153,33 @@ function CreateToc{
 	}
 }
 
-Function Get-MD5Hash { 
-    param
-    (
-        [String] $String
-    )
-    $Hash = New-Object System.Text.StringBuilder 
-    $([System.Security.Cryptography.HashAlgorithm]::Create('MD5')).ComputeHash([System.Text.Encoding]::UTF8.GetBytes($String)) | 
-    ForEach-Object { 
-        $null = $Hash.Append($_.ToString("x2")) 
-    } 
-    return $Hash.ToString().ToUpper()
+function Get-SHA256Hash { 
+	Param (
+		[Parameter(Mandatory=$true)]
+		[string]
+		$ClearString
+	)
+	
+	$hasher = [System.Security.Cryptography.HashAlgorithm]::Create('sha256')
+	$hash = $hasher.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($ClearString))
+	
+	$hashString = [System.BitConverter]::ToString($hash)
+	$hashString.Replace('-', '')
 }
 
+function Get-SHA512Hash { 
+	Param (
+		[Parameter(Mandatory=$true)]
+		[string]
+		$ClearString
+	)
+	
+	$hasher = [System.Security.Cryptography.HashAlgorithm]::Create('sha512')
+	$hash = $hasher.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($ClearString))
+	
+	$hashString = [System.BitConverter]::ToString($hash)
+	$hashString.Replace('-', '')
+}
 
 
 function CreateReportContent{
@@ -315,22 +329,38 @@ function Get-HtmlReportSection {
 		$id = Convert-SectionTitleToHtmlId -Title ($Prefix + $Title)
 		$sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
 		$class = Get-HtmlClassFromStatus $sectionStatus
-
 		htmlElement 'section' @{} {
 			htmlElement 'h1' @{ id = $id } {
+				
+				
 				htmlElement 'span' @{ class = $class } { $Title }
 				htmlElement 'span' @{ class = 'sectionAction collapseButton' } { '-' }
 				htmlElement 'a' @{ href = '#toc'; class = 'sectionAction' } {
 					htmlElement 'span' @{ style = "font-size: 75%;" } { '&uarr;' }
 				}
 			}
-
+			#hashes generating here
+			if($Subsections.AuditInfos -ne $null){
+				$hash_sha256 = ""
+				$hash_sha512 = ""
+				foreach($info in $Subsections){
+					foreach($test in $info.AuditInfos){
+						$statusHash_sha256 = (Get-SHA256Hash $test.Status)
+						$hash_sha256 += $statusHash_sha256
+						$hash_sha256 = (Get-SHA256Hash $hash_sha256)
+						
+						$statusHash_sha512 = (Get-SHA512Hash $test.Status)
+						$hash_sha512 += $statusHash_sha512
+						$hash_sha512 = (Get-SHA512Hash $hash_sha512)
+					}
+				}
+				htmlElement 'p' @{style="width: 90%;"} { "Integrity check / checksum (SHA256): $hash_sha256" }
+				htmlElement 'p' @{style="width: 90%;"} { "Integrity check / checksum (SHA512): $hash_sha512" }
+			}
+				
 			if ($null -ne $Description) {
 				htmlElement 'p' @{} { $Description }
 			}
-			# if ($null -ne $ConfigAudits){
-			# 	htmlElement 'p' @{} {$ConfigAudits.Count + ' tests have been executed in this section'}
-			# }
 			if ($null -ne $ConfigAudits) {
 				htmlElement 'table' @{ class = 'audit-info' } {
 					htmlElement 'tbody' @{} {
@@ -345,7 +375,7 @@ function Get-HtmlReportSection {
 					}
 				}
 			}
-			if ($null -ne $Subsections) {
+			if ($null -ne $Subsections) {				
 				foreach ($subsection in $Subsections) {
 					$subsection | Get-HtmlReportSection -Prefix ($Prefix + $Title)
 				}
@@ -684,21 +714,30 @@ function Get-ATAPHtmlReport {
 						htmlElement 'ul' @{} {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
-						htmlElement 'h2' @{} {"Benchmark Details"}
 
 						$auditInfoList = @()
 						foreach ($section in $Sections) 
 						{
 							$auditInfoList += $section.SubSections.AuditInfos
 						}
-						$currentHash = ""
+						$hash_sha256 = ""
+						$hash_sha512 = ""
 						foreach($info in $auditInfoList){
 
-							$statusHash = (Get-MD5Hash -string $info.Status)
-							$currentHash += $statusHash
-							$currentHash = (Get-MD5Hash -string $currentHash)
+							$statusHash256 = (Get-SHA256Hash $info.Status)
+							$hash_sha256 += $statusHash256
+							$hash_sha256 = (Get-SHA256Hash $hash_sha256)
+
+							$statusHash512 = (Get-SHA512Hash $info.Status)
+							$hash_sha512 += $statusHash512
+							$hash_sha512 = (Get-SHA512Hash $hash_sha512)
 						}
-						htmlElement 'p' @{} { "Hash value of all settings tests: $currentHash" }
+
+						htmlElement 'h2' @{} {"Benchmark Details"}
+						htmlElement 'p' @{} { "Overall integrity check / checksum (SHA-256): $hash_sha256" }
+						htmlElement 'p' @{} { "Overall integrity check / checksum (SHA-512): $hash_sha512" }
+
+
 						# Report Sections
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
