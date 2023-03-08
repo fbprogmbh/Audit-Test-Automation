@@ -3,105 +3,80 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
-if((Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise Evaluation" -or 
-(Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise"){
-    [AuditTest] @{
-        Id = "3.1.1_1"
-        Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
-        Test = {
-            try {
-                $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
-                    -Name "AllowTelemetry" `
-                    | Select-Object -ExpandProperty "AllowTelemetry"
-            
-                if ($regValue -ne 0) {
-                    return @{
-                        Message = "Registry value is '$regValue'. Expected: 0"
-                        Status = "False"
-                    }
-                }
-            }
-            catch [System.Management.Automation.PSArgumentException] {
+[AuditTest] @{
+    Id = "3.1.1 A"
+    Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
+                -Name "AllowTelemetry" `
+                | Select-Object -ExpandProperty "AllowTelemetry"
+        
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value not found."
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
                 }
             }
-            catch [System.Management.Automation.ItemNotFoundException] {
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
-            
+        }
+        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Registry value not found."
+                Status = "False"
             }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
         }
     }
-    [AuditTest] @{
-        Id = "3.1.1_2"
-        Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
-        Test = {
-            return @{
-                Message = "Windows operating system is 'Enterprise' edition"
-                Status = "None"
-            }
-        }
-    }
-}
-else{
-    [AuditTest] @{
-        Id = "3.1.1_1"
-        Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
-        Test = {
-            return @{
-                Message = "Windows operating system is not 'Enterprise' edition"
-                Status = "None"
-            }
-        }
-    }
-    [AuditTest] @{
-        Id = "3.1.1_2"
-        Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
-        Test = {
-            try {
-                $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
-                    -Name "AllowTelemetry" `
-                    | Select-Object -ExpandProperty "AllowTelemetry"
-            
-                if ($regValue -ne 1) {
-                    return @{
-                        Message = "Registry value is '$regValue'. Expected: 1"
-                        Status = "False"
-                    }
-                }
-            }
-            catch [System.Management.Automation.PSArgumentException] {
-                return @{
-                    Message = "Registry value not found."
-                    Status = "False"
-                }
-            }
-            catch [System.Management.Automation.ItemNotFoundException] {
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
-            
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-    }   
 }
 [AuditTest] @{
-    Id = "3.1.2.1"
+    Id = "3.1.1 B"
+    Task = "Configuration of the lowest possible telemetry-level (Non-Enterprise Windows 10)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
+                -Name "AllowTelemetry" `
+                | Select-Object -ExpandProperty "AllowTelemetry"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.1.2 A"
     Task = "Deactivation of the telemetry service and ETW-sessions - disable service DiagTrack"
     Test = {
         try {
@@ -137,8 +112,8 @@ else{
     }
 }
 [AuditTest] @{
-    Id = "3.1.2.2"
-    Task = "Deactivation of the telemetry service and ETW-sessions - disable service Autologger-Diatrack-Listener"
+    Id = "3.1.2 B"
+    Task = "Deactivation of the telemetry service and ETW-sessions - disable service Autologger-Diagtrack-Listener"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -173,7 +148,7 @@ else{
     }
 }
 [AuditTest] @{
-    Id = "3.1.3.1.1"
+    Id = "3.1.3 A"
     Task = "Deactivation of telemetry according to Microsoft - Disable Windows Update Service"
     Test = {
         try {
@@ -209,7 +184,7 @@ else{
     }
 }
 [AuditTest] @{
-    Id = "3.1.3.1.2"
+    Id = "3.1.3 B"
     Task = "Deactivation of telemetry according to Microsoft - Cloud-Based-Protection: disable MAPS"
     Test = {
         try {
@@ -253,7 +228,7 @@ else{
     }
 }
 [AuditTest] @{
-    Id = "3.1.3.1.3"
+    Id = "3.1.3 C"
     Task = "Deactivation of telemetry according to Microsoft - Cloud-Based-Protection: never send sample files"
     Test = {
         try {
