@@ -11825,6 +11825,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "361"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -11841,6 +11844,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "362"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -11857,6 +11863,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "363"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -11873,6 +11882,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "364"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";

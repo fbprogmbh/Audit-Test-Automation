@@ -1,26 +1,6 @@
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
-function isWindows8OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
-}
-function isWindows81OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,3))
-}
-function isWindows10OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
-}
-function win7NoTPMChipDetected {
-	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
-}
-function hasTPM {
-	try {
-		$obj = (Get-Tpm).TpmPresent
-	} catch {
-		return $null
-	}
-	return $obj
-}
 [AuditTest] @{
 	Id = "SBD-009"
 	Task = "Get amount of active local users on system."

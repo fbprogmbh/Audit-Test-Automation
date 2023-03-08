@@ -324,6 +324,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id   = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
@@ -340,6 +343,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id   = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
