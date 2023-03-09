@@ -211,7 +211,7 @@ function CreateHashTable{
 								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
 							}
 						}
-						$trColorSwitch = 1
+						$trColorSwitch = 0
 					}
 					$index += 1
 				}
