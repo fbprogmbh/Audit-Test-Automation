@@ -51,12 +51,12 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SiSyPHus-BSI'
+			Title = 'BSI Benchmarks SiSyPHus-BSI Telemetrie'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-BSI-V1.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
 				}
 			)
 		}
