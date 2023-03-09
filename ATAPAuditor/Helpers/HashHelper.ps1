@@ -15,16 +15,39 @@ function Get-SHA256Hash {
 	$hashString.Replace('-', '')
 }
 
-function Get-SHA512Hash { 
+function GenerateHashTable{
 	Param (
 		[Parameter(Mandatory=$true)]
-		[string]
-		$ClearString
+		[Report]
+		$report
 	)
 	
-	$hasher = [System.Security.Cryptography.HashAlgorithm]::Create('sha512')
-	$hash = $hasher.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($ClearString))
+	#hashes for each recommendation
+	$hashtable_sha256 = @{}
+	foreach($recommendation in $report.Sections){
+		$hash_sha256 = ""
+		foreach($section in $recommendation.SubSections){
+			foreach($test in $section.AuditInfos){
+				#hash each test status
+				$statusHash_sha256 = (Get-SHA256Hash $test.Status)
+				$hash_sha256 += $statusHash_sha256
+				#hash combination of tests
+				$hash_sha256 = (Get-SHA256Hash $hash_sha256)
+			}
+		}
+		#add final hash to hashlist
+		$hashtable_sha256.add($recommendation.Title, $hash_sha256)
+	}
 	
-	$hashString = [System.BitConverter]::ToString($hash)
-	$hashString.Replace('-', '')
+	#checksum hash for overal check
+	$overallHash_sha256 = ""
+	foreach($hash in $hashtable_sha256.values){
+		#add recommendation hash to overall hash
+		$overallHash_sha256 += $hash
+		#hash this value again
+		$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
+	}
+
+	$hashtable_sha256.add($report.Title, $overallHash_sha256) 
+	return $hashtable_sha256
 }

@@ -163,21 +163,16 @@ function CreateHashTable{
 			htmlElement 'thead' @{}{
 				htmlElement 'tr' @{}{
 					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Scope"}
-					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Hash-Type"}
-					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Checksum"}
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Checksum (SHA-256)"}
 				}
 			}
 			htmlElement 'tbody' @{id="hashTableBody"}{
 				htmlElement 'tr' @{}{
 					#Scope
 					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse;vertical-align: middle; " } {"Overall integrity check"}
-					#HashType
-					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-						htmlElement 'p' @{} {"SHA 256"}
-					}
 					#Checksum
 					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-						htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$hashList_sha256.Length-1])"}
+						htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($Title))"}
 					}
 				}
 				$index = 0
@@ -187,13 +182,9 @@ function CreateHashTable{
 						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: #efefef;" }{
 							#Scope
 							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
-							#HashType
-							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-								htmlElement 'p' @{} {"SHA 256"}
-							}
 							#Checksum
 							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
+								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($section.Title))"}
 							}
 						}
 						$trColorSwitch = 1
@@ -202,13 +193,9 @@ function CreateHashTable{
 						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse;" }{
 							#Scope
 							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
-							#HashType
-							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-								htmlElement 'p' @{} {"SHA 256"}
-							}
 							#Checksum
 							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
+								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($section.Title))"}
 							}
 						}
 						$trColorSwitch = 0
@@ -600,8 +587,8 @@ function Get-ATAPHtmlReport {
 		[switch] $RiskScore,
 
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[array]
-		$hashList_sha256,
+		[hashtable]
+		$hashtable_sha256,
 
 		#[switch] $DarkMode,
 

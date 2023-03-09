@@ -566,35 +566,10 @@ function Save-ATAPHtmlReport {
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 
 	#hashes for each recommendation
-	$hashList_sha256 = @()
-	$hash_sha256 = ""
-	foreach($recommendation in $report.Sections){
-		foreach($section in $recommendation.SubSections){
-			$hash_sha256 = ""
-			foreach($test in $section.AuditInfos){
-				#hash each test status
-				$statusHash_sha256 = (Get-SHA256Hash $test.Status)
-				$hash_sha256 += $statusHash_sha256
-				#hash combination of tests
-				$hash_sha256 = (Get-SHA256Hash $hash_sha256)
-			}
-			#add final hash to hashlist
-			$hashList_sha256 += $hash_sha256
-		}
-	}
-	
-	#checksum hash for overal check
-	$overallHash_sha256 = ""
-	foreach($hash in $hashList_sha256){
-		#add recommendation hash to overall hash
-		$overallHash_sha256 += $hash
-		#hash this value again
-		$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
-	}
-	
-	$hashList_sha256 += $overallHash_sha256
+	$hashtable_sha256 = GenerateHashTable $report
 
-	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashList_sha256:$hashList_sha256 #-DarkMode:$DarkMode 
+
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashtable_sha256:$hashtable_sha256 #-DarkMode:$DarkMode 
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
