@@ -582,7 +582,6 @@ function Save-ATAPHtmlReport {
 			$hashList_sha256 += $hash_sha256
 		}
 	}
-	Write-Host $hashList_sha256.Length
 	
 	#checksum hash for overal check
 	$overallHash_sha256 = ""

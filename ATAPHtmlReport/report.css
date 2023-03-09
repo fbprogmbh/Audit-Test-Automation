@@ -726,9 +726,23 @@ button{
 	cursor: pointer;
 }
 
-/* #hashTable{
-	float: right;
-} */
 #hashTableDiv{
 	float: right;
+	width: 60%;
+	margin-bottom: 30px;
+}
+#hashTableBody td{
+	line-height: 0px;
+	vertical-align: middle;
+}
+
+#hashTable thead tr th{
+	vertical-align: middle;
+}
+
+@media only screen and (max-width: 1900px) {
+	#hashTableBody td{
+		line-height: 17px;
+		vertical-align: middle;
+	}
 }

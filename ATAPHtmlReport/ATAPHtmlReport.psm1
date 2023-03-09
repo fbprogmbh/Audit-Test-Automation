@@ -158,40 +158,60 @@ function CreateToc{
 function CreateHashTable{
 	htmlElement 'div'@{id="hashTableDiv"}{
 		htmlElement 'h2' @{style="margin-top: 0;"}{"Overall integrity"}
+		htmlElement 'p' @{} {"This table outlines integrity checksums for each hardening recommendation. This leads to the possibility of an easy comparison between reports created regularly due to regulatory/internal reasons.<br>So just compare the hash values of overall report or for specific hardening recommendations. In case the values of checksums / hashes are equal settings are the same."}
 		htmlElement 'table'@{ id="hashTable"}{
 			htmlElement 'thead' @{}{
 				htmlElement 'tr' @{}{
-					htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Scope"}
-					htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Hash-Type"}
-					htmlElement 'th'  @{style="border: 1px solid black; border-collapse: collapse;" } {"Checksum"}
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Scope"}
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Hash-Type"}
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Checksum"}
 				}
 			}
-			htmlElement 'tbody' @{}{
+			htmlElement 'tbody' @{id="hashTableBody"}{
 				htmlElement 'tr' @{}{
 					#Scope
-					htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;vertical-align: middle;" } {"Overall integrity check"}
+					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse;vertical-align: middle; " } {"Overall integrity check"}
 					#HashType
-					htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
+					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
 						htmlElement 'p' @{} {"SHA 256"}
 					}
 					#Checksum
-					htmlElement 'td' @{style="border: 1px solid black; border-collapse: collapse;" } {
+					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
 						htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$hashList_sha256.Length-1])"}
 					}
 				}
 				$index = 0
+				$trColorSwitch = 0
 				foreach($section in $Sections){
-					htmlElement 'tr'  @{style="border: 1px solid black; border-collapse: collapse;" }{
-						#Scope
-						htmlElement 'td'  @{style="border: 1px solid black; border-collapse:; vertical-align: middle;" } { "Integrity check for $($section.Title)"}
-						#HashType
-						htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
-							htmlElement 'p' @{} {"SHA 256"}
+					if($trColorSwitch -eq 0){
+						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: #efefef;" }{
+							#Scope
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
+							#HashType
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+								htmlElement 'p' @{} {"SHA 256"}
+							}
+							#Checksum
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
+							}
 						}
-						#Checksum
-						htmlElement 'td'  @{style="border: 1px solid black; border-collapse: collapse;" } {
-							htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
+						$trColorSwitch = 1
+					}
+					else{
+						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse;" }{
+							#Scope
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
+							#HashType
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+								htmlElement 'p' @{} {"SHA 256"}
+							}
+							#Checksum
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashList_sha256[$index])"}
+							}
 						}
+						$trColorSwitch = 1
 					}
 					$index += 1
 				}
@@ -1236,7 +1256,7 @@ function Get-ATAPHtmlReport {
 					text-align: center;
 				}
 				td {
-					border: 1px solid black;
+					border: 1px solid #d2d2d2;
 				}
 			</style>
 		</head>
