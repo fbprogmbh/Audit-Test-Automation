@@ -875,10 +875,16 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
-							htmlElement 'h2' @{style="margin-top: 0px;"} {'System information'}
-							htmlElement 'table' @{id='summaryTable'} {
+							htmlElement 'h2' @{id="systemInformation"} {'System information'}
+							$hostInformation = Get-ATAPHostInformation;
+							htmlElement 'table' @{id='hardwareInformation'}{
+								htmlElement 'thead' @{} {
+									htmlElement 'tr' @{} {
+										htmlElement 'td' @{}{"Hardware Information"}
+										htmlElement 'td' @{}{} 
+									}
+								}
 								htmlElement 'tbody' @{} {
-									$hostInformation = Get-ATAPHostInformation;
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[7] }
@@ -914,40 +920,50 @@ function Get-ATAPHtmlReport {
 										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
 										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
 									}
-									#Free physical memory
+								}
+							}
+							htmlElement 'table' @{id='softwareInformation'}{
+								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
+										htmlElement 'td' @{}{"Software Information"}
+										htmlElement 'td' @{}{} 
 									}
-									#Free physical memory
+								}
+								htmlElement 'tbody' @{} {
+									#Hostname
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[8] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[8] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[7] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[7] }
 									}
-									#Free physical memory
+									#Domain Role
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[9] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[9] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
 									}
-									#Free physical memory
+									#Operating System
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[10] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[10] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
 									}
-									#Free physical memory
+									#Build Number
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[11] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[11] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[5] }
 									}
-									#Free physical memory
+									#Installation Language
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[12] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[12] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
 									}
-									#Free physical memory
+									#System uptime
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[13] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[13] }
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[0] }
+									}
+									#Free disk space
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
+										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
 									}
 								}
 							}
