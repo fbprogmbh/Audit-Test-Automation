@@ -224,12 +224,18 @@ $windefrunning = CheckWindefRunning
     Task = "Set registry value 'PUAProtection' to 1."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender" `
                 -Name "PUAProtection" `
@@ -266,12 +272,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn on behavior monitoring' is set to 'Enabled'."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableBehaviorMonitoring" `
@@ -308,12 +320,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Scan removable drives' is set to 'Enabled'."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableRemovableDriveScanning" `
@@ -350,12 +368,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn on e-mail scanning' is set to 'Enabled'."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableEmailScanning" `
@@ -392,12 +416,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Send file samples when further analysis is required' is set to 'Send safe samples'."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SubmitSamplesConsent" `
@@ -434,12 +464,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Join Microsoft MAPS' is set to 'Advanced MAPS'."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
@@ -476,12 +512,18 @@ $windefrunning = CheckWindefRunning
     Task = "Set registry value 'ExploitGuard_ASR_Rules' to 1."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
@@ -537,12 +579,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -598,12 +646,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -659,12 +713,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -720,12 +780,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -781,12 +847,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -842,12 +914,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
        try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -903,12 +981,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -964,12 +1048,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1025,12 +1115,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1086,12 +1182,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1147,12 +1249,18 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1208,12 +1316,18 @@ $windefrunning = CheckWindefRunning
     Task = "Set registry value 'EnableNetworkProtection' to 1."
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" `
                 -Name "EnableNetworkProtection" `

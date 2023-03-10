@@ -520,12 +520,19 @@ $RootPath = Split-Path $RootPath -Parent
 		}
 		else {
 			$windefrunning = CheckWindefRunning
+			$licensecheck = CheckLicense
+			if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
 			if ((-not $windefrunning)) {
 				return @{
 					Message = "This rule requires Windows Defender Antivirus to be enabled."
 					Status = "None"
 				}
-			}                           
+			}
 			$countEnabled = 0
 			$Rule1 = @{
 				Path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
