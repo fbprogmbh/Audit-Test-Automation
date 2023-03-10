@@ -478,6 +478,22 @@ function ConvertTo-NTAccountUser {
                 Message = $message
             }
         } 
+        if($null -eq $currentUserRights -and $identityAccounts.Count -gt 0){
+            return @{
+                Status = "True"
+                Message = "Compliant - Positive Deviation to publisher. No UserRights are assigned to this policy."
+            }
+        }
+        if($currentUserRights.Count -lt $identityAccounts.Count){
+            $users = ""
+            foreach($currentUser in $currentUserRights){
+                $users += $currentUser.Values
+            }
+            return @{
+                Status = "True"
+                Message = "Compliant - Positive Deviation to publisher. Less UserRights are assigned to this policy than expected: $($users)"
+            }
+        }
         return @{
             Status = "True"
             Message = "Compliant"
