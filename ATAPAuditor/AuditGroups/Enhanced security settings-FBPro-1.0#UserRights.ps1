@@ -89,7 +89,7 @@ function ConvertTo-NTAccountUser {
         if($null -eq $currentUserRights -and $identityAccounts.Count -gt 0){
             return @{
                 Status = "True"
-                Message = "Compliant - Positive Deviation to publisher. No UserRights are assigned to this policy."
+                Message = "Compliant - No UserRights are assigned to this policy. This configuration is even more secure than publisher recommendation."
             }
         }
         #Less UserRights on System comparing to publisher recommendation
