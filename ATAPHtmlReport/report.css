@@ -559,15 +559,29 @@ button{
 	margin-right: 10%;
 }
 
+.systemInformationContent > tr > th{
+	padding-left: 0;
+	padding-right: 0;
+}
+.systemInformationContent > tr > th{
+	padding-left: 0;
+	padding-right: 0;
+}
+
 #systemData{
 	display: grid;
-	grid-template-columns: repeat(1, 50%);
+	grid-template-columns: repeat(2, 50%);
 	grid-template-rows: 20% 5%;
-	grid-column-gap: 0px;
+	grid-column-gap: 9px;
 	grid-row-gap: 0px;
-	width: 50%;
+	width: 60%;
 	float: right;
+	margin-bottom: 2%;
 } 
+
+#hardwareInformation td{
+	width: min-content;
+}
 
 #systemInformation{
 	grid-column-start: 1;
