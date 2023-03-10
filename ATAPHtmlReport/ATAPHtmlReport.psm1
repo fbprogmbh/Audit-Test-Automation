@@ -367,6 +367,17 @@ function Get-ATAPHostInformation {
 		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
 		$uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime
 		$v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
+		$licenseStatus = (Get-CIMInstance -query "select Name, Description, LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1").LicenseStatus
+		$lcStatus
+		switch($licenseStatus){
+			0 {$lcStatus = "Unlicensed"}
+			1 {$lcStatus = "Licensed"}
+			2 {$lcStatus = "OOBGrace"}
+			3 {$lcStatus = "OOTGrace"}
+			4 {$lcStatus = "NonGenuineGrace"}
+			5 {$lcStatus = "Notification"}
+			6 {$lcStatus = "ExtendedGrace"}
+		}
 		return @{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
 			"Domain role"               = $role
@@ -383,7 +394,7 @@ function Get-ATAPHostInformation {
 			"System SKU"				= (GWMI -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
 			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
 			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
-			"Licence Status"			= Get-CIMInstance -query "select LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1" | Format-List LicenseStatus
+			"License Status"			= $lcStatus
 		} 
 	}
 }
