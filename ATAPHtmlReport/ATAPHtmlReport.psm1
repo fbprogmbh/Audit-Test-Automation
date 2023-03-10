@@ -882,12 +882,12 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
-							htmlElement 'h2' @{id="systemInformation"} {'System information'}
+							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
 							$hostInformation = Get-ATAPHostInformation;
 							htmlElement 'table' @{id='hardwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'td' @{ style="padding-left:0;padding-right:0;"}{"Hardware Information"}
+										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold;"}{"Hardware Information"}
 										htmlElement 'td' @{}{} 
 									}
 								}
@@ -942,7 +942,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'table' @{id='softwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'td' @{}{"Software Information"}
+										htmlElement 'td' @{style="font-weight:bold;"}{"Software Information"}
 										htmlElement 'td' @{}{} 
 									}
 								}

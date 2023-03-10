@@ -571,7 +571,7 @@ button{
 #systemData{
 	display: grid;
 	grid-template-columns: repeat(2, 50%);
-	grid-template-rows: 20% 5%;
+	grid-template-rows: 88% 5%;
 	grid-column-gap: 9px;
 	grid-row-gap: 0px;
 	width: 60%;
