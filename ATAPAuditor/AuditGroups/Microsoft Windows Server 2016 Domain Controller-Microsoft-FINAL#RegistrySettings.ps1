@@ -2,6 +2,7 @@
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $windefrunning = CheckWindefRunning
+$licensecheck = CheckLicense
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "Registry-001"

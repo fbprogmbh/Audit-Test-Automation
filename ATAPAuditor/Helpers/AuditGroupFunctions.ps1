@@ -122,7 +122,7 @@ function CheckLicense {
     # 4=NonGenuineGrace
     # 5=Notification
     # 6=ExtendedGrace
-    return Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus
+    return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 }
 
 function CheckWindefRunning {
