@@ -1,3 +1,33 @@
+# Begin Helper for version control
+function isWindows8OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
+}
+function isWindows81OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,3))
+}
+function isWindows10OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
+}
+function win7NoTPMChipDetected {
+	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
+}
+function hasTPM {
+	try {
+		$obj = (Get-Tpm).TpmPresent
+	} catch {
+		return $null
+	}
+	return $obj
+}
+# End Helper for version control
+function isWindows10Enterprise {
+    $os = Get-ComputerInfo OsName
+    if($os -match "Windows 10 Enterprise" -or $os -match "Windows 11 Enterprise"){
+        return $true
+    }
+    return $false
+}
+
 #Helper function for 'Test-ASRRules'
 Function Test-RegistryValue ($regkey, $name) {
     if (Get-ItemProperty -Path $regkey -Name $name -ErrorAction Ignore) {
@@ -82,6 +112,17 @@ function Test-MultiplePaths {
 #Returns Hyper-V status
 function CheckHyperVStatus {
     return (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State
+}
+
+function CheckLicense {
+    # 0=Unlicensed
+    # 1=Licensed
+    # 2=OOBGrace
+    # 3=OOTGrace
+    # 4=NonGenuineGrace
+    # 5=Notification
+    # 6=ExtendedGrace
+    return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 }
 
 function CheckWindefRunning {

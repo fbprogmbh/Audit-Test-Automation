@@ -1,23 +1,6 @@
-function isWindows8OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
-}
-function isWindows81OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,3))
-}
-function isWindows10OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
-}
-function win7NoTPMChipDetected {
-	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
-}
-function hasTPM {
-	try {
-		$obj = (Get-Tpm).TpmPresent
-	} catch {
-		return $null
-	}
-	return $obj
-}
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
 [AuditTest] @{
 	Id = "SBD-001"
 	Task = "Ensure the system is booting in 'UEFI' mode."

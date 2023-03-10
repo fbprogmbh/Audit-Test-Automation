@@ -3,6 +3,7 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
+$licensecheck = CheckLicense
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "1"
@@ -5842,12 +5843,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender" `
@@ -5886,12 +5893,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender" `
@@ -5930,12 +5943,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Reporting" `
@@ -5974,12 +5993,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
@@ -6018,12 +6043,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
@@ -6062,12 +6093,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
@@ -6106,12 +6143,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
@@ -6150,12 +6193,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
@@ -6194,12 +6243,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" `
@@ -6238,12 +6293,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }            
             $regValue = 0;
             $regValueTwo = 0;
@@ -6301,12 +6362,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6364,12 +6431,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6427,12 +6500,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                   
             $regValue = 0;
             $regValueTwo = 0;
@@ -6490,12 +6569,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6553,12 +6638,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6616,12 +6707,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6679,12 +6776,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6742,12 +6845,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6805,12 +6914,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6868,12 +6983,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -6931,12 +7052,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -7858,12 +7985,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender Security Center\App and Browser protection" `
@@ -11825,6 +11958,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "361"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -11841,6 +11977,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "362"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -11857,6 +11996,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "363"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -11873,6 +12015,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "364"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";

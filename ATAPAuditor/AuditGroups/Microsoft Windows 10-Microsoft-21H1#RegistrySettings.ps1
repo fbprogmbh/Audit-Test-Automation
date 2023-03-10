@@ -3,6 +3,7 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
+$licensecheck = CheckLicense
 $hyperVStatus = CheckHyperVStatus
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
@@ -11,12 +12,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender" `
@@ -55,12 +62,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\MpEngine" `
@@ -99,12 +112,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
@@ -143,12 +162,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
@@ -187,12 +212,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
@@ -231,12 +262,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
@@ -275,12 +312,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
@@ -319,12 +362,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
@@ -363,12 +412,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -426,12 +481,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -489,12 +550,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -552,12 +619,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -615,12 +688,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -678,12 +757,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -741,12 +826,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
        try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }  
             $regValue = 0;
             $regValueTwo = 0;
@@ -804,12 +895,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -867,12 +964,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -930,12 +1033,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -993,12 +1102,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -1056,12 +1171,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -1119,12 +1240,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -1182,12 +1309,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
             try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -1245,12 +1378,18 @@ $hyperVStatus = CheckHyperVStatus
     Test = {
         try {
             if($avstatus){
+                if ($licensecheck -ne "1") {
+                    return @{
+                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                        Status = "False"
+                    }
+                }
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" `
@@ -4158,6 +4297,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-105"
     Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -4174,6 +4316,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-106"
     Task = "Domain: Set registry value 'DisableNotifications' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -4190,6 +4335,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-107"
     Task = "Domain: Set registry value 'EnableFirewall' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
@@ -4206,6 +4354,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-108"
     Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -4222,6 +4373,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-109"
     Task = "Domain: Set registry value 'LogDroppedPackets' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
@@ -4238,6 +4392,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-110"
     Task = "Domain: Set registry value 'LogFileSize' to 16384."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
@@ -4254,6 +4411,9 @@ $hyperVStatus = CheckHyperVStatus
 [AuditTest] @{
     Id = "Registry-111"
     Task = "Domain: Set registry value 'LogSuccessfulConnections' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      

@@ -3,6 +3,7 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
+$licensecheck = CheckLicense
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "2.3.1.2"
@@ -2608,6 +2609,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.1"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
@@ -2624,6 +2628,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.2"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -2640,6 +2647,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.3"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -2656,6 +2666,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.4"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -2672,6 +2685,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
@@ -2688,6 +2704,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.6"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"    
@@ -2704,6 +2723,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"    
@@ -2720,6 +2742,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"    
@@ -7920,14 +7945,6 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Security: Specify the maximum log file size (KB)' is set to 'Enabled: 196,608 or greater'"
     Test = {
         try {
-            if($avstatus){
-                if ((-not $windefrunning)) {
-                    return @{
-                        Message = "This rule requires Windows Defender Antivirus to be enabled."
-                        Status = "None"
-                    }
-                }         
-            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Security" `
                 -Name "MaxSize" `
@@ -8324,6 +8341,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "LocalSettingOverrideSpynetReporting" `
@@ -8360,6 +8389,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L2) Ensure 'Join Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
@@ -8396,6 +8437,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" `
                 -Name "EnableNetworkProtection" `
@@ -8432,6 +8485,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L2) Ensure 'Enable file hash computation feature' is set to 'Enabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\MpEngine" `
                 -Name "EnableFileHashComputation" `
@@ -8468,6 +8533,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Scan all downloaded files and attachments' is set to 'Enabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableIOAVProtection" `
@@ -8504,6 +8581,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableRealtimeMonitoring" `
@@ -8540,6 +8629,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableBehaviorMonitoring" `
@@ -8576,6 +8677,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Turn on script scanning' is set to 'Enabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableScriptScanning" `
@@ -8612,6 +8725,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L2) Ensure 'Configure Watson events' is set to 'Disabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" `
                 -Name "DisableGenericReports" `
@@ -8648,6 +8773,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Scan removable drives' is set to 'Enabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableRemovableDriveScanning" `
@@ -8684,6 +8821,18 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
     Test = {
         try {
+            if ($licensecheck -ne "1") {
+                return @{
+                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
+                    Status = "False"
+                }
+            }
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableEmailScanning" `
