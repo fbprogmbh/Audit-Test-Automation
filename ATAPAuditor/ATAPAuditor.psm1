@@ -126,6 +126,21 @@ function Test-ArrayEqual {
 	return $true
 }
 
+function Get-LicenseStatus{
+	$licenseStatus = (Get-CIMInstance -query "select Name, Description, LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1").LicenseStatus
+	switch($licenseStatus){
+		"0" {$lcStatus = "Unlicensed"}
+		"1" {$lcStatus = "Licensed"}
+		"2" {$lcStatus = "OOBGrace"}
+		"3" {$lcStatus = "OOTGrace"}
+		"4" {$lcStatus = "NonGenuineGrace"}
+		"5" {$lcStatus = "Notification"}
+		"6" {$lcStatus = "ExtendedGrace"}
+	}
+	return $lcStatus
+}
+
+
 # Get domain role
 # 0 {"Standalone Workstation"}
 # 1 {"Member Workstation"}
@@ -561,8 +576,9 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
+	$LicenseStatus = Get-LicenseStatus
 
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore #-DarkMode:$DarkMode
+	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport

@@ -559,10 +559,49 @@ button{
 	margin-right: 10%;
 }
 
+.systemInformationContent > tr > th{
+	padding-left: 0;
+	padding-right: 0;
+}
+.systemInformationContent > tr > th{
+	padding-left: 0;
+	padding-right: 0;
+}
+
 #systemData{
-	float:right;
-	margin-right: 30%;
-    text-align: left;
+	display: grid;
+	grid-template-columns: repeat(2, 50%);
+	grid-template-rows: 88% 5%;
+	grid-column-gap: 9px;
+	grid-row-gap: 0px;
+	width: 60%;
+	float: right;
+	margin-bottom: 2%;
+} 
+
+#hardwareInformation td{
+	width: min-content;
+}
+
+#systemInformation{
+	grid-column-start: 1;
+	grid-column-end: 2;
+	grid-row-start: 0;
+	grid-row-end: 1;
+	margin-top: 0px;
+}
+
+#hardwareInformation{
+	grid-column-start: 1;
+	grid-column-end: 2;
+	grid-row-start: 1;
+	grid-row-end: 1;
+}
+#softwareInformation{
+	grid-column-start: 2;
+	grid-column-end: 3;
+	grid-row-start: 1;
+	grid-row-end: 2;
 }
 
 #dotRiskScoreTab {

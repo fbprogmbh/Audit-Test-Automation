@@ -367,6 +367,7 @@ function Get-ATAPHostInformation {
 		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
 		$uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime
 		$v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
+
 		return @{
 			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
 			"Domain role"               = $role
@@ -377,6 +378,13 @@ function Get-ATAPHostInformation {
 			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
 			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
 			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
+			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
+			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
+			"System Type"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
+			"System SKU"				= (GWMI -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
+			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
+			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
+			"License Status"			= $LicenseStatus
 		} 
 	}
 }
@@ -522,6 +530,11 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[array]
 		$Sections,
+
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$LicenseStatus,
 
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[RSFullReport[]]
@@ -869,49 +882,120 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
-							htmlElement 'h2' @{style="margin-top: 0px;"} {'System information'}
-							htmlElement 'table' @{id='summaryTable'} {
-								htmlElement 'tbody' @{} {
-									$hostInformation = Get-ATAPHostInformation;
+							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
+							$hostInformation = Get-ATAPHostInformation;
+							htmlElement 'table' @{id='hardwareInformation'}{
+								htmlElement 'thead' @{} {
+									htmlElement 'tr' @{} {
+										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold;"}{"Hardware Information"}
+										htmlElement 'td' @{}{} 
+									}
+								}
+								htmlElement 'tbody' @{class="systemInformationContent"} {
 									#Hostname
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[7] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[7] }
+										htmlElement 'th' @{ scope = 'row' } { "System Manufacturer" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Manufacturer")) }
 									}
 									#Domain Role
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[2] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[2] }
+										htmlElement 'th' @{ scope = 'row' } { "System SKU" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("System SKU")) }
 									}
 									#Operating System
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[1] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[1] }
+										htmlElement 'th' @{ scope = 'row' } { "System Model" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Model")) }
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[5] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[5] }
+										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Serialnumber")) }
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[4] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[4] }
+										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("BIOS Version")) }
 									}
-									#System uptime
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[0] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[0] }
+										htmlElement 'th' @{ scope = 'row' } { "" }
+										htmlElement 'td' @{} { "" }
+									}
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "" }
+										htmlElement 'td' @{} { "" }
+									}
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "" }
+										htmlElement 'td' @{} { "" }
+									}
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "" }
+										htmlElement 'td' @{} { "" }
+									}
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "" }
+										htmlElement 'td' @{} { "" }
+									}
+								}
+							}
+							htmlElement 'table' @{id='softwareInformation'}{
+								htmlElement 'thead' @{} {
+									htmlElement 'tr' @{} {
+										htmlElement 'td' @{style="font-weight:bold;"}{"Software Information"}
+										htmlElement 'td' @{}{} 
+									}
+								}
+								htmlElement 'tbody' @{} {
+									#Hostname
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "Hostname" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Hostname")) }
+									}
+									#System Uptime
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "System Uptime" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Uptime")) }
+									}
+									#Operating System
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Operating System")) }
+									}
+									#System Type
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "System Type" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Type")) }
+									}
+									#Build Number
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "Build Number" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+									}
+									#Installation Language
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "Installation Language" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Installation Language")) }
+									}
+									#Domain role
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "Domain role" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
 									}
 									#Free disk space
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[3] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[3] }
+										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
 									}
-									#Free physical memory
+									#Free physican memory
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { $($hostInformation.Keys)[6] }
-										htmlElement 'td' @{} { $($hostInformation.Values)[6] }
+										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
+									}
+									#licence activation status
+									htmlElement 'tr' @{} {
+										htmlElement 'th' @{ scope = 'row' } { "License Status" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
 									}
 								}
 							}
