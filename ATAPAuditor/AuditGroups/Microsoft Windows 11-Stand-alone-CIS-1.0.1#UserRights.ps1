@@ -629,12 +629,14 @@ else{
             }
         }
         
+        #No UserRights on System comparing to publisher recommendation
         if($null -eq $currentUserRights -and $identityAccounts.Count -gt 0){
             return @{
                 Status = "True"
                 Message = "Compliant - Positive Deviation to publisher. No UserRights are assigned to this policy."
             }
         }
+        #Less UserRights on System comparing to publisher recommendation
         if($currentUserRights.Count -lt $identityAccounts.Count){
             $users = ""
             foreach($currentUser in $currentUserRights){
@@ -645,6 +647,7 @@ else{
                 Message = "Compliant - Positive Deviation to publisher. Less UserRights are assigned to this policy than expected: $($users)"
             }
         }
+        #Same UserRights on System comparing to publisher recommendation
         return @{
             Status = "True"
             Message = "Compliant"
