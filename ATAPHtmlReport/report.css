@@ -726,7 +726,7 @@ button{
 
 
 #settingsOverview section{
-	margin-left: 5%;
+	margin-left: 2%;
 	margin-right: 5%;
 }
 
@@ -748,7 +748,7 @@ button{
 }
 
 #foundationData section{
-	margin-left: 5%;
+	margin-left: 2%;
 	margin-right: 5%;
 }
 
@@ -763,4 +763,25 @@ button{
 	text-transform: uppercase;
 	border-style: none;
 	cursor: pointer;
+}
+
+#hashTableDiv{
+	float: right;
+	width: 60%;
+	margin-bottom: 30px;
+}
+#hashTableBody td{
+	line-height: 0px;
+	vertical-align: middle;
+}
+
+#hashTable thead tr th{
+	vertical-align: middle;
+}
+
+@media only screen and (max-width: 1900px) {
+	#hashTableBody td{
+		line-height: 17px;
+		vertical-align: middle;
+	}
 }

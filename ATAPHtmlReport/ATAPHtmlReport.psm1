@@ -153,6 +153,60 @@ function CreateToc{
 	}
 }
 
+
+
+function CreateHashTable{
+	htmlElement 'div'@{id="hashTableDiv"}{
+		htmlElement 'h2' @{style="margin-top: 0;"}{"Overall integrity"}
+		htmlElement 'p' @{} {"This table outlines integrity checksums for each hardening recommendation. This leads to the possibility of an easy comparison between reports created regularly due to regulatory/internal reasons.<br>So just compare the hash values of overall report or for specific hardening recommendations. In case the values of checksums / hashes are equal settings are the same."}
+		htmlElement 'table'@{ id="hashTable"}{
+			htmlElement 'thead' @{}{
+				htmlElement 'tr' @{}{
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Scope"}
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Checksum (SHA-256)"}
+				}
+			}
+			htmlElement 'tbody' @{id="hashTableBody"}{
+				htmlElement 'tr' @{}{
+					#Scope
+					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse;vertical-align: middle; " } {"Overall integrity check"}
+					#Checksum
+					htmlElement 'td' @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+						htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($Title))"}
+					}
+				}
+				$index = 0
+				$trColorSwitch = 0
+				foreach($section in $Sections){
+					if($trColorSwitch -eq 0){
+						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: #efefef;" }{
+							#Scope
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
+							#Checksum
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($section.Title))"}
+							}
+						}
+						$trColorSwitch = 1
+					}
+					else{
+						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse;" }{
+							#Scope
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
+							#Checksum
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($section.Title))"}
+							}
+						}
+						$trColorSwitch = 0
+					}
+					$index += 1
+				}
+			}
+		}
+	}
+}
+
 function CreateReportContent{
 	param(
 		[Parameter(Mandatory = $true)]
@@ -300,22 +354,20 @@ function Get-HtmlReportSection {
 		$id = Convert-SectionTitleToHtmlId -Title ($Prefix + $Title)
 		$sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
 		$class = Get-HtmlClassFromStatus $sectionStatus
-
 		htmlElement 'section' @{} {
 			htmlElement 'h1' @{ id = $id } {
+				
+				
 				htmlElement 'span' @{ class = $class } { $Title }
 				htmlElement 'span' @{ class = 'sectionAction collapseButton' } { '-' }
 				htmlElement 'a' @{ href = '#toc'; class = 'sectionAction' } {
 					htmlElement 'span' @{ style = "font-size: 75%;" } { '&uarr;' }
 				}
 			}
-
+				
 			if ($null -ne $Description) {
 				htmlElement 'p' @{} { $Description }
 			}
-			# if ($null -ne $ConfigAudits){
-			# 	htmlElement 'p' @{} {$ConfigAudits.Count + ' tests have been executed in this section'}
-			# }
 			if ($null -ne $ConfigAudits) {
 				htmlElement 'table' @{ class = 'audit-info' } {
 					htmlElement 'tbody' @{} {
@@ -330,7 +382,7 @@ function Get-HtmlReportSection {
 					}
 				}
 			}
-			if ($null -ne $Subsections) {
+			if ($null -ne $Subsections) {				
 				foreach ($subsection in $Subsections) {
 					$subsection | Get-HtmlReportSection -Prefix ($Prefix + $Title)
 				}
@@ -547,6 +599,10 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[hashtable]
+		$hashtable_sha256,
+
 		#[switch] $DarkMode,
 
 		[switch] $ComplianceStatus
@@ -677,14 +733,19 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
+						CreateHashTable
 						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
 						htmlElement 'h2' @{} {"Benchmark Details"}
+
 						# Report Sections
-						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+						foreach ($section in $Sections) {
+							$section | Get-HtmlReportSection 
+						}
+
 					}
 
 
@@ -1266,7 +1327,7 @@ function Get-ATAPHtmlReport {
 					text-align: center;
 				}
 				td {
-					border: 1px solid black;
+					border: 1px solid #d2d2d2;
 				}
 			</style>
 		</head>

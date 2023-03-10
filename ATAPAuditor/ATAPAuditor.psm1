@@ -3,6 +3,7 @@ using namespace Microsoft.PowerShell.Commands
 #region Initialization
 
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+. "$RootPath\Helpers\HashHelper.ps1"
 
 $script:atapReportsPath = $env:ATAPReportPath
 if (-not $script:atapReportsPath) {
@@ -578,7 +579,13 @@ function Save-ATAPHtmlReport {
 	}
 	$LicenseStatus = Get-LicenseStatus
 
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode
+	$report = Invoke-ATAPReport -ReportName $ReportName 
+
+	#hashes for each recommendation
+	$hashtable_sha256 = GenerateHashTable $report
+
+
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode 
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
