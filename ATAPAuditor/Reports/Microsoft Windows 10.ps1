@@ -190,7 +190,7 @@
 			}
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SiSyPHus-BSI'
+			Title = 'BSI Benchmarks SiSyPHus-BSI Telemetrie'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
