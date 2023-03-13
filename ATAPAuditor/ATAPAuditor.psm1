@@ -364,21 +364,6 @@ function Test-AuditGroup {
 					}
 				}
 			}
-			if($test.Task -match "(MS only)"){
-				if($role.domainRole -ne 2 -and $role.domainRole -ne 3){
-					$message = 'Not applicable. This audit does not apply to Domain Controller systems.'
-					$status = [AuditInfoStatus]::None
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = $message
-						Status = $status
-					})
-					continue
-				}
-			}
-
-
 			try {
 				$innerResult = & $test.Test
 
