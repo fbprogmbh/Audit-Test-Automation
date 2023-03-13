@@ -77,7 +77,7 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.1"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -96,7 +96,7 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.2"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -115,7 +115,7 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.3"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -134,7 +134,7 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "4.2.1.4"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"

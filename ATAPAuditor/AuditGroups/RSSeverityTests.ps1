@@ -35,6 +35,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id   = "2.2.38"
     Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
@@ -71,7 +74,7 @@ $licensecheck = CheckLicense
     Id   = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         try {
@@ -326,7 +329,7 @@ $licensecheck = CheckLicense
     Id   = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -345,7 +348,7 @@ $licensecheck = CheckLicense
     Id   = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"

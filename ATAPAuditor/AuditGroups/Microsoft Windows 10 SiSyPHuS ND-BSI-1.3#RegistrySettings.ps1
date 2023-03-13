@@ -8695,7 +8695,7 @@ $licensecheck = CheckLicense
     Id = "361"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -8714,7 +8714,7 @@ $licensecheck = CheckLicense
     Id = "362"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -8733,7 +8733,7 @@ $licensecheck = CheckLicense
     Id = "363"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -8752,7 +8752,7 @@ $licensecheck = CheckLicense
     Id = "364"
     Task = "(ND) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";

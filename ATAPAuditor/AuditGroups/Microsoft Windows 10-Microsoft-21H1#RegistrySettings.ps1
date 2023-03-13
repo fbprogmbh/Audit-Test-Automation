@@ -4298,7 +4298,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-105"
     Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -4317,7 +4317,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-106"
     Task = "Domain: Set registry value 'DisableNotifications' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -4336,7 +4336,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-107"
     Task = "Domain: Set registry value 'EnableFirewall' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
@@ -4355,7 +4355,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-108"
     Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -4374,7 +4374,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-109"
     Task = "Domain: Set registry value 'LogDroppedPackets' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -4393,7 +4393,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-110"
     Task = "Domain: Set registry value 'LogFileSize' to 16384."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -4412,7 +4412,7 @@ $hyperVStatus = CheckHyperVStatus
     Id = "Registry-111"
     Task = "Domain: Set registry value 'LogSuccessfulConnections' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"

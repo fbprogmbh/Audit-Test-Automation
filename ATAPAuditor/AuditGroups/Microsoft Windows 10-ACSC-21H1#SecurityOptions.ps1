@@ -1,6 +1,9 @@
 ﻿[AuditTest] @{
     Id = "High-032"
     Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableAdminAccount"]
@@ -27,6 +30,9 @@
 [AuditTest] @{
     Id = "Medium-069"
     Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["EnableGuestAccount"]

@@ -113,6 +113,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "2.2.2"
     Task = "(L1) Ensure 'Access this computer from the network' is set to  'Administrators, Authenticated Users, ENTERPRISE DOMAIN  CONTROLLERS' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
@@ -150,6 +153,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "2.2.3"
     Task = "(L1) Ensure 'Access this computer from the network' is set to  'Administrators, Authenticated Users' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
@@ -220,6 +226,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "2.2.5"
     Task = "(L1) Ensure 'Add workstations to domain' is set to 'Administrators' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeMachineAccountPrivilege"]
@@ -327,6 +336,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "2.2.8"
     Task = "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteInteractiveLogonRight"]
@@ -362,6 +374,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "2.2.9"
     Task = "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteInteractiveLogonRight"]
@@ -638,6 +653,9 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "2.2.17"
     Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -674,6 +692,9 @@ if($hyperVStatus -ne "Enabled"){
     [AuditTest] @{
         Id = "2.2.18"
         Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators [Hyper-V-Feature NOT installed] (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
         Test = {
             $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
             $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -711,6 +732,9 @@ else{
     [AuditTest] @{
         Id = "2.2.18"
         Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\Virtual Machines' [Hyper-V-Feature installed] (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
         Test = {
             $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
             $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
@@ -800,6 +824,9 @@ else{
 [AuditTest] @{
     Id = "2.2.20"
     Task = "(L1) Ensure 'Deny access to this computer from the network' to include 'Guests' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
@@ -832,6 +859,9 @@ else{
 [AuditTest] @{
     Id = "2.2.21"
     Task = "(L1) Ensure 'Deny access to this computer from the network' to include 'Guests, Local account and member of Administrators group' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
@@ -961,6 +991,9 @@ else{
 [AuditTest] @{
     Id = "2.2.25"
     Task = "(L1) Ensure 'Deny log on through Remote Desktop Services' to include 'Guests' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
@@ -993,6 +1026,9 @@ else{
 [AuditTest] @{
     Id = "2.2.26"
     Task = "(L1) Ensure 'Deny log on through Remote Desktop Services' is set to 'Guests, Local account' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
@@ -1026,6 +1062,9 @@ else{
 [AuditTest] @{
     Id = "2.2.27"
     Task = "(L1) Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'Administrators' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
@@ -1061,6 +1100,9 @@ else{
 [AuditTest] @{
     Id = "2.2.28"
     Task = "(L1) Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
@@ -1204,6 +1246,9 @@ else{
 [AuditTest] @{
     Id = "2.2.31"
     Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
@@ -1242,6 +1287,9 @@ else{
 [AuditTest] @{
     Id = "2.2.32 A"
     Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' [IIS Role NOT installed] (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
@@ -1280,6 +1328,9 @@ else{
 [AuditTest] @{
     Id = "2.2.32 B"
     Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' [IIS Role installed] (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
@@ -1423,6 +1474,9 @@ else{
 [AuditTest] @{
     Id = "2.2.36"
     Task = "(L2) Ensure 'Log on as a batch job' is set to 'Administrators' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeBatchLogonRight"]
@@ -1458,6 +1512,9 @@ else{
 [AuditTest] @{
     Id = "2.2.37"
     Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' and (when Exchange is running in the environment) 'Exchange Servers' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
@@ -1493,6 +1550,9 @@ else{
 [AuditTest] @{
     Id = "2.2.38"
     Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
@@ -1809,6 +1869,9 @@ else{
 [AuditTest] @{
     Id = "2.2.47"
     Task = "(L1) Ensure 'Synchronize directory service data' is set to 'No One' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSyncAgentPrivilege"]

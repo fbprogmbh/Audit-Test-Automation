@@ -1338,7 +1338,7 @@ $licensecheck = CheckLicense
     Id = "Registry-051"
     Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -1357,7 +1357,7 @@ $licensecheck = CheckLicense
     Id = "Registry-052"
     Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -1376,7 +1376,7 @@ $licensecheck = CheckLicense
     Id = "Registry-053"
     Task = "Domain: Set registry value 'EnableFirewall' to 1."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";

@@ -114,7 +114,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000340"
     Task = "Windows Server 2019 Access this computer from the network user right must only be assigned to the Administrators, Authenticated Users, and `nEnterprise Domain Controllers groups on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -153,7 +153,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-MS-000070"
     Task = "Windows Server 2019 Access this computer from the network user right must only be assigned to the Administrators and Authenticated Users groups on domain-joined member servers and standalone systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer", "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server", "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -226,7 +226,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000350"
     Task = "Windows Server 2019 Add workstations to domain user right must only be assigned to the Administrators group on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -299,7 +299,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000360"
     Task = "Windows Server 2019 Allow log on through Remote Desktop Services user right must only be assigned to the Administrators group on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -597,7 +597,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000370"
     Task = "Windows Server 2019 Deny access to this computer from the network user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -632,7 +632,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000380"
     Task = "Windows Server 2019 Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -667,7 +667,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000390"
     Task = "Windows Server 2019 Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -701,7 +701,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000400"
     Task = "Windows Server 2019 Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -736,7 +736,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000410"
     Task = "Windows Server 2019 Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -771,7 +771,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-DC-000420"
     Task = "Windows Server 2019 Enable computer and user accounts to be trusted for delegation user right must only be assigned to the Administrators group on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -809,7 +809,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN19-MS-000130"
     Task = "Windows Server 2019 Enable computer and user accounts to be trusted for delegation user right must not be assigned to any groups or accounts on domain-joined member servers and standalone systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer", "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server", "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"

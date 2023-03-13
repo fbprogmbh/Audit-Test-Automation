@@ -470,9 +470,6 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "V-63871"
     Task = "The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneWorkstation" }
-    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
@@ -505,9 +502,6 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "V-63877"
     Task = "The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
-    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyInteractiveLogonRight"]
@@ -542,9 +536,6 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "V-63879"
     Task = "The Deny log on through Remote Desktop Services user right on Windows 10 workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
-    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]

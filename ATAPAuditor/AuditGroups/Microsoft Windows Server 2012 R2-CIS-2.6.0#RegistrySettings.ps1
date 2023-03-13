@@ -223,6 +223,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.1"
     Task = "(L1) Ensure 'Domain controller: Allow server operators to schedule tasks' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -259,6 +262,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: Allow vulnerable Netlogon secure channel connections' is set to 'Not Configured' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -293,6 +299,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.3"
     Task = "(L1) Ensure 'Domain controller: LDAP server channel binding token requirements' is set to 'Always' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -329,6 +338,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.4"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -365,6 +377,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.5"
     Task = "(L1) Ensure 'Domain controller: Refuse machine account password changes' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -793,6 +808,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.7.6"
     Task = "(L2) Ensure 'Interactive logon: Number of previous logons to cache (in case domain controller is not available)' is set to '4 or fewer logon(s)' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -865,6 +883,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.7.8"
     Task = "(L1) Ensure 'Interactive logon: Require Domain Controller Authentication to unlock workstation' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1189,6 +1210,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.9.5"
     Task = "(L1) Ensure 'Microsoft network server: Server SPN target name validation level' is set to 'Accept if provided by client' or higher (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1261,6 +1285,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.10.2"
     Task = "(L1) Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1297,6 +1324,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.10.3"
     Task = "(L1) Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1405,6 +1435,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.10.6"
     Task = "(L1) Configure 'Network access: Named Pipes that can be accessed anonymously' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1446,6 +1479,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.10.7"
     Task = "(L1) Configure 'Network access: Named Pipes that can be accessed anonymously' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1708,6 +1744,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.10.11"
     Task = "(L1) Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2536,6 +2575,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "5.1"
     Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2572,6 +2614,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "5.2"
     Task = "(L2) Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2609,7 +2654,7 @@ $licensecheck = CheckLicense
     Id = "9.1.1"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
@@ -2628,7 +2673,7 @@ $licensecheck = CheckLicense
     Id = "9.1.2"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -2647,7 +2692,7 @@ $licensecheck = CheckLicense
     Id = "9.1.3"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -2666,7 +2711,7 @@ $licensecheck = CheckLicense
     Id = "9.1.4"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -2685,7 +2730,7 @@ $licensecheck = CheckLicense
     Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -2704,7 +2749,7 @@ $licensecheck = CheckLicense
     Id = "9.1.6"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -2723,7 +2768,7 @@ $licensecheck = CheckLicense
     Id = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -2742,7 +2787,7 @@ $licensecheck = CheckLicense
     Id = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -3120,6 +3165,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.2.2"
     Task = "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3156,6 +3204,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.2.3"
     Task = "(L1) Ensure 'Enable Local Admin Password Management' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3192,6 +3243,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.2.4"
     Task = "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3228,6 +3282,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.2.5"
     Task = "(L1) Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3264,6 +3321,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.2.6"
     Task = "(L1) Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3300,6 +3360,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.3.1"
     Task = "(L1) Ensure 'Apply UAC restrictions to local accounts on network logons' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4812,6 +4875,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.5.21.2"
     Task = "(L2) Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5928,6 +5994,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.8.28.5"
     Task = "(L1) Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6216,6 +6285,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.8.37.1"
     Task = "(L1) Ensure 'Enable RPC Endpoint Mapper Client Authentication' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6252,6 +6324,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.8.37.2"
     Task = "(L2) Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6288,6 +6363,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.8.40.1"
     Task = "(L1) Ensure 'Configure validation of ROCA-vulnerable WHfB keys during authentication' is set to 'Enabled: Audit' or higher (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6468,6 +6546,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.8.53.1.2"
     Task = "(L2) Ensure 'Enable Windows NTP Server' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

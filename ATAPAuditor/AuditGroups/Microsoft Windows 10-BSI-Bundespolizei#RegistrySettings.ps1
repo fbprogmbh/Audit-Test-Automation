@@ -4113,7 +4113,7 @@ $licensecheck = CheckLicense
     Id = "0253"
     Task = "Ensure 'Windows Firewall: Domain: Apply local firewall rules' set to 'Disabled'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -4132,7 +4132,7 @@ $licensecheck = CheckLicense
     Id = "0254"
     Task = "Ensure 'Windows Firewall: Domain: Display a notification' set to 'Disabled'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -4151,7 +4151,7 @@ $licensecheck = CheckLicense
     Id = "0279"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' set to '%windir%\system32\logfiles\firewall\domainfirewall.log'."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
