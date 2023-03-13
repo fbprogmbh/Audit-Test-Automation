@@ -1,8 +1,26 @@
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
+. "$RootPath\ATAPAuditor.psm1"
 [AuditTest] @{
 	Id = "SBD-009"
+	Task = "Get License status."
+	Test = {	
+		$license = Get-LicenseStatus
+		if($license -eq "Licensed"){
+			return @{
+				Message = "Compliant"
+				Status = "True"
+			}
+		}
+		return @{
+			Message = "System not licensed."
+			Status = "False"
+		}
+	}
+}
+[AuditTest] @{
+	Id = "SBD-010"
 	Task = "Get amount of active local users on system."
 	Test = {	
 		$users = Get-LocalUser;
@@ -42,7 +60,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-010"
+	Id = "SBD-011"
 	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
 	Test = {	
 		try { 
@@ -139,7 +157,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-011"
+	Id = "SBD-012"
 	Task = "Ensure the status of the Bitlocker service is 'Running'."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -168,7 +186,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-012"
+	Id = "SBD-013"
 	Task = "Ensure that Bitlocker is activated on all volumes."
 	Test = {
 		try {
@@ -222,7 +240,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-013"
+	Id = "SBD-014"
 	Task = "Ensure the status of the Windows Defender service is 'Running'."
 	Test = {
 		try{
@@ -251,7 +269,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-014"
+	Id = "SBD-015"
 	Task = "Ensure Windows Defender Application Guard is enabled."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -278,7 +296,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-015"
+	Id = "SBD-016"
 	Task = "Ensure the Windows Firewall is enabled on all profiles."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -316,7 +334,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-016"
+	Id = "SBD-017"
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
 		try {
@@ -352,7 +370,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-017"
+	Id = "SBD-018"
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
 		try{
@@ -388,7 +406,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-018"
+	Id = "SBD-019"
 	Task = "Ensure Virtualization Based Security is enabled and running."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -430,7 +448,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-019"
+	Id = "SBD-020"
 	Task = "Ensure Hypervisor-protected Code Integrity (HVCI) is running."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -456,7 +474,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-020"
+	Id = "SBD-021"
 	Task = "Ensure Credential Guard is running."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -482,7 +500,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-021"
+	Id = "SBD-022"
 	Task = "Ensure Attack Surface Reduction (ASR) rules are enabled."
 	Test = {
 		if (isWindows10OrNewer) {
