@@ -223,6 +223,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.1"
     Task = "(L1) Ensure 'Domain controller: Allow server operators to schedule tasks' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -259,6 +262,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: Allow vulnerable Netlogon secure channel connections' is set to 'Not Configured' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -293,6 +299,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.3"
     Task = "(L1) Ensure 'Domain controller: LDAP server channel binding token requirements' is set to 'Always' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -329,6 +338,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.4"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -365,6 +377,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.5.5"
     Task = "(L1) Ensure 'Domain controller: Refuse machine account password changes' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1405,6 +1420,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "2.3.10.6"
     Task = "(L1) Configure 'Network access: Named Pipes that can be accessed anonymously' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2536,6 +2554,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "5.1"
     Task = "(L1) Ensure 'Print Spooler (Spooler)' is set to 'Disabled' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6288,6 +6309,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id = "18.8.40.1"
     Task = "(L1) Ensure 'Configure validation of ROCA-vulnerable WHfB keys during authentication' is set to 'Enabled: Audit' or higher (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
