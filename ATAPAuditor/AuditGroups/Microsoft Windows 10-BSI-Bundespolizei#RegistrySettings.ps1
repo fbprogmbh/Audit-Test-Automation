@@ -5302,7 +5302,7 @@ $licensecheck = CheckLicense
                 -Name "FDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
-            if ($regValue -ne "<none>") {
+            if ($regValue -ne "") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: <none>"
                     Status = "False"
@@ -5338,7 +5338,7 @@ $licensecheck = CheckLicense
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
-            if ($regValue -ne "<none>") {
+            if ($regValue -ne "") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: <none>"
                     Status = "False"
