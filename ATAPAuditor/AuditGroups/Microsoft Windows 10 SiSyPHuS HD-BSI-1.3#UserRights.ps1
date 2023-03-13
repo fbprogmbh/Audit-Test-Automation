@@ -1433,7 +1433,7 @@ else{
         $identityAccounts = @(
             "S-1-5-7"
             "S-1-5-32-546"
-            "S-1-2-0"
+            "S-1-5-113"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         
