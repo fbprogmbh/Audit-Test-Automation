@@ -126,12 +126,23 @@ function CheckLicense {
 }
 
 function CheckWindefRunning {
-    # for standalone systems, won't work if server 
+    # for systems, won't work if server 
     try {
         $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
         if ($defStatus.AMRunningMode -eq "Normal") {
             return $true
         }   
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+    }
+
+    # for standalone systems, won't work if server 
+    try {
+        $defStatus = (Get-MpComputerStatus -ErrorAction Ignore)
+        if ($defStatus.AMServiceEnabled -eq $true -and $defStatus.AntispywareEnabled -eq $true -and $defStatus.AntivirusEnabled -eq $true -and $defStatus.NISEnabled -eq $true -and $defStatus.RealTimeProtectionEnabled  -eq $true) {
+            return $true
+        }    
     }
     catch {
         <#Do this if a terminating exception happens#>
