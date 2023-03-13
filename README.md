@@ -16,7 +16,7 @@ ATAPAuditor:\
 			</td>
 			<td>
 
-AuditTAP Release 5.3:\
+AuditTAP Release 5.5:\
 [![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.3.zip)
 			</td>
 		</tr>
@@ -165,6 +165,21 @@ Save-ATAPHtmlReport -ReportName "Ubuntu 20.04"
 Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters and select the desired  report using arrow-keys.
 
 The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
+
+## How to Update
+In order to update AuditTAP, you need to update both modules "ATAPAuditor" and "ATAPHtmlReport". To do that, just run the following line of code:
+
+For updating ATAPAuditor:
+```PowerShell
+Update-Module ATAPAuditor
+```
+
+For updating ATAPHtmlReport:
+```PowerShell
+Update-Module ATAPHtmlReport
+```
+
+If you want to update via Installer, make sure to download the latest version of AuditTAP. Then just follow the installation steps.
 
 ## Good to know
 
