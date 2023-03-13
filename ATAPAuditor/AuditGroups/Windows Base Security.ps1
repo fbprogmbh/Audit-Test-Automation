@@ -320,7 +320,14 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
 		try {
-			$tdiff = New-TimeSpan -ErrorAction Stop -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate -End (Get-Date)
+			$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate
+			if ($null -eq $startdate) {
+				return @{
+					Message = "There was no search found."
+					Status = "False"
+				}
+			}
+			$tdiff = New-TimeSpan -ErrorAction Stop -Start $startdate -End (Get-Date)
 			$status = switch ($tdiff.Hours) {
 				{($PSItem -ge 0) -and ($PSItem -le 24)}{
 					@{
@@ -356,7 +363,14 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
 		try{
-			$tdiff = New-TimeSpan -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate -End (Get-Date)
+			$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate
+			if ($null -eq $startdate) {
+				return @{
+					Message = "There was no date found."
+					Status = "False"
+				}
+			}
+			$tdiff = New-TimeSpan -Start $startdate -End (Get-Date)
 			$status = switch ($tdiff.Hours) {
 				{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
 					@{
