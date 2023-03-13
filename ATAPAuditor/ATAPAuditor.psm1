@@ -311,17 +311,31 @@ function Test-AuditGroup {
 				$domainRoles = $DomainRoleConstraint.Values
 				if ($currentRole -notin $domainRoles) {
 					$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-					if($roleValue -eq 4 -or $roleValue -eq 5){
-						$message = 'Not applicable. This audit only applies to Domain controllers.'
-						$status = [AuditInfoStatus]::None
-					}
-					if($roleValue -ne 4 -or $roleValue -ne 5){
-						$message = 'Not applicable. This audit does not apply to Domain controllers.'
-						$status = [AuditInfoStatus]::None
-					}
-					if($roleValue -eq 0 -or $roleValue -eq 2){
-						$message = 'Not applicable. This audit does not apply to Standalone systems.'
-						$status = [AuditInfoStatus]::None
+					switch ($roleValue) {
+						0 {	
+							$message = 'Not applicable. This audit does not apply to Standalone Workstation.'
+							$status = [AuditInfoStatus]::None
+						}
+						1 {	
+							$message = 'Not applicable. This audit does not apply to Member Workstation.'
+							$status = [AuditInfoStatus]::None
+						}
+						2 {	
+							$message = 'Not applicable. This audit does not apply to Standalone Server.'
+							$status = [AuditInfoStatus]::None
+						}
+						3 {	
+							$message = 'Not applicable. This audit does not apply to Member Server.'
+							$status = [AuditInfoStatus]::None
+						}
+						4 {	
+							$message = 'Not applicable. This audit does not apply to Backup Domain Controller.'
+							$status = [AuditInfoStatus]::None
+						}
+						5 {	
+							$message = 'Not applicable. This audit does not apply to Primary Domain Controller.'
+							$status = [AuditInfoStatus]::None
+						}
 					}
 					Write-Output ([AuditInfo]@{
 						Id = $test.Id
