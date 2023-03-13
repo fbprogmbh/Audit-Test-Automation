@@ -7210,14 +7210,10 @@ $licensecheck = CheckLicense
     Task = "(ND, NE) Ensure 'Connected User Experiences and Telemetry' is set to 'Disabled'."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
-                -Name "TelemetryProxyServer" `
-                | Select-Object -ExpandProperty "TelemetryProxyServer"
-        
-            if ($regValue -ne "") {
+            $status = Get-Service DiagTrack | select -property starttype
+            if($status.StartType -ne "Disabled"){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Service not compliant. Currently: $($status)"
                     Status = "False"
                 }
             }
