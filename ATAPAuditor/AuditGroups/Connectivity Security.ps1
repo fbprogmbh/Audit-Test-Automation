@@ -1,5 +1,5 @@
 [AuditTest] @{
-	Id = "SBD-034"
+	Id = "SBD-035"
 	Task = "Ensure system is configured to deny remote access via Terminal Services."
 	Test = {
 		$value = (Get-ItemProperty -path "HKLM:\System\CurrentControlSet\Control\Terminal Server").fDenyTSConnections
@@ -16,7 +16,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-035"
+	Id = "SBD-036"
 	Task = "Ensure system is configured to prevent RDP service."
 	Test = {
 		$value = (Get-ItemProperty -path "HKLM:\System\CurrentControlSet\Control\Terminal Server").AllowRemoteRPC
@@ -33,7 +33,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-036"
+	Id = "SBD-037"
 	Task = "Ensure NTLM Session Server Security settings are configured."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0').NtlmMinServerSec
@@ -50,7 +50,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-037"
+	Id = "SBD-038"
 	Task = "Ensure WinFW Service is running."
 	Test = {
 		$value = (Get-Service WinRM).status
@@ -67,7 +67,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-038"
+	Id = "SBD-039"
 	Task = "Ensure NetBios is set to 'Disabled'."
 	Test = {
 		$value = (Get-WmiObject -Class Win32_NetWorkAdapterConfiguration -Filter "IPEnabled=$true").TcpipNetbiosOptions
@@ -84,7 +84,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-039"
+	Id = "SBD-040"
 	Task = "Ensure SMBv1 is set to 'Disabled'."
 	Test = {
 		$value = (Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol).State
@@ -102,7 +102,7 @@
 }
 
 [AuditTest] @{
-    Id = "SBD-040"
+    Id = "SBD-041"
     Task = "Disable SSLv2 Protocol (Server)"
     Test = {
         try {
@@ -138,7 +138,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-041"
+    Id = "SBD-042"
     Task = "Disable SSLv2 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -174,7 +174,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-042"
+    Id = "SBD-043"
     Task = "Disable SSLv2 Protocol (Client)"
     Test = {
         try {
@@ -210,7 +210,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-043"
+    Id = "SBD-044"
     Task = "Disable SSLv2 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -246,7 +246,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-044"
+    Id = "SBD-045"
     Task = "Disable SSLv3 Protocol (Server)"
     Test = {
         try {
@@ -282,7 +282,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-045"
+    Id = "SBD-046"
     Task = "Disable SSLv3 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -318,7 +318,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-046"
+    Id = "SBD-047"
     Task = "Disable SSLv3 Protocol (Client)"
     Test = {
         try {
@@ -354,7 +354,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-047"
+    Id = "SBD-048"
     Task = "Disable SSLv3 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -390,7 +390,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-048"
+    Id = "SBD-049"
     Task = "Disable TLS1.0 Protocol (Server)"
     Test = {
         try {
@@ -426,7 +426,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-049"
+    Id = "SBD-050"
     Task = "Disable TLS1.0 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -462,7 +462,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-050"
+    Id = "SBD-051"
     Task = "Disable TLS1.0 Protocol (Client)"
     Test = {
         try {
@@ -498,7 +498,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-051"
+    Id = "SBD-052"
     Task = "Disable TLS1.0 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -534,7 +534,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-052"
+    Id = "SBD-053"
     Task = "Disable TLS1.1 Protocol (Server)"
     Test = {
         try {
@@ -570,7 +570,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-053"
+    Id = "SBD-054"
     Task = "Disable TLS1.1 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -606,7 +606,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-054"
+    Id = "SBD-055"
     Task = "Disable TLS1.1 Protocol (Client)"
     Test = {
         try {
@@ -642,7 +642,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-055"
+    Id = "SBD-056"
     Task = "Disable TLS1.1 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -678,7 +678,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-056"
+    Id = "SBD-057"
     Task = "Enable TLS1.2 Protocol (Server)"
     Test = {
         try {
@@ -714,7 +714,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-057"
+    Id = "SBD-058"
     Task = "Enable TLS1.2 Protocol (Server Default)"
     Test = {
         try {
@@ -750,7 +750,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-058"
+    Id = "SBD-059"
     Task = "Disable NULL Cipher"
     Test = {
         try {
@@ -786,7 +786,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-059"
+    Id = "SBD-060"
     Task = "Disable DES Cipher Suite"
     Test = {
         try {
@@ -822,7 +822,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-060"
+    Id = "SBD-061"
     Task = "Disable RC4 Cipher Suite - 40/128"
     Test = {
         try {
@@ -858,7 +858,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-061"
+    Id = "SBD-062"
     Task = "Disable RC4 Cipher Suite - 56/128"
     Test = {
         try {
@@ -894,7 +894,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-062"
+    Id = "SBD-063"
     Task = "Disable RC4 Cipher Suite - 64/128"
     Test = {
         try {
@@ -930,7 +930,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-063"
+    Id = "SBD-064"
     Task = "Disable RC4 Cipher Suite - 128/128"
     Test = {
         try {
@@ -966,7 +966,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-064"
+    Id = "SBD-065"
     Task = "Disable AES 128/128 Cipher Suite"
     Test = {
         try {
@@ -1002,7 +1002,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-065"
+    Id = "SBD-066"
     Task = "Enable AES 256/256 Cipher Suite"
     Test = {
         try {
@@ -1038,7 +1038,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-066"
+    Id = "SBD-067"
     Task = "Disable Triple DES Cipher Suite"
     Test = {
         try {
@@ -1074,7 +1074,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-067"
+    Id = "SBD-068"
     Task = "Disable SHA-1 hash"
     Test = {
         try {
@@ -1110,7 +1110,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-067"
+    Id = "SBD-069"
     Task = "Disable MD5 hash"
     Test = {
         try {
@@ -1146,7 +1146,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-068"
+    Id = "SBD-070"
     Task = "Configure Cipher Suite Ordering"
     Test = {
         try {
@@ -1192,7 +1192,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-069"
+    Id = "SBD-071"
     Task = "Check NETBIOS-Status for all active NICs"
     Test = {
         try{

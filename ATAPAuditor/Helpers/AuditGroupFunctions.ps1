@@ -11,6 +11,13 @@ function isWindows10OrNewer {
 function win7NoTPMChipDetected {
 	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
 }
+
+$sbdIndex = 1
+function IncrementSecurityBaseDataCounter{
+    return $sbdIndex++
+}
+
+
 function hasTPM {
 	try {
 		$obj = (Get-Tpm).TpmPresent
