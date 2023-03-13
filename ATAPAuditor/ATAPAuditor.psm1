@@ -128,7 +128,7 @@ function Test-ArrayEqual {
 }
 
 function Get-LicenseStatus{
-	$licenseStatus = (Get-CIMInstance -query "select Name, Description, LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1").LicenseStatus
+	$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 	switch($licenseStatus){
 		"0" {$lcStatus = "Unlicensed"}
 		"1" {$lcStatus = "Licensed"}
