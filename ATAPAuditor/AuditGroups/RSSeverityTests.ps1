@@ -71,7 +71,7 @@ $licensecheck = CheckLicense
     Id   = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         try {

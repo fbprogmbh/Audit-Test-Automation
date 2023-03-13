@@ -658,7 +658,7 @@ else{
     Id = "2.2.16"
     Task = "(L1) Ensure 'Deny access to this computer from the network' to include 'Guests' (DC only)"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
