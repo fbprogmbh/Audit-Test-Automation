@@ -474,7 +474,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000070 MW"
     Task = "The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -512,7 +512,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000070 SW"
     Task = "The Deny access to this computer from the network user right on workstations must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -547,7 +547,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000075 MW"
     Task = "The Deny log on as a batch job user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -583,7 +583,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000080 MW"
     Task = "The Deny log on as a service user right on domain-joined workstations must be configured to prevent access from highly privileged domain accounts."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -619,7 +619,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000085 MW"
     Task = "The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -656,7 +656,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000085 SW"
     Task = "The Deny log on locally user right on workstations must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -691,7 +691,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000090 MW"
     Task = "The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -729,7 +729,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN10-UR-000090 SW"
     Task = "The Deny log on through Remote Desktop Services user right on workstations must at a minimum be configured to prevent access from highly privileged domain accounts and local accounts on domain systems and unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneWorkstation" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"

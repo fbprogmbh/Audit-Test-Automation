@@ -417,7 +417,7 @@ $licensecheck = CheckLicense
     Id = "2.3.6.1"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -456,7 +456,7 @@ $licensecheck = CheckLicense
     Id = "2.3.6.2"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -495,7 +495,7 @@ $licensecheck = CheckLicense
     Id = "2.3.6.3"
     Task = "(L1) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -534,7 +534,7 @@ $licensecheck = CheckLicense
     Id = "2.3.6.4"
     Task = "(L1) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -573,7 +573,7 @@ $licensecheck = CheckLicense
     Id = "2.3.6.5"
     Task = "(L1) Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -612,7 +612,7 @@ $licensecheck = CheckLicense
     Id = "2.3.6.6"
     Task = "(L1) Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2672,7 +2672,7 @@ $licensecheck = CheckLicense
     Id = "9.1.1"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
@@ -2691,7 +2691,7 @@ $licensecheck = CheckLicense
     Id = "9.1.2"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -2710,7 +2710,7 @@ $licensecheck = CheckLicense
     Id = "9.1.3"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -2729,7 +2729,7 @@ $licensecheck = CheckLicense
     Id = "9.1.4"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
@@ -2748,7 +2748,7 @@ $licensecheck = CheckLicense
     Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -2767,7 +2767,7 @@ $licensecheck = CheckLicense
     Id = "9.1.6"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -2786,7 +2786,7 @@ $licensecheck = CheckLicense
     Id = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
@@ -2805,7 +2805,7 @@ $licensecheck = CheckLicense
     Id = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation"}
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"

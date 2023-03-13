@@ -1,7 +1,7 @@
 ﻿[AuditTest] @{
     Id = "2.3.1.1"
     Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled' (MS only)"
-    Constraints = @(
+     @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
@@ -30,7 +30,7 @@
 [AuditTest] @{
     Id = "2.3.1.3"
     Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only)"
-    Constraints = @(
+     @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {

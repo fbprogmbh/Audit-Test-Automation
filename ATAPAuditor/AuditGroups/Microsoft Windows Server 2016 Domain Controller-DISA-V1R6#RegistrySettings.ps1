@@ -506,8 +506,7 @@
     Id = "WN16-CC-000120"
     Task = "Credential Guard must be running on domain-joined member servers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -545,9 +544,6 @@
 [AuditTest] @{
     Id = "WN16-CC-000130"
     Task = "Virtualization-based protection of code integrity must be enabled on domain-joined systems."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -765,7 +761,7 @@
     Id = "WN16-MS-000030"
     Task = "Local users on domain-joined computers must not be enumerated."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2100,7 +2096,7 @@
     Id = "WN16-DC-000320"
     Task = "Domain controllers must require LDAP access signing."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         try {
@@ -2139,7 +2135,7 @@
     Id = "WN16-DC-000330"
     Task = "Domain controllers must be configured to allow reset of machine account passwords."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         try {
@@ -2178,7 +2174,7 @@
     Id = "WN16-SO-000080"
     Task = "Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2217,7 +2213,7 @@
     Id = "WN16-SO-000090"
     Task = "Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2256,7 +2252,7 @@
     Id = "WN16-SO-000100"
     Task = "Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2871,7 +2867,7 @@
     Id = "WN16-MS-000310"
     Task = "Remote calls to the Security Account Manager (SAM) must be restricted to Administrators."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer", "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server", "Standalone Server" }
     )
     Test = {
         try {
