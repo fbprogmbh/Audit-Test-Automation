@@ -35,6 +35,9 @@ $licensecheck = CheckLicense
 [AuditTest] @{
     Id   = "2.2.38"
     Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
