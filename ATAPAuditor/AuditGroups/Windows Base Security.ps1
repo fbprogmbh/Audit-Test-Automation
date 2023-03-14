@@ -1,7 +1,6 @@
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
-. "$RootPath\ATAPAuditor.psm1"
 [AuditTest] @{
 	Id = "SBD-009"
 	Task = "Get License status."
@@ -552,13 +551,6 @@ $RootPath = Split-Path $RootPath -Parent
 		}
 		else {
 			$windefrunning = CheckWindefRunning
-			$licensecheck = CheckLicense
-			if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
 			if ((-not $windefrunning)) {
 				return @{
 					Message = "This rule requires Windows Defender Antivirus to be enabled."

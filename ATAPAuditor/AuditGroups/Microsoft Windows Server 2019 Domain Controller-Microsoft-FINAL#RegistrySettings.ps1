@@ -2,7 +2,6 @@
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $windefrunning = CheckWindefRunning
-$licensecheck = CheckLicense
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "Registry-001"
@@ -225,12 +224,6 @@ $licensecheck = CheckLicense
     Task = "Set registry value 'PUAProtection' to 1."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -273,12 +266,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Turn on behavior monitoring' is set to 'Enabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -321,12 +308,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Scan removable drives' is set to 'Enabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -369,12 +350,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Turn on e-mail scanning' is set to 'Enabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -417,12 +392,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Send file samples when further analysis is required' is set to 'Send safe samples'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -465,12 +434,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Join Microsoft MAPS' is set to 'Advanced MAPS'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -513,12 +476,6 @@ $licensecheck = CheckLicense
     Task = "Set registry value 'ExploitGuard_ASR_Rules' to 1."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -580,12 +537,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from injecting code into other processes)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -647,12 +598,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -714,12 +659,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -781,12 +720,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -848,12 +781,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -915,12 +842,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
        try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -982,12 +903,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1049,12 +964,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1116,12 +1025,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1183,12 +1086,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1250,12 +1147,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1317,12 +1208,6 @@ $licensecheck = CheckLicense
     Task = "Set registry value 'EnableNetworkProtection' to 1."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
