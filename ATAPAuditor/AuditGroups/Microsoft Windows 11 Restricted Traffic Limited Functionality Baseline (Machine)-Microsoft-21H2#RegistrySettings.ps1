@@ -1342,12 +1342,7 @@ $licensecheck = CheckLicense
     Test = {
         try {
             if($avstatus){
-                if ($licensecheck -ne "1") {
-                    return @{
-                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                        Status = "False"
-                    }
-                }
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1390,12 +1385,7 @@ $licensecheck = CheckLicense
     Test = {
         try {
             if($avstatus){
-                if ($licensecheck -ne "1") {
-                    return @{
-                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                        Status = "False"
-                    }
-                }
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1440,12 +1430,7 @@ $licensecheck = CheckLicense
     Test = {
         try {
             if($avstatus){
-                if ($licensecheck -ne "1") {
-                    return @{
-                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                        Status = "False"
-                    }
-                }
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -1490,12 +1475,7 @@ $licensecheck = CheckLicense
     Test = {
         try {
             if($avstatus){
-                if ($licensecheck -ne "1") {
-                    return @{
-                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                        Status = "False"
-                    }
-                }
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -4060,12 +4040,7 @@ $licensecheck = CheckLicense
     Test = {
         try {
             if($avstatus){
-                if ($licensecheck -ne "1") {
-                    return @{
-                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                        Status = "False"
-                    }
-                }
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -4110,12 +4085,7 @@ $licensecheck = CheckLicense
     Test = {
         try {
             if($avstatus){
-                if ($licensecheck -ne "1") {
-                    return @{
-                        Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                        Status = "False"
-                    }
-                }
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
