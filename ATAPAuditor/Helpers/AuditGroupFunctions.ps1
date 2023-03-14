@@ -132,6 +132,21 @@ function CheckLicense {
     return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 }
 
+function Get-LicenseStatus{
+	$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
+	switch($licenseStatus){
+		"0" {$lcStatus = "Unlicensed"}
+		"1" {$lcStatus = "Licensed"}
+		"2" {$lcStatus = "OOBGrace"}
+		"3" {$lcStatus = "OOTGrace"}
+		"4" {$lcStatus = "NonGenuineGrace"}
+		"5" {$lcStatus = "Notification"}
+		"6" {$lcStatus = "ExtendedGrace"}
+	}
+	return $lcStatus
+}
+
+
 function CheckWindefRunning {
     # for systems, won't work if server 
     try {

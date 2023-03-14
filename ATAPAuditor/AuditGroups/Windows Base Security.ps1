@@ -1,7 +1,6 @@
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
-. "$RootPath\ATAPAuditor.psm1"
 [AuditTest] @{
 	Id = "SBD-009"
 	Task = "Get License status."
