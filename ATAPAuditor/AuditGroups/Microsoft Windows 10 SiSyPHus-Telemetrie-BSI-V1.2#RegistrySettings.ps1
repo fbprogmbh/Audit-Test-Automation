@@ -3,7 +3,6 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
-$licensecheck = CheckLicense
 if((Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise Evaluation" -or 
 (Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise"){
     [AuditTest] @{

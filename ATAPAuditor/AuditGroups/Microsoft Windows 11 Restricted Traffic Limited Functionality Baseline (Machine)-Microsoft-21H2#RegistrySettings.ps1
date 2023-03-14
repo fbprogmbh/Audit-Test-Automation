@@ -3,7 +3,6 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
-$licensecheck = CheckLicense
 [AuditTest] @{
     Id = "1"
     Task = "Prevent OneDrive from generating network traffic until the user signs in to OneDrive (Enable)"

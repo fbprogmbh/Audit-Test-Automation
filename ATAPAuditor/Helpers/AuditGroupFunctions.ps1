@@ -121,17 +121,6 @@ function CheckHyperVStatus {
     return (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State
 }
 
-function CheckLicense {
-    # 0=Unlicensed
-    # 1=Licensed
-    # 2=OOBGrace
-    # 3=OOTGrace
-    # 4=NonGenuineGrace
-    # 5=Notification
-    # 6=ExtendedGrace
-    return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
-}
-
 function Get-LicenseStatus{
 	$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 	switch($licenseStatus){
@@ -145,7 +134,6 @@ function Get-LicenseStatus{
 	}
 	return $lcStatus
 }
-
 
 function CheckWindefRunning {
     # for systems, won't work if server 

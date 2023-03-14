@@ -3,7 +3,6 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
-$licensecheck = CheckLicense
 [AuditTest] @{
     Id = "High-001 A"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"

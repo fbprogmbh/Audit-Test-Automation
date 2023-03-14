@@ -2,7 +2,6 @@
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $windefrunning = CheckWindefRunning
-$licensecheck = CheckLicense
 . "$RootPath\Helpers\Firewall.ps1"
 [AuditTest] @{
     Id = "Registry-001"
@@ -3112,12 +3111,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Turn off Windows Defender' is set to 'Disabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -3160,12 +3153,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Turn on behavior monitoring' is set to 'Enabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -3208,12 +3195,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Scan removable drives' is set to 'Enabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -3256,12 +3237,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Turn on e-mail scanning' is set to 'Enabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -3304,12 +3279,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -3352,12 +3321,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Send file samples when further analysis is required' is set to 'Send safe samples'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
@@ -3400,12 +3363,6 @@ $licensecheck = CheckLicense
     Task = "Ensure 'Join Microsoft MAPS' is set to 'Advanced MAPS'."
     Test = {
         try {
-            if ($licensecheck -ne "1") {
-                return @{
-                    Message = "Windows License is not available, therefore the requirements for this rule (Windows Defender Antivirus) are not present. "
-                    Status = "False"
-                }
-            }
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."

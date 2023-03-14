@@ -3,7 +3,6 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
-$licensecheck = CheckLicense
 [AuditTest] @{
     Id = "1"
     Task = "Turn off Automatic Root Certificates Update"
