@@ -1590,15 +1590,10 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "The Application Compatibility Program service must be disabled in order to prefent sending inventory data."
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
-                -Name "DisablePCA" `
-                | Select-Object -ExpandProperty "DisablePCA"
-        
-            if ($regValue -ne 1) {
-                Set-AppCompatServiceStatus $false
+            $status = (get-service -name pcasvc).Status
+            if ($status -ne "Stopped") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Service not stopped. Currently set: $status"
                     Status = "False"
                 }
             }
@@ -1615,7 +1610,6 @@ $RootPath = Split-Path $RootPath -Parent
                 Status = "False"
             }
         }
-        Set-AppCompatServiceStatus $true
         return @{
             Message = "Compliant"
             Status = "True"
@@ -1626,7 +1620,8 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "V-63663 B"
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
-        if(Get-AppCompatServiceStatus -eq $false){
+        $status = (get-service -name pcasvc).Status
+        if($status -ne "Stopped"){
             try {
                 $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
