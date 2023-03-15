@@ -162,7 +162,7 @@ function CreateHashTable{
 		htmlElement 'table'@{ id="hashTable"}{
 			htmlElement 'thead' @{}{
 				htmlElement 'tr' @{}{
-					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Scope"}
+					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Integrity Check for following scopes"}
 					htmlElement 'th'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } {"Checksum (SHA-256)"}
 				}
 			}
@@ -181,7 +181,7 @@ function CreateHashTable{
 					if($trColorSwitch -eq 0){
 						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; background-color: #efefef;" }{
 							#Scope
-							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "$($section.Title)"}
 							#Checksum
 							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
 								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($section.Title))"}
@@ -192,7 +192,7 @@ function CreateHashTable{
 					else{
 						htmlElement 'tr'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse;" }{
 							#Scope
-							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "Integrity check for $($section.Title)"}
+							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "$($section.Title)"}
 							#Checksum
 							htmlElement 'td'  @{style="border: 1px solid #d2d2d2; border-collapse: collapse; " } {
 								htmlElement 'p' @{style="padding-right: 20px;"} {"$($hashtable_sha256.Get_Item($section.Title))"}
