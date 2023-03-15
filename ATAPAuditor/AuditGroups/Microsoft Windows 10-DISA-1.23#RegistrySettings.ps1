@@ -1,4 +1,7 @@
-﻿[AuditTest] @{
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+[AuditTest] @{
     Id = "V-63321"
     Task = "Users must be prevented from changing installation options."
     Test = {
@@ -1583,10 +1586,48 @@
     }
 }
 [AuditTest] @{
-    Id = "V-63663"
+    Id = "V-63663 A"
+    Task = "The Application Compatibility Program service must be disabled in order to prefent sending inventory data."
+    Test = {
+        try {
+            $status = (get-service -name pcasvc).Status
+            if ($status -ne "Stopped") {
+                return @{
+                    Message = "Service not stopped. Currently set: $status"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-63663 B"
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
@@ -1611,7 +1652,6 @@
                 Status = "False"
             }
         }
-        
         return @{
             Message = "Compliant"
             Status = "True"

@@ -9114,6 +9114,13 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn off Inventory Collector' is set to 'Enabled'"
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
@@ -9150,6 +9157,13 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn off Steps Recorder' is set to 'Enabled'"
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableUAR" `
