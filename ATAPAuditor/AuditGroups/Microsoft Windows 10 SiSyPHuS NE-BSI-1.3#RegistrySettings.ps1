@@ -1949,7 +1949,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "100_1"
+    Id = "100 A"
     Task = "(ND, NE) Ensure 'Turn off automatic learning' is set to 'Enabled' for ImplicitTextCollection."
     Test = {
         try {
@@ -1958,9 +1958,9 @@ $windefrunning = CheckWindefRunning
                 -Name "RestrictImplicitTextCollection" `
                 | Select-Object -ExpandProperty "RestrictImplicitTextCollection"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -1985,7 +1985,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "100_2"
+    Id = "100 B"
     Task = "(ND, NE) Ensure 'Turn off automatic learning' is set to 'Enabled' for ImplicitInkCollection."
     Test = {
         try {
@@ -1994,9 +1994,9 @@ $windefrunning = CheckWindefRunning
                 -Name "RestrictImplicitInkCollection" `
                 | Select-Object -ExpandProperty "RestrictImplicitInkCollection"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
