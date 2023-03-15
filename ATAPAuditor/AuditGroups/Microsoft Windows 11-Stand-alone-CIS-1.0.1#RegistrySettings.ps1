@@ -8098,7 +8098,7 @@ $windefrunning = CheckWindefRunning
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: <none>"
+                    Message = "Registry value is '$regValue'. Expected: ''"
                     Status = "False"
                 }
             }
@@ -9070,7 +9070,7 @@ $windefrunning = CheckWindefRunning
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: <none>"
+                    Message = "Registry value is '$regValue'. Expected: ''"
                     Status = "False"
                 }
             }

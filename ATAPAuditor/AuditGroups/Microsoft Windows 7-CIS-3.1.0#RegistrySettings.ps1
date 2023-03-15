@@ -6224,7 +6224,7 @@ $RootPath = Split-Path $RootPath -Parent
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: <none>"
+                    Message = "Registry value is '$regValue'. Expected: ''"
                     Status = "False"
                 }
             }
@@ -7232,7 +7232,7 @@ $RootPath = Split-Path $RootPath -Parent
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: <none>"
+                    Message = "Registry value is '$regValue'. Expected: ''"
                     Status = "False"
                 }
             }
