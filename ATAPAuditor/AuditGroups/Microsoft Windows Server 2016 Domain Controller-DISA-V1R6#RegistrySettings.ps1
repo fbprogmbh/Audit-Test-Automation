@@ -909,6 +909,13 @@
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
