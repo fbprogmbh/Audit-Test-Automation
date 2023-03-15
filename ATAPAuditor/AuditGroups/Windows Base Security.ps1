@@ -291,7 +291,11 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
 		try {
-			$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate
+			$startdateObjects =  get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending
+			$startdate = $startdateObjects[0].InstalledOn
+			if ($null -eq $startdate) {
+				$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate
+			}
 			if ($null -eq $startdate) {
 				return @{
 					Message = "There was no search found."
