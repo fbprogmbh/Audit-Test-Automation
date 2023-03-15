@@ -1583,10 +1583,55 @@
     }
 }
 [AuditTest] @{
-    Id = "V-63663"
+    Id = "V-63663 A"
+    Task = "The Application Compatibility Program service must be disabled in order to prefent sending inventory data."
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
+                -Name "DisablePCA" `
+                | Select-Object -ExpandProperty "DisablePCA"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "V-63663 B"
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
+            -Name "DisablePCA" `
+            | Select-Object -ExpandProperty "DisablePCA"
+            if($regValue -eq 1){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
@@ -1611,7 +1656,6 @@
                 Status = "False"
             }
         }
-        
         return @{
             Message = "Compliant"
             Status = "True"
