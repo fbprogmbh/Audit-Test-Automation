@@ -45,6 +45,21 @@ Function Test-RegistryValue ($regkey, $name) {
     }
 }
 
+$AppCompatServiceStatus = ""
+function Set-AppCompatServiceStatus{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [bool] $status
+    )
+    $AppCompatServiceStatus = $status
+}
+
+function Get-AppCompatServiceStatus{
+    return $AppCompatServiceStatus
+}
+
+
 #This function is needed in AuditGroups, which check both paths of ASR-Rules.
 function Test-ASRRules {
     [CmdletBinding()]

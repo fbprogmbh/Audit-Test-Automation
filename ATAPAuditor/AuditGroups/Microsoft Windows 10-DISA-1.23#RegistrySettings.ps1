@@ -1,4 +1,7 @@
-﻿[AuditTest] @{
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+[AuditTest] @{
     Id = "V-63321"
     Task = "Users must be prevented from changing installation options."
     Test = {
@@ -1593,6 +1596,7 @@
                 | Select-Object -ExpandProperty "DisablePCA"
         
             if ($regValue -ne 1) {
+                Set-AppCompatServiceStatus $false
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -1611,6 +1615,7 @@
                 Status = "False"
             }
         }
+        Set-AppCompatServiceStatus $true
         return @{
             Message = "Compliant"
             Status = "True"
@@ -1621,43 +1626,39 @@
     Id = "V-63663 B"
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
-            -Name "DisablePCA" `
-            | Select-Object -ExpandProperty "DisablePCA"
-            if($regValue -eq 1){
-                return @{
-                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
-                    Status = "True"
+        if(Get-AppCompatServiceStatus -eq $false){
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
+                    -Name "DisableInventory" `
+                    | Select-Object -ExpandProperty "DisableInventory"
+            
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Status = "False"
+                    }
                 }
             }
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
-                -Name "DisableInventory" `
-                | Select-Object -ExpandProperty "DisableInventory"
-        
-            if ($regValue -ne 1) {
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value not found."
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         return @{
-            Message = "Compliant"
+            Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
             Status = "True"
         }
     }
