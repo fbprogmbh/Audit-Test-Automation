@@ -2908,7 +2908,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-049 B"
-    Task = " Ensure 'Conﬁgure Automatic Updates' is set to 4"
+    Task = " Ensure 'Conﬁgure Automatic Updates' is set to '4 - Auto download and schedule the install'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
