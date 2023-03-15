@@ -63,76 +63,32 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
 	Test = {	
 		try { 
-			try{
-				#List all groups 
-				$group = Get-LocalGroup -sid "S-1-5-32-544"
-				$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
-				$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
-				$message = ""
-				foreach($member in $group_members){
-					$message += "$($member) "
-				}
-				$amountOfUserAndGroups = $group_members.Count
-				
-				$status = switch ($amountOfUserAndGroups.Count) {
-					{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
-						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
-							Status = "True"
-						}
-					}
-					{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
-						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
-							Status = "Warning"
-						}
-					}
-					{$amountOfUserAndGroups -gt 5}{ # 6, ...
-						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
-							Status = "False"
-						}
-					}
-					Default {
-						@{
-							Message = "Cannot determine the count of admin users. Please check manually."
-							Status = "Error"
-						}
-					}
-				}
-				return $status
+			#List all groups 
+			$group = Get-LocalGroup -sid "S-1-5-32-544" -ErrorAction Stop
+			$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
+			$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
+			$message = ""
+			foreach($member in $group_members){
+				$message += "$($member) "
 			}
-			catch{
-				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-				if($roleValue -eq 4 -or $roleValue -eq 5){
-					return @{
-						Message = "Not applicable. This audit only applies to Domain controllers."
-						Status = "None"
-					}
-				}
-				#List all groups 
-				$group = Get-LocalGroup -sid "S-1-5-32-544"
-				$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
-				$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
-				$amountOfUserAndGroups = 0;
-				$amountOfUserAndGroups = $group_members.Count;
-			}
+			$amountOfUserAndGroups = $group_members.Count
+			
 			$status = switch ($amountOfUserAndGroups.Count) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 						Status = "False"
 					}
 				}
@@ -143,13 +99,11 @@ $RootPath = Split-Path $RootPath -Parent
 					}
 				}
 			}
+			return $status
 		} catch {
-			$theError = $_
-			if ($theError.Exception -like "*1789*") {
-				@{
-			 		Message = "Not all users could be enumerated, please manually check members of administrators group"
-					Status = "Error"
-				}
+			@{
+				Message = "Cannot determine the count of admin users. Please check manually."
+				Status = "Error"
 			}
 		}
 		return $status
