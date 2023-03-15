@@ -291,11 +291,7 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
 		try {
-			$startdateObjects =  get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending
-			$startdate = $startdateObjects[0].InstalledOn
-			if ($null -eq $startdate) {
-				$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate
-			}
+			$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate
 			if ($null -eq $startdate) {
 				return @{
 					Message = "There was no search found."
@@ -303,30 +299,23 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 			$tdiff = New-TimeSpan -ErrorAction Stop -Start $startdate -End (Get-Date)
-			if ($tdiff.Days -ge 5) {
-				@{
-					Message = "Compliant"
-					Status = "True"
+			$status = switch ($tdiff.Hours) {
+				{($PSItem -ge 0) -and ($PSItem -le 24)}{
+					@{
+						Message = "Compliant"
+						Status = "True"
+					}
 				}
-			} else {
-				$status = switch ($tdiff.Hours) {
-					{($PSItem -ge 0) -and ($PSItem -le 24)}{
-						@{
-							Message = "Compliant"
-							Status = "True"
-						}
+				{($PSItem -gt 24) -and ($PSItem -le 24*5)}{
+					@{
+						Message = "Last search for updates was within 5 days."
+						Status = "Warning"
 					}
-					{($PSItem -gt 24) -and ($PSItem -le 24*5)}{
-						@{
-							Message = "Last search for updates was within 5 days."
-							Status = "Warning"
-						}
-					}
-					Default {
-						@{
-							Message = "Last search for updates was more than 5 days ago."
-							Status = "False"
-						}
+				}
+				Default {
+					@{
+						Message = "Last search for updates was more than 5 days ago."
+						Status = "False"
 					}
 				}
 			}
@@ -345,7 +334,11 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
 		try{
-			$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate
+			$startdateObjects =  get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending
+			$startdate = $startdateObjects[0].InstalledOn
+			if ($null -eq $startdate) {
+				$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate
+			}
 			if ($null -eq $startdate) {
 				return @{
 					Message = "There was no date found."
@@ -353,24 +346,30 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 			$tdiff = New-TimeSpan -Start $startdate -End (Get-Date)
-			if ()
-			$status = switch ($tdiff.Hours) {
-				{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
-					@{
-						Message = "Compliant"
-						Status = "True"
-					}
+			if ($tdiff.Days -ge 5) {
+				@{
+					Message = "Compliant"
+					Status = "True"
 				}
-				{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
-					@{
-						Message = "Last installation of updates was within the last month."
-						Status = "Warning"
+			} else {
+				$status = switch ($tdiff.Hours) {
+					{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
+						@{
+							Message = "Compliant"
+							Status = "True"
+						}
 					}
-				}
-				Default {
-					@{
-						Message = "Last installation of updates was more than a month ago."
-						Status = "False"
+					{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
+						@{
+							Message = "Last installation of updates was within the last month."
+							Status = "Warning"
+						}
+					}
+					Default {
+						@{
+							Message = "Last installation of updates was more than a month ago."
+							Status = "False"
+						}
 					}
 				}
 			}
