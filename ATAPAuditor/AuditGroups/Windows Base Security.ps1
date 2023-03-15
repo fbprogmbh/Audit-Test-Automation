@@ -299,23 +299,30 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 			$tdiff = New-TimeSpan -ErrorAction Stop -Start $startdate -End (Get-Date)
-			$status = switch ($tdiff.Hours) {
-				{($PSItem -ge 0) -and ($PSItem -le 24)}{
-					@{
-						Message = "Compliant"
-						Status = "True"
-					}
+			if ($tdiff.Days -ge 5) {
+				@{
+					Message = "Compliant"
+					Status = "True"
 				}
-				{($PSItem -gt 24) -and ($PSItem -le 24*5)}{
-					@{
-						Message = "Last search for updates was within 5 days."
-						Status = "Warning"
+			} else {
+				$status = switch ($tdiff.Hours) {
+					{($PSItem -ge 0) -and ($PSItem -le 24)}{
+						@{
+							Message = "Compliant"
+							Status = "True"
+						}
 					}
-				}
-				Default {
-					@{
-						Message = "Last search for updates was more than 5 days ago."
-						Status = "False"
+					{($PSItem -gt 24) -and ($PSItem -le 24*5)}{
+						@{
+							Message = "Last search for updates was within 5 days."
+							Status = "Warning"
+						}
+					}
+					Default {
+						@{
+							Message = "Last search for updates was more than 5 days ago."
+							Status = "False"
+						}
 					}
 				}
 			}
@@ -342,6 +349,7 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 			$tdiff = New-TimeSpan -Start $startdate -End (Get-Date)
+			if ()
 			$status = switch ($tdiff.Hours) {
 				{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
 					@{
