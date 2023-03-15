@@ -1620,40 +1620,40 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "V-63663 B"
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
-        $status = (get-service -name pcasvc).Status
-        if($status -ne "Stopped"){
-            try {
-                $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
-                    -Name "DisableInventory" `
-                    | Select-Object -ExpandProperty "DisableInventory"
-            
-                if ($regValue -ne 1) {
-                    return @{
-                        Message = "Registry value is '$regValue'. Expected: 1"
-                        Status = "False"
-                    }
+        try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
                 }
             }
-            catch [System.Management.Automation.PSArgumentException] {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
+                -Name "DisableInventory" `
+                | Select-Object -ExpandProperty "DisableInventory"
+        
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value not found."
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
-            catch [System.Management.Automation.ItemNotFoundException] {
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
             }
         }
         return @{
-            Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+            Message = "Compliant"
             Status = "True"
         }
     }
