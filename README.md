@@ -47,10 +47,12 @@ How to read the table below:
 * The entries in the **BSI** column specify the version of the BSI benchmark that is used.
 * The entries in the **ACSC** column specify the version of the ACSC benchmark that is used.
 
+We currently support the following reports, based on these topics:
+
+### **Application**
+
 Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
-Debian 10 | - | - | - | - | -
-Fedora 35 | - | - | - | - | -
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
 Microsoft Edge | - | - | 99 | - | -
@@ -62,6 +64,11 @@ Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
 Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
+
+### **Microsoft OS**
+
+Report | DISA | CIS | Microsoft | BSI | ACSC
+--------- | -----| --- | -- | --- | ---
 Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R23 | 1.12.0 | 21H1 | SiSyPHuS 1.3 | 21H1
@@ -76,6 +83,13 @@ Microsoft Windows Server 2016 DC | V1R6 | 1.4.0 | FINAL | - | -
 Microsoft Windows Server 2019 | 1.5 | 1.3.0 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
+
+### **Unix OS**
+
+Report | DISA | CIS | Microsoft | BSI | ACSC
+--------- | -----| --- | -- | --- | ---
+Debian 10 | - | - | - | - | -
+Fedora 35 | - | - | - | - | -
 Red Hat Enterprise Linux 8 | - | - | - | - | -
 Ubuntu 20.04 | - | - | - | - | -
 
