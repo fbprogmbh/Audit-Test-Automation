@@ -1,3 +1,40 @@
+# Begin Helper for version control
+function isWindows8OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
+}
+function isWindows81OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,3))
+}
+function isWindows10OrNewer {
+	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
+}
+function win7NoTPMChipDetected {
+	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
+}
+
+$sbdIndex = 1
+function IncrementSecurityBaseDataCounter{
+    return $sbdIndex++
+}
+
+
+function hasTPM {
+	try {
+		$obj = (Get-Tpm).TpmPresent
+	} catch {
+		return $null
+	}
+	return $obj
+}
+# End Helper for version control
+function isWindows10Enterprise {
+    $os = Get-ComputerInfo OsName
+    if($os -match "Windows 10 Enterprise" -or $os -match "Windows 11 Enterprise"){
+        return $true
+    }
+    return $false
+}
+
 #Helper function for 'Test-ASRRules'
 Function Test-RegistryValue ($regkey, $name) {
     if (Get-ItemProperty -Path $regkey -Name $name -ErrorAction Ignore) {
@@ -84,13 +121,38 @@ function CheckHyperVStatus {
     return (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V").State
 }
 
+function Get-LicenseStatus{
+	$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
+	switch($licenseStatus){
+		"0" {$lcStatus = "Unlicensed"}
+		"1" {$lcStatus = "Licensed"}
+		"2" {$lcStatus = "OOBGrace"}
+		"3" {$lcStatus = "OOTGrace"}
+		"4" {$lcStatus = "NonGenuineGrace"}
+		"5" {$lcStatus = "Notification"}
+		"6" {$lcStatus = "ExtendedGrace"}
+	}
+	return $lcStatus
+}
+
 function CheckWindefRunning {
-    # for standalone systems, won't work if server 
+    # for systems, won't work if server 
     try {
         $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
         if ($defStatus.AMRunningMode -eq "Normal") {
             return $true
         }   
+    }
+    catch {
+        <#Do this if a terminating exception happens#>
+    }
+
+    # for standalone systems, won't work if server 
+    try {
+        $defStatus = (Get-MpComputerStatus -ErrorAction Ignore)
+        if ($defStatus.AMServiceEnabled -eq $true -and $defStatus.AntispywareEnabled -eq $true -and $defStatus.AntivirusEnabled -eq $true -and $defStatus.NISEnabled -eq $true -and $defStatus.RealTimeProtectionEnabled  -eq $true) {
+            return $true
+        }    
     }
     catch {
         <#Do this if a terminating exception happens#>

@@ -16,8 +16,9 @@ ATAPAuditor:\
 			</td>
 			<td>
 
-AuditTAP Release 5.4:\
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.4.zip)
+
+AuditTAP Release 5.5:\
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.5.zip)
 			</td>
 		</tr>
 	</table>
@@ -47,10 +48,12 @@ How to read the table below:
 * The entries in the **BSI** column specify the version of the BSI benchmark that is used.
 * The entries in the **ACSC** column specify the version of the ACSC benchmark that is used.
 
+We currently support the following reports, based on these topics:
+
+### **Application**
+
 Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
-Debian 10 | - | - | - | - | -
-Fedora 35 | - | - | - | - | -
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
 Microsoft Edge | - | - | 99 | - | -
@@ -62,6 +65,11 @@ Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
 Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
+
+### **Microsoft OS**
+
+Report | DISA | CIS | Microsoft | BSI | ACSC
+--------- | -----| --- | -- | --- | ---
 Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R23 | 1.12.0 | 21H1 | SiSyPHuS 1.3 | 21H1
@@ -76,6 +84,13 @@ Microsoft Windows Server 2016 DC | V1R6 | 1.4.0 | FINAL | - | -
 Microsoft Windows Server 2019 | 1.5 | 1.3.0 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
+
+### **Unix OS**
+
+Report | DISA | CIS | Microsoft | BSI | ACSC
+--------- | -----| --- | -- | --- | ---
+Debian 10 | - | - | - | - | -
+Fedora 35 | - | - | - | - | -
 Red Hat Enterprise Linux 8 | - | - | - | - | -
 Ubuntu 20.04 | - | - | - | - | -
 
@@ -120,7 +135,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.4.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.5.zip -Verbose
 ```
 The following screenshot shows the output:
 
@@ -130,7 +145,7 @@ The following screenshot shows the output:
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.4.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.5.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
@@ -165,6 +180,21 @@ Save-ATAPHtmlReport -ReportName "Ubuntu 20.04"
 Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters and select the desired  report using arrow-keys.
 
 The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
+
+## How to Update
+In order to update AuditTAP, you need to update both modules "ATAPAuditor" and "ATAPHtmlReport". To do that, just run the following line of code:
+
+For updating ATAPAuditor:
+```PowerShell
+Update-Module ATAPAuditor
+```
+
+For updating ATAPHtmlReport:
+```PowerShell
+Update-Module ATAPHtmlReport
+```
+
+If you want to update via Installer, make sure to download the latest version of AuditTAP. Then just follow the installation steps.
 
 ## Good to know
 

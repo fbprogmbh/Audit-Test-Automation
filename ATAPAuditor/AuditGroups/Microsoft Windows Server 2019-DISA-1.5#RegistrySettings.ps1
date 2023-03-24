@@ -1010,7 +1010,7 @@
     Id = "V-93273"
     Task = "Windows Server 2019 domain controllers must be configured to allow reset of machine account passwords."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         try {
@@ -1878,6 +1878,13 @@
     Task = "Windows Server 2019 Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
@@ -2273,7 +2280,7 @@
     Id = "V-93453"
     Task = "Windows Server 2019 must restrict unauthenticated Remote Procedure Call (RPC) clients from connecting to the RPC server on domain-joined member servers and standalone systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "MemberWorkstation", "Standalone Server", "Member Server" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation", "Standalone Server", "Member Server" }
     )
     Test = {
         try {
@@ -3068,7 +3075,7 @@
     Id = "V-93545"
     Task = "Windows Server 2019 domain controllers must require LDAP access signing."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         try {

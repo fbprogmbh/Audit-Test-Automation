@@ -478,6 +478,25 @@ function ConvertTo-NTAccountUser {
                 Message = $message
             }
         } 
+        #No UserRights on System comparing to publisher recommendation
+        if($null -eq $currentUserRights -and $identityAccounts.Count -gt 0){
+            return @{
+                Status = "True"
+                Message = "Compliant - No UserRights are assigned to this policy. This configuration is even more secure than publisher recommendation."
+            }
+        }
+        #Less UserRights on System comparing to publisher recommendation
+        if($currentUserRights.Count -lt $identityAccounts.Count){
+            $users = ""
+            foreach($currentUser in $currentUserRights){
+                $users += $currentUser.Values
+            }
+            return @{
+                Status = "True"
+                Message = "Compliant - Positive Deviation to publisher. Less UserRights are assigned to this policy than expected: $($users)"
+            }
+        }
+        #Same UserRights on System comparing to publisher recommendation
         return @{
             Status = "True"
             Message = "Compliant"
@@ -1333,7 +1352,7 @@ function ConvertTo-NTAccountUser {
         $identityAccounts = @(
             "S-1-5-7"
             "S-1-5-32-546"
-            "S-1-2-0"
+            "S-1-5-113"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         

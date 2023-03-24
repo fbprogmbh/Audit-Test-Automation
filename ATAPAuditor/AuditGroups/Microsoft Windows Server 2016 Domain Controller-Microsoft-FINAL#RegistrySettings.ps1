@@ -1336,6 +1336,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "Registry-051"
     Task = "Domain: Set registry value 'DefaultOutboundAction' to 0."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -1352,6 +1355,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "Registry-052"
     Task = "Domain: Set registry value 'DefaultInboundAction' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
@@ -1368,6 +1374,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "Registry-053"
     Task = "Domain: Set registry value 'EnableFirewall' to 1."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
@@ -3107,7 +3116,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender" `
                 -Name "DisableAntiSpyware" `
@@ -3149,7 +3158,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableBehaviorMonitoring" `
@@ -3191,7 +3200,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableRemovableDriveScanning" `
@@ -3233,7 +3242,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableEmailScanning" `
@@ -3275,7 +3284,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "LocalSettingOverrideSpynetReporting" `
@@ -3317,7 +3326,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SubmitSamplesConsent" `
@@ -3359,7 +3368,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `

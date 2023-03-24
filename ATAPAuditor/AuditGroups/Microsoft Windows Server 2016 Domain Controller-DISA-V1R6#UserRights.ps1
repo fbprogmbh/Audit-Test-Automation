@@ -114,7 +114,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-DC-000340"
     Task = "The Access this computer from the network user right must only be assigned to the Administrators, Authenticated Users, and Enterprise Domain Controllers groups on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -153,7 +153,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000340"
     Task = "The Access this computer from the network user right must only be assigned to the Administrators and Authenticated Users groups on member servers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer", "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -225,9 +225,6 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "WN16-DC-000350"
     Task = "The Add workstations to domain user right must only be assigned to the Administrators group."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
-    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeMachineAccountPrivilege"]
@@ -298,9 +295,6 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "WN16-DC-000360"
     Task = "The Allow log on through Remote Desktop Services user right must only be assigned to the Administrators group."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
-    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteInteractiveLogonRight"]
@@ -568,6 +562,25 @@ function ConvertTo-NTAccountUser {
             }
         }
         
+        #No UserRights on System comparing to publisher recommendation
+        if($null -eq $currentUserRights -and $identityAccounts.Count -gt 0){
+            return @{
+                Status = "True"
+                Message = "Compliant - No UserRights are assigned to this policy. This configuration is even more secure than publisher recommendation."
+            }
+        }
+        #Less UserRights on System comparing to publisher recommendation
+        if($currentUserRights.Count -lt $identityAccounts.Count){
+            $users = ""
+            foreach($currentUser in $currentUserRights){
+                $users += $currentUser.Values
+            }
+            return @{
+                Status = "True"
+                Message = "Compliant - Positive Deviation to publisher. Less UserRights are assigned to this policy than expected: $($users)"
+            }
+        }
+        #Same UserRights on System comparing to publisher recommendation
         return @{
             Status = "True"
             Message = "Compliant"
@@ -577,9 +590,6 @@ function ConvertTo-NTAccountUser {
 [AuditTest] @{
     Id = "WN16-DC-000370"
     Task = "The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems."
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
-    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
@@ -613,7 +623,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000370 MS"
     Task = "The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -651,7 +661,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000370 SS"
     Task = "The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and local accounts on domain systems, and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -686,7 +696,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-DC-000380"
     Task = "The Deny log on as a batch job user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -721,7 +731,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000380 MS"
     Task = "The Deny log on as a batch job user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -758,7 +768,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000380 SS"
     Task = "The Deny log on as a batch job user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -793,7 +803,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-DC-000390"
     Task = "The Deny log on as a service user right must be configured to include no accounts or groups (blank) on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -827,7 +837,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000390 MS"
     Task = "The Deny log on as a service user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems. No other groups or accounts must be assigned this right."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -863,7 +873,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000390 SS"
     Task = "The Deny log on as a service user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems. No other groups or accounts must be assigned this right."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -897,7 +907,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-DC-000400"
     Task = "The Deny log on locally user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -932,7 +942,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000400 MS"
     Task = "The Deny log on locally user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -969,7 +979,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000400 SS"
     Task = "The Deny log on locally user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -1004,7 +1014,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-DC-000410"
     Task = "The Deny log on through Remote Desktop Services user right on domain controllers must be configured to prevent unauthenticated access."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -1039,7 +1049,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000410 MS"
     Task = "The Deny log on through Remote Desktop Services user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -1076,7 +1086,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000410 SS"
     Task = "The Deny log on through Remote Desktop Services user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and from unauthenticated access on all systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Server" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -1111,7 +1121,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-DC-000420"
     Task = "The Enable computer and user accounts to be trusted for delegation user right must only be assigned to the Administrators group on domain controllers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -1149,7 +1159,7 @@ function ConvertTo-NTAccountUser {
     Id = "WN16-MS-000420"
     Task = "The Enable computer and user accounts to be trusted for delegation user right must not be assigned to any groups or accounts on member servers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer", "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server"}
     )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"

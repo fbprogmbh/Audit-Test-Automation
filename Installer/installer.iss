@@ -4,7 +4,7 @@
 #define AppPublisher "FB Pro GmbH"
 #define AppURL "https://www.fb-pro.com/"
 #define AppIcon "AT.ico"
-#define AppVersion "5.4"
+#define AppVersion "5.5"
 //#define BaseFolder "Audit-Test-Automation"
 #define BaseFolder ".."
 #define AskVersionText "Please select the version to be installed"
@@ -71,7 +71,7 @@ begin
       exit;
     end;
     DownloadPage.Clear;
-    DownloadPage.Add('https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/heads/develop.zip', 'atap-develop.zip', '');
+    DownloadPage.Add('https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/heads/approve.zip', 'atap-approve.zip', '');
     DownloadPage.Show;
     try
       try

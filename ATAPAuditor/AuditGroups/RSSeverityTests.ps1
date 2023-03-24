@@ -34,6 +34,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id   = "2.2.38"
     Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
@@ -70,7 +73,7 @@ $windefrunning = CheckWindefRunning
     Id   = "2.3.5.2"
     Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "PrimaryDomainController", "BackupDomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
     Test = {
         try {
@@ -324,6 +327,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id   = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
@@ -340,6 +346,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id   = "9.1.8"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
@@ -550,7 +559,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }         
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableRealtimeMonitoring" `
@@ -592,7 +601,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -653,7 +662,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -714,7 +723,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -775,7 +784,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -836,7 +845,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -897,7 +906,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -958,7 +967,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1019,7 +1028,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1080,7 +1089,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1141,7 +1150,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1202,7 +1211,7 @@ $windefrunning = CheckWindefRunning
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
@@ -1257,13 +1266,13 @@ $windefrunning = CheckWindefRunning
     Id = "18.9.47.5.1.2 L"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
-            try {
+        try {
             if ((-not $windefrunning)) {
                 return @{
                     Message = "This rule requires Windows Defender Antivirus to be enabled."
                     Status = "None"
                 }
-            }                           
+            }
             $regValue = 0;
             $regValueTwo = 0;
             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"

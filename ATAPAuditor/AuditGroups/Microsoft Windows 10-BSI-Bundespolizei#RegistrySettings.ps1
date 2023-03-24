@@ -4111,6 +4111,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "0253"
     Task = "Ensure 'Windows Firewall: Domain: Apply local firewall rules' set to 'Disabled'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"  
@@ -4127,6 +4130,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "0254"
     Task = "Ensure 'Windows Firewall: Domain: Display a notification' set to 'Disabled'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile" 
@@ -4143,6 +4149,9 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "0279"
     Task = "Ensure 'Windows Firewall: Domain: Logging: Name' set to '%windir%\system32\logfiles\firewall\domainfirewall.log'."
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
+    )
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
@@ -4302,12 +4311,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if($avstatus){
+
                 if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status = "None"
                     }
-                }         
+                }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
@@ -5286,9 +5296,9 @@ $windefrunning = CheckWindefRunning
                 -Name "FDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
-            if ($regValue -ne "<none>") {
+            if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: <none>"
+                    Message = "Registry value is '$regValue'. Expected: ''"
                     Status = "False"
                 }
             }
@@ -5322,9 +5332,9 @@ $windefrunning = CheckWindefRunning
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
-            if ($regValue -ne "<none>") {
+            if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: <none>"
+                    Message = "Registry value is '$regValue'. Expected: ''"
                     Status = "False"
                 }
             }

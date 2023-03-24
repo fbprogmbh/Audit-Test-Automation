@@ -135,6 +135,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.1.2"
     Task = "(L1) Ensure 'Audit Kerberos Authentication Service' is set to 'Success and Failure' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Kerberos Authentication Service
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Kerberos Authentication Service"
@@ -192,6 +195,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.1.3"
     Task = "(L1) Ensure 'Audit Kerberos Service Ticket Operations' is set to 'Success and Failure' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Kerberos Service Ticket Operations
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Kerberos Service Ticket Operations"
@@ -306,6 +312,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.2.2"
     Task = "(L1) Ensure 'Audit Computer Account Management' is set to include 'Success' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Computer Account Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Computer Account Management"
@@ -363,6 +372,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.2.3"
     Task = "(L1) Ensure 'Audit Distribution Group Management' is set to include 'Success' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Distribution Group Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Distribution Group Management"
@@ -420,6 +432,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.2.4"
     Task = "(L1) Ensure 'Audit Other Account Management Events' is set to include 'Success' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Other Account Management Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Account Management Events"
@@ -705,6 +720,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.4.1"
     Task = "(L1) Ensure 'Audit Directory Service Access' is set to include 'Failure' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Directory Service Access
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Directory Service Access"
@@ -762,6 +780,9 @@ function Get-AuditPolicySubcategoryGUID {
 [AuditTest] @{
     Id = "17.4.2"
     Task = "(L1) Ensure 'Audit Directory Service Changes' is set to include 'Success' (DC only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         # Get the audit policy for the subcategory Directory Service Changes
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Directory Service Changes"

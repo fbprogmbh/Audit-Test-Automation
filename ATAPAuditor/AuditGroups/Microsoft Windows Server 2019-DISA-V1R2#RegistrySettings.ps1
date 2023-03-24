@@ -362,7 +362,7 @@
     Id = "WN19-MS-000140"
     Task = "Windows Server 2019 must be running Credential Guard on domain-joined member servers."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -581,7 +581,7 @@
     Id = "WN19-MS-000030"
     Task = "Windows Server 2019 local users on domain-joined member servers must not be enumerated."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -729,6 +729,13 @@
     Task = "Windows Server 2019 Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
@@ -1916,7 +1923,7 @@
     Id = "WN19-DC-000320"
     Task = "Windows Server 2019 domain controllers must require LDAP access signing."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "DomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         try {
@@ -1955,7 +1962,7 @@
     Id = "WN19-DC-000330"
     Task = "Windows Server 2019 domain controllers must be configured to allow reset of machine account passwords."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "DomainController" }
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
         try {
@@ -1994,7 +2001,7 @@
     Id = "WN19-SO-000060"
     Task = "Windows Server 2019 setting Domain member: Digitally encrypt or sign secure channel data (always) must be configured to Enabled."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2033,7 +2040,7 @@
     Id = "WN19-SO-000070"
     Task = "Windows Server 2019 setting Domain member: Digitally encrypt secure channel data (when possible) must be configured to enabled."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2072,7 +2079,7 @@
     Id = "WN19-SO-000080"
     Task = "Windows Server 2019 setting Domain member: Digitally sign secure channel data (when possible) must be configured to Enabled."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
     Test = {
         try {
@@ -2615,7 +2622,7 @@
     Id = "WN19-MS-000060"
     Task = "Windows Server 2019 must restrict remote calls to the Security Account Manager (SAM) to Administrators on domain-joined member servers and standalone systems."
     Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "MemberServer", "StandaloneServer" }
+        @{ "Property" = "DomainRole"; "Values" = "Member erver", "Standalone Server" }
     )
     Test = {
         try {

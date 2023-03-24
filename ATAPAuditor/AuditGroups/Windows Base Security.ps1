@@ -1,28 +1,25 @@
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
-function isWindows8OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,2))
-}
-function isWindows81OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 6,3))
-}
-function isWindows10OrNewer {
-	return ([Environment]::OSVersion.Version -ge (New-Object 'Version' 10,0))
-}
-function win7NoTPMChipDetected {
-	return (Get-CimInstance -ClassName Win32_Tpm -Namespace root\cimv2\security\microsofttpm | Select-Object -ExpandProperty IsActivated_InitialValue) -eq $null
-}
-function hasTPM {
-	try {
-		$obj = (Get-Tpm).TpmPresent
-	} catch {
-		return $null
-	}
-	return $obj
-}
 [AuditTest] @{
 	Id = "SBD-009"
+	Task = "Get License status."
+	Test = {	
+		$license = Get-LicenseStatus
+		if($license -eq "Licensed"){
+			return @{
+				Message = "Compliant"
+				Status = "True"
+			}
+		}
+		return @{
+			Message = "System not licensed."
+			Status = "False"
+		}
+	}
+}
+[AuditTest] @{
+	Id = "SBD-010"
 	Task = "Get amount of active local users on system."
 	Test = {	
 		$users = Get-LocalUser;
@@ -62,76 +59,36 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-010"
-	Task = "Get amount of users and groups in administrators group on system."
+	Id = "SBD-011"
+	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
 	Test = {	
 		try { 
-			try{
-				$userAndGroups = Get-LocalGroupMember -SID "S-1-5-32-544" -ErrorAction Stop
-				foreach($user in $userAndGroups){
-					if($user.PrincipalSource -eq "Local"){
-						$amountOfUserAndGroups ++;
-					}
-				}
-				$status = switch ($amountOfUserAndGroups.Count) {
-					{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
-						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
-							Status = "True"
-						}
-					}
-					{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
-						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
-							Status = "Warning"
-						}
-					}
-					{$amountOfUserAndGroups -gt 5}{ # 6, ...
-						@{
-							Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members"
-							Status = "False"
-						}
-					}
-					Default {
-						@{
-							Message = "Cannot determine the count of admin users. Please check manually."
-							Status = "Error"
-						}
-					}
-				}
-				return $status
+			#List all groups 
+			$group = Get-LocalGroup -sid "S-1-5-32-544" -ErrorAction Stop
+			$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
+			$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
+			$message = ""
+			foreach($member in $group_members){
+				$message += "$($member) "
 			}
-			catch{
-				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-				if($roleValue -eq 4 -or $roleValue -eq 5){
-					return @{
-						Message = "Not applicable. This audit only applies to Domain controllers."
-						Status = "None"
-					}
-				}
-				#List all groups 
-				$group = Get-LocalGroup -sid "S-1-5-32-544"
-				$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
-				$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
-				$amountOfUserAndGroups = 0;
-				$amountOfUserAndGroups = $group_members.Count;
-			}
+			$amountOfUserAndGroups = $group_members.Count
+			
 			$status = switch ($amountOfUserAndGroups.Count) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $group_members `r`n *Some SIDs could not be resolved. Please check manually."
+						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
 						Status = "False"
 					}
 				}
@@ -142,20 +99,18 @@ function hasTPM {
 					}
 				}
 			}
+			return $status
 		} catch {
-			$theError = $_
-			if ($theError.Exception -like "*1789*") {
-				@{
-			 		Message = "Not all users could be enumerated, please manually check members of administrators group"
-					Status = "Error"
-				}
+			@{
+				Message = "Cannot determine the count of admin users. Please check manually."
+				Status = "Error"
 			}
 		}
 		return $status
 	}
 }
 [AuditTest] @{
-	Id = "SBD-011"
+	Id = "SBD-012"
 	Task = "Ensure the status of the Bitlocker service is 'Running'."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -184,7 +139,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-012"
+	Id = "SBD-013"
 	Task = "Ensure that Bitlocker is activated on all volumes."
 	Test = {
 		try {
@@ -238,7 +193,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-013"
+	Id = "SBD-014"
 	Task = "Ensure the status of the Windows Defender service is 'Running'."
 	Test = {
 		try{
@@ -267,7 +222,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-014"
+	Id = "SBD-015"
 	Task = "Ensure Windows Defender Application Guard is enabled."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -294,7 +249,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-015"
+	Id = "SBD-016"
 	Task = "Ensure the Windows Firewall is enabled on all profiles."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -332,11 +287,18 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-016"
+	Id = "SBD-017"
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
 		try {
-			$tdiff = New-TimeSpan -ErrorAction Stop -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate -End (Get-Date)
+			$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastSearchSuccessDate
+			if ($null -eq $startdate) {
+				return @{
+					Message = "There was no search found."
+					Status = "False"
+				}
+			}
+			$tdiff = New-TimeSpan -ErrorAction Stop -Start $startdate -End (Get-Date)
 			$status = switch ($tdiff.Hours) {
 				{($PSItem -ge 0) -and ($PSItem -le 24)}{
 					@{
@@ -368,28 +330,46 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-017"
+	Id = "SBD-018"
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
 		try{
-			$tdiff = New-TimeSpan -Start (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate -End (Get-Date)
-			$status = switch ($tdiff.Hours) {
-				{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
-					@{
-						Message = "Compliant"
-						Status = "True"
-					}
+			$startdateObjects =  get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending
+			$startdate = $startdateObjects[0].InstalledOn
+			if ($null -eq $startdate) {
+				$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate
+			}
+			if ($null -eq $startdate) {
+				return @{
+					Message = "There was no date found."
+					Status = "False"
 				}
-				{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
-					@{
-						Message = "Last installation of updates was within the last month."
-						Status = "Warning"
-					}
+			}
+			$tdiff = New-TimeSpan -Start $startdate -End (Get-Date)
+			if ($tdiff.Days -ge 5) {
+				@{
+					Message = "Compliant"
+					Status = "True"
 				}
-				Default {
-					@{
-						Message = "Last installation of updates was more than a month ago."
-						Status = "False"
+			} else {
+				$status = switch ($tdiff.Hours) {
+					{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
+						@{
+							Message = "Compliant"
+							Status = "True"
+						}
+					}
+					{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
+						@{
+							Message = "Last installation of updates was within the last month."
+							Status = "Warning"
+						}
+					}
+					Default {
+						@{
+							Message = "Last installation of updates was more than a month ago."
+							Status = "False"
+						}
 					}
 				}
 			}
@@ -404,7 +384,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-018"
+	Id = "SBD-019"
 	Task = "Ensure Virtualization Based Security is enabled and running."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -446,7 +426,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-019"
+	Id = "SBD-020"
 	Task = "Ensure Hypervisor-protected Code Integrity (HVCI) is running."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -472,7 +452,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-020"
+	Id = "SBD-021"
 	Task = "Ensure Credential Guard is running."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -498,7 +478,7 @@ function hasTPM {
 	}
 }
 [AuditTest] @{
-	Id = "SBD-021"
+	Id = "SBD-022"
 	Task = "Ensure Attack Surface Reduction (ASR) rules are enabled."
 	Test = {
 		if (isWindows10OrNewer) {
@@ -541,7 +521,7 @@ function hasTPM {
 					Message = "This rule requires Windows Defender Antivirus to be enabled."
 					Status = "None"
 				}
-			}                           
+			}
 			$countEnabled = 0
 			$Rule1 = @{
 				Path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"

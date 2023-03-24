@@ -3,6 +3,7 @@ using namespace Microsoft.PowerShell.Commands
 #region Initialization
 
 $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+. "$RootPath\Helpers\HashHelper.ps1"
 
 $script:atapReportsPath = $env:ATAPReportPath
 if (-not $script:atapReportsPath) {
@@ -125,6 +126,21 @@ function Test-ArrayEqual {
 	}
 	return $true
 }
+
+function Get-LicenseStatus{
+	$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
+	switch($licenseStatus){
+		"0" {$lcStatus = "Unlicensed"}
+		"1" {$lcStatus = "Licensed"}
+		"2" {$lcStatus = "OOBGrace"}
+		"3" {$lcStatus = "OOTGrace"}
+		"4" {$lcStatus = "NonGenuineGrace"}
+		"5" {$lcStatus = "Notification"}
+		"6" {$lcStatus = "ExtendedGrace"}
+	}
+	return $lcStatus
+}
+
 
 # Get domain role
 # 0 {"Standalone Workstation"}
@@ -295,17 +311,31 @@ function Test-AuditGroup {
 				$domainRoles = $DomainRoleConstraint.Values
 				if ($currentRole -notin $domainRoles) {
 					$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-					if($roleValue -eq 4 -or $roleValue -eq 5){
-						$message = 'Not applicable. This audit only applies to Domain controllers.'
-						$status = [AuditInfoStatus]::None
-					}
-					if($roleValue -ne 4 -or $roleValue -ne 5){
-						$message = 'Not applicable. This audit does not apply to Domain controllers.'
-						$status = [AuditInfoStatus]::None
-					}
-					if($roleValue -eq 0 -or $roleValue -eq 2){
-						$message = 'Not applicable. This audit does not apply to Standalone systems.'
-						$status = [AuditInfoStatus]::None
+					switch ($roleValue) {
+						0 {	
+							$message = 'Not applicable. This audit does not apply to Standalone Workstation.'
+							$status = [AuditInfoStatus]::None
+						}
+						1 {	
+							$message = 'Not applicable. This audit does not apply to Member Workstation.'
+							$status = [AuditInfoStatus]::None
+						}
+						2 {	
+							$message = 'Not applicable. This audit does not apply to Standalone Server.'
+							$status = [AuditInfoStatus]::None
+						}
+						3 {	
+							$message = 'Not applicable. This audit does not apply to Member Server.'
+							$status = [AuditInfoStatus]::None
+						}
+						4 {	
+							$message = 'Not applicable. This audit does not apply to Backup Domain Controller.'
+							$status = [AuditInfoStatus]::None
+						}
+						5 {	
+							$message = 'Not applicable. This audit does not apply to Primary Domain Controller.'
+							$status = [AuditInfoStatus]::None
+						}
 					}
 					Write-Output ([AuditInfo]@{
 						Id = $test.Id
@@ -334,21 +364,6 @@ function Test-AuditGroup {
 					}
 				}
 			}
-			if($test.Task -match "(MS only)"){
-				if($role.domainRole -ne 2 -and $role.domainRole -ne 3){
-					$message = 'Not applicable. This audit does not apply to Domain Controller systems.'
-					$status = [AuditInfoStatus]::None
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
-						Message = $message
-						Status = $status
-					})
-					continue
-				}
-			}
-
-
 			try {
 				$innerResult = & $test.Test
 
@@ -561,8 +576,15 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
+	$LicenseStatus = Get-LicenseStatus
 
-	Invoke-ATAPReport -ReportName $ReportName | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore #-DarkMode:$DarkMode
+	$report = Invoke-ATAPReport -ReportName $ReportName 
+
+	#hashes for each recommendation
+	$hashtable_sha256 = GenerateHashTable $report
+
+
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode 
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
