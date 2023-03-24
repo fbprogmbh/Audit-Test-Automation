@@ -134,7 +134,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.4.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.5.zip -Verbose
 ```
 The following screenshot shows the output:
 
@@ -144,7 +144,7 @@ The following screenshot shows the output:
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.4.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.5.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
