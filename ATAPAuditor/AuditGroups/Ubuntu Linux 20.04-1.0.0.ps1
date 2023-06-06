@@ -1042,3 +1042,83 @@
         }
     }
 }
+[AuditTest] @{
+    Id = "2.1.1.1"
+    Task = "Ensure time synchronization is in use"
+    Test = {
+        $test1 = systemctl is-enabled systemd-timesyncd        
+        $test2 = dpkg -s chrony
+        $test3 = dpkg -s ntp
+        if($test1 -match "enabled" -or $test2 -match "Status: install ok installed" -or $test3 -match "Status: install ok installed"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.1.1.2"
+    Task = "Ensure systemd-timesyncd is configured"
+    Test = {
+        $test1 = dpkg -s ntp
+        $test2 = dpkg -s chrony
+        $test3 = systemctl is-enabled systemd-timesyncd.service
+        $time = timedatectl status
+        if($test1 -match "package 'ntp' is not installed" -and $test2 -match "package 'chrony' is not installed" -and $test3 -match "enabled" -and $time -ne $null){    
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.1.1.3"
+    Task = "Ensure chrony is configured"
+    Test = {
+        $test1 = dpkg -s ntp | grep -E '(Status:|not installed)'
+        $test2 = systemctl is-enabled systemd-timesyncd
+        $test3 = grep -E "^(server|pool)" /etc/chrony/chrony.conf
+        $test4 = ps -ef | grep chronyd | grep "_chrony"
+        if($test1 -match "package 'ntp' is not installed" -and $test2 -match "masked" -and $test3 -ne $null -and $test4 -ne $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.1.1.4"
+    Task = "Ensure ntp is configured"
+    Test = {
+        $test1 = dpkg -s chrony | grep -E '(Status:|not installed)'
+        $test2 = systemctl is-enabled systemd-timesyncd
+        $test3 = grep "^restrict" /etc/ntp.conf
+        $test4 = grep -E "^(server|pool)" /etc/ntp.conf
+        $test5 = grep "RUNASUSER=ntp" /etc/init.d/ntp
+        if($test1 -match "package 'ntp' is not installed" -and $test2 -match "masked" -and $test3 -ne $null -and $test4 -ne $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
