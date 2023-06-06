@@ -830,3 +830,215 @@
         }
     }
 }
+[AuditTest] @{
+    Id = "1.6.1.4"
+    Task = "Ensure all AppArmor Profiles are enforcing"
+    Test = {
+        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        
+        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+
+        if($profileMode1 -eq $profileMode2 -and $unconfinedProcesses -eq 0){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.7.1"
+    Task = "Ensure message of the day is configured properly"
+    Test = {
+        $output = grep -Eis "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/motd
+
+        if($output -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.7.2"
+    Task = "Ensure local login warning banner is configured properly"
+    Test = {
+        $output1 = cat /etc/issue
+        $output2 = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/issue
+        
+        if($output1 -ne $null -and $output2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.7.3"
+    Task = "Ensure remote login warning banner is configured properly"
+    Test = {
+        $output1 = cat /etc/issue.net
+        $output2 = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/issue.net
+        
+        if($output1 -ne $null -and $output2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.7.4"
+    Task = "Ensure permissions on /etc/motd are configured"
+    Test = {
+        $output = stat -L /etc/motd
+        
+        if($output -eq $null -or $output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.7.5"
+    Task = "Ensure permissions on /etc/issue are configured"
+    Test = {
+        $output = stat -L /etc/issue
+        
+        if($output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.7.6"
+    Task = "Ensure permissions on /etc/issue.net are configured"
+    Test = {
+        $output = stat -L /etc/issue.net
+        
+        if($output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.8.2"
+    Task = "Ensure GNOME Display Manager is removed"
+    Test = {
+        $path = /etc/gdm3/greeter.dconf-defaults
+        if(Test-Path $path){
+            $content = cat $path
+            $line1 = $content | grep "banner-message-enable=true"
+            $line2 = $content | grep "banner-message-text="
+            if($line1 -ne $null -and $line1[0] -ne '#' -and $line2 -ne $null -and $line2[0] -ne '#'){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.8.3"
+    Task = "Ensure disable-user-list is enabled"
+    Test = {
+        $path = /etc/gdm3/greeter.dconf-defaults
+        if(Test-Path $path){
+            $content = cat $path
+            $line = $content | grep "disable-user-list=true"
+            if($line -ne $null -and $line[0] -ne '#'){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.8.4"
+    Task = "Ensure XDCMP is not enabled"
+    Test = {
+        $output = grep -Eis '^\s*Enable\s*=\s*true' /etc/gdm3/custom.conf
+        if($output -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.9"
+    Task = "Ensure updates, patches, and additional security software are installed"
+    Test = {
+        $output = apt -s upgrade
+        $result1 = $output | sed '13!d' | cut -d ' ' -f 1
+        $result2 = $output | sed '13!d' | cut -d ' ' -f 3
+        $result3 = $output | sed '13!d' | cut -d ' ' -f 6
+        $result4 = $output | sed '13!d' | cut -d ' ' -f 10
+        if($result1 -eq 0 -and $result2 -eq 0 -and $result3 -eq 0 -and $result4 -eq 0){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
