@@ -12,6 +12,7 @@ let SeverityCompliance;
 
 function startConditions(){
     let isRiskScoreValue = document.getElementById("riskScore");
+    let isMITREValue = document.getElementById("MITRE");
 
     /* Default-Value: Display summary always at the beginning */
     document.getElementById("summary").style.display = "block";
@@ -59,6 +60,11 @@ function startConditions(){
             }
         })
     }
+
+    if(isMITREValue != null) {
+        document.getElementById("MITRE").style.display = "none";
+        document.getElementById("MITREBtn").style.backgroundColor= 'transparent';
+    }
 }
 
 
@@ -103,6 +109,10 @@ function clickButton(value){
         case 5:
             document.getElementById("foundationData").style.display = "block";
             document.getElementById("foundationDataBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 6:
+            document.getElementById("MITRE").style.display = "block";
+            document.getElementById("MITREBtn").style.backgroundColor= '#ff9933';
         break;
     }
 
