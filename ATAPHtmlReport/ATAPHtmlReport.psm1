@@ -325,6 +325,71 @@ function Get-HtmlToc {
 	}
 }
 
+function Show-ReportSections {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Description,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[alias('AuditInfos')]
+		[array]
+		$ConfigAudits,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[alias('Sections')]
+		[array]
+		$Subsections,
+
+		[Parameter(Mandatory = $false)]
+		[string]
+		$Prefix
+	)
+
+	process {
+		$id = $Prefix + $Title
+		# $sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
+
+		#check if main section
+		if ($null -ne $Description) {
+			Write-Host ""
+			Write-Host "$id   -----------------------------------------------------------------"
+			Write-Host $Description
+		}
+
+		#check if subsection
+		if ($null -ne $ConfigAudits) {
+			#table head
+			foreach ($columnName in $AuditProperties.Name) {
+				Write-Host -NoNewline "$columnName  |  "
+			}
+			Write-Host ""
+			#table rows
+			foreach ($configAudit in $ConfigAudits) {
+				foreach ($property in $AuditProperties) {
+					$value = $configAudit | Select-Object -ExpandProperty $property.Name
+					#highlight important information
+					if ($Property.Name -eq 'Status' -or $Property.Name -eq 'Id' ) {
+						$value = "--> $value <--"
+					}
+					Write-Host -NoNewline "$value  |  "
+				}
+				Write-Host ""
+			}
+		}
+
+		if ($null -ne $Subsections) {				
+			foreach ($subsection in $Subsections) {
+				$subsection | Show-ReportSections -Prefix ($Prefix + $Title)
+			}
+		}
+	}
+}
+
 function Get-HtmlReportSection {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -741,9 +806,10 @@ function Get-ATAPHtmlReport {
 						}
 						htmlElement 'h2' @{} {"Benchmark Details"}
 
-						# Report Sections
+						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
 							$section | Get-HtmlReportSection 
+							$section | Show-ReportSections
 						}
 
 					}
@@ -1067,7 +1133,7 @@ function Get-ATAPHtmlReport {
 							foreach ($section in $Sections) { $section | Get-HtmlToc }
 						}
 						htmlElement 'h2' @{} {"Security Base Data Details"}
-						# Report Sections
+						# Report Sections for base data
 						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 					}
 					
