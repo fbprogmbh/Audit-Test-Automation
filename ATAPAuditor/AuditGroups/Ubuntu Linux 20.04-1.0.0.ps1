@@ -512,7 +512,7 @@
     Id = "1.1.23"
     Task = "Disable Automounting"
     Test = {
-        $result = dpkg -s autofs
+        $result =$(dpkg -s autofs)
         if($result -match "package 'autofs' is not installed"){
             return @{
                 Message = "Compliant"
@@ -4427,6 +4427,170 @@
     }
 }
 [AuditTest] @{
+    Id = "6.2.3"
+    Task = "Ensure all groups in /etc/passwd exist in /etc/group"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.3.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.4"
+    Task = "Ensure all users' home directories exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.4.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.5"
+    Task = "Ensure users own their home directories"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.5.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.6"
+    Task = "Ensure users' home directories permissions are 750 or more restrictive"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.6.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.7"
+    Task = "Ensure users' dot files are not group or world writable"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.7.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.8"
+    Task = "Ensure no users have .netrc files"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.8.sh"
+        $result=bash $path
+        if($result -match "FAILED"){
+            return @{
+                Message = "Not-Compliant. Permissions need to get updated."
+                Status = "False"
+            }
+        }
+        if($result -match "WARNING" -and $result -notmatch "FAILED"){
+            return @{
+                Message = "Some changed should be made."
+                Status = "Warning"
+            }
+        }
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.9"
+    Task = "Ensure no users have .forward files"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.9.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.10"
+    Task = "Ensure no users have .rhosts files"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.10.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
     Id = "6.2.11"
     Task = "Ensure root is the only UID 0 account"
     Test = {
@@ -4444,12 +4608,32 @@
     }
 }
 [AuditTest] @{
-    Id = "6.2.17"
-    Task = "Ensure shadow group is empty"
+    Id = "6.2.12"
+    Task = "Ensure root PATH Integrity"
     Test = {
-        $test1 = awk -F: '($1=="shadow") {print $NF}' /etc/group
-        $test2 = awk -F: -v GID="$(awk -F: '($1=="shadow") {print $3}' /etc/group)" '($4==GID) {print $1}' /etc/passwd
-        if($test1 -eq $null -and $test2 -eq $null){
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.12.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.13"
+    Task = "Ensure no duplicate UIDs exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.13.sh"
+        $result=bash $path
+        if($result -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4465,7 +4649,65 @@
     Id = "6.2.14"
     Task = "Ensure no duplicate GIDs exist"
     Test = {
-        "./ATAPAuditor/Helpers/ShellScripts/CIS-Ubuntu-6.2.14.sh"
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.14.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.15"
+    Task = "Ensure no duplicate user names exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.15.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.16"
+    Task = "Ensure no duplicate group names exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.16.sh"
+        $result=bash $path
+        if($result -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.17"
+    Task = "Ensure shadow group is empty"
+    Test = {
+        $test1 = awk -F: '($1=="shadow") {print $NF}' /etc/group
+        $test2 = awk -F: -v GID="$(awk -F: '($1=="shadow") {print $3}' /etc/group)" '($4==GID) {print $1}' /etc/passwd
         if($test1 -eq $null -and $test2 -eq $null){
             return @{
                 Message = "Compliant"
