@@ -965,9 +965,8 @@
     Id = "1.8.2"
     Task = "Ensure GNOME Display Manager is removed"
     Test = {
-        $path = /etc/gdm3/greeter.dconf-defaults
-        if(Test-Path $path){
-            $content = cat $path
+        if(Test-Path "/etc/gdm3/greeter.dconf-defaults"){
+            $content = cat /etc/gdm3/greeter.dconf-defaults
             $line1 = $content | grep "banner-message-enable=true"
             $line2 = $content | grep "banner-message-text="
             if($line1 -ne $null -and $line1[0] -ne '#' -and $line2 -ne $null -and $line2[0] -ne '#'){
@@ -987,9 +986,8 @@
     Id = "1.8.3"
     Task = "Ensure disable-user-list is enabled"
     Test = {
-        $path = /etc/gdm3/greeter.dconf-defaults
-        if(Test-Path $path){
-            $content = cat $path
+        if(Test-Path "/etc/gdm3/greeter.dconf-defaults"){
+            $content = cat /etc/gdm3/greeter.dconf-defaults
             $line = $content | grep "disable-user-list=true"
             if($line -ne $null -and $line[0] -ne '#'){
                 return @{
@@ -3308,6 +3306,668 @@
     Test = {
         $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei'^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'
         $test2 = grep -Ei '^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'/etc/ssh/sshd_config
+        if($test1 -eq $null -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.16"
+    Task = "Ensure SSH Idle Timeout Interval is configured"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
+        $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
+        $test3 = grep -Eis '^\s*clientaliveinterval\s+(0|3[0-9][1-9]|[4-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+|[6-9]m|[1-9][0-9]+m)\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+        $test4 = grep -Eis '^\s*ClientAliveCountMax\s+(0|[4-9]|[1-9][0-9]+)\b'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+        if(($test1 -ge 1 -and $test1 -le 300) -and ($test2 -ge 1 -and $test2 -le 3) -and $test3 -eq $null -and $test4 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.17"
+    Task = "Ensure SSH LoginGraceTime is set to one minute or less"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep logingracetime
+        $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+        if(($test1 -ge 1 -and $test1 -le 60) -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.18"
+    Task = "Ensure SSH warning banner is configured"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep banner
+        $test2 = grep -Eis '^\s*Banner\s+"?none\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+        if($test1 -match "banner /etc/issue.net" -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.19"
+    Task = "Ensure SSH PAM is enabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i usepam
+        $test2 = grep -Eis '^\s*UsePAM\s+no' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+        if($test1 -match "usepam yes" -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.20"
+    Task = "Ensure SSH AllowTcpForwarding is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
+        $test2 = grep -Eis '^\s*AllowTcpForwarding\s+yes\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+        if($test1 -match "allowtcpforwarding no" -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.21"
+    Task = "Ensure SSH MaxStartups is configured"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxstartups
+        $test2 = grep -Eis '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+        if($test1 -match "10:30:60" -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.22"
+    Task = "Ensure SSH MaxSessions is limited"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
+        $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+        if($test1 -le 10 -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.1"
+    Task = "Ensure password creation requirements are configured"
+    Test = {
+        $test1 = grep '^\s*minlen\s*' /etc/security/pwquality.conf | cut -d ' ' -f 3
+        $test2 = grep '^\s*minclass\s*' /etc/security/pwquality.conf | cut -d ' ' -f 3
+        $test3 = grep -E '^\s*password\s+(requisite|required)\s+pam_pwquality\.so\s+(\S+\s+)*retry=[1-3]\s*(\s+\S+\s*)*(\s+#.*)?$' /etc/pam.d/common-password | cut -d '=' -f 2
+        if($test1 -ge 14 -and $test2 -eq 4 -and $test3 -le 3){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.2"
+    Task = "Ensure lockout for failed password attempts is configured"
+    Test = {
+        $test1 = grep "pam_tally2" /etc/pam.d/common-auth
+        $test2 = grep -E "pam_(tally2|deny)\.so" /etc/pam.d/common-account
+        if($test1 -ne $null -and $test2 -match "pam_deny.so" -and $test2 -match "pam_tally2.so"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.3"
+    Task = "Ensure password reuse is limited"
+    Test = {
+        $test1 = grep -E '^\s*password\s+required\s+pam_pwhistory\.so\s+([^#]+\s+)?remember=([5-9]|[1-9][0-9]+)\b' /etc/pam.d/common-password | cut -d '=' -f 2
+        if($test1 -ge 5){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.4"
+    Task = "Ensure password hashing algorithm is SHA-512"
+    Test = {
+        $test1 = grep -E '^\s*password\s+(\[success=1\s+default=ignore\]|required)\s+pam_unix\.so\s+([^#]+\s+)?sha512\b' /etc/pam.d/common-password
+        if($test1 -match "password" -and $test1 -match "success=1" -and $test1 -match "default=ignore" -and $test1 -match "sha512"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.1.1"
+    Task = "Ensure minimum days between password changes is configured"
+    Test = {
+        $test1 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
+        $test2 = awk -F : '(/^[^:]+:[^!*]/ && $4 < 1){print $1 " " $4}' /etc/shadow 
+
+        if($test1 -ge 1){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.1.2"
+    Task = "Ensure password expiration is 365 days or less"
+    Test = {
+        $test1 = grep PASS_MAX_DAYS /etc/login.defs | cut -d ' ' -f 2
+        $test2 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
+        $test3 = wk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
+
+        if($test1 -le 365 -and $test1 -gt $test2){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.1.3"
+    Task = "Ensure password expiration warning days is 7 or more"
+    Test = {
+        $test1 = grep PASS_WARN_AGE /etc/login.defs | cut -d ' ' -f 2
+        $test2 = awk -F: '(/^[^:]+:[^!*]/ && $6<7){print $1 " " $6}' /etc/shadow
+
+        if($test1 -ge 7){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.1.4"
+    Task = "Ensure inactive password lock is 30 days or less"
+    Test = {
+        $test1 = useradd -D | grep INACTIVE | cut -d '=' -2
+        $test2 = awk -F: '(/^[^:]+:[^!*]/ && ($7~/(\s*|-1)/ || $7>30)){print $1 " " $7}'/etc/shadow
+
+        if($test1 -le 30){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.1.5"
+    Task = "Ensure all users last password change date is in the past"
+    Test = {
+        # $test1 = awk -F : '/^[^:]+:[^!*]/{print $1}' /etc/shadow | while read -r usr; do ["$(date --date="$(chage --list "$usr" | grep '^Last password change' | cut -d: -f2)" +%s)" -gt "$(date "+%s")" ] && echo "user: $usr password change date: $(chage --list "$usr" | grep '^Last password change' | cut -d: -f2)"; done
+
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.2"
+    Task = "Ensure system accounts are secured"
+    Test = {
+        $test1 = awk -F: '$1!~/(root|sync|shutdown|halt|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!~/((\/usr)?\/sbin\/nologin)/ && $7!~/(\/bin)?\/false/ {print}' /etc/passwd
+        $test2 = awk -F: '($1!~/(root|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}'/etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!~/LK?/) {print $1}'
+        if($test1 -eq $null -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.3"
+    Task = "Ensure default group for the root account is GID 0"
+    Test = {
+        $test1 = grep "^root:" /etc/passwd | cut -f4 -d ':'
+        if($test1 -eq 0){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.7"
+    Task = "Ensure access to the su command is restricte"
+    Test = {
+        $test1 = grep pam_wheel.so /etc/pam.d/su
+        if($test1 -match "auth required pam_wheel.so use_uid group="){
+            $test2 = $test1 | cut -d '=' -f 2
+            $test3 = grep $test2 /etc/group | cut -d ':' -f 4
+            if($test3 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.1"
+    Task = "Audit system file permissions"
+    Test = {
+        $test1 = grep pam_wheel.so /etc/pam.d/su
+        if($test1 -match "auth required pam_wheel.so use_uid group="){
+            $test2 = $test1 | cut -d '=' -f 2
+            $test3 = grep $test2 /etc/group | cut -d ':' -f 4
+            if($test3 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.2"
+    Task = "Ensure permissions on /etc/passwd are configured"
+    Test = {
+        $test1 = stat /etc/passwd
+        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.3"
+    Task = "Ensure permissions on /etc/passwd- are configured"
+    Test = {
+        $test1 = stat /etc/passwd-
+        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.4"
+    Task = "Ensure permissions on /etc/group are configured"
+    Test = {
+        $test1 = stat /etc/group
+        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.5"
+    Task = "Ensure permissions on /etc/group- are configured"
+    Test = {
+        $test1 = stat /etc/group-
+        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.6"
+    Task = "Ensure permissions on /etc/shadow are configured"
+    Test = {
+        $test1 = stat /etc/shadow
+        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.7"
+    Task = "Ensure permissions on /etc/shadow- are configured"
+    Test = {
+        $test1 = stat /etc/shadow-
+        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    42/    shadow)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.8"
+    Task = "Ensure permissions on /etc/gshadow are configured"
+    Test = {
+        $test1 = stat /etc/gshadow
+        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    42/    shadow)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.9"
+    Task = "Ensure permissions on /etc/gshadow- are configured"
+    Test = {
+        $test1 = stat /etc/gshadow-
+        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    42/    shadow)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.10"
+    Task = "Ensure no world writable files exist"
+    Test = {
+        # $partitions = mapfile -t partitions < (sudo fdisk -l | grep -o '/dev/[^ ]*')
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.11"
+    Task = "Ensure no unowned files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev-nouser
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.12"
+    Task = "Ensure no ungrouped files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev-nogroup
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.13"
+    Task = "Audit SUID executables"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -4000
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.14"
+    Task = "Audit SGID executables"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -2000
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.1"
+    Task = "Ensure accounts in /etc/passwd use shadowed passwords"
+    Test = {
+        $test1 = awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}'/etc/passwd
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.2"
+    Task = "Ensure password fields are not empty"
+    Test = {
+        $test1 = awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.11"
+    Task = "Ensure root is the only UID 0 account"
+    Test = {
+        $test1 = awk -F: '($3 == 0) { print $1 }' /etc/passwd
+        if($test1 -match "root"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.17"
+    Task = "Ensure shadow group is empty"
+    Test = {
+        $test1 = awk -F: '($1=="shadow") {print $NF}' /etc/group
+        $test2 = awk -F: -v GID="$(awk -F: '($1=="shadow") {print $3}' /etc/group)" '($4==GID) {print $1}' /etc/passwd
         if($test1 -eq $null -and $test2 -eq $null){
             return @{
                 Message = "Compliant"
