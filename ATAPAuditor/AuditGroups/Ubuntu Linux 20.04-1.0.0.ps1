@@ -487,16 +487,24 @@
     Id = "1.1.22"
     Task = "Ensure sticky bit is set on all world-writable directories"
     Test = {
-        $result = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
-        if($result -eq $null){
+        try{
+            $result = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+            if($result -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -751,23 +759,31 @@
     Id = "1.5.4"
     Task = "Ensure core dumps are restricted"
     Test = {
-        $result1 = grep -Es '^(\*|\s).*hard.*core.*(\s+#.*)?$' /etc/security/limits.conf /etc/security/limits.d/*
-        $result2 = sysctl fs.suid_dumpable
-        $result3 = grep "fs.suid_dumpable" /etc/sysctl.conf /etc/sysctl.d/*
-        $result4 = systemctl is-enabled coredump.service
-        $message = "Compliant"
-        if($result4 -match "enabled" -or $result4 -match "masked" -or $result4 -match "disabled"){
-            $message = "systemd-coredump is installed"
-        }
-        if($result1 -match "* hard core 0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
+        try{
+            $result1 = grep -Es '^(\*|\s).*hard.*core.*(\s+#.*)?$' /etc/security/limits.conf /etc/security/limits.d/*
+            $result2 = sysctl fs.suid_dumpable
+            $result3 = grep "fs.suid_dumpable" /etc/sysctl.conf /etc/sysctl.d/*
+            $result4 = systemctl is-enabled coredump.service
+            $message = "Compliant"
+            if($result4 -match "enabled" -or $result4 -match "masked" -or $result4 -match "disabled"){
+                $message = "systemd-coredump is installed"
+            }
+            if($result1 -match "* hard core 0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
+                return @{
+                    Message = $message
+                    Status = "True"
+                }
+            }
             return @{
-                Message = $message
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2007,16 +2023,24 @@
     Id = "3.5.2.4"
     Task = "Ensure a nftables table exists"
     Test = {
-        $test1 = nft list tables
-        if($test1 -match "table"){
+        try{
+            $test1 = nft list tables
+            if($test1 -match "table"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2024,18 +2048,26 @@
     Id = "3.5.2.5"
     Task = "Ensure nftables base chains exist"
     Test = {
-        $test1 = nft list ruleset | grep 'hook input'
-        $test2 = nft list ruleset | grep 'hook forward'
-        $test3 = nft list ruleset | grep 'hook output'
-        if($test1 -match "type filter hook input priority 0;" -and $test2 -match "type filter hook forward priority 0;" -and $test3 -match "type filter hook output priority 0;"){
+        try{
+            $test1 = nft list ruleset | grep 'hook input'
+            $test2 = nft list ruleset | grep 'hook forward'
+            $test3 = nft list ruleset | grep 'hook output'
+            if($test1 -match "type filter hook input priority 0;" -and $test2 -match "type filter hook forward priority 0;" -and $test3 -match "type filter hook output priority 0;"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2043,17 +2075,25 @@
     Id = "3.5.2.6"
     Task = "Ensure nftables loopback traffic is configured"
     Test = {
-        $test1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
-        $test2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
-        if($test1 -match 'iif "lo" accept' -and $test2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop"){
+        try{
+            $test1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
+            $test2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
+            if($test1 -match 'iif "lo" accept' -and $test2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2061,17 +2101,25 @@
     Id = "3.5.2.7"
     Task = "Ensure nftables outbound and established connections are configured"
     Test = {
-        $test1 = nft list ruleset | awk '/hook input/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
-        $test2 = nft list ruleset | awk '/hook output/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
-        if($test1 -match "ip protocol tcp ct state established accept" -and $test1 -match "p protocol udp ct state established accept" -and $test1 -match "ip protocol icmp ct state established accept" -and $test2 -match "ip protocol tcp ct state established,related,new accep" -and $test2 -match "ip protocol udp ct state established,related,new accept" -and $test2 -match "ip protocol icmp ct state established,related,new accept"){
+        try{
+            $test1 = nft list ruleset | awk '/hook input/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
+            $test2 = nft list ruleset | awk '/hook output/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
+            if($test1 -match "ip protocol tcp ct state established accept" -and $test1 -match "p protocol udp ct state established accept" -and $test1 -match "ip protocol icmp ct state established accept" -and $test2 -match "ip protocol tcp ct state established,related,new accep" -and $test2 -match "ip protocol udp ct state established,related,new accept" -and $test2 -match "ip protocol icmp ct state established,related,new accept"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2079,18 +2127,26 @@
     Id = "3.5.2.8"
     Task = "Ensure nftables default deny firewall policy"
     Test = {
-        $test1 = nft list ruleset | grep 'hook input'
-        $test2 = nft list ruleset | grep 'hook forward'
-        $test3 = nft list ruleset | grep 'hook output'
-        if($test1 -match "policy drop" -and $test2 -match "policy drop" -and $test3 -match "policy drop"){
+        try{
+            $test1 = nft list ruleset | grep 'hook input'
+            $test2 = nft list ruleset | grep 'hook forward'
+            $test3 = nft list ruleset | grep 'hook output'
+            if($test1 -match "policy drop" -and $test2 -match "policy drop" -and $test3 -match "policy drop"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2360,33 +2416,41 @@
     Id = "4.1.3"
     Task = "Ensure events that modify date and time information are collected"
     Test = {
-        $test1 = grep time-change /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep time-change
-        $test3 = grep time-change /etc/audit/rules.d/*.rules
-        $test4 = auditctl -l | grep time-change
-        if($test1 -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-
-        change
-        -a always,exit -F arch=b32 -S clock_settime -k time-change
-        -w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change
-        -a always,exit -F arch=b32 -S clock_settime -F key=time-change
-        -w /etc/localtime -p wa -k time-change" -and $test3 -match "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
-        -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-
-        change
-        -a always,exit -F arch=b64 -S clock_settime -k time-change
-        -a always,exit -F arch=b32 -S clock_settime -k time-change
-        -w /etc/localtime -p wa -k time-change" -and $test4 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change
-        -a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change
-        -a always,exit -F arch=b64 -S clock_settime -F key=time-change
-        -a always,exit -F arch=b32 -S clock_settime -F key=time-change
-        -w /etc/localtime -p wa -k time-change"){
+        try{
+            $test1 = grep time-change /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep time-change
+            $test3 = grep time-change /etc/audit/rules.d/*.rules
+            $test4 = auditctl -l | grep time-change
+            if($test1 -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-
+            change
+            -a always,exit -F arch=b32 -S clock_settime -k time-change
+            -w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change
+            -a always,exit -F arch=b32 -S clock_settime -F key=time-change
+            -w /etc/localtime -p wa -k time-change" -and $test3 -match "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+            -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-
+            change
+            -a always,exit -F arch=b64 -S clock_settime -k time-change
+            -a always,exit -F arch=b32 -S clock_settime -k time-change
+            -w /etc/localtime -p wa -k time-change" -and $test4 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change
+            -a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change
+            -a always,exit -F arch=b64 -S clock_settime -F key=time-change
+            -a always,exit -F arch=b32 -S clock_settime -F key=time-change
+            -w /etc/localtime -p wa -k time-change"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2394,25 +2458,33 @@
     Id = "4.1.4"
     Task = "Ensure events that modify user/group information are collected"
     Test = {
-        $test1 = grep identity /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep identity
-        if($test1 -match "-w /etc/group -p wa -k identity
-        -w /etc/passwd -p wa -k identity
-        -w /etc/gshadow -p wa -k identity
-        -w /etc/shadow -p wa -k identity
-        -w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity
-        -w /etc/passwd -p wa -k identity
-        -w /etc/gshadow -p wa -k identity
-        -w /etc/shadow -p wa -k identity
-        -w /etc/security/opasswd -p wa -k identity"){
+        try{
+            $test1 = grep identity /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep identity
+            if($test1 -match "-w /etc/group -p wa -k identity
+            -w /etc/passwd -p wa -k identity
+            -w /etc/gshadow -p wa -k identity
+            -w /etc/shadow -p wa -k identity
+            -w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity
+            -w /etc/passwd -p wa -k identity
+            -w /etc/gshadow -p wa -k identity
+            -w /etc/shadow -p wa -k identity
+            -w /etc/security/opasswd -p wa -k identity"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2420,25 +2492,33 @@
     Id = "4.1.4"
     Task = "Ensure events that modify user/group information are collected"
     Test = {
-        $test1 = grep identity /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep identity
-        if($test1 -match "-w /etc/group -p wa -k identity
-        -w /etc/passwd -p wa -k identity
-        -w /etc/gshadow -p wa -k identity
-        -w /etc/shadow -p wa -k identity
-        -w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity
-        -w /etc/passwd -p wa -k identity
-        -w /etc/gshadow -p wa -k identity
-        -w /etc/shadow -p wa -k identity
-        -w /etc/security/opasswd -p wa -k identity"){
+        try{
+            $test1 = grep identity /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep identity
+            if($test1 -match "-w /etc/group -p wa -k identity
+            -w /etc/passwd -p wa -k identity
+            -w /etc/gshadow -p wa -k identity
+            -w /etc/shadow -p wa -k identity
+            -w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity
+            -w /etc/passwd -p wa -k identity
+            -w /etc/gshadow -p wa -k identity
+            -w /etc/shadow -p wa -k identity
+            -w /etc/security/opasswd -p wa -k identity"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2446,37 +2526,45 @@
     Id = "4.1.5"
     Task = "Ensure events that modify the system's network environment are collected"
     Test = {
-        $test1 = grep system-locale /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep system-locale
-        $test3 = grep system-locale /etc/audit/rules.d/*.rules
-        $test4 = auditctl -l | grep system-locale
-        if($test1 -match "-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
-        -w /etc/issue -p wa -k system-locale
-        -w /etc/issue.net -p wa -k system-locale
-        -w /etc/hosts -p wa -k system-locale
-        -w /etc/network -p wa -k system-locale" -and $test2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale
-        -w /etc/issue -p wa -k system-locale
-        -w /etc/issue.net -p wa -k system-locale
-        -w /etc/hosts -p wa -k system-locale
-        -w /etc/network -p wa -k system-locale" -and $test3 -match "-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
-        -a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
-        -w /etc/issue -p wa -k system-locale
-        -w /etc/issue.net -p wa -k system-locale
-        -w /etc/hosts -p wa -k system-locale
-        -w /etc/network -p wa -k system-locale" -and $test4 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale
-        -a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale
-        -w /etc/issue -p wa -k system-locale
-        -w /etc/issue.net -p wa -k system-locale
-        -w /etc/hosts -p wa -k system-locale
-        -w /etc/network -p wa -k system-locale"){
+        try{
+            $test1 = grep system-locale /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep system-locale
+            $test3 = grep system-locale /etc/audit/rules.d/*.rules
+            $test4 = auditctl -l | grep system-locale
+            if($test1 -match "-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+            -w /etc/issue -p wa -k system-locale
+            -w /etc/issue.net -p wa -k system-locale
+            -w /etc/hosts -p wa -k system-locale
+            -w /etc/network -p wa -k system-locale" -and $test2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale
+            -w /etc/issue -p wa -k system-locale
+            -w /etc/issue.net -p wa -k system-locale
+            -w /etc/hosts -p wa -k system-locale
+            -w /etc/network -p wa -k system-locale" -and $test3 -match "-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+            -a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+            -w /etc/issue -p wa -k system-locale
+            -w /etc/issue.net -p wa -k system-locale
+            -w /etc/hosts -p wa -k system-locale
+            -w /etc/network -p wa -k system-locale" -and $test4 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale
+            -a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale
+            -w /etc/issue -p wa -k system-locale
+            -w /etc/issue.net -p wa -k system-locale
+            -w /etc/hosts -p wa -k system-locale
+            -w /etc/network -p wa -k system-locale"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2484,19 +2572,27 @@
     Id = "4.1.6"
     Task = "Ensure events that modify the system's Mandatory Access Controls are collected"
     Test = {
-        $test1 = grep MAC-policy /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep MAC-policy
-        if($test1 -match "-w /etc/apparmor/ -p wa -k MAC-policy
-        -w /etc/apparmor.d/ -p wa -k MAC-policy" -and $test2 -match "-w /etc/apparmor/ -p wa -k MAC-policy
-        -w /etc/apparmor.d/ -p wa -k MAC-policy"){
+        try{
+            $test1 = grep MAC-policy /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep MAC-policy
+            if($test1 -match "-w /etc/apparmor/ -p wa -k MAC-policy
+            -w /etc/apparmor.d/ -p wa -k MAC-policy" -and $test2 -match "-w /etc/apparmor/ -p wa -k MAC-policy
+            -w /etc/apparmor.d/ -p wa -k MAC-policy"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2504,21 +2600,29 @@
     Id = "4.1.7"
     Task = "Ensure login and logout events are collected"
     Test = {
-        $test1 = grep logins /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep logins
-        if($test1 -match "-w /var/log/faillog -p wa -k logins
-        -w /var/log/lastlog -p wa -k logins
-        -w /var/log/tallylog -p wa -k logins" -and $test2 -match "-w /var/log/faillog -p wa -k logins
-        -w /var/log/lastlog -p wa -k logins
-        -w /var/log/tallylog -p wa -k logins"){
+        try{
+            $test1 = grep logins /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep logins
+            if($test1 -match "-w /var/log/faillog -p wa -k logins
+            -w /var/log/lastlog -p wa -k logins
+            -w /var/log/tallylog -p wa -k logins" -and $test2 -match "-w /var/log/faillog -p wa -k logins
+            -w /var/log/lastlog -p wa -k logins
+            -w /var/log/tallylog -p wa -k logins"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2526,21 +2630,29 @@
     Id = "4.1.8"
     Task = "Ensure session initiation information is collected"
     Test = {
-        $test1 = grep -E '(session|logins)' /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep -E '(session|logins)'
-        if($test1 -match "-w /var/run/utmp -p wa -k session
-        -w /var/log/wtmp -p wa -k logins
-        -w /var/log/btmp -p wa -k logins" -and $test2 -match "-w /var/run/utmp -p wa -k session
-        -w /var/log/wtmp -p wa -k logins
-        -w /var/log/btmp -p wa -k logins"){
+        try{
+            $test1 = grep -E '(session|logins)' /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep -E '(session|logins)'
+            if($test1 -match "-w /var/run/utmp -p wa -k session
+            -w /var/log/wtmp -p wa -k logins
+            -w /var/log/btmp -p wa -k logins" -and $test2 -match "-w /var/run/utmp -p wa -k session
+            -w /var/log/wtmp -p wa -k logins
+            -w /var/log/btmp -p wa -k logins"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2548,43 +2660,51 @@
     Id = "4.1.9"
     Task = "Ensure discretionary access control permission modification events are collected"
     Test = {
-        $test1 = grep perm_mod /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep perm_mod
-        $test3 = auditctl -l | grep auditctl -l | grep perm_mod
-        if($test1 -match "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F
-        auid!=4294967295 -k perm_mod
-        -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F
-        auid>=1000 -F auid!=4294967295 -k perm_mod
-        -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S
-        removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295
-        -k perm_mod" -and $test2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
-        -F key=perm_mod
-        -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F
-        auid!=-1 -F key=perm_mod
-        -a always,exit -F arch=b32 -S
-        setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
-        auid>=1000 -F auid!=-1 -F key=perm_mod" -and $test3 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
-        -F key=perm_mod
-        -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
-        -F key=perm_mod
-        -a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F
-        auid!=-1 -F key=perm_mod
-        -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F
-        auid!=-1 -F key=perm_mod
-        -a always,exit -F arch=b64 -S
-        setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
-        auid>=1000 -F auid!=-1 -F key=perm_mod
-        -a always,exit -F arch=b32 -S
-        setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
-        auid>=1000 -F auid!=-1 -F key=perm_mod"){
+        try{
+            $test1 = grep perm_mod /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep perm_mod
+            $test3 = auditctl -l | grep auditctl -l | grep perm_mod
+            if($test1 -match "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F
+            auid!=4294967295 -k perm_mod
+            -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F
+            auid>=1000 -F auid!=4294967295 -k perm_mod
+            -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S
+            removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295
+            -k perm_mod" -and $test2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
+            -F key=perm_mod
+            -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F
+            auid!=-1 -F key=perm_mod
+            -a always,exit -F arch=b32 -S
+            setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
+            auid>=1000 -F auid!=-1 -F key=perm_mod" -and $test3 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
+            -F key=perm_mod
+            -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
+            -F key=perm_mod
+            -a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F
+            auid!=-1 -F key=perm_mod
+            -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F
+            auid!=-1 -F key=perm_mod
+            -a always,exit -F arch=b64 -S
+            setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
+            auid>=1000 -F auid!=-1 -F key=perm_mod
+            -a always,exit -F arch=b32 -S
+            setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
+            auid>=1000 -F auid!=-1 -F key=perm_mod"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2592,23 +2712,31 @@
     Id = "4.1.10"
     Task = "Ensure unsuccessful unauthorized file access attempts are collected"
     Test = {
-        $test1 = grep access /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep access
-        if($test1 -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S
-        ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access
-        -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S
-        ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and $test2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-
-        EACCES -F auid>=1000 -F auid!=-1 -F key=access
-        -a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-
-        EPERM -F auid>=1000 -F auid!=-1 -F key=access"){
+        try{
+            $test1 = grep access /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep access
+            if($test1 -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S
+            ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access
+            -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S
+            ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and $test2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-
+            EACCES -F auid>=1000 -F auid!=-1 -F key=access
+            -a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-
+            EPERM -F auid>=1000 -F auid!=-1 -F key=access"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2616,17 +2744,25 @@
     Id = "4.1.12"
     Task = "Ensure successful file system mounts are collected"
     Test = {
-        $test1 = grep mounts /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep mounts
-        if($test1 -match "--a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and $test2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"){
+        try{
+            $test1 = grep mounts /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep mounts
+            if($test1 -match "--a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and $test2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2634,17 +2770,25 @@
     Id = "4.1.13"
     Task = "Ensure file deletion events by users are collected"
     Test = {
-        $test1 = grep delete /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep delete
-        if($test1 -match "-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and $test2 -match "-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"){
+        try{
+            $test1 = grep delete /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep delete
+            if($test1 -match "-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and $test2 -match "-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2652,19 +2796,27 @@
     Id = "4.1.14"
     Task = "Ensure changes to system administration scope (sudoers) is collected"
     Test = {
-        $test1 = grep scope /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep scope
-        if($test1 -match "-w /etc/sudoers -p wa -k scope
-        -w /etc/sudoers.d/ -p wa -k scope" -and $test2 -match "-w /etc/sudoers -p wa -k scope
-        -w /etc/sudoers.d/ -p wa -k scope"){
+        try{
+            $test1 = grep scope /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep scope
+            if($test1 -match "-w /etc/sudoers -p wa -k scope
+            -w /etc/sudoers.d/ -p wa -k scope" -and $test2 -match "-w /etc/sudoers -p wa -k scope
+            -w /etc/sudoers.d/ -p wa -k scope"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2672,17 +2824,25 @@
     Id = "4.1.15"
     Task = "Ensure system administrator command executions (sudo) are collected"
     Test = {
-        $test1 = grep actions /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep actions
-        if($test1 -match "/etc/audit/rules.d/cis.rules:-a exit,always -F arch=b32 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions" -and $test2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F auid>=1000 -F auid!=-1 -F key=actions"){
+        try{
+            $test1 = grep actions /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep actions
+            if($test1 -match "/etc/audit/rules.d/cis.rules:-a exit,always -F arch=b32 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions" -and $test2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F auid>=1000 -F auid!=-1 -F key=actions"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -2690,23 +2850,31 @@
     Id = "4.1.16"
     Task = "Ensure kernel module loading and unloading is collected"
     Test = {
-        $test1 = grep modules /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep modules
-        if($test1 -match "-w /sbin/insmod -p x -k modules
-        -w /sbin/rmmod -p x -k modules
-        -w /sbin/modprobe -p x -k modules
-        -a always,exit -F arch=b32 -S init_module -S delete_module -k modules" -and $test2 -match "-w /sbin/insmod -p x -k modules
-        -w /sbin/rmmod -p x -k modules
-        -w /sbin/modprobe -p x -k modules
-        -a always,exit -F arch=b32 -S init_module,delete_module -F key=modules"){
+        try{
+            $test1 = grep modules /etc/audit/rules.d/*.rules
+            $test2 = auditctl -l | grep modules
+            if($test1 -match "-w /sbin/insmod -p x -k modules
+            -w /sbin/rmmod -p x -k modules
+            -w /sbin/modprobe -p x -k modules
+            -a always,exit -F arch=b32 -S init_module -S delete_module -k modules" -and $test2 -match "-w /sbin/insmod -p x -k modules
+            -w /sbin/rmmod -p x -k modules
+            -w /sbin/modprobe -p x -k modules
+            -a always,exit -F arch=b32 -S init_module,delete_module -F key=modules"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -3074,16 +3242,33 @@
     Id = "5.3.1"
     Task = "Ensure permissions on /etc/ssh/sshd_config are configured"
     Test = {
-        $test1 = stat /etc/ssh/sshd_config
-        if($test1 -match "Access: (0600/-rw-------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        try{
+            try{
+                $test1 = stat /etc/ssh/sshd_config
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+
+            if($test1 -match "Access: (0600/-rw-------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Path not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -3125,16 +3310,24 @@
     Id = "5.3.4"
     Task = "Ensure SSH access is limited"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'
-        if($test1 -match "allowusers" -or $test1 -match "allowgroups" -or $test1 -match "denyusers" -or $test1 -match "denygroups"){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'
+            if($test1 -match "allowusers" -or $test1 -match "allowgroups" -or $test1 -match "denyusers" -or $test1 -match "denygroups"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3142,17 +3335,33 @@
     Id = "5.3.5"
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep loglevel
-        $test2 = grep -is 'loglevel' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf | grep -Evi '(VERBOSE|INFO)'
-        if(($test1 -match "loglevel VERBOSE" -or $test1 -match "loglevel INFO") -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep loglevel
+            try{
+                $test2 = grep -is 'loglevel' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf | grep -Evi '(VERBOSE|INFO)'
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if(($test1 -match "loglevel VERBOSE" -or $test1 -match "loglevel INFO") -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3160,17 +3369,33 @@
     Id = "5.3.6"
     Task = "Ensure SSH X11 forwarding is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i x11forwarding
-        $test2 = grep -Eis '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "x11forwarding no" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i x11forwarding
+            try{
+                $test2 = grep -Eis '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "x11forwarding no" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3178,17 +3403,33 @@
     Id = "5.3.7"
     Task = "Ensure SSH MaxAuthTries is set to 4 or less"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep maxauthtries
-        $test2 = grep -Eis '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "maxauthtries 4" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep maxauthtries
+            try{
+                $test2 = grep -Eis '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "maxauthtries 4" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3196,17 +3437,33 @@
     Id = "5.3.8"
     Task = "Ensure SSH IgnoreRhosts is enabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep ignorerhosts
-        $test2 = grep -Eis '^\s*ignorerhosts\s+no\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "ignorerhosts yes" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep ignorerhosts
+            try{
+                $test2 = grep -Eis '^\s*ignorerhosts\s+no\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "ignorerhosts yes" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3214,17 +3471,33 @@
     Id = "5.3.10"
     Task = "Ensure SSH root login is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permitrootlogin
-        $test2 = grep -Eis '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "permitrootlogin no" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permitrootlogin
+            try{
+                $test2 = grep -Eis '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "permitrootlogin no" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3232,17 +3505,33 @@
     Id = "5.3.11"
     Task = "Ensure SSH PermitEmptyPasswords is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permitemptypasswords
-        $test2 = grep -Eis '^\s*PermitEmptyPasswords\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "permitemptypasswords no" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permitemptypasswords
+            try{
+                $test2 = grep -Eis '^\s*PermitEmptyPasswords\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "permitemptypasswords no" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3250,17 +3539,33 @@
     Id = "5.3.12"
     Task = "Ensure SSH PermitUserEnvironment is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permituserenvironment
-        $test2 = grep -Eis '^\s*PermitUserEnvironment\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "permituserenvironment no" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permituserenvironment
+            try{
+                $test2 = grep -Eis '^\s*PermitUserEnvironment\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "permituserenvironment no" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3268,17 +3573,33 @@
     Id = "5.3.13"
     Task = "Ensure only strong Ciphers are used"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b'
-        $test2 = grep -Eis '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
-        if($test1 -eq $null -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b'
+            try{
+                $test2 = grep -Eis '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -eq $null -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3286,17 +3607,33 @@
     Id = "5.3.14"
     Task = "Ensure only strong MAC algorithms are used"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b'
-        $test2 = grep -Eis '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
-        if($test1 -eq $null -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b'
+            try{
+                $test2 = grep -Eis '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -eq $null -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3304,17 +3641,33 @@
     Id = "5.3.15"
     Task = "Ensure only strong Key Exchange algorithms are used"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei'^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'
-        $test2 = grep -Ei '^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'/etc/ssh/sshd_config
-        if($test1 -eq $null -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei'^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'
+            try{
+                $test2 = grep -Ei '^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'/etc/ssh/sshd_config
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -eq $null -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3322,19 +3675,35 @@
     Id = "5.3.16"
     Task = "Ensure SSH Idle Timeout Interval is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
-        $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
-        $test3 = grep -Eis '^\s*clientaliveinterval\s+(0|3[0-9][1-9]|[4-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+|[6-9]m|[1-9][0-9]+m)\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        $test4 = grep -Eis '^\s*ClientAliveCountMax\s+(0|[4-9]|[1-9][0-9]+)\b'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
-        if(($test1 -ge 1 -and $test1 -le 300) -and ($test2 -ge 1 -and $test2 -le 3) -and $test3 -eq $null -and $test4 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
+            $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
+            try{
+                $test3 = grep -Eis '^\s*clientaliveinterval\s+(0|3[0-9][1-9]|[4-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+|[6-9]m|[1-9][0-9]+m)\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+                $test4 = grep -Eis '^\s*ClientAliveCountMax\s+(0|[4-9]|[1-9][0-9]+)\b'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if(($test1 -ge 1 -and $test1 -le 300) -and ($test2 -ge 1 -and $test2 -le 3) -and $test3 -eq $null -and $test4 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3342,17 +3711,33 @@
     Id = "5.3.17"
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep logingracetime
-        $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
-        if(($test1 -ge 1 -and $test1 -le 60) -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep logingracetime
+            try{
+                $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if(($test1 -ge 1 -and $test1 -le 60) -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3360,17 +3745,33 @@
     Id = "5.3.18"
     Task = "Ensure SSH warning banner is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep banner
-        $test2 = grep -Eis '^\s*Banner\s+"?none\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "banner /etc/issue.net" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep banner
+            try{
+                $test2 = grep -Eis '^\s*Banner\s+"?none\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "banner /etc/issue.net" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3378,17 +3779,33 @@
     Id = "5.3.19"
     Task = "Ensure SSH PAM is enabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i usepam
-        $test2 = grep -Eis '^\s*UsePAM\s+no' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "usepam yes" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i usepam
+            try{
+                $test2 = grep -Eis '^\s*UsePAM\s+no' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "usepam yes" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3396,17 +3813,33 @@
     Id = "5.3.20"
     Task = "Ensure SSH AllowTcpForwarding is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
-        $test2 = grep -Eis '^\s*AllowTcpForwarding\s+yes\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "allowtcpforwarding no" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
+            try{
+                $test2 = grep -Eis '^\s*AllowTcpForwarding\s+yes\b' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "allowtcpforwarding no" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3414,17 +3847,33 @@
     Id = "5.3.21"
     Task = "Ensure SSH MaxStartups is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxstartups
-        $test2 = grep -Eis '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-        if($test1 -match "10:30:60" -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxstartups
+            try{
+                $test2 = grep -Eis '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -match "10:30:60" -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3432,17 +3881,33 @@
     Id = "5.3.22"
     Task = "Ensure SSH MaxSessions is limited"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
-        $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
-        if($test1 -le 10 -and $test2 -eq $null){
+        try{
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
+            try{
+                $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
+            }
+            catch{
+                return @{
+                    Message = "Path not found!"
+                    Status = "False"
+                }
+            }
+            if($test1 -le 10 -and $test2 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command doesn't exist"
+                Status = "False"
+            }
         }
     }
 }
@@ -3540,19 +4005,27 @@
     Id = "5.5.1.2"
     Task = "Ensure password expiration is 365 days or less"
     Test = {
-        $test1 = grep PASS_MAX_DAYS /etc/login.defs | cut -d ' ' -f 2
-        $test2 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
-        $test3 = wk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
-
-        if($test1 -le 365 -and $test1 -gt $test2){
+        try{
+            $test1 = grep PASS_MAX_DAYS /etc/login.defs | cut -d ' ' -f 2
+            $test2 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
+            $test3 = wk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
+    
+            if($test1 -le 365 -and $test1 -gt $test2){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
         }
     }
 }
@@ -3847,16 +4320,24 @@
     Id = "6.1.11"
     Task = "Ensure no unowned files or directories exist"
     Test = {
-        $test1 = df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev-nouser
-        if($test1 -eq $null){
+        try{
+            $test1 = df --local -P | awk "{if (NR -ne 1) { print `$6 }}" | xargs -I '{}' find '{}' -xdev -nouser
+            if($test1 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }  
         }
     }
 }
@@ -3864,7 +4345,7 @@
     Id = "6.1.12"
     Task = "Ensure no ungrouped files or directories exist"
     Test = {
-        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev-nogroup
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -nogroup
         if($test1 -eq $null){
             return @{
                 Message = "Compliant"
@@ -3968,6 +4449,23 @@
     Test = {
         $test1 = awk -F: '($1=="shadow") {print $NF}' /etc/group
         $test2 = awk -F: -v GID="$(awk -F: '($1=="shadow") {print $3}' /etc/group)" '($4==GID) {print $1}' /etc/passwd
+        if($test1 -eq $null -and $test2 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.14"
+    Task = "Ensure no duplicate GIDs exist"
+    Test = {
+        "./ATAPAuditor/Helpers/ShellScripts/CIS-Ubuntu-6.2.14.sh"
         if($test1 -eq $null -and $test2 -eq $null){
             return @{
                 Message = "Compliant"
