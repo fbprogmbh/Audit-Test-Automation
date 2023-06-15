@@ -808,8 +808,10 @@ function Get-ATAPHtmlReport {
 
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
-							$section | Get-HtmlReportSection 
-							$section | Show-ReportSections
+							$section | Get-HtmlReportSection
+							if($section.Title -eq "CIS Benchmarks"){
+								$section | Show-ReportSections
+							}
 						}
 
 					}
