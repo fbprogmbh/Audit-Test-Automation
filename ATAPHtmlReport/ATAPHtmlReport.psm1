@@ -351,7 +351,7 @@ function Show-ReportSections {
 	)
 
 	process {
-		$id = $Prefix + $Title
+		$id = $Prefix + " " + $Title
 		# $sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
 
 		#check if main section
@@ -809,9 +809,7 @@ function Get-ATAPHtmlReport {
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
 							$section | Get-HtmlReportSection
-							if($section.Title -eq "CIS Benchmarks"){
-								$section | Show-ReportSections
-							}
+							$section | Where-Object { $_.Title -eq "CIS Benchmarks" } | Show-ReportSections 
 						}
 
 					}
