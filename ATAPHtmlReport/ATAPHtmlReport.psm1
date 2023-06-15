@@ -1239,8 +1239,8 @@ function Get-ATAPHtmlReport {
 					if($MITRE) {
 						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 							htmlElement 'h1'@{} {"MITRE ATT&CK"}
-							htmlElement 'p'@{} {'To get a quick overview of how good ur systems is hardend in terms of the MITRE ATT&CK Framework we made a headmap.'}
-							htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current ATT&CK headmap on tested System: "}
+							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 						}
 					}
 
