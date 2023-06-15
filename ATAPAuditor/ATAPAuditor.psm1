@@ -526,6 +526,8 @@ function Invoke-ATAPReport {
 	The path where the result html document should be stored.
 .PARAMETER RiskScore
 	Add a RiskScore-Matrix to report (works only on Windows OS)
+.PARAMETER MITRE
+	Add a MITRE ATT&CK headmap to report (works only on Windows OS)
 .PARAMETER DarkMode
 	By default the report is displayed in light mode. If specified the report will be displayed in dark mode.
 .PARAMETER Force
@@ -548,6 +550,10 @@ function Save-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch]
 		$RiskScore,
+
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$MITRE,
 
 		# [switch]
 		# $DarkMode,
@@ -584,7 +590,7 @@ function Save-ATAPHtmlReport {
 	$hashtable_sha256 = GenerateHashTable $report
 
 
-	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode 
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode 
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport

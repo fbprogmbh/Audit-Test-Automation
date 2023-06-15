@@ -664,6 +664,9 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
+		[Parameter(Mandatory = $false)]
+		[switch] $MITRE,
+
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[hashtable]
 		$hashtable_sha256,
@@ -790,6 +793,9 @@ function Get-ATAPHtmlReport {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Security Base Data" }
 						if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
+						}
+						if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")){
+							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITTRE ATT&CK" }
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
@@ -1293,6 +1299,14 @@ function Get-ATAPHtmlReport {
 							# htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
 	
 							# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
+						}
+					}
+
+					if($MITRE) {
+						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
+							htmlElement 'h1'@{} {"MITRE ATT&CK"}
+							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 						}
 					}
 
