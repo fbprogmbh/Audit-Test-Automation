@@ -1323,19 +1323,13 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-					if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")) {
+					if($MITRE) {
 						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 							htmlElement 'h1'@{} {"Verson of CIS in MITRE Mapping and tests"}
 							htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
 							htmlElement 'h1'@{} {"MITRE ATT&CK"}
 							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
 							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
-						}
-					}
-					elseif($MITRE) {
-						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
-							htmlElement 'h1'@{} {"MITRE ATT&CK"}
-							htmlElement 'p'@{} {'MITRE Mapping just supported on Windows OS'}
 						}
 					}
 
