@@ -1338,12 +1338,17 @@ function Get-ATAPHtmlReport {
 			$name = Split-Path -Path $Path -Leaf
 			$Path = Split-Path -Path $Path -Parent
 			New-Item -Path $Path -Name $name -ItemType File -Value $html -Force 
+
 		} else {
 			$Title = $Title -replace " Audit Report",""
 			$auditReport += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
 			New-Item -Path $Path -Name $auditReport -ItemType File -Value $html -Force 
 		}
-
+		if([System.Environment]::OSVersion.Platform -eq 'Unix'){
+			# $shellPath = $Path"/"$name
+			# bash -c "chmod o+r $($shellPath)"
+			# Write-Host $shellPath
+		}
 		#Create Report file
 		#$html | Out-File -FilePath $auditReport -Encoding utf8
 	}

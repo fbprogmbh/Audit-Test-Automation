@@ -505,7 +505,7 @@
     Task = "Ensure sticky bit is set on all world-writable directories"
     Test = {
         try{
-            $result = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+            $result = bash -c "df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2> /dev/null"
             if($result -eq $null){
                 return @{
                     Message = "Compliant"
@@ -538,7 +538,7 @@
         }
         else{
             $result = systemctl is-enabled autofs
-            if($result -match "disabled"){
+            if($result -match "No such file or directory"){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -648,20 +648,15 @@
     Task = "Ensure permissions on bootloader config are not overridden"
     Test = {
         $output = grep -E '^\s*chmod\s+[0-7][0-7][0-7]\s+\$\{grub_cfg\}\.new' -A 1 -B1 /usr/sbin/grub-mkconfig
-        $response = 'if [ "x${grub_cfg}" != "x" ] && ! grep "^password" ${grub_cfg}.new >/dev/null; then
-        chmod 444 ${grub_cfg}.new || true
-      fi
-      ' 
-        if($output -ne $response){
+        if($output -match 'hmod 400 ${grub_cfg}.new || true'){
             return @{
-                Message = "Not-Compliant"
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = "Not-Compliant"
+            Status = "False"
         }
     }
 }
@@ -689,9 +684,9 @@
     Test = {
         $result = stat /boot/grub/grub.cfg | grep "Uid: (    0/    root)   Gid: (    0/    root)"
         $result = $result | cut -d '(' -f 2
-        $result = $result | cut '/'
         $result = $result | cut -d '/' -f 1
-        if($result -ge 0400){
+
+        if($result -eq "0400" -or $result[1] -le 4){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -724,8 +719,9 @@
     Id = "1.5.1"
     Task = "Ensure XD/NX support is enabled"
     Test = {
-        $result = journalctl | grep 'protection: active'
-        if($result -match "kernel: NX (Execute Disable) protection: active"){
+        $result = bash -c '[[ -n $(grep noexec[0-9]*=off /proc/cmdline) || -z $(grep -E -i " (pae|nx)" /proc/cpuinfo) || -n $(grep "\\sNX\\s.*\\sprotection:\\s" /var/log/dmesg | grep -v active) ]] && echo "NX Protection is not active"'
+        
+        if($result -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -785,7 +781,7 @@
             if($result4 -match "enabled" -or $result4 -match "masked" -or $result4 -match "disabled"){
                 $message = "systemd-coredump is installed"
             }
-            if($result1 -match "* hard core 0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
+            if($result1 -match "*            hard    core            0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
                 return @{
                     Message = $message
                     Status = "True"
@@ -962,9 +958,9 @@
     Id = "1.7.5"
     Task = "Ensure permissions on /etc/issue are configured"
     Test = {
-        $output = stat -L /etc/issue
+        $output = stat -L /etc/issue | grep "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"
         
-        if($output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        if($output -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -980,9 +976,9 @@
     Id = "1.7.6"
     Task = "Ensure permissions on /etc/issue.net are configured"
     Test = {
-        $output = stat -L /etc/issue.net
+        $output = stat -L /etc/issue.net | grep "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"
         
-        if($output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        if($output -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
