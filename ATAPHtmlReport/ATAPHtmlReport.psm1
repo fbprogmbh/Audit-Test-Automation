@@ -401,10 +401,12 @@ function Compare-EqualCISVersions {
 		$BasedOn
 	)
 	$os = [System.Environment]::OSVersion.Platform
-	if($os -match "Win32NT" -and $Title -match "Win"){
+	if($os -match "Win32NT" -and $Title -match "Windows 10"){
 		$testVersion = $BasedOn[0].Split(',')[1]
 		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
-		if($testVersion -eq "1.11.0"){
+		$mappingVersion = $BasedOn[1].Split(',')[0]
+		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
+		if($testVersion -eq $mappingVersion){
 			return "The CIS Versions used for the MITRE mapping and testing are the same."
 		}
 		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
