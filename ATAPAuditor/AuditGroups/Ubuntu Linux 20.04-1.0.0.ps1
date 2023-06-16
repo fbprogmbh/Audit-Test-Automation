@@ -1,11 +1,10 @@
 [AuditTest] @{
     Id = "1.1.1.1"
-    Task = "Ensure mounting of cramfs filesystetms is disabled"
+    Task = "Ensure mounting of cramfs filesystems is disabled"
     Test = {
         $result1 = modprobe -n -v cramfs | grep -E '(cramfs|install)'
         $result2 = lsmod | grep cramfs
-        
-        if($result1 -match "install /bin/true" -and $result2 -eq $null){
+        if($result2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -20,12 +19,12 @@
 }
 [AuditTest] @{
     Id = "1.1.1.2"
-    Task = "Ensure mounting of freevxfs filesystetms is disabled"
+    Task = "Ensure mounting of freevxfs filesystems is disabled"
     Test = {
         $result1 = modprobe -n -v freevxfs | grep -E '(freevxfs|install)'
         $result2 = lsmod | grep freevxfs
         
-        if($result1 -match "install /bin/true" -and $result2 -eq $null){
+        if($result2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -105,7 +104,7 @@
         $result1 = modprobe -n -v squashfs | grep -E '(squashfs|install)'
         $result2 = lsmod | grep squashfs
         
-        if($result1 -match "install /bin/true" -and $result2 -eq $null){
+        if($result2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -252,6 +251,24 @@
     Test = {
         $result = findmnt -n /dev/shm
         if($result -match "nosuid"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.1.9"
+    Task = "Ensure nosuid option set on /dev/shm partition"
+    Test = {
+        $result = findmnt -n /dev/shm | grep -v noexec
+        if($result -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
