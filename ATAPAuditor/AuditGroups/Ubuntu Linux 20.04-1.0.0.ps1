@@ -529,8 +529,8 @@
     Id = "1.1.23"
     Task = "Disable Automounting"
     Test = {
-        $result =$(dpkg -s autofs)
-        if($result -match "package 'autofs' is not installed"){
+        $result = dpkg -l | grep -o autofs
+        if($result -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -610,8 +610,8 @@
     Id = "1.3.1"
     Task = "Ensure AIDE is installed"
     Test = {
-        $result1 = dpkg -s aide | grep -E 'Status:|not installed)'
-        $result2 = dpkg -s aide-common | grep -E 'Status:|not installed)'
+        $result1 = dpkg -l | grep -o aide
+        $result2 = dpkg -l | grep -o aide-common
         if($result1 -eq $null -or $result2 -eq $null){
             return @{
                 Message = "Not-Compliant"
@@ -759,8 +759,8 @@
     Id = "1.5.3"
     Task = "Ensure prelink is not installed"
     Test = {
-        $result = dpkg -s prelink | grep -E '(Status:|not installed)'
-        if($result -match "package 'prelink' is not installed"){
+        $result = dpkg -l | grep -o prelink
+        if($result -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1158,7 +1158,7 @@
     Id = "2.1.2"
     Task = "Ensure X Window System is not installed"
     Test = {
-        $test1 = dpkg -l xserver-xorg* | grep 'ii '
+        $test1 = dpkg -l | grep -o xserver-xorg*
         if($test1 -eq $null){
             return @{
                 Message = "Compliant"
@@ -1175,8 +1175,8 @@
     Id = "2.1.3"
     Task = "Ensure Avahi Server is not installed"
     Test = {
-        $test1 = dpkg -s avahi-daemon | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'avahi-daemon' is not installed"){
+        $status = dpkg -l | grep -o avahi-daemon
+        if($status -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1192,8 +1192,8 @@
     Id = "2.1.4"
     Task = "Ensure CUPS is not installed"
     Test = {
-        $test1 = dpkg -s avahi-daemon | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'cups' is not installed"){
+        $test1 = dpkg -l | grep -o cups
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1209,8 +1209,8 @@
     Id = "2.1.5"
     Task = "Ensure DHCP Server is not installed"
     Test = {
-        $test1 = dpkg -s isc-dhcp-server | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'isc-dhcp-server' is not installed"){
+        $test1 = dpkg -l | grep -o isc-dhcp-server
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1226,8 +1226,8 @@
     Id = "2.1.6"
     Task = "Ensure LDAP server is not installed"
     Test = {
-        $test1 = dpkg -s slapd | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'slapd' is not installed"){
+        $test1 = dpkg -l | grep -o slapd
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1243,8 +1243,8 @@
     Id = "2.1.7"
     Task = "Ensure NFS is not installed"
     Test = {
-        $test1 = dpkg -s nfs-kernel-server | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'nfs-kernel-server' is not installed"){
+        $test1 = dpkg -l | grep -o nfs-kernel-server
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1260,8 +1260,8 @@
     Id = "2.1.8"
     Task = "Ensure DNS Server is not installed"
     Test = {
-        $test1 = dpkg -s bind9 | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'bind9' is not installed"){
+        $test1 = dpkg -l | grep -o bind9
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1277,8 +1277,8 @@
     Id = "2.1.9"
     Task = "Ensure FTP Server is not installed"
     Test = {
-        $test1 = dpkg -s vsftpd | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'vsftpd' is not installed"){
+        $test1 = dpkg -l | grep -o vsftpd
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1294,8 +1294,8 @@
     Id = "2.1.10"
     Task = "Ensure HTTP server is not installed"
     Test = {
-        $test1 = dpkg -s apache2 | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'apache2' is not installed"){
+        $test1 = dpkg -l | grep -o apache2
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1311,8 +1311,9 @@
     Id = "2.1.11"
     Task = "Ensure IMAP and POP3 server are not installed"
     Test = {
-        $test1 = dpkg -s dovecot-imapd dovecot-pop3d | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'dovecot-imapd' is not installed" -and $test1 -match "package 'dovecot-pop3d' is not installed"){
+        $test1 =  dpkg -l | grep -o dovecot-imapd
+        $test2 = dpkg -l | grep -o dovecot-pop3d
+        if($test1 -eq $null -and $test2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1328,8 +1329,8 @@
     Id = "2.1.12"
     Task = "Ensure Samba is not installed"
     Test = {
-        $test1 = dpkg -s samba | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'samba' is not installed"){
+        $test1 = dpkg -l | grep -o samba
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1345,8 +1346,8 @@
     Id = "2.1.13"
     Task = "Ensure HTTP Proxy Server is not installed"
     Test = {
-        $test1 = dpkg -s squid | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'squid' is not installed"){
+        $test1 = dpkg -l | grep -o squid
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1362,8 +1363,8 @@
     Id = "2.1.14"
     Task = "Ensure SNMP Server is not installed"
     Test = {
-        $test1 = dpkg -s snmpd | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'snmpd' is not installed"){
+        $test1 = dpkg -l | grep -o snmpd
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1396,8 +1397,8 @@
     Id = "2.1.16"
     Task = "Ensure rsync service is not installed"
     Test = {
-        $test1 = dpkg -s rsync | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'rsync' is not installed"){
+        $test1 = dpkg -l | grep -o rsync
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1413,8 +1414,8 @@
     Id = "2.1.17"
     Task = "Ensure NIS Server is not installed"
     Test = {
-        $test1 = dpkg -s nis | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'nis' is not installed"){
+        $test1 = dpkg -l | grep -o nis
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1430,8 +1431,8 @@
     Id = "2.2.1"
     Task = "Ensure NIS Client is not installed"
     Test = {
-        $test1 = dpkg -s nis | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'nis' is not installed"){
+        $test1 = dpkg -l | grep -o nis
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1447,8 +1448,8 @@
     Id = "2.2.2"
     Task = "Ensure rsh client is not installed"
     Test = {
-        $test1 = dpkg -s rsh-client | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'rsh-client' is not installed"){
+        $test1 = dpkg -l | grep -o rsh-client
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1464,8 +1465,8 @@
     Id = "2.2.3"
     Task = "Ensure talk client is not installed"
     Test = {
-        $test1 = dpkg -s talk | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'talk' is not installed"){
+        $test1 = dpkg -l | grep -o talk
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1481,8 +1482,8 @@
     Id = "2.2.4"
     Task = "Ensure telnet client is not installed"
     Test = {
-        $test1 = dpkg -s telnet | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'telnet' is not installed"){
+        $test1 = dpkg -l | grep -o telnet
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1498,8 +1499,8 @@
     Id = "2.2.5"
     Task = "Ensure LDAP client is not installed"
     Test = {
-        $test1 = dpkg -s ldap-utils | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'ldap-utils' is not installed"){
+        $test1 = dpkg -l | grep -o ldap-utils
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1515,8 +1516,8 @@
     Id = "2.2.6"
     Task = "Ensure RPC is not installed"
     Test = {
-        $test1 = dpkg -s rpcbind | grep -E '(Status:|not installed)'
-        if($test1 -match "package 'rpcbind' is not installed"){
+        $test1 = dpkg -l | grep -o rpcbind
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1988,8 +1989,8 @@
     Id = "3.5.2.1"
     Task = "Ensure nftables is installed"
     Test = {
-        $test1 = dpkg-query -s nftables | grep 'Status: install ok installed'
-        if($test1 -match "Status: install ok installed"){
+        $test1 = dpkg -l | grep -o nftables
+        if($test1 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2292,8 +2293,9 @@
     Id = "4.1.1.1"
     Task = "Ensure auditd is installed"
     Test = {
-        $test1 = dpkg -s auditd audispd-plugins
-        if($test1 -notmatch "package 'auditd' is not installed"){
+        $test1 = dpkg -l | grep -o auditd
+        $test2 = dpkg -l | grep -o audispd-plugins
+        if($test1 -ne $null -and $test2 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
