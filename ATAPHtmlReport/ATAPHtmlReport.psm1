@@ -390,6 +390,27 @@ function Show-ReportSections {
 	}
 }
 
+function Compare-EqualCISVersions {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]]
+		$BasedOn
+	)
+	$os = [System.Environment]::OSVersion.Platform
+	if($os -match "Win32NT" -and $Title -match "Win"){
+		$testVersion = $BasedOn[0].Split(',')[1]
+		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
+		if($testVersion -eq "1.11.0"){
+			return "The CIS Versions used for the MITRE mapping and testing are the same."
+		}
+		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
+	}
+}
+
 function Get-HtmlReportSection {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -1302,11 +1323,19 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-					if($MITRE) {
+					if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")) {
 						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
+							htmlElement 'h1'@{} {"Verson of CIS in MITRE Mapping and tests"}
+							htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
 							htmlElement 'h1'@{} {"MITRE ATT&CK"}
 							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
 							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
+						}
+					}
+					elseif($MITRE) {
+						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
+							htmlElement 'h1'@{} {"MITRE ATT&CK"}
+							htmlElement 'p'@{} {'MITRE Mapping just supported on Windows OS'}
 						}
 					}
 
