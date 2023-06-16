@@ -1,3 +1,14 @@
+function Get-IPv6Disabled{
+    $test1 = sysctl net.ipv6.conf.all.disable_ipv6
+    $test2 = sysctl net.ipv6.conf.default.disable_ipv6
+    $grep = grep -E '^\s*net\.ipv6\.conf\.(all|default)\.disable_ipv6\s*=\s*1\b(\s+#.*)?$'/etc/sysctl.conf /etc/sysctl.d/*.conf | cut -d: -f2
+    if($test1 -match "net.ipv6.conf.all.disable_ipv6 = 1" -and $test2 -match "net.ipv6.conf.default.disable_ipv6 = 1" -and $grep -match "net.ipv6.conf.all.disable_ipv6 = 1" -and $grep -match "net.ipv6.conf.default.disable_ipv6 = 1"){
+        return $true
+    }
+    return $false
+}
+$isIPv6Disabled = Get-IPv6Disabled
+
 [AuditTest] @{
     Id = "1.1.1.1"
     Task = "Ensure mounting of cramfs filesystems is disabled"
@@ -610,8 +621,8 @@
     Id = "1.3.1"
     Task = "Ensure AIDE is installed"
     Test = {
-        $result1 = dpkg -l | grep -o aide
-        $result2 = dpkg -l | grep -o aide-common
+        $result1 = dpkg -l aide | grep '^ii'
+        $result2 = dpkg -l aide-common | grep '^ii'
         if($result1 -eq $null -or $result2 -eq $null){
             return @{
                 Message = "Not-Compliant"
@@ -1546,9 +1557,7 @@
     Id = "3.1.1"
     Task = "Disable IPv6"
     Test = {
-        $test1 = sysctl net.ipv6.conf.all.disable_ipv6
-        $test2 = sysctl net.ipv6.conf.default.disable_ipv6
-        if($test1 -match "net.ipv6.conf.all.disable_ipv6 = 1" -and $test2 -match "net.ipv6.conf.default.disable_ipv6 = 1"){
+        if($isIPv6Disabled -eq $true){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1564,16 +1573,17 @@
     Id = "3.1.2"
     Task = "Ensure wireless interfaces are disabled"
     Test = {
-        bash "./3.1.2-Ensure wireless interfaces are disabled.sh"
-        
-        if($test1 -match "net.ipv6.conf.all.disable_ipv6 = 1" -and $test2 -match "net.ipv6.conf.default.disable_ipv6 = 1"){
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-3.1.2.sh"
+        $result=bash $path
+        if($result -match "Wireless is not enabled"){
             return @{
                 Message = "Compliant"
                 Status = "True"
             }
         }
         return @{
-            Message = "Not-Compliant"
+            Message = "Wireless interfaces are active"
             Status = "False"
         }
     }
@@ -1586,7 +1596,7 @@
         $test2 = sysctl net.ipv4.conf.default.send_redirects
         $test3 = grep -E "^\s*net\.ipv4\.conf\.all\.send_redirects" /etc/sysctl.conf /etc/sysctl.d/*
         $test4 = grep -E "^\s*net\.ipv4\.conf\.default\.send_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-        if($test1 -match "net.ipv4.conf.all.send_redirects = 0" -and $test2 -match "net.ipv4.conf.default.send_redirects = 0" -and $test3 -match "net.ipv4.conf.all.send_redirects = 0" -and $test4 -match "net.ipv4.conf.default.send_redirects= 0"){
+        if($test1 -match "net.ipv4.conf.all.send_redirects = 0" -and $test2 -match "net.ipv4.conf.default.send_redirects = 0" -and $test3 -match "net.ipv4.conf.all.send_redirects = 0" -and $test4 -match "net.ipv4.conf.default.send_redirects = 0"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1605,9 +1615,17 @@
         $test1 = sysctl net.ipv4.ip_forward
         $test2 = grep -E -s "^\s*net\.ipv4\.ip_forward\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
         if($test1 -match "net.ipv4.ip_forward = 0" -and $test2 -eq $null){
-            $test1 = sysctl net.ipv6.conf.all.forwarding
-            $test2 = grep -E -s "^\s*net\.ipv6\.conf\.all\.forwarding\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
-            if($test1 -match "net.ipv6.conf.all.forwarding = 0" -and $test2 -eq $null){
+            if($isIPv6Disabled -ne $true){
+                $test1 = sysctl net.ipv6.conf.all.forwarding
+                $test2 = grep -E -s "^\s*net\.ipv6\.conf\.all\.forwarding\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
+                if($test1 -match "net.ipv6.conf.all.forwarding = 0" -and $test2 -eq $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            else{
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -1628,12 +1646,20 @@
         $test2 = sysctl net.ipv4.conf.default.accept_source_route
         $test3 = grep "net\.ipv4\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
         $test4 = grep "net\.ipv4\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
-        if($test1 -match "net.ipv4.conf.all.accept_source_route = 0" -and $test2 -match "net.ipv4.conf.default.accept_source_route = 0" -and $test3 -match "net.ipv4.conf.all.accept_source_route= 0" -and $test4 -match "net.ipv4.conf.default.accept_source_route= 0"){
-            $test1 = sysctl net.ipv6.conf.all.accept_source_route
-            $test2 = sysctl net.ipv6.conf.default.accept_source_route
-            $test3 = grep "net\.ipv6\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
-            $test4 = grep "net\.ipv6\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
-            if($test1 -match "net.ipv6.conf.all.accept_source_route = 0" -and $test2 -match "net.ipv6.conf.default.accept_source_route = 0" -and $test3 -match "net.ipv4.conf.all.accept_source_route= 0" -and $test4 -match "net.ipv6.conf.default.accept_source_route= 0"){
+        if($test1 -match "net.ipv4.conf.all.accept_source_route = 0" -and $test2 -match "net.ipv4.conf.default.accept_source_route = 0" -and $test3 -match "net.ipv4.conf.all.accept_source_route = 0" -and $test4 -match "net.ipv4.conf.default.accept_source_route = 0"){
+            if($isIPv6Disabled -eq $false){
+                $test1 = sysctl net.ipv6.conf.all.accept_source_route
+                $test2 = sysctl net.ipv6.conf.default.accept_source_route
+                $test3 = grep "net\.ipv6\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
+                $test4 = grep "net\.ipv6\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
+                if($test1 -match "net.ipv6.conf.all.accept_source_route = 0" -and $test2 -match "net.ipv6.conf.default.accept_source_route = 0" -and $test3 -match "net.ipv4.conf.all.accept_source_route = 0" -and $test4 -match "net.ipv6.conf.default.accept_source_route = 0"){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            else{
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -1654,12 +1680,20 @@
         $test2 = sysctl net.ipv4.conf.default.accept_redirects
         $test3 = grep "net\.ipv4\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
         $test4 = grep "net\.ipv4\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-        if($test1 -match "net.ipv4.conf.all.accept_redirects = 0" -and $test2 -match "net.ipv4.conf.default.accept_redirects = 0" -and $test3 -match "net.ipv4.conf.all.accept_redirects= 0" -and $test4 -match "net.ipv4.conf.default.accept_redirects= 0"){
-            $test1 = sysctl net.ipv6.conf.all.accept_redirects
-            $test2 = sysctl net.ipv6.conf.default.accept_redirects
-            $test3 = grep "net\.ipv6\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-            $test4 = grep "net\.ipv6\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-            if($test1 -match "net.ipv6.conf.all.accept_redirects = 0" -and $test2 -match "net.ipv6.conf.default.accept_redirects = 0" -and $test3 -match "net.ipv6.conf.all.accept_redirects= 0" -and $test4 -match "net.ipv6.conf.default.accept_redirects= 0"){
+        if($test1 -match "net.ipv4.conf.all.accept_redirects = 0" -and $test2 -match "net.ipv4.conf.default.accept_redirects = 0" -and $test3 -match "net.ipv4.conf.all.accept_redirects = 0" -and $test4 -match "net.ipv4.conf.default.accept_redirects = 0"){
+            if($isIPv6Disabled -eq $false){
+                $test1 = sysctl net.ipv6.conf.all.accept_redirects
+                $test2 = sysctl net.ipv6.conf.default.accept_redirects
+                $test3 = grep "net\.ipv6\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+                $test4 = grep "net\.ipv6\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+                if($test1 -match "net.ipv6.conf.all.accept_redirects = 0" -and $test2 -match "net.ipv6.conf.default.accept_redirects = 0" -and $test3 -match "net.ipv6.conf.all.accept_redirects = 0" -and $test4 -match "net.ipv6.conf.default.accept_redirects = 0"){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            else{
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -1680,7 +1714,7 @@
         $test2 = sysctl net.ipv4.conf.default.secure_redirects
         $test3 = grep "net\.ipv4\.conf\.all\.secure_redirects" /etc/sysctl.conf /etc/sysctl.d/*
         $test4 = grep "net\.ipv4\.conf\.default\.secure_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-        if($test1 -match "net.ipv4.conf.all.secure_redirects = 0" -and $test2 -match "net.ipv4.conf.default.secure_redirects = 0" -and $test3 -match "net.ipv4.conf.all.secure_redirects= 0" -and $test4 -match "net.ipv4.conf.default.secure_redirects= 0"){
+        if($test1 -match "net.ipv4.conf.all.secure_redirects = 0" -and $test2 -match "net.ipv4.conf.default.secure_redirects = 0" -and $test3 -match "net.ipv4.conf.all.secure_redirects = 0" -and $test4 -match "net.ipv4.conf.default.secure_redirects = 0"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1756,7 +1790,7 @@
         $test2 = sysctl net.ipv4.conf.default.rp_filter
         $test3 = grep "net\.ipv4\.conf\.all\.rp_filter" /etc/sysctl.conf /etc/sysctl.d/*
         $test4 = grep "net\.ipv4\.conf\.default\.rp_filter" /etc/sysctl.conf /etc/sysctl.d/*
-        if($test1 -match "net.ipv4.conf.all.rp_filter = 1" -and $test2 -match "net.ipv4.conf.default.rp_filter = 1" -and $test3 -match "net.ipv4.conf.all.rp_filter = 1" -and $test4 -match "net.ipv4.conf.default.rp_filter = 1"){
+        if($test1 -match "net.ipv4.conf.all.rp_filter = 1" -and $test2 -match "net.ipv4.conf.default.rp_filter = 1" -and $test3 -match "net.ipv4.conf.all.rp_filter=1" -and $test4 -match "net.ipv4.conf.default.rp_filter=1"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1899,8 +1933,8 @@
     Id = "3.5.1.2"
     Task = "Ensure iptables-persistent is not installed with ufw"
     Test = {
-        $test1 = dpkg-query -s iptables-persistent
-        if($test1 -match "'iptables-persistent' is not installed"){
+        $test1 = dpkg -l | grep -o iptables-persistent
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2002,8 +2036,8 @@
     Id = "3.5.2.2"
     Task = "Ensure ufw is uninstalled or disabled with nftables"
     Test = {
-        $test1 = dpkg-query -s ufw | grep 'Status: install ok installed'
-        if($test1 -match "package 'ufw' is not installed"){
+        $test1 = dpkg -l | grep -o ufw
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2236,10 +2270,8 @@
     Id = "3.5.3.1.3"
     Task = "Ensure ufw is uninstalled or disabled with iptables"
     Test = {
-        $test1 = dpkg-query -s ufw
-        $test2 = ufw status
-        $test3 = systemctl is-enabled ufw
-        if($test1 -match "package 'ufw' is not installed" -and $test2 -match "Status: inactive" -and $test3 -match "masked"){
+        $test1 = dpkg -l | grep -o ufw
+        if($test1 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
