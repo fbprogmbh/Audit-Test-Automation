@@ -498,6 +498,32 @@ function Invoke-ATAPReport {
 	return $report
 }
 
+function Compare-EqualCISVersions {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]]
+		$BasedOn,
+
+		[Parameter(Mandatory = $false)]
+		[switch] $MITRE
+	)
+	$os = [System.Environment]::OSVersion.Platform
+	if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")){
+		$testVersion = $BasedOn[0].Split(',')[1]
+		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
+		if($testVersion -eq "1.11.0"){
+			Write-Host "The CIS Versions used for the MITRE mapping and testing are the same."
+		}
+		else {
+			Write-Host "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
+		}
+	}
+}
+
 <#
 .SYNOPSIS
 	The Audit Test Automation Package creates transparents reports about hardening compliance status
@@ -589,8 +615,8 @@ function Save-ATAPHtmlReport {
 	#hashes for each recommendation
 	$hashtable_sha256 = GenerateHashTable $report
 
-
-	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode 
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus #-DarkMode:$DarkMode
+	$report | Compare-EqualCISVersions -MITRE:$MITRE
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
