@@ -1761,6 +1761,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         }
     }
 }
+
 [AuditTest] @{
     Id = "3.3.5"
     Task = "Ensure broadcast ICMP requests are ignored"
@@ -2234,23 +2235,6 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         }
     }
 }
-# [AuditTest] @{
-#     Id = "3.5.2.10"
-#     Task = "Ensure nftables rules are permanent"
-#     Test = {
-#         $test1 = [ -n "$(grep -E '^\s*include' /etc/nftables.conf)" ] && awk '/hook input/,/}/' $(awk '$1 ~ /^\s*include/ { gsub("\"","",$2); print $2 }' /etc/nftables.conf)
-#         if($test1 -match "enabled"){
-#             return @{
-#                 Message = "Compliant"
-#                 Status = "True"
-#             }
-#         }
-#         return @{
-#             Message = "Not-Compliant"
-#             Status = "False"
-#         }
-#     }
-# }
 [AuditTest] @{
     Id = "3.5.3.1.1"
     Task = "Ensure iptables packages are installed"
@@ -2292,6 +2276,41 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         $test1 = dpkg -l | grep -o ufw
         if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.2.1"
+    Task = "Ensure iptables loopback traffic is configured"
+    Test = {
+        $test1 = iptables -L INPUT -v -n
+        $test2 = iptables -L OUTPUT -v -n
+        if($test1 -contains "Chain INPUT (policy DROP" -and $test2 -match "Chain OUTPUT (policy DROP"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.2.2"
+    Task = "Ensure iptables outbound and established connections are configured"
+    Test = {
+        $test1 = iptables -L -v -n
+        if($test1 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2792,18 +2811,37 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure unsuccessful unauthorized file access attempts are collected"
     Test = {
         try{
-            $test1 = grep access /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep access
-            if($test1 -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S
-            ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access
-            -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S
-            ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and $test2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-
-            EACCES -F auid>=1000 -F auid!=-1 -F key=access
-            -a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-
-            EPERM -F auid>=1000 -F auid!=-1 -F key=access"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
+            $bitVersion = uname -a
+            if($bitVersion -match "i386"){
+                $output = grep access /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access"
+                $output2 = auditctl -l | grep access
+                $test3 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
+                $test4 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
+                if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            elseif($bitVersion -match "x86_64"){
+                $output = grep access /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access"
+                $test3 = $output -match "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access"
+                $test4 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access"
+                $output2 = auditctl -l | grep access
+                $test5 = $output2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
+                $test6 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
+                $test7 = $output2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
+                $test8 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
+                if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test7 -ne $null -and $test8 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
                 }
             }
             return @{
@@ -2824,12 +2862,31 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure successful file system mounts are collected"
     Test = {
         try{
-            $test1 = grep mounts /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep mounts
-            if($test1 -match "--a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and $test2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
+            $bitVersion = uname -a
+            if($bitVersion -match "i386"){
+                $output = grep mounts /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts"
+                $output2 = auditctl -l | grep mounts
+                $test2 = $output2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
+                if($test1 -ne $null -and $test2 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            elseif($bitVersion -match "x86_64"){
+                $output = grep mounts /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts"
+                $output2 = auditctl -l | grep mounts
+                $test3 = $output2 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
+                $test4 = $output2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
+                if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
                 }
             }
             return @{
@@ -3116,7 +3173,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         $test1 = systemctl is-enabled cron
         $test2 = systemctl status cron | grep 'Active: active (running) '
-        if($test1 -match "enabled" -and $test2 -match "Active: active (running)"){
+        if($test1 -eq "enabled" -and $test2 -match "running"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3133,7 +3190,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/crontab are configured"
     Test = {
         $test1 = stat /etc/crontab
-        if($test1 -match "Access: (0600/-rw-------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        if($test1 -eq "Access: (0600/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3150,7 +3207,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/cron.hourly are configured"
     Test = {
         $test1 = stat /etc/cron.hourly/
-        if($test1 -match "Access: (0700/drwx------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3167,7 +3224,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/cron.daily are configured"
     Test = {
         $test1 = stat /etc/cron.daily/
-        if($test1 -match "Access: (0700/drwx------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3184,7 +3241,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/cron.weekly are configured"
     Test = {
         $test1 = stat /etc/cron.weekly/
-        if($test1 -match "Access: (0700/drwx------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3201,7 +3258,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/cron.monthly are configured"
     Test = {
         $test1 = stat /etc/cron.monthly/
-        if($test1 -match "Access: (0700/drwx------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3218,7 +3275,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/cron.d are configured"
     Test = {
         $test1 = stat /etc/cron.d/
-        if($test1 -match "Access: (0700/drwx------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3235,8 +3292,9 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure cron is restricted to authorized users"
     Test = {
         $test1 = stat /etc/cron.deny
-        $test2 = stat /etc/cron.allow
-        if($test1 -match "stat: cannot stat `/etc/cron.deny': No such file or directory" -and $test2 -match "Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        $test1 = $?
+        $test2 = stat /etc/cron.allow | grep 0640
+        if($test1 -match "False" -and $test2 -eq "Access: (0640/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3250,11 +3308,12 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
 }
 [AuditTest] @{
     Id = "5.1.9"
-    Task = "Ensure cron is restricted to authorized users"
+    Task = "Ensure at is restricted to authorized users"
     Test = {
         $test1 = stat /etc/at.deny
-        $test2 = stat /etc/at.allow
-        if($test1 -match "stat: cannot stat `/etc/at.deny': No such file or directory" -and $test2 -match "Access: (0640/-rw-r-----) Uid: ( 0/ root) Gid: ( 0/ root)"){
+        $test1 = $?
+        $test2 = stat /etc/at.allow | grep 0640
+        if($test1 -match "False" -and $test2 -eq "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3323,7 +3382,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         try{
             try{
-                $test1 = stat /etc/ssh/sshd_config
+                $test1 = stat /etc/ssh/sshd_config | grep 0600
             }
             catch{
                 return @{
@@ -3332,7 +3391,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 }
             }
 
-            if($test1 -match "Access: (0600/-rw-------) Uid: ( 0/ root) Gid: ( 0/ root)"){
+            if($test1 -eq "Access: (0600/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)"){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -3483,7 +3542,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH MaxAuthTries is set to 4 or less"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep maxauthtries
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep maxauthtries | cut -d ' ' -f 2
             try{
                 $test2 = grep -Eis '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
             }
@@ -3493,7 +3552,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                     Status = "False"
                 }
             }
-            if($test1 -match "maxauthtries 4" -and $test2 -eq $null){
+            if($test1 -le 4 -and $test2 -eq $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -3791,7 +3850,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep logingracetime
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
             try{
                 $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3937,7 +3996,10 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                     Status = "False"
                 }
             }
-            if($test1 -match "10:30:60" -and $test2 -eq $null){
+            $value1 = $test1 | cut -d ':' -f 1
+            $value2 = $test1 | cut -d ':' -f 2
+            $value3 = $test1 | cut -d ':' -f 3
+            if($value1 -ge 10 -and $value2 -ge 30 -and $value3 -ge 60 -and $test2 -eq $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -3962,6 +4024,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         try{
             $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
+            
             try{
                 $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4197,9 +4260,10 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
 }
 [AuditTest] @{
     Id = "5.7"
-    Task = "Ensure access to the su command is restricte"
+    Task = "Ensure access to the su command is restricted"
     Test = {
         $test1 = grep pam_wheel.so /etc/pam.d/su
+
         if($test1 -match "auth required pam_wheel.so use_uid group="){
             $test2 = $test1 | cut -d '=' -f 2
             $test3 = grep $test2 /etc/group | cut -d ':' -f 4
@@ -4220,15 +4284,11 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.1"
     Task = "Audit system file permissions"
     Test = {
-        $test1 = grep pam_wheel.so /etc/pam.d/su
-        if($test1 -match "auth required pam_wheel.so use_uid group="){
-            $test2 = $test1 | cut -d '=' -f 2
-            $test3 = grep $test2 /etc/group | cut -d ':' -f 4
-            if($test3 -eq $null){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
+        $test1 = dpkg --verify $(dpkg --get-selections | awk '{print $1}')
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
             }
         }
         return @{
@@ -4242,7 +4302,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/passwd are configured"
     Test = {
         $test1 = stat /etc/passwd
-        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        if($test1 -eq "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4259,7 +4319,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/passwd- are configured"
     Test = {
         $test1 = stat /etc/passwd-
-        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        if($test1 -eq "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4276,7 +4336,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure permissions on /etc/group are configured"
     Test = {
         $test1 = stat /etc/group
-        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        if($test1 -eq "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4292,8 +4352,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.5"
     Task = "Ensure permissions on /etc/group- are configured"
     Test = {
-        $test1 = stat /etc/group-
-        if($test1 -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        $test1 = stat /etc/group- | grep 0644
+        if($test1 -eq "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4309,8 +4369,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.6"
     Task = "Ensure permissions on /etc/shadow are configured"
     Test = {
-        $test1 = stat /etc/shadow
-        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        $test1 = stat /etc/shadow | grep 0640
+        if($test1 -eq "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4326,8 +4386,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.7"
     Task = "Ensure permissions on /etc/shadow- are configured"
     Test = {
-        $test1 = stat /etc/shadow-
-        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    42/    shadow)"){
+        $test1 = stat /etc/shadow- | grep 0640
+        if($test1 -eq "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (   42/  shadow)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4343,8 +4403,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.8"
     Task = "Ensure permissions on /etc/gshadow are configured"
     Test = {
-        $test1 = stat /etc/gshadow
-        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    42/    shadow)"){
+        $test1 = stat /etc/gshadow | grep 0640
+        if($test1 -eq "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (   42/  shadow)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4360,8 +4420,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.9"
     Task = "Ensure permissions on /etc/gshadow- are configured"
     Test = {
-        $test1 = stat /etc/gshadow-
-        if($test1 -match "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    42/    shadow)"){
+        $test1 = stat /etc/gshadow- | grep 0640
+        if($test1 -eq "Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (   42/  shadow)"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4438,15 +4498,13 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Audit SUID executables"
     Test = {
         $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -4000
-        if($test1 -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
+        $message = ""
+        foreach($line in $test1){
+            $message += "<br>$line"
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Please review following list of files: $($message)"
+            Status = "None"
         }
     }
 }
@@ -4455,15 +4513,13 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Audit SGID executables"
     Test = {
         $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -2000
-        if($test1 -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
+        $message = ""
+        foreach($line in $test1){
+            $message += "<br>$line"
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Please review following list of files: $($message)"
+            Status = "None"
         }
     }
 }
