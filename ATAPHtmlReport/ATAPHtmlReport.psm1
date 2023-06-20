@@ -325,6 +325,18 @@ function Get-HtmlToc {
 	}
 }
 
+class MitreMap {
+    [System.Collections.Generic.Dictionary[string, MitreTechniquesMap]] $Tactics
+}
+
+class MitreTechniquesMap {
+    [System.Collections.Generic.Dictionary[string, CisAuditsMap]] $Techniques
+}
+
+class CisAuditsMap {
+    [System.Collections.Generic.Dictionary[string, bool]] $CisAuditResults
+}
+
 function Merge-CisAuditsToMitreMap {
     <#
 	.Synopsis
@@ -347,7 +359,12 @@ function Merge-CisAuditsToMitreMap {
         $cisIdColumn = "B"
         $cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
 
-        $map = @{}
+		[CisAuditsMap] $cisAuditsMap = @{}
+		[MitreTechniquesMap] $mitreTechniquesMap = @{}
+        [MitreMap] $mitreMap= @{}
+		$cisAuditsMap.CisAuditResults = @{}
+		$mitreTechniquesMap.Techniques = @{}
+		$mitreMap.Tactics = @{}
     }
         
     Process {
@@ -360,24 +377,31 @@ function Merge-CisAuditsToMitreMap {
             $technique1 = $worksheet.Cells.Item($row, 7).Text
             $technique2 = $worksheet.Cells.Item($row, 8).Text
         
-            if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
-				if($null -eq $map[$tactic1]){
-					$map[$tactic1] = @{}
+			if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
+				if($null -eq $mitreMap.Tactics[$tactic1]){
+					$mitreMap.Tactics[$tactic1] = @{}
 				}
-				if($null -eq ($($map[$tactic1])[$technique1])){
-					$($map[$tactic1])[$technique1]= @{}
+				if($null -eq $mitreTechniquesMap.Techniques[$technique1]){
+					$mitreTechniquesMap.Techniques[$technique1] = @{}
 				}
-                $($($map[$tactic1])[$technique1])[$id] = $Audit.Status
-            }
-            if ($tactic2 -ne "No MITRE ATT&CK mapping  " -and $tactic2 -ne "" -and $technique2 -ne "") {
-				if($null -eq $map[$tactic2]){
-					$map[$tactic2] = @{}
+				$cisAuditsMap.CisAuditResults[$id] = $Audit.Status
+				#$mitreTechniquesMap.Techniques[$technique1] = $cisAuditsMap.CisAuditResults[$id]
+				#$mitreMap.Tactics[$tactic1] = $mitreTechniquesMap.Techniques[$technique1]
+			}	
+            
+			if ($tactic2 -ne "No MITRE ATT&CK mapping  ") {
+				if($null -eq $mitreMap.Tactics[$tactic2]){
+					$mitreMap.Tactics[$tactic2] = @{}
 				}
-				if($null -eq ($($map[$tactic2])[$technique2])){
-					$($map[$tactic2])[$technique2]= @{}
+				if($null -eq $mitreTechniquesMap.Techniques[$technique2]){
+					$mitreTechniquesMap.Techniques[$technique2] = @{}
 				}
-                $($($map[$tactic2])[$technique2])[$id] = $Audit.Status
-            }
+				$cisAuditsMap.CisAuditResults[$id] = $Audit.Status
+				#$mitreTechniquesMap.Techniques[$technique2] = $cisAuditsMap.CisAuditResults[$id]
+				#$mitreMap.Tactics[$tactic2] = $mitreTechniquesMap.Techniques[$technique2]
+			}
+			$mitreTechniquesMap.Techniques[$technique1] += $cisAuditsMap.CisAuditResults
+			$mitreMap.Tactics[$tactic1] += $mitreTechniquesMap.Techniques
         }
     }
         
@@ -389,7 +413,7 @@ function Merge-CisAuditsToMitreMap {
         [System.GC]::Collect()
         [System.GC]::WaitForPendingFinalizers()
 
-        return $map
+        return $mitreMap
     }
 }
 
@@ -883,9 +907,18 @@ function Get-ATAPHtmlReport {
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
 							$section | Get-HtmlReportSection 
-							$section | Show-ReportSections
+							#$section | Show-ReportSections
 						}
-						
+						$mapping = $Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
+                        foreach ($tactic in $mapping.Keys) {
+                            Write-Host "$tactic = "
+                            foreach ($technique in $($mapping[$tactic]).Keys) {
+                                Write-Host "    $technique = "
+                                foreach ($id in $($($mapping[$tactic])[$technique]).Keys) {
+                                    Write-Host "        $id = $($($($mapping[$tactic])[$technique])[$id])"
+                                }
+                            }
+                        }
 					}
 
 
