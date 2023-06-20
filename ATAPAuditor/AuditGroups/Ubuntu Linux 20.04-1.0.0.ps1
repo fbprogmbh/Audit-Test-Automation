@@ -787,12 +787,17 @@ $isIPv6Disabled = Get-IPv6Disabled
             $result1 = grep -Es '^(\*|\s).*hard.*core.*(\s+#.*)?$' /etc/security/limits.conf /etc/security/limits.d/*
             $result2 = sysctl fs.suid_dumpable
             $result3 = grep "fs.suid_dumpable" /etc/sysctl.conf /etc/sysctl.d/*
-            $result4 = systemctl is-enabled coredump.service
-            $message = "Compliant"
-            if($result4 -match "enabled" -or $result4 -match "masked" -or $result4 -match "disabled"){
-                $message = "systemd-coredump is installed"
+            try{
+                $result4 = systemctl is-enabled coredump.service
+                $message = "Compliant"
+                if($result4 -match "enabled" -or $result4 -match "masked" -or $result4 -match "disabled"){
+                    $message = "systemd-coredump is installed"
+                }
             }
-            if($result1 -match "*            hard    core            0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
+            catch{
+                $message = "systemd-coredump not installed"
+            }
+            if($result1 -match "hard" -and $result1 -match "core" -and $result1 -match "0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
                 return @{
                     Message = $message
                     Status = "True"
@@ -1064,11 +1069,8 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure updates, patches, and additional security software are installed"
     Test = {
         $output = apt -s upgrade
-        $result1 = $output | sed '13!d' | cut -d ' ' -f 1
-        $result2 = $output | sed '13!d' | cut -d ' ' -f 3
-        $result3 = $output | sed '13!d' | cut -d ' ' -f 6
-        $result4 = $output | sed '13!d' | cut -d ' ' -f 10
-        if($result1 -eq 0 -and $result2 -eq 0 -and $result3 -eq 0 -and $result4 -eq 0){
+        $output = $?
+        if($output -match "True"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1080,13 +1082,14 @@ $isIPv6Disabled = Get-IPv6Disabled
         }
     }
 }
+
 [AuditTest] @{
     Id = "2.1.1.1"
     Task = "Ensure time synchronization is in use"
     Test = {
-        $test1 = systemctl is-enabled systemd-timesyncd        
-        $test2 = dpkg -s chrony
-        $test3 = dpkg -s ntp
+        $test1 = systemctl is-enabled systemd-timesyncd    
+        $test2 = dpkg -s ntp
+        $test3 = dpkg -s chrony
         if($test1 -match "enabled" -or $test2 -match "Status: install ok installed" -or $test3 -match "Status: install ok installed"){
             return @{
                 Message = "Compliant"
@@ -1099,65 +1102,72 @@ $isIPv6Disabled = Get-IPv6Disabled
         }
     }
 }
-[AuditTest] @{
-    Id = "2.1.1.2"
-    Task = "Ensure systemd-timesyncd is configured"
-    Test = {
-        $test1 = dpkg -s ntp
-        $test2 = dpkg -s chrony
-        $test3 = systemctl is-enabled systemd-timesyncd.service
-        $time = timedatectl status
-        if($test1 -match "package 'ntp' is not installed" -and $test2 -match "package 'chrony' is not installed" -and $test3 -match "enabled" -and $time -ne $null){    
-            return @{
-                Message = "Compliant"
-                Status = "True"
+$ntp = dpkg -s ntp
+$ntp = $?
+$chrony = dpkg -s chrony
+$chrony = $?
+$timesyncd = systemctl is-enabled systemd-timesyncd
+
+if($ntp -match "False" -and $chrony -match "False"){
+    [AuditTest] @{
+        Id = "2.1.1.2"
+        Task = "Ensure systemd-timesyncd is configured"
+        Test = {
+            $test1 = systemctl is-enabled systemd-timesyncd.service
+            $time = timedatectl status
+            if($test1 -match "enabled" -and $time -ne $null){    
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
         }
     }
 }
-[AuditTest] @{
-    Id = "2.1.1.3"
-    Task = "Ensure chrony is configured"
-    Test = {
-        $test1 = dpkg -s ntp | grep -E '(Status:|not installed)'
-        $test2 = systemctl is-enabled systemd-timesyncd
-        $test3 = grep -E "^(server|pool)" /etc/chrony/chrony.conf
-        $test4 = ps -ef | grep chronyd | grep "_chrony"
-        if($test1 -match "package 'ntp' is not installed" -and $test2 -match "masked" -and $test3 -ne $null -and $test4 -ne $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
+elseif($ntp -match "False" -and $timesyncd -notmatch "enabled"){
+    [AuditTest] @{
+        Id = "2.1.1.3"
+        Task = "Ensure chrony is configured"
+        Test = {
+            $test1 = dpkg -s ntp | grep -E '(Status:|not installed)'
+            $test2 = systemctl is-enabled systemd-timesyncd
+            $test3 = grep -E "^(server|pool)" /etc/chrony/chrony.conf
+            $test4 = ps -ef | grep chronyd | grep "_chrony"
+            if($test1 -match "package 'ntp' is not installed" -and $test2 -match "masked" -and $test3 -ne $null -and $test4 -ne $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
         }
     }
 }
-[AuditTest] @{
-    Id = "2.1.1.4"
-    Task = "Ensure ntp is configured"
-    Test = {
-        $test1 = dpkg -s chrony | grep -E '(Status:|not installed)'
-        $test2 = systemctl is-enabled systemd-timesyncd
-        $test3 = grep "^restrict" /etc/ntp.conf | grep "restrict -4 default kod nomodify notrap nopeer noquery"
-        $test4 = grep "^restrict" /etc/ntp.conf | grep "restrict -6 default kod nomodify notrap nopeer noquery"
-        $test5 = grep -E "^(server|pool)" /etc/ntp.conf
-        $test6 = grep "RUNASUSER=ntp" /etc/init.d/ntp
-        if($test1 -match "package 'ntp' is not installed" -and $test2 -match "masked" -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -match "RUNASUSER=ntp"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
+elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
+    [AuditTest] @{
+        Id = "2.1.1.4"
+        Task = "Ensure ntp is configured"
+        Test = {
+            $test1 = grep "^restrict" /etc/ntp.conf
+            $test2 = grep -E "^(server|pool)" /etc/ntp.conf
+            $test3 = grep "RUNASUSER=ntp" /etc/init.d/ntp
+            if($test1 -match "restrict -4 default kod notrap nomodify nopeer noquery limited" -and $test1 -match "restrict -6 default kod notrap nomodify nopeer noquery limited" -and $test2 -ne $null -and $test3 -match "RUNASUSER=ntp"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
         }
     }
 }
@@ -1199,8 +1209,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "2.1.4"
     Task = "Ensure CUPS is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o cups
-        if($test1 -eq $null){
+        $test1 = dpkg -s cups
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1421,8 +1432,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "2.1.17"
     Task = "Ensure NIS Server is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o nis
-        if($test1 -eq $null){
+        $test1 = dpkg -s nis
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1438,8 +1450,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "2.2.1"
     Task = "Ensure NIS Client is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o nis
-        if($test1 -eq $null){
+        $test1 = dpkg -s nis
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1455,8 +1468,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "2.2.2"
     Task = "Ensure rsh client is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o rsh-client
-        if($test1 -eq $null){
+        $test1 = dpkg -s rsh-client
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1472,8 +1486,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "2.2.3"
     Task = "Ensure talk client is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o talk
-        if($test1 -eq $null){
+        $test1 = dpkg -s talk
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1951,8 +1966,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure ufw service is enabled"
     Test = {
         $test1 = systemctl is-enabled ufw
+        $test1 = $?
         $test2 = ufw status | grep Status
-        if($test1 -match "enabled" -and $test2 -match "Status: active"){
+        if($test1 -match "True" -and $test2 -match "Status: active"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2036,16 +2052,19 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "3.5.2.2"
     Task = "Ensure ufw is uninstalled or disabled with nftables"
     Test = {
-        $test1 = dpkg -l | grep -o ufw
-        if($test1 -eq $null){
+        $test1 = dpkg-query -s ufw
+        $test1 = $?
+        $test2 = dpkg-query -s nftables
+        $test2 = $?
+        if($test1 -match "True" -and $test2 -match "True"){
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not-Compliant"
+                Status = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -2236,8 +2255,9 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "3.5.3.1.1"
     Task = "Ensure iptables packages are installed"
     Test = {
-        $test1 = apt list iptables iptables-persistent | grep installed
-        if($test1 -match "iptables-persistent" -and $test1 -match "iptables"){
+        $test1 = apt list iptables iptables-persistent
+        $test1 = $?
+        if($test1 -match "True"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2287,8 +2307,14 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "3.5.3.2.3"
     Task = "Ensure iptables default deny firewall policy"
     Test = {
-        $test1 = iptables -L
-        if(($test1 -match "Chain INPUT (policy DROP)" -or $test1 -match "Chain INPUT (policy REJECT)") -and ($test1 -match "Chain FORWARD (policy DROP)" -or $test1 -match "Chain FORWARD (policy REJECT)") -and ($test1 -match "Chain OUTPUT (policy DROP)" -or $test1 -match "Chain OUTPUT (policy REJECT)")){
+        $output = iptables -L
+        $test1 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
+        $res1 = $?
+        $test2 = $output -match "DROP" | grep "Chain FORWARD (policy DROP)"
+        $res2 = $?
+        $test3 = $output -match "DROP" | grep "Chain OUTPUT (policy DROP)"
+        $res3 = $?
+        if($res1 -match "True" -and $res2 -match "True" -and $res3 -match "True"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2304,8 +2330,20 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "3.5.3.3.3"
     Task = "Ensure ip6tables default deny firewall policy"
     Test = {
-        $test1 = ip6tables -L
-        if(($test1 -match "Chain INPUT (policy DROP)" -or $test1 -match "Chain INPUT (policy REJECT)") -and ($test1 -match "Chain FORWARD (policy DROP)" -or $test1 -match "Chain FORWARD (policy REJECT)") -and ($test1 -match "Chain OUTPUT (policy DROP)" -or $test1 -match "Chain OUTPUT (policy REJECT)")){
+        $output = ip6tables -L
+        $test1 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
+        $res1 = $?
+        $test2 = $output -match "DROP" | grep "Chain FORWARD (policy DROP)"
+        $res2 = $?
+        $test3 = $output -match "DROP" | grep "Chain OUTPUT (policy DROP)"
+        $res3 = $?
+        if($isIPv6Disabled -eq $true){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        if($res1 -match "True" -and $res2 -match "True" -and $res3 -match "True"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2374,8 +2412,8 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure audit_backlog_limit is sufficient"
     Test = {
         $test1 = grep "^\s*linux" /boot/grub/grub.cfg | grep -v "audit_backlog_limit="
-        $test2 = grep "audit_backlog_limit=" /boot/grub/grub.cfg
-        if($test1 -eq $null -and $test2 -ge 8192){
+        $test2 = grep "audit_backlog_limit=" /boot/grub/grub.cfg | grep "audit_backlog_limit=8192"
+        if($test1 -eq $null -and $test2 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2464,25 +2502,15 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure events that modify date and time information are collected"
     Test = {
         try{
-            $test1 = grep time-change /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep time-change
-            $test3 = grep time-change /etc/audit/rules.d/*.rules
-            $test4 = auditctl -l | grep time-change
-            if($test1 -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-
-            change
-            -a always,exit -F arch=b32 -S clock_settime -k time-change
-            -w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change
-            -a always,exit -F arch=b32 -S clock_settime -F key=time-change
-            -w /etc/localtime -p wa -k time-change" -and $test3 -match "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
-            -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-
-            change
-            -a always,exit -F arch=b64 -S clock_settime -k time-change
-            -a always,exit -F arch=b32 -S clock_settime -k time-change
-            -w /etc/localtime -p wa -k time-change" -and $test4 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change
-            -a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change
-            -a always,exit -F arch=b64 -S clock_settime -F key=time-change
-            -a always,exit -F arch=b32 -S clock_settime -F key=time-change
-            -w /etc/localtime -p wa -k time-change"){
+            $output = grep time-change /etc/audit/rules.d/*.rules
+            $test1 = $output -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change"
+            $test2 = $output -match "-a always,exit -F arch=b32 -S clock_settime -k time-change"
+            $test3 = $output -match "-w /etc/localtime -p wa -k time-change"
+            $output2 = auditctl -l | grep time-change
+            $test4 = $output2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change"
+            $test5 = $output2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change"
+            $test6 = $output2 -match "-w /etc/localtime -p wa -k time-change"
+            if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2506,51 +2534,19 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure events that modify user/group information are collected"
     Test = {
         try{
-            $test1 = grep identity /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep identity
-            if($test1 -match "-w /etc/group -p wa -k identity
-            -w /etc/passwd -p wa -k identity
-            -w /etc/gshadow -p wa -k identity
-            -w /etc/shadow -p wa -k identity
-            -w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity
-            -w /etc/passwd -p wa -k identity
-            -w /etc/gshadow -p wa -k identity
-            -w /etc/shadow -p wa -k identity
-            -w /etc/security/opasswd -p wa -k identity"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            return @{
-                Message = "Not-Compliant"
-                Status = "False"
-            }
-        }
-        catch{
-            return @{
-                Message = "Command not found!"
-                Status = "False"
-            }
-        }
-    }
-}
-[AuditTest] @{
-    Id = "4.1.4"
-    Task = "Ensure events that modify user/group information are collected"
-    Test = {
-        try{
-            $test1 = grep identity /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep identity
-            if($test1 -match "-w /etc/group -p wa -k identity
-            -w /etc/passwd -p wa -k identity
-            -w /etc/gshadow -p wa -k identity
-            -w /etc/shadow -p wa -k identity
-            -w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity
-            -w /etc/passwd -p wa -k identity
-            -w /etc/gshadow -p wa -k identity
-            -w /etc/shadow -p wa -k identity
-            -w /etc/security/opasswd -p wa -k identity"){
+            $output = grep identity /etc/audit/rules.d/*.rules
+            $test1 = $output -match "-w /etc/group -p wa -k identity"
+            $test2 = $output -match "-w /etc/passwd -p wa -k identity"
+            $test3 = $output -match "-w /etc/gshadow -p wa -k identity"
+            $test4 = $output -match "-w /etc/shadow -p wa -k identity"
+            $test5 = $output -match "-w /etc/security/opasswd -p wa -k identity"
+            $output2 = auditctl -l | grep identity
+            $test6 = $output2 -match "-w /etc/group -p wa -k identity"
+            $test7 = $output2 -match "-w /etc/passwd -p wa -k identity"
+            $test8 = $output2 -match "-w /etc/gshadow -p wa -k identity"
+            $test9 = $output2 -match "-w /etc/shadow -p wa -k identity"
+            $test10 = $output2 -match "-w /etc/security/opasswd -p wa -k identity"
+            if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2574,32 +2570,49 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure events that modify the system's network environment are collected"
     Test = {
         try{
-            $test1 = grep system-locale /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep system-locale
-            $test3 = grep system-locale /etc/audit/rules.d/*.rules
-            $test4 = auditctl -l | grep system-locale
-            if($test1 -match "-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
-            -w /etc/issue -p wa -k system-locale
-            -w /etc/issue.net -p wa -k system-locale
-            -w /etc/hosts -p wa -k system-locale
-            -w /etc/network -p wa -k system-locale" -and $test2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale
-            -w /etc/issue -p wa -k system-locale
-            -w /etc/issue.net -p wa -k system-locale
-            -w /etc/hosts -p wa -k system-locale
-            -w /etc/network -p wa -k system-locale" -and $test3 -match "-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
-            -a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
-            -w /etc/issue -p wa -k system-locale
-            -w /etc/issue.net -p wa -k system-locale
-            -w /etc/hosts -p wa -k system-locale
-            -w /etc/network -p wa -k system-locale" -and $test4 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale
-            -a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale
-            -w /etc/issue -p wa -k system-locale
-            -w /etc/issue.net -p wa -k system-locale
-            -w /etc/hosts -p wa -k system-locale
-            -w /etc/network -p wa -k system-locale"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
+            $bitVersion = uname -a
+            #if 32 bit
+            if($bitVersion -match "i386"){
+                $output = grep system-locale /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale"
+                $test2 = $output -match "-w /etc/issue -p wa -k system-locale"
+                $test3 = $output -match "-w /etc/issue.net -p wa -k system-locale"
+                $test4 = $output -match "-w /etc/hosts -p wa -k system-locale"
+                $test5 = $output -match "-w /etc/network -p wa -k system-locale"
+                $output2 = auditctl -l | grep system-locale
+                $test6 = $output2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale"
+                $test7 = $output2 -match "-w /etc/issue -p wa -k system-locale"
+                $test8 = $output2 -match "-w /etc/issue.net -p wa -k system-locale"
+                $test9 = $output2 -match "-w /etc/hosts -p wa -k system-locale"
+                $test10 = $output2 -match "-w /etc/network -p wa -k system-locale"
+                if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            #64 bit
+            elseif($bitVersion -match "x86_64"){
+                $output = grep system-locale /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale"
+                $test1_2 = $output -match "-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale"
+                $test2 = $output -match "-w /etc/issue -p wa -k system-locale"
+                $test3 = $output -match "-w /etc/issue.net -p wa -k system-locale"
+                $test4 = $output -match "-w /etc/hosts -p wa -k system-locale"
+                $test5 = $output -match "-w /etc/network -p wa -k system-locale"
+                $output2 = auditctl -l | grep system-locale
+                $test6 = $output2 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale"
+                $test6_2 = $output2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale"
+                $test7 = $output2 -match "-w /etc/issue -p wa -k system-locale"
+                $test8 = $output2 -match "-w /etc/issue.net -p wa -k system-locale"
+                $test9 = $output2 -match "-w /etc/hosts -p wa -k system-locale"
+                $test10 = $output2 -match "-w /etc/network -p wa -k system-locale"
+                if($test1 -ne $null -and $test1_2 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test6_2 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
                 }
             }
             return @{
@@ -2620,11 +2633,13 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure events that modify the system's Mandatory Access Controls are collected"
     Test = {
         try{
-            $test1 = grep MAC-policy /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep MAC-policy
-            if($test1 -match "-w /etc/apparmor/ -p wa -k MAC-policy
-            -w /etc/apparmor.d/ -p wa -k MAC-policy" -and $test2 -match "-w /etc/apparmor/ -p wa -k MAC-policy
-            -w /etc/apparmor.d/ -p wa -k MAC-policy"){
+            $output = grep MAC-policy /etc/audit/rules.d/*.rules
+            $test1 = $output -match "-w /etc/apparmor/ -p wa -k MAC-policy"
+            $test2 = $output -match "-w /etc/apparmor.d/ -p wa -k MAC-policy"
+            $output2 = auditctl -l | grep MAC-policy
+            $test3 = $output2 -match "-w /etc/apparmor -p wa -k MAC-policy"
+            $test4 = $output2 -match "-w /etc/apparmor.d -p wa -k MAC-policy"
+            if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2648,13 +2663,15 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure login and logout events are collected"
     Test = {
         try{
-            $test1 = grep logins /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep logins
-            if($test1 -match "-w /var/log/faillog -p wa -k logins
-            -w /var/log/lastlog -p wa -k logins
-            -w /var/log/tallylog -p wa -k logins" -and $test2 -match "-w /var/log/faillog -p wa -k logins
-            -w /var/log/lastlog -p wa -k logins
-            -w /var/log/tallylog -p wa -k logins"){
+            $output = grep logins /etc/audit/rules.d/*.rules
+            $test1 = $output -match "-w /var/log/faillog -p wa -k logins"
+            $test2 = $output -match "-w /var/log/lastlog -p wa -k logins"
+            $test3 = $output -match "-w /var/log/tallylog -p wa -k logins"
+            $output2 = auditctl -l | grep logins
+            $test4 = $output2 -match "-w /var/log/faillog -p wa -k logins"
+            $test5 = $output2 -match "-w /var/log/lastlog -p wa -k logins"
+            $test6 = $output2 -match "-w /var/log/tallylog -p wa -k logins"
+            if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2678,13 +2695,15 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure session initiation information is collected"
     Test = {
         try{
-            $test1 = grep -E '(session|logins)' /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep -E '(session|logins)'
-            if($test1 -match "-w /var/run/utmp -p wa -k session
-            -w /var/log/wtmp -p wa -k logins
-            -w /var/log/btmp -p wa -k logins" -and $test2 -match "-w /var/run/utmp -p wa -k session
-            -w /var/log/wtmp -p wa -k logins
-            -w /var/log/btmp -p wa -k logins"){
+            $output = grep -E '(session|logins)' /etc/audit/rules.d/*.rules
+            $test1 = $output -match "-w /var/run/utmp -p wa -k session"
+            $test2 = $output -match "-w /var/log/wtmp -p wa -k logins"
+            $test3 = $output -match "-w /var/log/btmp -p wa -k logins"
+            $output2 = auditctl -l | grep -E '(session|logins)'
+            $test4 = $output2 -match "-w /var/run/utmp -p wa -k session"
+            $test5 = $output2 -match "-w /var/log/wtmp -p wa -k logins"
+            $test6 = $output2 -match "-w /var/log/btmp -p wa -k logins"
+            if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2708,38 +2727,51 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure discretionary access control permission modification events are collected"
     Test = {
         try{
-            $test1 = grep perm_mod /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep perm_mod
-            $test3 = auditctl -l | grep auditctl -l | grep perm_mod
-            if($test1 -match "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F
-            auid!=4294967295 -k perm_mod
-            -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F
-            auid>=1000 -F auid!=4294967295 -k perm_mod
-            -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S
-            removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295
-            -k perm_mod" -and $test2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
-            -F key=perm_mod
-            -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F
-            auid!=-1 -F key=perm_mod
-            -a always,exit -F arch=b32 -S
-            setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
-            auid>=1000 -F auid!=-1 -F key=perm_mod" -and $test3 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
-            -F key=perm_mod
-            -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1
-            -F key=perm_mod
-            -a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F
-            auid!=-1 -F key=perm_mod
-            -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F
-            auid!=-1 -F key=perm_mod
-            -a always,exit -F arch=b64 -S
-            setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
-            auid>=1000 -F auid!=-1 -F key=perm_mod
-            -a always,exit -F arch=b32 -S
-            setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F
-            auid>=1000 -F auid!=-1 -F key=perm_mod"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
+            $bitVersion = uname -a
+            #if 32 bit
+            if($bitVersion -match "i386"){
+                $output = grep perm_mod /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod"
+                $test3 = $output -match "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295"
+                $test4 = $output -match "-k perm_mod"
+                $output2 = auditctl -l | grep perm_mod
+                $test5 = $output2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1"
+                $test6 = $output2 -match "-F key=perm_mod"
+                $test7 = $output2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                $test8 = $output2 -match "-a always,exit -F arch=b32 -S"
+                $test9 = $output2 -match "setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                if($test1 -ne $null -and $test1_2 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test6_2 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null){
+                    
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            #64 Bit
+            elseif($bitVersion -match "x86_64"){
+                $output = grep perm_mod /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod"
+                $test3 = $output -match "-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod"
+                $test4 = $output -match "-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod"
+                $test5 = $output -match "-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295"
+                $test6 = $output -match "-k perm_mod"
+                $test7 = $output -match "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295"
+                $test8 = $output -match "-k perm_mod"
+                $output2 = auditctl -l | grep auditctl -l | grep perm_mod
+                $test9 = $output2 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                $test10 = $output2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                $test11 = $output2 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                $test12 = $output2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                $test13 = $output2 -match "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                $test14 = $output2 -match "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+                if($test1 -ne $null -and $test1_2 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test6_2 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null -and $test11 -ne $null -and $test12 -ne $null -and $test13 -ne $null -and $test14 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
                 }
             }
             return @{
@@ -4034,8 +4066,6 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure minimum days between password changes is configured"
     Test = {
         $test1 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
-        $test2 = awk -F : '(/^[^:]+:[^!*]/ && $4 < 1){print $1 " " $4}' /etc/shadow 
-
         if($test1 -ge 1){
             return @{
                 Message = "Compliant"
@@ -4053,11 +4083,12 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure password expiration is 365 days or less"
     Test = {
         try{
-            $test1 = grep PASS_MAX_DAYS /etc/login.defs | cut -d ' ' -f 2
-            $test2 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
-            $test3 = wk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
-    
-            if($test1 -le 365 -and $test1 -gt $test2){
+            $res=grep PASS_MAX_DAYS /etc/login.defs | tail -1 | cut -d ' ' -f 1
+            $res=$res.substring($res.Length -3)
+
+            $min=grep PASS_MIN_DAYS /etc/login.defs | tail -1 | cut -d ' ' -f 2
+            $min=$min.substring($min.Length -1)
+            if($res -le 365 -and $res -gt $min){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -4081,8 +4112,6 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure password expiration warning days is 7 or more"
     Test = {
         $test1 = grep PASS_WARN_AGE /etc/login.defs | cut -d ' ' -f 2
-        $test2 = awk -F: '(/^[^:]+:[^!*]/ && $6<7){print $1 " " $6}' /etc/shadow
-
         if($test1 -ge 7){
             return @{
                 Message = "Compliant"
@@ -4100,8 +4129,6 @@ $isIPv6Disabled = Get-IPv6Disabled
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
         $test1 = useradd -D | grep INACTIVE | cut -d '=' -2
-        $test2 = awk -F: '(/^[^:]+:[^!*]/ && ($7~/(\s*|-1)/ || $7>30)){print $1 " " $7}'/etc/shadow
-
         if($test1 -le 30){
             return @{
                 Message = "Compliant"
@@ -4118,9 +4145,10 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "5.5.1.5"
     Task = "Ensure all users last password change date is in the past"
     Test = {
-        # $test1 = awk -F : '/^[^:]+:[^!*]/{print $1}' /etc/shadow | while read -r usr; do ["$(date --date="$(chage --list "$usr" | grep '^Last password change' | cut -d: -f2)" +%s)" -gt "$(date "+%s")" ] && echo "user: $usr password change date: $(chage --list "$usr" | grep '^Last password change' | cut -d: -f2)"; done
-
-        if($test1 -eq $null){
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-5.5.1.5.sh"
+        $result=bash $path
+        if($result -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4755,7 +4783,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Test = {
         $test1 = awk -F: '($1=="shadow") {print $NF}' /etc/group
         $test2 = awk -F: -v GID="$(awk -F: '($1=="shadow") {print $3}' /etc/group)" '($4==GID) {print $1}' /etc/passwd
-        if($test1 -eq $null -and $test2 -eq $null){
+        if($test1.Length -eq 0 -and $test2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
