@@ -325,6 +325,154 @@ function Get-HtmlToc {
 	}
 }
 
+function Get-MitreTactics {
+
+    param(
+        [Parameter(Mandatory = $true)]
+        $TechniqueID
+    )
+
+	$map = @{
+	T1005='TA0009'
+	T1505='TA0003'
+	T1104='TA0011'
+	T1216='TA0005'
+	T1207='TA0005'
+	T1110='TA0006'
+	T1608='TA0042'
+	T1091='TA0008', 'TA0001'
+	T1534='TA0008'
+	T1003='TA0006'
+	T1219='TA0011'
+	T1593='TA0043'
+	T1204='TA0002'
+	T1620='TA0005'
+	T1092='TA0011'
+	T1529='TA0040'
+	T1569='TA0002'
+	T1543='TA0004', 'TA0003'
+	T1496='TA0040'
+	T1601='TA0005'
+	T1071='TA0011'
+	T1112='TA0005'
+	T1124='TA0007'
+	T1652='TA0007'
+	T1650='TA0042'
+	T1595='TA0043'
+	T1030='TA0010'
+	T1590='TA0043'
+	T1135='TA0007'
+	T1568='TA0011'
+	T1137='TA0003'
+	T1212='TA0006'
+	T1621='TA0006'
+	T1218='TA0005'
+	T1213='TA0009'
+	T1554='TA0003'
+	T1046='TA0007'
+	T1036='TA0005'
+	T1485='TA0040'
+	T1083='TA0007'
+	T1129='TA0002'
+	T1113='TA0009'
+	T1037='TA0004', 'TA0003'
+	T1482='TA0007'
+	T1612='TA0005'
+	T1201='TA0007'
+	T1203='TA0002'
+	T1047='TA0002'
+	T1048='TA0010'
+	T1561='TA0040'
+	T1102='TA0011'
+	T1490='TA0040'
+	T1497='TA0005', 'TA0007'
+	T1615='TA0007'
+	T1571='TA0011'
+	T1548='TA0004', 'TA0005'
+	T1080='TA0008'
+	T1573='TA0011'
+	T1586='TA0042'
+	T1491='TA0040'
+	T1006='TA0005'
+	T1025='TA0009'
+	T1041='TA0010'
+	T1115='TA0009'
+	T1090='TA0011'
+	T1587='TA0042'
+	T1480='TA0005'
+	T1123='TA0009'
+	T1056='TA0009', 'TA0006'
+	T1011='TA0010'
+	T1553='TA0005'
+	T1484='TA0004', 'TA0005'
+	T1570='TA0008'
+	T1546='TA0004', 'TA0003'
+	T1021='TA0008'
+	T1547='TA0004', 'TA0003'
+	T1619='TA0007'
+	T1008='TA0011'
+	T1588='TA0042'
+	T1489='TA0040'
+	T1016='TA0007'
+	T1563='TA0008'
+	T1125='TA0009'
+	T1199='TA0001'
+	T1211='TA0005'
+	T1127='TA0005'
+	T1098='TA0003'
+	T1001='TA0011'
+	T1538='TA0007'
+	T1222='TA0005'
+	T1119='TA0009'
+	T1012='TA0007'
+	T1537='TA0010'
+	T1018='TA0007'
+	T1528='TA0006'
+	T1596='TA0043'
+	T1187='TA0006'
+	T1614='TA0007'
+	T1105='TA0011'
+	T1486='TA0040'
+	T1609='TA0002'
+	T1555='TA0006'
+	T1578='TA0005'
+	T1221='TA0005'
+	T1027='TA0005'
+	T1647='TA0005'
+	T1082='TA0007'
+	T1606='TA0006'
+	T1070='TA0005'
+	T1598='TA0043'
+	T1526='TA0007'
+	T1007='TA0007'
+	T1495='TA0040'
+	T1074='TA0009'
+	T1111='TA0006'
+	T1649='TA0006'
+	T1594='TA0043'
+	T1202='TA0005'
+	T1558='TA0006'
+	T1220='TA0005'
+	T1114='TA0009'
+	T1591='TA0043'
+	T1567='TA0010'
+	T1562='TA0005'
+	T1525='TA0003'
+	T1106='TA0002'
+	T1176='TA0003'
+	T1120='TA0007'
+	T1029='TA0010'
+	T1499='TA0040'
+	T1531='TA0040'
+	T1136='TA0003'
+	T1049='TA0007'
+	T1217='TA0007'
+	T1580='TA0007'
+	T1611='TA0004'
+	}
+
+	return $map[$TechniqueID]
+}
 function Merge-CisAuditsToMitreMap {
     <#
 	.Synopsis
@@ -355,29 +503,15 @@ function Merge-CisAuditsToMitreMap {
         $cisIdLocation = $cisIdRange.Find($id)
         if ($cisIdLocation) {
             $row = $cisIdLocation.Row
-            $tactic1 = $worksheet.Cells.Item($row, 5).Text
-            $tactic2 = $worksheet.Cells.Item($row, 6).Text
             $technique1 = $worksheet.Cells.Item($row, 7).Text
             $technique2 = $worksheet.Cells.Item($row, 8).Text
         
-            if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
-				if($null -eq $map[$tactic1]){
-					$map[$tactic1] = @{}
-				}
-				if($null -eq ($($map[$tactic1])[$technique1])){
-					$($map[$tactic1])[$technique1]= @{}
-				}
-                $($($map[$tactic1])[$technique1])[$id] = $Audit.Status
-            }
-            if ($tactic2 -ne "No MITRE ATT&CK mapping  " -and $tactic2 -ne "" -and $technique2 -ne "") {
-				if($null -eq $map[$tactic2]){
-					$map[$tactic2] = @{}
-				}
-				if($null -eq ($($map[$tactic2])[$technique2])){
-					$($map[$tactic2])[$technique2]= @{}
-				}
-                $($($map[$tactic2])[$technique2])[$id] = $Audit.Status
-            }
+			foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
+				$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
+			}
+			foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
+				$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
+			}
         }
     }
         
@@ -879,7 +1013,7 @@ function Get-ATAPHtmlReport {
 							$section | Get-HtmlReportSection 
 							$section | Show-ReportSections
 						}
-						
+
 					}
 
 
