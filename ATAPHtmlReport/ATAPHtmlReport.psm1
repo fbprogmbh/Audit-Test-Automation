@@ -910,7 +910,7 @@ function Get-ATAPHtmlReport {
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
 							$section | Get-HtmlReportSection 
-							#$section | Show-ReportSections
+							$section | Show-ReportSections
 						}
 						$Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
 					}
