@@ -326,15 +326,38 @@ function Get-HtmlToc {
 }
 
 class MitreMap {
-    [System.Collections.Generic.Dictionary[string, MitreTechniquesMap]] $Tactics
-}
+    [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, bool]]]]]] $Map
 
-class MitreTechniquesMap {
-    [System.Collections.Generic.Dictionary[string, CisAuditsMap]] $Techniques
-}
+    MitreMap() {
+        $this.Map = @{}
+    }
 
-class CisAuditsMap {
-    [System.Collections.Generic.Dictionary[string, bool]] $CisAuditResults
+    [void] Add($tactic, $technique, $id, $value) {
+        if($tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
+            if($null -eq $this.Map[$tactic]) {
+                $this.Map[$tactic] = @{}
+            }
+            if($null -eq $this.Map[$tactic][$technique]) {
+                $this.Map[$tactic][$technique] = @{}
+            }
+            $this.Map[$tactic][$technique][$id] += $value
+        }
+        else {
+            Write-Error -Message 'Could not add value to Map' -Category InvalidType
+        }
+    }
+
+	[void] Print() {
+		foreach ($tactic in $this.Map.Keys) {
+			Write-Host "$tactic = "
+			foreach ($technique in $this.Map[$tactic].Keys) {
+				Write-Host "    $technique = "
+				foreach ($id in $this.Map[$tactic][$technique].Keys) {
+					Write-Host "        $id = $($this.Map[$tactic][$technique][$id])"
+				}
+			}
+		}
+	}
 }
 
 function Merge-CisAuditsToMitreMap {
@@ -359,49 +382,28 @@ function Merge-CisAuditsToMitreMap {
         $cisIdColumn = "B"
         $cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
 
-		[CisAuditsMap] $cisAuditsMap = @{}
-		[MitreTechniquesMap] $mitreTechniquesMap = @{}
-        [MitreMap] $mitreMap= @{}
-		$cisAuditsMap.CisAuditResults = @{}
-		$mitreTechniquesMap.Techniques = @{}
-		$mitreMap.Tactics = @{}
+		$mitreMap = [MitreMap]::new()
     }
         
     Process {
         $id = $Audit.Id
         $cisIdLocation = $cisIdRange.Find($id)
+
         if ($cisIdLocation) {
             $row = $cisIdLocation.Row
-            $tactic1 = $worksheet.Cells.Item($row, 5).Text
-            $tactic2 = $worksheet.Cells.Item($row, 6).Text
-            $technique1 = $worksheet.Cells.Item($row, 7).Text
-            $technique2 = $worksheet.Cells.Item($row, 8).Text
+            $tactic1 = ($worksheet.Cells.Item($row, 5).Text).Trim()
+            $tactic2 = ($worksheet.Cells.Item($row, 6).Text).Trim()
+            $technique1 = ($worksheet.Cells.Item($row, 7).Text).Trim()
+            $technique2 = ($worksheet.Cells.Item($row, 8).Text).Trim()
         
-			if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
-				if($null -eq $mitreMap.Tactics[$tactic1]){
-					$mitreMap.Tactics[$tactic1] = @{}
-				}
-				if($null -eq $mitreTechniquesMap.Techniques[$technique1]){
-					$mitreTechniquesMap.Techniques[$technique1] = @{}
-				}
-				$cisAuditsMap.CisAuditResults[$id] = $Audit.Status
-				#$mitreTechniquesMap.Techniques[$technique1] = $cisAuditsMap.CisAuditResults[$id]
-				#$mitreMap.Tactics[$tactic1] = $mitreTechniquesMap.Techniques[$technique1]
-			}	
-            
-			if ($tactic2 -ne "No MITRE ATT&CK mapping  ") {
-				if($null -eq $mitreMap.Tactics[$tactic2]){
-					$mitreMap.Tactics[$tactic2] = @{}
-				}
-				if($null -eq $mitreTechniquesMap.Techniques[$technique2]){
-					$mitreTechniquesMap.Techniques[$technique2] = @{}
-				}
-				$cisAuditsMap.CisAuditResults[$id] = $Audit.Status
-				#$mitreTechniquesMap.Techniques[$technique2] = $cisAuditsMap.CisAuditResults[$id]
-				#$mitreMap.Tactics[$tactic2] = $mitreTechniquesMap.Techniques[$technique2]
+			if ($tactic1 -ne "No MITRE ATT&CK mapping") {
+				$mitreMap.Add($tactic1, $technique1, $id, $Audit.Status)
 			}
-			$mitreTechniquesMap.Techniques[$technique1] += $cisAuditsMap.CisAuditResults
-			$mitreMap.Tactics[$tactic1] += $mitreTechniquesMap.Techniques
+
+            
+			if ($tactic2 -ne "No MITRE ATT&CK mapping" -and $tactic2 -ne "" -and $technique2 -ne "") {
+				$mitreMap.Add($tactic2, $technique2, $id, $Audit.Status)
+			}
         }
     }
         
@@ -413,7 +415,8 @@ function Merge-CisAuditsToMitreMap {
         [System.GC]::Collect()
         [System.GC]::WaitForPendingFinalizers()
 
-        return $mitreMap
+		$mitreMap.Print()
+        return $mitreMap.Map
     }
 }
 
@@ -909,16 +912,7 @@ function Get-ATAPHtmlReport {
 							$section | Get-HtmlReportSection 
 							#$section | Show-ReportSections
 						}
-						$mapping = $Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
-                        foreach ($tactic in $mapping.Keys) {
-                            Write-Host "$tactic = "
-                            foreach ($technique in $($mapping[$tactic]).Keys) {
-                                Write-Host "    $technique = "
-                                foreach ($id in $($($mapping[$tactic])[$technique]).Keys) {
-                                    Write-Host "        $id = $($($($mapping[$tactic])[$technique])[$id])"
-                                }
-                            }
-                        }
+						$Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
 					}
 
 
