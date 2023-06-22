@@ -32,6 +32,41 @@ $ModuleVersion = (Import-PowerShellDataFile -Path "$ScriptRoot\ATAPHtmlReport.ps
 $StatusValues = 'True', 'False', 'Warning', 'None', 'Error'
 $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, @{ Name = 'Status' }
 
+class MitreMap {
+    [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, bool]]]]]] $Map
+
+    MitreMap() {
+        $this.Map = @{}
+    }
+
+    [void] Add($tactic, $technique, $id, $value) {
+        if($tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
+            if($null -eq $this.Map[$tactic]) {
+                $this.Map[$tactic] = @{}
+            }
+            if($null -eq $this.Map[$tactic][$technique]) {
+                $this.Map[$tactic][$technique] = @{}
+            }
+            $this.Map[$tactic][$technique][$id] += $value
+        }
+        else {
+            Write-Error -Message 'Could not add value to Map' -Category InvalidType
+        }
+    }
+
+	[void] Print() {
+		foreach ($tactic in $this.Map.Keys) {
+			Write-Host "$tactic = "
+			foreach ($technique in $this.Map[$tactic].Keys) {
+				Write-Host "    $technique = "
+				foreach ($id in $this.Map[$tactic][$technique].Keys) {
+					Write-Host "        $id = $($this.Map[$tactic][$technique][$id])"
+				}
+			}
+		}
+	}
+}
+
 function Join-ATAPReportStatus {
 	[CmdletBinding()]
 	[OutputType([string])]
@@ -319,41 +354,6 @@ function Get-HtmlToc {
 					foreach ($subsection in $Subsections) {
 						$subsection | Get-HtmlToc -Prefix ($Prefix + $Title)
 					}
-				}
-			}
-		}
-	}
-}
-
-class MitreMap {
-    [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, bool]]]]]] $Map
-
-    MitreMap() {
-        $this.Map = @{}
-    }
-
-    [void] Add($tactic, $technique, $id, $value) {
-        if($tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
-            if($null -eq $this.Map[$tactic]) {
-                $this.Map[$tactic] = @{}
-            }
-            if($null -eq $this.Map[$tactic][$technique]) {
-                $this.Map[$tactic][$technique] = @{}
-            }
-            $this.Map[$tactic][$technique][$id] += $value
-        }
-        else {
-            Write-Error -Message 'Could not add value to Map' -Category InvalidType
-        }
-    }
-
-	[void] Print() {
-		foreach ($tactic in $this.Map.Keys) {
-			Write-Host "$tactic = "
-			foreach ($technique in $this.Map[$tactic].Keys) {
-				Write-Host "    $technique = "
-				foreach ($id in $this.Map[$tactic][$technique].Keys) {
-					Write-Host "        $id = $($this.Map[$tactic][$technique][$id])"
 				}
 			}
 		}
