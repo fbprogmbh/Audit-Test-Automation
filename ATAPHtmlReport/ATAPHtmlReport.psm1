@@ -458,6 +458,8 @@ function Show-ReportSections {
 	}
 }
 
+#in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
+#but the versions don't match so the function prints the status in the HTML but doesn't block Merge-CisAuditsToMitreMap
 function Compare-EqualCISVersions {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
