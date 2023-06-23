@@ -1,7 +1,6 @@
-BeforeAll {
-    #Import-Module
-    & "$PSScriptRoot\updateATAP.ps1"
-}
+
+#Import-Module
+& "$PSScriptRoot\updateATAP.ps1"
 
 InModuleScope ATAPHtmlReport {
     Describe 'Testing Merge-CisAuditsToMitreMap' {
