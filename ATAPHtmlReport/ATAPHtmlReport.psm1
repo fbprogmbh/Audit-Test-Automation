@@ -36,7 +36,43 @@ class MitreMap {
     [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, bool]]]]]] $Map
 
     MitreMap() {
-        $this.Map = @{}
+		$this.Map = @{}
+
+		#start the excel com to make its API available
+		$MitreAttackPath = "$PSScriptRoot\enterprise-attack-v13.1.xlsx"
+		$excelObject = New-Object -ComObject Excel.Application
+		$workbook = $excelObject.Workbooks.Open($MitreAttackPath)
+		$techniquesSheet = $workbook.Sheets | Where-Object { $_.Name -eq "techniques" }
+		
+		$idColumn = "A"
+		$isSubtechniqueColumn = 12
+		$rowCount = 608
+		$techniquesRange = $techniquesSheet.Range($idColumn + "2:" + $idColumn + $rowCount)
+
+		#add all techniques and tactics to map
+		foreach($techniqeCell in $techniquesRange){
+			$row = $techniqeCell.Row
+            $isSubtechnique = ($techniquesSheet.Cells.Item($row, $isSubtechniqueColumn).Text).Trim()
+			if($isSubtechnique -eq "FALSCH"){   #why is that german?
+				$technique = $techniqeCell.Value()
+				$tactics = Get-MitreTactics -TechniqueID $technique
+				foreach($tactic in $tactics){
+					if($null -eq $this.Map[$tactic]) {
+						$this.Map[$tactic] = @{}
+					}
+				}
+				if($null -eq $this.Map[$tactic][$technique]) {
+					$this.Map[$tactic][$technique] = @{}
+				}
+			}
+		}
+
+		# release Com Object
+		$workbook.Close($false)
+		$excelObject.Quit()
+		[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)
+		[System.GC]::Collect()
+		[System.GC]::WaitForPendingFinalizers()
     }
 
     [void] Add($tactic, $technique, $id, $value) {
