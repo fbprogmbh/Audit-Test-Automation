@@ -783,6 +783,16 @@ button{
 	vertical-align: middle;
 }
 
+#CurrentATTCKHeatmap{
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%;
+  	grid-template-rows: 20% 20% 20% 20% 20%;
+    margin-top: 30px;
+    border: 1px solid black;
+    margin-right: auto;
+	
+}
+
 @media only screen and (max-width: 1900px) {
 	#hashTableBody td{
 		line-height: 17px;
