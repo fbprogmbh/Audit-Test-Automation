@@ -61,11 +61,11 @@ class MitreMap {
 						$this.Map[$tactic] = @{}
 					}
 				}
-				if($null -eq $this.Map[$tactic][$technique]) {
-					$this.Map[$tactic][$technique] = @{}
+					if($null -eq $this.Map[$tactic][$technique]) {
+						$this.Map[$tactic][$technique] = @{}
+					}
 				}
 			}
-		}
 
 		# release Com Object
 		$workbook.Close($false)
@@ -101,6 +101,23 @@ class MitreMap {
 			}
 		}
 	}
+}
+
+function get-MitreLink{
+	param(
+		[string] $id,
+		[switch] $tactic,
+		[switch] $technique
+	)
+
+	$url = 'https://attack.mitre.org/'
+	if ($tactic) {
+		$url += "tactics/$id/"
+	}
+	elseif ($technique) {
+		$url += "techniques/$id/"
+	}
+	return $url
 }
 
 function Join-ATAPReportStatus {
