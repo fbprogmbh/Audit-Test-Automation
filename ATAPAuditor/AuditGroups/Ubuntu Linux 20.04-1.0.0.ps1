@@ -15,7 +15,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Test = {
         $result1 = modprobe -n -v cramfs | grep -E '(cramfs|install)'
         $result2 = lsmod | grep cramfs
-        if($result2 -eq $null){
+        if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -35,7 +35,7 @@ $isIPv6Disabled = Get-IPv6Disabled
         $result1 = modprobe -n -v freevxfs | grep -E '(freevxfs|install)'
         $result2 = lsmod | grep freevxfs
         
-        if($result2 -eq $null){
+        if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -110,12 +110,12 @@ $isIPv6Disabled = Get-IPv6Disabled
 }
 [AuditTest] @{
     Id = "1.1.1.6"
-    Task = "Ensure mounting of squashfs filesystetms is disabled"
+    Task = "Ensure mounting of squashfs filesystems is disabled"
     Test = {
         $result1 = modprobe -n -v squashfs | grep -E '(squashfs|install)'
         $result2 = lsmod | grep squashfs
         
-        if($result2 -eq $null){
+        if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -797,7 +797,7 @@ $isIPv6Disabled = Get-IPv6Disabled
             catch{
                 $message = "systemd-coredump not installed"
             }
-            if($result1 -match "hard" -and $result1 -match "core" -and $result1 -match "0" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
+            if($result1 -match ".*\s*hard\s*core\s*0{1}?\s*" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
                 return @{
                     Message = $message
                     Status = "True"
@@ -956,7 +956,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.7.4"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $output = stat -L /etc/motd
+        $output = stat -L /etc/motd | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
         
         if($output -eq $null -or $output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
             return @{
@@ -974,7 +974,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.7.5"
     Task = "Ensure permissions on /etc/issue are configured"
     Test = {
-        $output = stat -L /etc/issue | grep "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"
+        $output = stat -L /etc/issue | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
         
         if($output -ne $null){
             return @{
@@ -992,7 +992,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.7.6"
     Task = "Ensure permissions on /etc/issue.net are configured"
     Test = {
-        $output = stat -L /etc/issue.net | grep "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"
+        $output = stat -L /etc/issue.net | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
         
         if($output -ne $null){
             return @{
@@ -1347,8 +1347,9 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "2.1.12"
     Task = "Ensure Samba is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o samba
-        if($test1 -eq $null){
+        dpkg -s samba | grep -E '(Status:|not installed)'
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1415,8 +1416,9 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "2.1.16"
     Task = "Ensure rsync service is not installed"
     Test = {
-        $test1 = dpkg -l | grep -o rsync
-        if($test1 -eq $null){
+        dpkg -s rsync | grep -E '(Status:|not installed)'
+        $test1 = $?
+        if($test1 -match "False"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2120,7 +2122,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
             $test1 = nft list ruleset | grep 'hook input'
             $test2 = nft list ruleset | grep 'hook forward'
             $test3 = nft list ruleset | grep 'hook output'
-            if($test1 -match "type filter hook input priority 0;" -and $test2 -match "type filter hook forward priority 0;" -and $test3 -match "type filter hook output priority 0;"){
+            if($test1 -match "type filter hook input" -and $test2 -match "type filter hook forward" -and $test3 -match "type filter hook output"){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2144,12 +2146,23 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure nftables loopback traffic is configured"
     Test = {
         try{
-            $test1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
-            $test2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
-            if($test1 -match 'iif "lo" accept' -and $test2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
+            if($isIPv6Disabled -ne $true){
+                $test1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
+                $test2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
+                if($test1 -match 'iif "lo" accept' -and $test2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop"){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            else{
+                $test = nft list ruleset | awk '/hook input/,/}/' | grep 'ip6 saddr'
+                if($test -match 'ip6 saddr ::1 counter packets 0 bytes 0 drop'){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
                 }
             }
             return @{
@@ -2291,9 +2304,9 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.3.2.1"
     Task = "Ensure iptables loopback traffic is configured"
     Test = {
-        $test1 = iptables -L INPUT -v -n
-        $test2 = iptables -L OUTPUT -v -n
-        if($test1 -contains "Chain INPUT (policy DROP" -and $test2 -match "Chain OUTPUT (policy DROP"){
+        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        if($test1 -ne $null -and $test2 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2498,41 +2511,49 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     }
 }
 [AuditTest] @{
-    Id = "4.1.2.3"
-    Task = "Ensure system is disabled when audit logs are full"
-    Test = {
-        $test1 = grep space_left_action /etc/audit/auditd.conf
-        $test2 = grep action_mail_acct /etc/audit/auditd.conf
-        $test3 = grep admin_space_left_action /etc/audit/auditd.conf
-        if($test1 -match "space_left_action = email" -and $test2 -match "action_mail_acct = root" -and $test3 -match "admin_space_left_action = halt"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-[AuditTest] @{
     Id = "4.1.3"
     Task = "Ensure events that modify date and time information are collected"
     Test = {
         try{
-            $output = grep time-change /etc/audit/rules.d/*.rules
-            $test1 = $output -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change"
-            $test2 = $output -match "-a always,exit -F arch=b32 -S clock_settime -k time-change"
-            $test3 = $output -match "-w /etc/localtime -p wa -k time-change"
-            $output2 = auditctl -l | grep time-change
-            $test4 = $output2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change"
-            $test5 = $output2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change"
-            $test6 = $output2 -match "-w /etc/localtime -p wa -k time-change"
-            if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
+            $bitVersion = uname -a
+            #if 32 bit
+            if($bitVersion -match "i386"){
+                $output = grep time-change /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S clock_settime -k time-change"
+                $test3 = $output -match "-w /etc/localtime -p wa -k time-change"
+                
+                $output2 = auditctl -l | grep time-change
+                $test4 = $output2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change"
+                $test5 = $output2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change"
+                $test6 = $output2 -match "-w /etc/localtime -p wa -k time-change"
+               
+                if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            #64 bit
+            elseif($bitVersion -match "x86_64"){
+                $output = grep time-change /etc/audit/rules.d/*.rules
+                $test1 = $output -match "-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change"
+                $test2 = $output -match "-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change"
+                $test3 = $output -match "-a always,exit -F arch=b64 -S clock_settime -k time-change"
+                $test4 = $output -match "-a always,exit -F arch=b32 -S clock_settime -k time-change"
+                $test5 = $output -match "-w /etc/localtime -p wa -k time-change"
+                $output2 = auditctl -l | grep time-change
+                $test6 = $output2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change"
+                $test7 = $output2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change"
+                $test8 = $output2 -match "-a always,exit -F arch=b64 -S clock_settime -F key=time-change"
+                $test9 = $output2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change"
+                $test10 = $output2 -match "-w /etc/localtime -p wa -k time-change"
+                if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
                 }
             }
             return @{
@@ -2786,7 +2807,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test12 = $output2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
                 $test13 = $output2 -match "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
                 $test14 = $output2 -match "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
-                if($test1 -ne $null -and $test1_2 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null -and $test6_2 -ne $null -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null -and $test11 -ne $null -and $test12 -ne $null -and $test13 -ne $null -and $test14 -ne $null){
+                if($test1 -ne $null  -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null -and $test5 -ne $null -and $test6 -ne $null  -and $test7 -ne $null -and $test8 -ne $null -and $test9 -ne $null -and $test10 -ne $null -and $test11 -ne $null -and $test12 -ne $null -and $test13 -ne $null -and $test14 -ne $null){
                     return @{
                         Message = "Compliant"
                         Status = "True"
@@ -2854,6 +2875,16 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 Message = "Command not found!"
                 Status = "False"
             }
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.11"
+    Task = "Ensure use of privileged commands is collected"
+    Test = {
+        return @{
+            Message = "Not Implemented!"
+            Status = "Error"
         }
     }
 }
@@ -2935,9 +2966,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         try{
             $test1 = grep scope /etc/audit/rules.d/*.rules
             $test2 = auditctl -l | grep scope
-            if($test1 -match "-w /etc/sudoers -p wa -k scope
-            -w /etc/sudoers.d/ -p wa -k scope" -and $test2 -match "-w /etc/sudoers -p wa -k scope
-            -w /etc/sudoers.d/ -p wa -k scope"){
+            if($test1 -match "-w /etc/sudoers -p wa -k scope" -and $test1 -match "-w /etc/sudoers.d/ -p wa -k scope" -and $test2 -match "-w /etc/sudoers -p wa -k scope" -and $test2 -match "-w /etc/sudoers.d -p wa -k scope" ){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2963,7 +2992,11 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         try{
             $test1 = grep actions /etc/audit/rules.d/*.rules
             $test2 = auditctl -l | grep actions
-            if($test1 -match "/etc/audit/rules.d/cis.rules:-a exit,always -F arch=b32 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions" -and $test2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F auid>=1000 -F auid!=-1 -F key=actions"){
+            $res1 = "-a always,exit -F arch=b64 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions"
+            $res2 = "-a always,exit -F arch=b32 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions"
+            $res3 = "-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F auid>=1000 -F auid!=-1 -F key=actions"
+            $res4 = "-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F auid>=1000 -F auid!=-1 -F key=actions"
+            if($test1 -match $res1 -and $test1 -match $res2 -and $test2 -match $res3 -and $test2 -match $res4){
                 return @{
                     Message = "Compliant"
                     Status = "True"
@@ -2986,29 +3019,26 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.1.16"
     Task = "Ensure kernel module loading and unloading is collected"
     Test = {
-        try{
-            $test1 = grep modules /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep modules
-            if($test1 -match "-w /sbin/insmod -p x -k modules
-            -w /sbin/rmmod -p x -k modules
-            -w /sbin/modprobe -p x -k modules
-            -a always,exit -F arch=b32 -S init_module -S delete_module -k modules" -and $test2 -match "-w /sbin/insmod -p x -k modules
-            -w /sbin/rmmod -p x -k modules
-            -w /sbin/modprobe -p x -k modules
-            -a always,exit -F arch=b32 -S init_module,delete_module -F key=modules"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
+        $test1 = grep modules /etc/audit/rules.d/*.rules
+        $test2 = auditctl -l | grep modules
+        $res1 = "-w /sbin/insmod -p x -k modules"
+        $res2 = "-w /sbin/rmmod -p x -k modules"
+        $res3 = "-w /sbin/modprobe -p x -k modules"
+        $res4 = "-a always,exit -F arch=b64 -S init_module -S delete_module -k modules"
+        $res5 = "-w /sbin/insmod -p x -k modules"
+        $res6 = "-w /sbin/rmmod -p x -k modules"
+        $res7 = "-w /sbin/modprobe -p x -k modules"
+        $res8 = "-a always,exit -F arch=b64 -S init_module,delete_module -F key=modules"
+
+        if($test1 -match $res1 -and $test1 -match $res2 -and $test1 -match $res3 -and $test1 -match $res4 -and $test2 -match $res5 -and $test2 -match $res6 -and $test2 -match $res7 -and $test2 -match $res8){
             return @{
-                Message = "Not-Compliant"
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch{
+        else{
             return @{
-                Message = "Command not found!"
+                Message = "Not-Compliant"
                 Status = "False"
             }
         }
@@ -3018,7 +3048,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.1.17"
     Task = "Ensure the audit configuration is immutable"
     Test = {
-        $test1 = grep "^\s*[^#]" /etc/audit/rules.d/*.rules | tail -1
+        $test1 = grep "^\s*[^#]" /etc/audit/rules.d/*.rules | tail -l
         if($test1 -match "-e 2"){
             return @{
                 Message = "Compliant"
@@ -3069,16 +3099,40 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.2.1.3"
     Task = "Ensure logging is configured"
     Test = {
-        $test1 = ls -l /var/log/
-        if($test1 -match "enabled"){
+        $logginTypes = 0
+        $fileContent = cat /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        if($fileContent -match "^*.emerg\s*:omusrmsg:*") {$logginTypes++}
+        if($fileContent -match "^auth,authpriv.*\s*/var/log/auth.log") {$logginTypes++}
+        if($fileContent -match "^mail.*\s*-/var/log/mail") {$logginTypes++}
+        if($fileContent -match "^mail.info\s*-/var/log/mail.info") {$logginTypes++}
+        if($fileContent -match "^mail.warning\s*-/var/log/mail.warn") {$logginTypes++}
+        if($fileContent -match "^mail.err\s*/var/log/mail.err") {$logginTypes++}
+        if($fileContent -match "^news.crit\s*-/var/log/news/news.crit") {$logginTypes++}
+        if($fileContent -match "^news.err\s*-/var/log/news/news.err") {$logginTypes++}
+        if($fileContent -match "^news.notice\s*-/var/log/news/news.notice") {$logginTypes++}
+        if($fileContent -match "^*.=warning;*.=err\s*-/var/log/warn") {$logginTypes++}
+        if($fileContent -match "^*.crit\s*/var/log/warn") {$logginTypes++}
+        if($fileContent -match "^*.*;mail.none;news.none\s*-/var/log/messages") {$logginTypes++}
+        if($fileContent -match "^local0,local1.*\s*-/var/log/localmessages") {$logginTypes++}
+        if($fileContent -match "^local2,local3.*\s*-/var/log/localmessages") {$logginTypes++}
+        if($fileContent -match "^local4,local5.*\s*-/var/log/localmessages") {$logginTypes++}
+        if($fileContent -match "^local6,local7.*\s*-/var/log/localmessages") {$logginTypes++}
+
+        if($logginTypes -le 5){
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Not enough logging types supported! Currently: " + $logginTypes
+                Status = "False"
+            }
+        }
+        if($logginTypes -le 12){
+            return @{
+                Message = "Currently configured: " + $logginTypes
+                Status = "Warning"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Compliant. Currently: " + $logginTypes
+            Status = "True"
         }
     }
 }
@@ -3086,8 +3140,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.2.1.4"
     Task = "Ensure rsyslog default file permissions configured"
     Test = {
-        $test1 = grep ^\s*\$FileCreateMode /etc/rsyslog.conf /etc/rsyslog.d/*.conf
-        if($test1 -match "0640"){
+        $test1 = cat /etc/rsyslog.conf /etc/rsyslog.d/*.conf | grep "^\s*\`$FileCreateMode"
+        if($test1 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3103,8 +3157,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.2.1.5"
     Task = "Ensure rsyslog is configured to send logs to a remote log host"
     Test = {
-        $test1 = grep ^\s*\$FileCreateMode /etc/rsyslog.conf /etc/rsyslog.d/*.conf
-        if($test1 -match "0640"){
+        $test1 = grep -E '^\s*([^#]+\s+)?action\(([^#]+\s+)?\btarget=\"?[^#"]+\"?\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        if($test1 -match "target"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3147,6 +3201,51 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         return @{
             Message = "Not-Compliant"
             Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.2.2.3"
+    Task = "Ensure journald is configured to write logfiles to persistent disk"
+    Test = {
+        $test1 = grep -e Storage /etc/systemd/journald.conf
+        if($test1 -match "Storage=persistent"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.2.3"
+    Task = "Ensure permissions on all logfiles are configured"
+    Test = {
+        $fileListAll = find /var/log -type f -ls
+        $fileListFiltered = find /var/log -type f -ls | grep "\-....\-\-\-\-\-"
+        if($fileListAll.Count -eq $fileListFiltered.Count){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "$($fileListAll.Count - $fileListFiltered.Count) files grant too many permissions"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.3"
+    Task = "Ensure logrotate is configured"
+    Test = {
+        return @{
+            Message = "Review /etc/logrotate.conf and /etc/logrotate.d/rsyslog and verify logs are rotated according to site policy."
+            Status = "None"
         }
     }
 }
@@ -3293,8 +3392,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         $test1 = stat /etc/cron.deny
         $test1 = $?
-        $test2 = stat /etc/cron.allow | grep 0640
-        if($test1 -match "False" -and $test2 -eq "Access: (0640/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        $test2 = stat /etc/cron.allow
+        if($test1 -match "False" -and $test2 -match "0640\s*.*Uid.*root.*Gid.*root"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3449,7 +3548,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH access is limited"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'
             if($test1 -match "allowusers" -or $test1 -match "allowgroups" -or $test1 -match "denyusers" -or $test1 -match "denygroups"){
                 return @{
                     Message = "Compliant"
