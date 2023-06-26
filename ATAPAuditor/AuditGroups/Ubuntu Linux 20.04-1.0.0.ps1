@@ -2800,7 +2800,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test6 = $output -match "-k perm_mod"
                 $test7 = $output -match "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295"
                 $test8 = $output -match "-k perm_mod"
-                $output2 = auditctl -l | grep auditctl -l | grep perm_mod
+                $output2 = auditctl -l | grep perm_mod
                 $test9 = $output2 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
                 $test10 = $output2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
                 $test11 = $output2 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
@@ -2882,6 +2882,9 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.1.11"
     Task = "Ensure use of privileged commands is collected"
     Test = {
+        $mountPoints = mount | grep -v "/var/lib/snapd" | grep -v "cgroup on " | grep -v "noexec" | grep -v " fuse" | cut -f 3 -d ' '
+        #$filesPerMountPoint = bash -c "find /home -xdev \( -perm -4000 -o -perm -2000 \) -type f
+        #auditctl -l in array 
         return @{
             Message = "Not Implemented!"
             Status = "Error"
