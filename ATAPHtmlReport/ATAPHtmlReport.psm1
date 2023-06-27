@@ -359,7 +359,7 @@ function Merge-CisAuditsToMitreMap {
             $tactic2 = $worksheet.Cells.Item($row, 6).Text
             $technique1 = $worksheet.Cells.Item($row, 7).Text
             $technique2 = $worksheet.Cells.Item($row, 8).Text
-        
+
             if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
 				if($null -eq $map[$tactic1]){
 					$map[$tactic1] = @{}
@@ -400,39 +400,36 @@ function ConvertTo-HtmlTable {
         $Mappings
     )
 
-    $html = "<table>"
-    
-    $tacticHeaders = $Mappings.Keys | Sort-Object
-    
-    $html += "<tr>"
-    $html += "<th>Tactic</th>"
-    $html += "<th>Technique</th>"
-    $html += "<th>Audit IDs</th>"
-    $html += "</tr>"
-    
-    foreach ($tactic in $tacticHeaders) {
-        $techniqueHeaders = $Mappings[$tactic].Keys | Sort-Object
-        
-        foreach ($technique in $techniqueHeaders) {
-            $auditIds = $Mappings[$tactic][$technique].Keys | Sort-Object
-            
-            $html += "<tr>"
-            $html += "<td rowspan='$($auditIds.Count)'>$tactic</td>"
-            $html += "<td>$technique</td>"
-            $html += "<td>$($auditIds[0])</td>"
-            $html += "</tr>"
-            
-            for ($i = 1; $i -lt $auditIds.Count; $i++) {
-                $html += "<tr>"
-                $html += "<td>$($auditIds[$i])</td>"
-                $html += "</tr>"
-            }
-        }
-    }
-    
-    $html += "</table>"
-    
-    $html
+	htmlElement 'table' @{} {
+		htmlElement 'thead' @{} {
+			htmlElement 'tr' @{} {
+				foreach ($tactic in $Mappings.Keys) {
+					htmlElement 'td' @{} {"$tactic"}
+				}
+			}
+		}
+		htmlElement 'tbody' @{} {
+			htmlElement 'tr' @{} {
+				foreach ($tactic in $Mappings.Keys) {
+					htmlElement 'td' @{} {
+						foreach ($technique in $Mappings[$tactic].Keys){
+							htmlElement 'p' @{} {
+								htmlElement 'div' @{} {
+									$successCounter = 0
+									foreach ($id in $Mappings[$tactic][$technique].Keys) {
+										if($Mappings[$tactic][$technique][$id] -eq $true){
+											$successCounter++
+										}
+									}
+									"$technique : $successCounter /" + $Mappings[$tactic][$technique].Count
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -1145,11 +1142,12 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-					#Tab: Foundation Data (Only works for Windows OS!)
-					if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
-						$Sections = $FoundationReport.Sections
-					}
+
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
+						#Tab: Foundation Data (Only works for Windows OS!)
+						if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
+							$FoundationSections = $FoundationReport.Sections
+						}
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
 							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
@@ -1273,11 +1271,11 @@ function Get-ATAPHtmlReport {
 						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
-							foreach ($section in $Sections) { $section | Get-HtmlToc }
+							foreach ($section in $FoundationSections) { $section | Get-HtmlToc }
 						}
 						htmlElement 'h2' @{} {"Security Base Data Details"}
 						# Report Sections for base data
-						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+						foreach ($section in $FoundationSections) { $section | Get-HtmlReportSection }
 					}
 					
 					
@@ -1446,21 +1444,14 @@ function Get-ATAPHtmlReport {
 							htmlElement 'h1'@{} {"MITRE ATT&CK"}
 							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
 							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
-							$audits = Get-CisAudits
-							$map = Merge-CisAuditsToMitreMap -Audit $audits
-							$tableHtml = ""
-							htmlElement 'table' @{id = 'CurrentATTCKHeatmap'}{
-								foreach ($tactic in $Mappings.Keys) {
-									foreach ($technique in $map[$tactic].Keys) {
-										foreach ($id in $map[$tactic][$technique].Keys) {
-											$status = $map[$tactic][$technique][$id]
-											$html += "<tr><td>$tactic</td><td>$technique</td><td>$id</td><td>$status</td></tr>"
-										}
-									}
-								}
-							}
-							$htmlElement = "<table id='CurrentATTCKHeatmap'>$tableHtml</table>"
 
+							$Mappings = $Sections | 
+							Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+							ForEach-Object { return $_.SubSections } | 
+							ForEach-Object { return $_.AuditInfos } | 
+							Merge-CisAuditsToMitreMap
+
+							ConvertTo-HtmlTable $Mappings
 						}
 					}
 
