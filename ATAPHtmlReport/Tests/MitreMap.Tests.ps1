@@ -1,7 +1,6 @@
-BeforeAll {
-    Import-Module "C:\Program Files\WindowsPowerShell\Modules\ATAPAuditor" -Force
-    Import-Module "C:\Program Files\WindowsPowerShell\Modules\ATAPHtmlReport" -Force
-}
+
+#Import-Module
+& "$PSScriptRoot\updateATAP.ps1"
 
 InModuleScope ATAPHtmlReport {
     Describe 'testing functions of the class MitreMap' {
