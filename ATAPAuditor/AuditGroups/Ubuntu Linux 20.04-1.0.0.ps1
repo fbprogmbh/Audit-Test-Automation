@@ -2882,12 +2882,31 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "4.1.11"
     Task = "Ensure use of privileged commands is collected"
     Test = {
+        $results = @()
         $mountPoints = mount | grep -v "/var/lib/snapd" | grep -v "cgroup on " | grep -v "noexec" | grep -v " fuse" | cut -f 3 -d ' '
-        #$filesPerMountPoint = bash -c "find /home -xdev \( -perm -4000 -o -perm -2000 \) -type f
-        #auditctl -l in array 
+        foreach($mountPoint in $mountPoints){                                  
+            $res=bash -c "find $($mountPoint) -xdev \( -perm -4000 -o -perm -2000 \) -type f" 
+            $results += $res | awk '{print "-a always,exit -F path=" $1 " -F perm=x -F auid>=1000 -F auid!=4294967295 \ -k privileged" }'
+        }
+        $viablePaths = @()
+        $paths = @()
+        foreach($element in $results){
+            $viablePaths += $element | cut -d ' ' -f 4 | cut -d '=' -f 2 | grep "/etc/audit/rules.d/*.rules"
+            $paths += $element | cut -d ' ' -f 4 | cut -d '=' -f 2 | grep -v "/etc/audit/rules.d/*.rules"
+        }
+        $message = ""
+        foreach($line in $paths){
+            $message += "<br>$line"
+        }
+        if($viablePaths.Count -ne $results.Count){
+            return @{
+                Message = "Not all results are in path /etc/audit/rules.d/ and are .rules files. Non compliant files: <br>$($message)"
+                Status = "False"
+            }
+        }
         return @{
-            Message = "Not Implemented!"
-            Status = "Error"
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -3516,8 +3535,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "5.3.2"
     Task = "Ensure permissions on SSH private host key files are configured"
     Test = {
-        $test1 = find /etc/ssh -xdev -type f -name 'ssh_host_*_key' -exec stat {} \;
-        if($test1 -ne $null){
+        $res = bash -c "find /etc/ssh -xdev -type f -name 'ssh_host_*_key' -exec stat {} \;" | grep "Access:\s*(0600/-rw-------)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)\s*"
+        if($res.count -eq 3){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3533,8 +3552,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "5.3.3"
     Task = "Ensure permissions on SSH public host key files are configured"
     Test = {
-        $test1 = find /etc/ssh -xdev -type f -name 'ssh_host_*_key.pub' -exec stat {} \;
-        if($test1 -ne $null){
+        $res = bash -c "find /etc/ssh -xdev -type f -name 'ssh_host_*_key.pub' -exec stat {} \;" | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)\s*"
+        if($res.count -eq 3){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3551,8 +3570,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH access is limited"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'
-            if($test1 -match "allowusers" -or $test1 -match "allowgroups" -or $test1 -match "denyusers" -or $test1 -match "denygroups"){
+            $result = bash -c "sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
+            if($result -match "allowusers" -or $result -match "allowgroups" -or $result -match "denyusers" -or $result -match "denygroups"){
                 return @{
                     Message = "Compliant"
                     Status = "True"
