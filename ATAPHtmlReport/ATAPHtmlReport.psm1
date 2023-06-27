@@ -24,6 +24,14 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 
+enum AuditInfoStatus {
+	True
+	False
+	Warning
+	None
+	Error
+}
+
 $ScriptRoot = Split-Path -Parent $PSCommandPath
 
 $Settings = Import-PowerShellDataFile -Path "$ScriptRoot\Settings.psd1"
@@ -244,6 +252,41 @@ function Get-MitreTactics {
         $TechniqueID
     )
 	return $MitreTechniquesToTacticsMap[$TechniqueID]
+}
+
+class MitreMap {
+    [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, AuditInfoStatus]]]]]] $Map
+
+    MitreMap() {
+        $this.Map = @{}
+    }
+
+    [void] Add($tactic, $technique, $id, $value) {
+        if($tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
+            if($null -eq $this.Map[$tactic]) {
+                $this.Map[$tactic] = @{}
+            }
+            if($null -eq $this.Map[$tactic][$technique]) {
+                $this.Map[$tactic][$technique] = @{}
+            }
+            $this.Map[$tactic][$technique][$id] += $value
+        }
+        else {
+            Write-Error -Message 'Could not add value to Map' -Category InvalidType
+        }
+    }
+
+	[void] Print() {
+		foreach ($tactic in $this.Map.Keys) {
+			Write-Host "$tactic = "
+			foreach ($technique in $this.Map[$tactic].Keys) {
+				Write-Host "    $technique = "
+				foreach ($id in $this.Map[$tactic][$technique].Keys) {
+					Write-Host "        $id = $($this.Map[$tactic][$technique][$id])"
+				}
+			}
+		}
+	}
 }
 
 function Join-ATAPReportStatus {
@@ -561,37 +604,28 @@ function Merge-CisAuditsToMitreMap {
         $cisIdColumn = "B"
         $cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
 
-        $map = @{}
+		$mitreMap = [MitreMap]::new()
     }
         
     Process {
         $id = $Audit.Id
         $cisIdLocation = $cisIdRange.Find($id)
+
         if ($cisIdLocation) {
             $row = $cisIdLocation.Row
-            $tactic1 = $worksheet.Cells.Item($row, 5).Text
-            $tactic2 = $worksheet.Cells.Item($row, 6).Text
-            $technique1 = $worksheet.Cells.Item($row, 7).Text
-            $technique2 = $worksheet.Cells.Item($row, 8).Text
+            $tactic1 = ($worksheet.Cells.Item($row, 5).Text).Trim()
+            $tactic2 = ($worksheet.Cells.Item($row, 6).Text).Trim()
+            $technique1 = ($worksheet.Cells.Item($row, 7).Text).Trim()
+            $technique2 = ($worksheet.Cells.Item($row, 8).Text).Trim()
         
-            if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
-				if($null -eq $map[$tactic1]){
-					$map[$tactic1] = @{}
-				}
-				if($null -eq ($($map[$tactic1])[$technique1])){
-					$($map[$tactic1])[$technique1]= @{}
-				}
-                $($($map[$tactic1])[$technique1])[$id] = $Audit.Status
-            }
-            if ($tactic2 -ne "No MITRE ATT&CK mapping  " -and $tactic2 -ne "" -and $technique2 -ne "") {
-				if($null -eq $map[$tactic2]){
-					$map[$tactic2] = @{}
-				}
-				if($null -eq ($($map[$tactic2])[$technique2])){
-					$($map[$tactic2])[$technique2]= @{}
-				}
-                $($($map[$tactic2])[$technique2])[$id] = $Audit.Status
-            }
+			if ($tactic1 -ne "No MITRE ATT&CK mapping") {
+				$mitreMap.Add($tactic1, $technique1, $id, $Audit.Status)
+			}
+
+            
+			if ($tactic2 -ne "No MITRE ATT&CK mapping" -and $tactic2 -ne "" -and $technique2 -ne "") {
+				$mitreMap.Add($tactic2, $technique2, $id, $Audit.Status)
+			}
         }
     }
         
@@ -603,7 +637,7 @@ function Merge-CisAuditsToMitreMap {
         [System.GC]::Collect()
         [System.GC]::WaitForPendingFinalizers()
 
-        return $map
+        return [MitreMap] $mitreMap
     }
 }
 
@@ -633,7 +667,7 @@ function Show-ReportSections {
 	)
 
 	process {
-		$id = $Prefix + $Title
+		$id = $Prefix + " " + $Title
 		# $sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
 
 		#check if main section
@@ -669,6 +703,31 @@ function Show-ReportSections {
 				$subsection | Show-ReportSections -Prefix ($Prefix + $Title)
 			}
 		}
+	}
+}
+
+#in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
+#but the versions don't match so the function prints the status in the HTML but doesn't block Merge-CisAuditsToMitreMap
+function Compare-EqualCISVersions {
+	param(
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Title,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]]
+		$BasedOn
+	)
+	$os = [System.Environment]::OSVersion.Platform
+	if($os -match "Win32NT" -and $Title -match "Windows 10"){
+		$testVersion = $BasedOn[0].Split(',')[1]
+		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
+		$mappingVersion = $BasedOn[1].Split(',')[0]
+		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
+		if($testVersion -eq $mappingVersion){
+			return "The CIS Versions used for the MITRE mapping and testing are the same."
+		}
+		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
 	}
 }
 
@@ -946,6 +1005,9 @@ function Get-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
+		[Parameter(Mandatory = $false)]
+		[switch] $MITRE,
+
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[hashtable]
 		$hashtable_sha256,
@@ -1073,6 +1135,9 @@ function Get-ATAPHtmlReport {
 						if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
+						if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")){
+							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
+						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
 					}
@@ -1090,10 +1155,10 @@ function Get-ATAPHtmlReport {
 
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
-							$section | Get-HtmlReportSection 
-							$section | Show-ReportSections
+							$section | Get-HtmlReportSection
+							$section | Where-Object { $_.Title -eq "CIS Benchmarks" } | Show-ReportSections 
 						}
-						
+						$Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
 					}
 
 
@@ -1575,6 +1640,16 @@ function Get-ATAPHtmlReport {
 							# htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
 	
 							# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
+						}
+					}
+
+					if($MITRE) {
+						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
+							htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
+							htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
+							htmlElement 'h1'@{} {"MITRE ATT&CK"}
+							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 						}
 					}
 
