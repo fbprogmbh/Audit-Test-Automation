@@ -244,7 +244,7 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(5,160px);
+	grid-template-columns: repeat(6,160px);
 }
 button{
 	margin-left: 10px;
@@ -255,6 +255,10 @@ button{
 #riskScore{
 	font-family: Arial, sans-serif;
 	text-align: center;
+}
+
+#MITRE{
+	font-family: Arial, sans-serif;
 }
 
 #riskMatrixContainer{
