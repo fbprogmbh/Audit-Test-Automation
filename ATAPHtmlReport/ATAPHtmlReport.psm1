@@ -355,10 +355,10 @@ function Merge-CisAuditsToMitreMap {
         $cisIdLocation = $cisIdRange.Find($id)
         if ($cisIdLocation) {
             $row = $cisIdLocation.Row
-            $tactic1 = $worksheet.Cells.Item($row, 5).Text
-            $tactic2 = $worksheet.Cells.Item($row, 6).Text
-            $technique1 = $worksheet.Cells.Item($row, 7).Text
-            $technique2 = $worksheet.Cells.Item($row, 8).Text
+            $tactic1 = $worksheet.Cells.Item($row, 5).Text.Trim()
+            $tactic2 = $worksheet.Cells.Item($row, 6).Text.Trim()
+            $technique1 = $worksheet.Cells.Item($row, 7).Text.Trim()
+            $technique2 = $worksheet.Cells.Item($row, 8).Text.Trim()
         
             if ($tactic1 -ne "No MITRE ATT&CK mapping  ") {
 				if($null -eq $map[$tactic1]){
