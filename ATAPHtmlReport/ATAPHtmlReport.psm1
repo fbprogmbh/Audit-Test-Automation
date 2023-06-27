@@ -453,7 +453,7 @@ function Show-ReportSections {
 	)
 
 	process {
-		$id = $Prefix + $Title
+		$id = $Prefix + " " + $Title
 		# $sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
 
 		#check if main section
@@ -941,8 +941,8 @@ function Get-ATAPHtmlReport {
 
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
-							$section | Get-HtmlReportSection 
-							$section | Show-ReportSections
+							$section | Get-HtmlReportSection
+							$section | Where-Object { $_.Title -eq "CIS Benchmarks" } | Show-ReportSections 
 						}
 						$Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
 					}
