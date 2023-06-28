@@ -262,8 +262,8 @@ class MitreMap {
     }
 
     [void] Add($tactic, $technique, $id, $value) {
-        if($tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
-            if($null -eq $this.Map[$tactic]) {
+        if($tactic -and $technique -and $id -and $null -ne $value -and $tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
+			if($null -eq $this.Map[$tactic]) {
                 $this.Map[$tactic] = @{}
             }
             if($null -eq $this.Map[$tactic][$technique]) {
@@ -272,7 +272,21 @@ class MitreMap {
             $this.Map[$tactic][$technique][$id] += $value
         }
         else {
-            Write-Error -Message 'Could not add value to Map' -Category InvalidType
+			if(!$tactic) {
+				Write-Error -Message 'Could not add value to Map. $tactic is $null or empty' -Category InvalidType
+			}
+			elseif(!$technique) {
+				Write-Error -Message 'Could not add value to Map. $technique is $null or empty' -Category InvalidType
+			}
+			elseif(!$id) {
+				Write-Error -Message 'Could not add value to Map. $id is $null or empty' -Category InvalidType
+			}
+			elseif($null -eq $value) {
+				Write-Error -Message 'Could not add value to Map. $value is $null' -Category InvalidType
+			}
+			else{
+				Write-Error -Message 'Could not add value to Map' -Category InvalidType
+			}
         }
     }
 
@@ -593,47 +607,101 @@ function Merge-CisAuditsToMitreMap {
         $Audit
     )
     Begin {
-        #start the excel com to make its API available
-        $CISMappingPath = "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1.11.0.xlsx"
-        
-        $excelObject = New-Object -ComObject Excel.Application
+		$finally = $true;
+		try{
+			#start the excel com to make its API available
+			$CISMappingPath = "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1.11.0.xlsx"
+			
+			$excelObject = New-Object -ComObject Excel.Application
 
-        $workbook = $excelObject.Workbooks.Open($CISMappingPath)
-        $worksheet = $workbook.Sheets | Where-Object { $_.Name -eq "MITRE ATT&CK Mappings" }
-        
-        $cisIdColumn = "B"
-        $cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
+			$workbook = $excelObject.Workbooks.Open($CISMappingPath)
+			$worksheet = $workbook.Sheets | Where-Object { $_.Name -eq "MITRE ATT&CK Mappings" }
+			
+			$cisIdColumn = "B"
+			$cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
 
-		$mitreMap = [MitreMap]::new()
+			$mitreMap = [MitreMap]::new()
+			$finally = $false;
+		}
+		catch {
+			Write-Host $_.Message
+		}
+		finally {
+			if($finally) {
+				# release Com Object
+				if($workbench) {
+					$workbook.Close($false)
+				}
+				if($excelObject) {
+					$excelObject.Quit()
+					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
+				}
+				if($workbench -or $excelObject) {
+					[System.GC]::Collect()
+					[System.GC]::WaitForPendingFinalizers()
+				}
+			}
+		}
     }
         
     Process {
-        $id = $Audit.Id
-        $cisIdLocation = $cisIdRange.Find($id)
+		$finally = $true;
+		try {
+			$id = $Audit.Id
+			$cisIdLocation = $cisIdRange.Find($id)
 
-        if ($cisIdLocation) {
-            $row = $cisIdLocation.Row
-            $tactic1 = ($worksheet.Cells.Item($row, 5).Text).Trim()
-            $tactic2 = ($worksheet.Cells.Item($row, 6).Text).Trim()
-            $technique1 = ($worksheet.Cells.Item($row, 7).Text).Trim()
-            $technique2 = ($worksheet.Cells.Item($row, 8).Text).Trim()
-        
-			foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
-				$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
+			if ($cisIdLocation) {
+				$row = $cisIdLocation.Row
+				$technique1 = ($worksheet.Cells.Item($row, 7).Text).Trim()
+				$technique2 = ($worksheet.Cells.Item($row, 8).Text).Trim()
+			
+				foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
+					if($tactic -and $technique1) {
+						$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
+					}
+				}
+				foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
+					if($tactic -and $technique2) {
+						$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
+					}
+				}
 			}
-			foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
-				$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
-			}
-        }
+			$finally = $false;
+		}
+		catch {
+			Write-Host $_.Message
+		}
+		finally {
+			if($finally) {
+				# release Com Object
+				if($workbench) {
+					$workbook.Close($false)
+				}
+				if($excelObject) {
+					$excelObject.Quit()
+					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
+				}
+				if($workbench -or $excelObject) {
+					[System.GC]::Collect()
+					[System.GC]::WaitForPendingFinalizers()
+				}
+			}	
+		}
     }
         
     End {
         # release Com Object
-        $workbook.Close($false)
-        $excelObject.Quit()
-        [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)
-        [System.GC]::Collect()
-        [System.GC]::WaitForPendingFinalizers()
+		if($workbench) {
+			$workbook.Close($false)
+		}
+		if($excelObject) {
+			$excelObject.Quit()
+			[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
+		}
+		if($workbench -or $excelObject) {
+			[System.GC]::Collect()
+			[System.GC]::WaitForPendingFinalizers()
+		}
 
         return [MitreMap] $mitreMap
     }

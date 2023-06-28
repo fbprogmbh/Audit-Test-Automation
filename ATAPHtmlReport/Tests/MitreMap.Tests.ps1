@@ -1,21 +1,27 @@
 
 #Import-Module
-& "$PSScriptRoot\updateATAP.ps1"
+Import-Module "C:\Program Files\WindowsPowerShell\Modules\ATAPAuditor" -Force
+Import-Module "C:\Program Files\WindowsPowerShell\Modules\ATAPHtmlReport" -Force
 
 InModuleScope ATAPHtmlReport {
     Describe 'testing functions of the class MitreMap' {
         It 'tests with an example report' {
             #Dummy-Data
-            $AuditInfos = @{Id = "1.1.4"
-            Status = [AuditInfoStatus]::False
+            $AuditInfos = 
+            @{
+                Id = "1.1.4"
+                Status = [AuditInfoStatus]::False
             },
-            @{Id = "1.2.3"
+            @{
+                Id = "1.2.3"
                 Status = [AuditInfoStatus]::True
             },
-            @{Id = "1.2.5"
+            @{
+                Id = "1.2.5"
                 Status = [AuditInfoStatus]::False
             }, 
-            @{Id = "1.4.5"
+            @{
+                Id = "1.4.5"
                 Status = [AuditInfoStatus]::True
             }
             $Subsection = @{AuditInfos = $AuditInfos }
