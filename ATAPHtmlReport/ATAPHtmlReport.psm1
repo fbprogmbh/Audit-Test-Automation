@@ -707,6 +707,46 @@ function Merge-CisAuditsToMitreMap {
     }
 }
 
+function ConvertTo-HtmlTable {
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Mappings
+    )
+
+	htmlElement 'table' @{} {
+		htmlElement 'thead' @{} {
+			htmlElement 'tr' @{} {
+				foreach ($tactic in $Mappings.Keys) {
+					htmlElement 'td' @{} {"$tactic"}
+				}
+			}
+		}
+		htmlElement 'tbody' @{} {
+			htmlElement 'tr' @{} {
+				foreach ($tactic in $Mappings.Keys) {
+					htmlElement 'td' @{} {
+						foreach ($technique in $Mappings[$tactic].Keys){
+							htmlElement 'p' @{} {
+								htmlElement 'div' @{} {
+									$successCounter = 0
+									foreach ($id in $Mappings[$tactic][$technique].Keys) {
+										if($Mappings[$tactic][$technique][$id] -eq $true){
+											$successCounter++
+										}
+									}
+									"$technique : $successCounter /" + $Mappings[$tactic][$technique].Count
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
 function Show-ReportSections {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -1415,11 +1455,12 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-					#Tab: Foundation Data (Only works for Windows OS!)
-					if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
-						$Sections = $FoundationReport.Sections
-					}
+
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
+						#Tab: Foundation Data (Only works for Windows OS!)
+						if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
+							$FoundationSections = $FoundationReport.Sections
+						}
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="systemData"} {
 							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
@@ -1543,11 +1584,11 @@ function Get-ATAPHtmlReport {
 						htmlElement 'h2' @{} {"Table Of Contents"}
 						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 						htmlElement 'ul' @{} {
-							foreach ($section in $Sections) { $section | Get-HtmlToc }
+							foreach ($section in $FoundationSections) { $section | Get-HtmlToc }
 						}
 						htmlElement 'h2' @{} {"Security Base Data Details"}
 						# Report Sections for base data
-						foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+						foreach ($section in $FoundationSections) { $section | Get-HtmlReportSection }
 					}
 					
 					
@@ -1716,8 +1757,17 @@ function Get-ATAPHtmlReport {
 							htmlElement 'h1'@{} {"MITRE ATT&CK"}
 							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
 							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
+
+							$Mappings = $Sections | 
+							Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+							ForEach-Object { return $_.SubSections } | 
+							ForEach-Object { return $_.AuditInfos } | 
+							Merge-CisAuditsToMitreMap
+
+							ConvertTo-HtmlTable $Mappings.map
 						}
 					}
+
 
 					htmlElement 'div' @{class = 'tabContent'; id = 'references'}{
 						htmlElement 'h1' @{} {"About us"}
