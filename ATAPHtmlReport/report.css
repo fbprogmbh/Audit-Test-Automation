@@ -244,7 +244,7 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(5,160px);
+	grid-template-columns: repeat(6,160px);
 }
 button{
 	margin-left: 10px;
@@ -255,6 +255,10 @@ button{
 #riskScore{
 	font-family: Arial, sans-serif;
 	text-align: center;
+}
+
+#MITRE{
+	font-family: Arial, sans-serif;
 }
 
 #riskMatrixContainer{
@@ -777,6 +781,16 @@ button{
 
 #hashTable thead tr th{
 	vertical-align: middle;
+}
+
+#CurrentATTCKHeatmap{
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%;
+  	grid-template-rows: 20% 20% 20% 20% 20%;
+    margin-top: 30px;
+    border: 1px solid black;
+    margin-right: auto;
+	
 }
 
 @media only screen and (max-width: 1900px) {
