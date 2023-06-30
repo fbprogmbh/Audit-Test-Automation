@@ -348,6 +348,23 @@ class MitreMap {
 }
 
 function get-MitreLink{
+	<#
+	.SYNOPSIS
+		Creates a url which points to the documentation of mitre for a given tactic or technique
+
+    .PARAMETER id
+        id of the tactic or technique
+		
+    .PARAMETER tactic
+        flag to show you want a tactic
+		
+    .PARAMETER technique
+        flag to show you want a technique
+
+	.EXAMPLE
+		get-MitreLink -technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
+	#>
+
 	param(
 		[string] $id,
 		[switch] $tactic,
