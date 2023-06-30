@@ -1,4 +1,4 @@
-<#
+﻿<#
 BSD 3-Clause License
 Copyright (c) 2018, FB Pro GmbH
 All rights reserved.
@@ -778,7 +778,10 @@ function ConvertTo-HtmlTable {
 		htmlElement 'thead' @{} {
 			htmlElement 'tr' @{} {
 				foreach ($tactic in $Mappings.Keys) {
-					htmlElement 'td' @{} {"$tactic"}
+					$url = get-MitreLink -tactic -id $tactic
+					htmlElement 'td' @{} {
+						htmlElement 'a' @{href = $url } {"$tactic"}
+					}
 				}
 			}
 		}
@@ -795,7 +798,9 @@ function ConvertTo-HtmlTable {
 											$successCounter++
 										}
 									}
-									"$technique : $successCounter /" + $Mappings[$tactic][$technique].Count
+									$url = get-MitreLink -technique -id $technique
+						            htmlElement 'a' @{href = $url } { "$technique" }
+									htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
 								}
 							}
 						}
