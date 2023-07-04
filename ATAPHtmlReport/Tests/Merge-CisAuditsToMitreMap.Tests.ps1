@@ -7,16 +7,16 @@ InModuleScope ATAPHtmlReport {
         It 'tests with an example Report' {
 
             $AuditInfos = @{Id = "1.1.4"
-                Status         = $false
+            Status = [AuditInfoStatus]::False
             },
             @{Id       = "1.2.3"
-                Status = $true
+            Status = [AuditInfoStatus]::True
             },
             @{Id       = "1.2.5"
-                Status = $false
+            Status = [AuditInfoStatus]::False
             }, 
             @{Id       = "1.4.5"
-                Status = $true
+            Status = [AuditInfoStatus]::True
             }
 
             $Subsection = @{AuditInfos = $AuditInfos }
@@ -42,9 +42,10 @@ InModuleScope ATAPHtmlReport {
                     }
                 }
             }
+            # $mapping.Print()
 
-            $mapping["TA0001"]["T1078"]["1.1.4"] | Should -Be $false
-            $mapping["TA0006"]["T1110"]["1.2.3"] | Should -Be $true
+            $mapping.Map["TA0001"]["T1078"]["1.1.4"] | Should -Be False
+            $mapping.Map["TA0006"]["T1110"]["1.2.3"] | Should -Be True
         }
     }
 }
