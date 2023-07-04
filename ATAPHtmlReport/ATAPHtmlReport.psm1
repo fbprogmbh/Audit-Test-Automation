@@ -707,42 +707,39 @@ function Merge-CisAuditsToMitreMap {
     }
 }
 
+
 function ConvertTo-HtmlTable {
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Mappings
     )
 
-	htmlElement 'table' @{} {
-		htmlElement 'thead' @{} {
-			htmlElement 'tr' @{} {
-				foreach ($tactic in $Mappings.Keys) {
-					htmlElement 'td' @{} {"$tactic"}
-				}
-			}
-		}
-		htmlElement 'tbody' @{} {
-			htmlElement 'tr' @{} {
-				foreach ($tactic in $Mappings.Keys) {
-					htmlElement 'td' @{} {
-						foreach ($technique in $Mappings[$tactic].Keys){
-							htmlElement 'p' @{} {
-								htmlElement 'div' @{} {
-									$successCounter = 0
-									foreach ($id in $Mappings[$tactic][$technique].Keys) {
-										if($Mappings[$tactic][$technique][$id] -eq $true){
-											$successCounter++
-										}
-									}
-									"$technique : $successCounter /" + $Mappings[$tactic][$technique].Count
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    $html = ""
+
+    $html += "<table>"
+    $html += "<thead><tr>"
+    foreach ($tactic in $Mappings.Keys) {
+        $html += "<th>$tactic</th>"
+    }
+    $html += "</tr></thead>"
+    $html += "<tbody><tr>"
+    foreach ($tactic in $Mappings.Keys) {
+        $html += "<td>"
+        foreach ($technique in $Mappings[$tactic].Keys) {
+            $successCounter = 0
+            foreach ($id in $Mappings[$tactic][$technique].Keys) {
+                if ($Mappings[$tactic][$technique][$id] -eq $true) {
+                    $successCounter++
+                }
+            }
+            $html += "<div class='cell'>$technique : $successCounter / " + $Mappings[$tactic][$technique].Count + "</div>"
+        }
+        $html += "</td>"
+    }
+    $html += "</tr></tbody>"
+    $html += "</table>"
+
+    $html
 }
 
 

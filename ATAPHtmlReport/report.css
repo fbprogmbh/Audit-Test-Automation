@@ -261,6 +261,38 @@ button{
 	font-family: Arial, sans-serif;
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #0e0d0d;
+}
+
+thead {
+    background-color: #75e917; /*nur zum Testen */
+	color:blue;
+}
+
+th, td {
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+th {
+    border: 1px solid #0a0a0a;
+}
+
+td .cell {
+	border: 1px solid black;
+	padding: 5px;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 1px;
+	margin-right: 1px;
+  }
+
 #riskMatrixContainer{
 	display: grid;
 	position: relative;
