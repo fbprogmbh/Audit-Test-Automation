@@ -677,7 +677,20 @@ function Get-HtmlToc {
 function Merge-CisAuditsToMitreMap {
     <#
 	.Synopsis
-		Merges multiple Report Sections into a 2 dimensional map which is indexd by Mitre tactics an techniques.
+		Merges the stati of multiple AuditInfos into a 2 dimensional map which can be indexd by the corresponding Mitre tactics an techniques. 
+		This allows to simply find out how many Audits where succesfull for a given Mitre technique.
+		The result is a MitreMap Object.
+
+    .PARAMETER Audit
+        An AuditTest Object containing the Audit results. Multiple can be passed from a pipeline
+		
+	.EXAMPLE
+		$mitreMap = $Sections | 
+			Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+			ForEach-Object { return $_.SubSections } | 
+			ForEach-Object { return $_.AuditInfos } | 
+			Merge-CisAuditsToMitreMap
+		$mitreMap.Print()
 	#>
     
     param(
@@ -707,14 +720,14 @@ function Merge-CisAuditsToMitreMap {
 		finally {
 			if($finally) {
 				# release Com Object
-				if($workbench) {
+				if($workbook) {
 					$workbook.Close($false)
 				}
 				if($excelObject) {
 					$excelObject.Quit()
 					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
 				}
-				if($workbench -or $excelObject) {
+				if($workbook -or $excelObject) {
 					[System.GC]::Collect()
 					[System.GC]::WaitForPendingFinalizers()
 				}
@@ -752,14 +765,14 @@ function Merge-CisAuditsToMitreMap {
 		finally {
 			if($finally) {
 				# release Com Object
-				if($workbench) {
+				if($workbook) {
 					$workbook.Close($false)
 				}
 				if($excelObject) {
 					$excelObject.Quit()
 					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
 				}
-				if($workbench -or $excelObject) {
+				if($workbook -or $excelObject) {
 					[System.GC]::Collect()
 					[System.GC]::WaitForPendingFinalizers()
 				}
@@ -769,14 +782,14 @@ function Merge-CisAuditsToMitreMap {
         
     End {
         # release Com Object
-		if($workbench) {
+		if($workbook) {
 			$workbook.Close($false)
 		}
 		if($excelObject) {
 			$excelObject.Quit()
 			[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
 		}
-		if($workbench -or $excelObject) {
+		if($workbook -or $excelObject) {
 			[System.GC]::Collect()
 			[System.GC]::WaitForPendingFinalizers()
 		}
