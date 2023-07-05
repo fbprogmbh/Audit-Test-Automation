@@ -257,9 +257,53 @@ function Get-MitreTactics {
 class MitreMap {
     [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, AuditInfoStatus]]]]]] $Map
 
-    MitreMap() {
-        $this.Map = @{}
-    }
+	MitreMap() {
+		$this.Map = @{}
+
+		#start the excel com to make its API available
+		$MitreAttackPath = "$PSScriptRoot\enterprise-attack-v13.1.xlsx"
+		$excelObject = New-Object -ComObject Excel.Application
+		$workbook = $excelObject.Workbooks.Open($MitreAttackPath)
+		try{
+			$techniquesSheet = $workbook.Sheets | Where-Object { $_.Name -eq "techniques" }
+			
+			$idColumn = "A"
+			$isSubtechniqueColumn = 12
+			$rowCount = 608
+			$techniquesRange = $techniquesSheet.Range($idColumn + "2:" + $idColumn + $rowCount)
+
+			#add all techniques and tactics to map
+			foreach($techniqeCell in $techniquesRange){
+				$row = $techniqeCell.Row
+				$isSubtechnique = ($techniquesSheet.Cells.Item($row, $isSubtechniqueColumn).Text).Trim()
+				if($isSubtechnique -eq "FALSCH"){   #why is that german?
+					$technique = $techniqeCell.Value()
+					$tactics = Get-MitreTactics -TechniqueID $technique
+					foreach($tactic in $tactics){
+						if($null -eq $this.Map[$tactic]) {
+							$this.Map[$tactic] = @{}
+						}
+						if($null -eq $this.Map[$tactic][$technique]) {
+							$this.Map[$tactic][$technique] = @{}
+						}
+					}
+				}
+			}
+		}
+		finally{
+			if($workbook) {
+				$workbook.Close($false)
+			}
+			if($excelObject) {
+				$excelObject.Quit()
+				[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
+			}
+			if($workbook -or $excelObject) {
+				[System.GC]::Collect()
+				[System.GC]::WaitForPendingFinalizers()
+			}
+		}
+	}
 
     [void] Add($tactic, $technique, $id, $value) {
         if($tactic -and $technique -and $id -and $null -ne $value -and $tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
@@ -301,6 +345,40 @@ class MitreMap {
 			}
 		}
 	}
+}
+
+function get-MitreLink{
+	<#
+	.SYNOPSIS
+		Creates a url which points to the documentation of mitre for a given tactic or technique
+
+    .PARAMETER id
+        id of the tactic or technique
+		
+    .PARAMETER tactic
+        flag to show you want a tactic
+		
+    .PARAMETER technique
+        flag to show you want a technique
+
+	.EXAMPLE
+		get-MitreLink -technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
+	#>
+
+	param(
+		[string] $id,
+		[switch] $tactic,
+		[switch] $technique
+	)
+
+	$url = 'https://attack.mitre.org/'
+	if ($tactic) {
+		$url += "tactics/$id/"
+	}
+	elseif ($technique) {
+		$url += "techniques/$id/"
+	}
+	return $url
 }
 
 function Join-ATAPReportStatus {
@@ -717,7 +795,10 @@ function ConvertTo-HtmlTable {
 		htmlElement 'thead' @{} {
 			htmlElement 'tr' @{} {
 				foreach ($tactic in $Mappings.Keys) {
-					htmlElement 'td' @{} {"$tactic"}
+					$url = get-MitreLink -tactic -id $tactic
+					htmlElement 'td' @{} {
+						htmlElement 'a' @{href = $url } {"$tactic"}
+					}
 				}
 			}
 		}
@@ -734,8 +815,9 @@ function ConvertTo-HtmlTable {
 											$successCounter++
 										}
 									}
-									$colorValue = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
-									"$technique : $colorvalue , $successCounter /" + $Mappings[$tactic][$technique].Count
+									$url = get-MitreLink -technique -id $technique
+						            htmlElement 'a' @{href = $url } { "$technique" }
+									htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
 								}
 							}
 						}
