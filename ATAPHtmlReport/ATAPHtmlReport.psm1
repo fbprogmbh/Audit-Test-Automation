@@ -1337,8 +1337,10 @@ function Get-ATAPHtmlReport {
 						if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
-						if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")){
-							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
+						if($MITRE){
+							if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
+							}
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
@@ -1847,20 +1849,25 @@ function Get-ATAPHtmlReport {
 					}
 
 					if($MITRE) {
-						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
-							htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
-							htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
-							htmlElement 'h1'@{} {"MITRE ATT&CK"}
-							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
-							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
+						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
+								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
+								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
+								htmlElement 'h1'@{} {"MITRE ATT&CK"}
+								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 
-							$Mappings = $Sections | 
-							Where-Object { $_.Title -eq "CIS Benchmarks" } | 
-							ForEach-Object { return $_.SubSections } | 
-							ForEach-Object { return $_.AuditInfos } | 
-							Merge-CisAuditsToMitreMap
+								$Mappings = $Sections | 
+								Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+								ForEach-Object { return $_.SubSections } | 
+								ForEach-Object { return $_.AuditInfos } | 
+								Merge-CisAuditsToMitreMap
 
-							ConvertTo-HtmlTable $Mappings.map
+								ConvertTo-HtmlTable $Mappings.map
+							}
+						}
+						else {
+							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Windows 10 Report`". The Mitre Heatmap will not be generated"
 						}
 					}
 
