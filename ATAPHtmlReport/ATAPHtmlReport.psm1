@@ -257,9 +257,53 @@ function Get-MitreTactics {
 class MitreMap {
     [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, AuditInfoStatus]]]]]] $Map
 
-    MitreMap() {
-        $this.Map = @{}
-    }
+	MitreMap() {
+		$this.Map = @{}
+
+		#start the excel com to make its API available
+		$MitreAttackPath = "$PSScriptRoot\enterprise-attack-v13.1.xlsx"
+		$excelObject = New-Object -ComObject Excel.Application
+		$workbook = $excelObject.Workbooks.Open($MitreAttackPath)
+		try{
+			$techniquesSheet = $workbook.Sheets | Where-Object { $_.Name -eq "techniques" }
+			
+			$idColumn = "A"
+			$isSubtechniqueColumn = 12
+			$rowCount = 608
+			$techniquesRange = $techniquesSheet.Range($idColumn + "2:" + $idColumn + $rowCount)
+
+			#add all techniques and tactics to map
+			foreach($techniqeCell in $techniquesRange){
+				$row = $techniqeCell.Row
+				$isSubtechnique = ($techniquesSheet.Cells.Item($row, $isSubtechniqueColumn).Text).Trim()
+				if($isSubtechnique -eq "FALSCH"){   #why is that german?
+					$technique = $techniqeCell.Value()
+					$tactics = Get-MitreTactics -TechniqueID $technique
+					foreach($tactic in $tactics){
+						if($null -eq $this.Map[$tactic]) {
+							$this.Map[$tactic] = @{}
+						}
+						if($null -eq $this.Map[$tactic][$technique]) {
+							$this.Map[$tactic][$technique] = @{}
+						}
+					}
+				}
+			}
+		}
+		finally{
+			if($workbook) {
+				$workbook.Close($false)
+			}
+			if($excelObject) {
+				$excelObject.Quit()
+				[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
+			}
+			if($workbook -or $excelObject) {
+				[System.GC]::Collect()
+				[System.GC]::WaitForPendingFinalizers()
+			}
+		}
+	}
 
     [void] Add($tactic, $technique, $id, $value) {
         if($tactic -and $technique -and $id -and $null -ne $value -and $tactic.GetType().Name -eq 'String' -and $technique.GetType().Name -eq 'String' -and $id.GetType().Name -eq 'String' -and $value.GetType().Name -eq 'AuditInfoStatus'){
@@ -301,6 +345,40 @@ class MitreMap {
 			}
 		}
 	}
+}
+
+function get-MitreLink{
+	<#
+	.SYNOPSIS
+		Creates a url which points to the documentation of mitre for a given tactic or technique
+
+    .PARAMETER id
+        id of the tactic or technique
+		
+    .PARAMETER tactic
+        flag to show you want a tactic
+		
+    .PARAMETER technique
+        flag to show you want a technique
+
+	.EXAMPLE
+		get-MitreLink -technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
+	#>
+
+	param(
+		[string] $id,
+		[switch] $tactic,
+		[switch] $technique
+	)
+
+	$url = 'https://attack.mitre.org/'
+	if ($tactic) {
+		$url += "tactics/$id/"
+	}
+	elseif ($technique) {
+		$url += "techniques/$id/"
+	}
+	return $url
 }
 
 function Join-ATAPReportStatus {
@@ -599,7 +677,20 @@ function Get-HtmlToc {
 function Merge-CisAuditsToMitreMap {
     <#
 	.Synopsis
-		Merges multiple Report Sections into a 2 dimensional map which is indexd by Mitre tactics an techniques.
+		Merges the stati of multiple AuditInfos into a 2 dimensional map which can be indexd by the corresponding Mitre tactics an techniques. 
+		This allows to simply find out how many Audits where succesfull for a given Mitre technique.
+		The result is a MitreMap Object.
+
+    .PARAMETER Audit
+        An AuditTest Object containing the Audit results. Multiple can be passed from a pipeline
+		
+	.EXAMPLE
+		$mitreMap = $Sections | 
+			Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+			ForEach-Object { return $_.SubSections } | 
+			ForEach-Object { return $_.AuditInfos } | 
+			Merge-CisAuditsToMitreMap
+		$mitreMap.Print()
 	#>
     
     param(
@@ -629,14 +720,14 @@ function Merge-CisAuditsToMitreMap {
 		finally {
 			if($finally) {
 				# release Com Object
-				if($workbench) {
+				if($workbook) {
 					$workbook.Close($false)
 				}
 				if($excelObject) {
 					$excelObject.Quit()
 					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
 				}
-				if($workbench -or $excelObject) {
+				if($workbook -or $excelObject) {
 					[System.GC]::Collect()
 					[System.GC]::WaitForPendingFinalizers()
 				}
@@ -674,14 +765,14 @@ function Merge-CisAuditsToMitreMap {
 		finally {
 			if($finally) {
 				# release Com Object
-				if($workbench) {
+				if($workbook) {
 					$workbook.Close($false)
 				}
 				if($excelObject) {
 					$excelObject.Quit()
 					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
 				}
-				if($workbench -or $excelObject) {
+				if($workbook -or $excelObject) {
 					[System.GC]::Collect()
 					[System.GC]::WaitForPendingFinalizers()
 				}
@@ -691,14 +782,14 @@ function Merge-CisAuditsToMitreMap {
         
     End {
         # release Com Object
-		if($workbench) {
+		if($workbook) {
 			$workbook.Close($false)
 		}
 		if($excelObject) {
 			$excelObject.Quit()
 			[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
 		}
-		if($workbench -or $excelObject) {
+		if($workbook -or $excelObject) {
 			[System.GC]::Collect()
 			[System.GC]::WaitForPendingFinalizers()
 		}
@@ -707,43 +798,48 @@ function Merge-CisAuditsToMitreMap {
     }
 }
 
-
 function ConvertTo-HtmlTable {
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Mappings
     )
 
-    $html = ""
-
-    $html += "<table>"
-    $html += "<thead><tr>"
-    foreach ($tactic in $Mappings.Keys) {
-        $html += "<th>$tactic</th>"
-    }
-    $html += "</tr></thead>"
-    $html += "<tbody><tr>"
-    foreach ($tactic in $Mappings.Keys) {
-        $html += "<td>"
-        foreach ($technique in $Mappings[$tactic].Keys) {
-            $successCounter = 0
-            foreach ($id in $Mappings[$tactic][$technique].Keys) {
-                if ($Mappings[$tactic][$technique][$id] -eq $true) {
-                    $successCounter++
+    htmlElement 'table' @{id='MITRETable'} {
+        htmlElement 'thead' @{id='MITREthead'} {
+            htmlElement 'tr' @{} {
+                foreach ($tactic in $Mappings.Keys) {
+                    $url = get-MitreLink -tactic -id $tactic
+                    htmlElement 'td' @{} {
+                        htmlElement 'a' @{href = $url } {"$tactic"}
+                    }
                 }
             }
-            $html += "<div class='cell'>$technique : $successCounter / " + $Mappings[$tactic][$technique].Count + "</div>"
         }
-        $html += "</td>"
+        htmlElement 'tbody' @{id='MITREtbody'} {
+            htmlElement 'tr' @{} {
+                foreach ($tactic in $Mappings.Keys) {
+                    htmlElement 'td' @{id='MITREtbody'} {
+                        foreach ($technique in $Mappings[$tactic].Keys){
+                            htmlElement 'div' @{id='MITRETechniques'} {
+                                htmlElement 'div' @{class='MITRETechnique'} {  
+                                    $successCounter = 0
+                                    foreach ($id in $Mappings[$tactic][$technique].Keys) {
+                                        if($Mappings[$tactic][$technique][$id] -eq $true){
+                                            $successCounter++
+                                        }
+                                    }
+                                    $url = get-MitreLink -technique -id $technique
+                                    htmlElement 'a' @{href = $url } { "$technique" } 
+                                    htmlElement 'span' @{id='MITREtd'} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-    $html += "</tr></tbody>"
-    $html += "</table>"
-
-    $html
 }
-
-
-
 function Show-ReportSections {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -1238,8 +1334,10 @@ function Get-ATAPHtmlReport {
 						if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
-						if($MITRE -and ($os -match "Win32NT" -and $Title -match "Win")){
-							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
+						if($MITRE){
+							if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
+							}
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
@@ -1748,20 +1846,25 @@ function Get-ATAPHtmlReport {
 					}
 
 					if($MITRE) {
-						htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
-							htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
-							htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
-							htmlElement 'h1'@{} {"MITRE ATT&CK"}
-							htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
-							htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
+						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
+								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
+								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
+								htmlElement 'h1'@{} {"MITRE ATT&CK"}
+								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 
-							$Mappings = $Sections | 
-							Where-Object { $_.Title -eq "CIS Benchmarks" } | 
-							ForEach-Object { return $_.SubSections } | 
-							ForEach-Object { return $_.AuditInfos } | 
-							Merge-CisAuditsToMitreMap
+								$Mappings = $Sections | 
+								Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+								ForEach-Object { return $_.SubSections } | 
+								ForEach-Object { return $_.AuditInfos } | 
+								Merge-CisAuditsToMitreMap
 
-							ConvertTo-HtmlTable $Mappings.map
+								ConvertTo-HtmlTable $Mappings.map
+							}
+						}
+						else {
+							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Windows 10 Report`". The Mitre Heatmap will not be generated"
 						}
 					}
 

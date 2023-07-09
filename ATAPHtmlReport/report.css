@@ -257,42 +257,36 @@ button{
 	text-align: center;
 }
 
-#MITRE{
-	font-family: Arial, sans-serif;
+#MITRE {
+    font-family: Arial, sans-serif;
 }
 
-table {
+#MITRETable {
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #0e0d0d;
+    border-collapse: collapse; 
+    border: 1px solid #ffffff;
+    font-family: Arial, sans-serif;
 }
 
-thead {
-    background-color: #75e917; /*nur zum Testen */
-	color:blue;
+#MITREthead {
+    background-color: #1ebd40;
+    border: 1px solid #141414;
+	text-align:center;
 }
 
-th, td {
-    text-align: center;
+#MITREthead th {
+    padding: 8px;
+    border: 1px solid #141414;
+	font-weight:bold;
+	display: inline-flex;
 }
 
-tr:nth-child(even) {
-    background-color: #f2f2f2;
+.MITRETechnique {
+    padding: 8px;
+    border: 1px solid #000000;
+    background-color: #ffffff;
 }
-
-th {
-    border: 1px solid #0a0a0a;
-}
-
-td .cell {
-	border: 1px solid black;
-	padding: 5px;
-	margin-top: 0;
-	margin-bottom: 0;
-	margin-left: 1px;
-	margin-right: 1px;
-  }
-
+  
 #riskMatrixContainer{
 	display: grid;
 	position: relative;
