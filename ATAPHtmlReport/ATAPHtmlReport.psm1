@@ -841,6 +841,29 @@ function ConvertTo-HtmlTable {
 	}
 }
 
+function Get-ColorValue{
+	<#
+	.Synopsis 
+		Compares two Integer variables returns true if equal, false if not
+	.Example 
+		$colorValue = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
+	#>
+    param (
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true)]
+        [int]$FirstValue,
+
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true)]
+        [int]$SecondValue
+    )
+
+    if ($FirstValue -eq $SecondValue) {
+        return 1
+    }
+    else {
+        return 0
+    }
+}
+
 
 
 function Show-ReportSections {
