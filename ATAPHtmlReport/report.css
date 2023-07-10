@@ -257,10 +257,36 @@ button{
 	text-align: center;
 }
 
-#MITRE{
-	font-family: Arial, sans-serif;
+#MITRE {
+    font-family: Arial, sans-serif;
 }
 
+#MITRETable {
+    width: 100%;
+    border-collapse: collapse; 
+    border: 1px solid #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+#MITREthead {
+    background-color: #1ebd40;
+    border: 1px solid #141414;
+	text-align:center;
+}
+
+#MITREthead th {
+    padding: 8px;
+    border: 1px solid #141414;
+	font-weight:bold;
+	display: inline-flex;
+}
+
+.MITRETechnique {
+    padding: 8px;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+}
+  
 #riskMatrixContainer{
 	display: grid;
 	position: relative;

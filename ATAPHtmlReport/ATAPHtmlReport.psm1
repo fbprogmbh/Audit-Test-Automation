@@ -804,41 +804,41 @@ function ConvertTo-HtmlTable {
         $Mappings
     )
 
-	htmlElement 'table' @{} {
-		htmlElement 'thead' @{} {
-			htmlElement 'tr' @{} {
-				foreach ($tactic in $Mappings.Keys) {
-					$url = get-MitreLink -tactic -id $tactic
-					htmlElement 'td' @{} {
-						htmlElement 'a' @{href = $url } {"$tactic"}
-					}
-				}
-			}
-		}
-		htmlElement 'tbody' @{} {
-			htmlElement 'tr' @{} {
-				foreach ($tactic in $Mappings.Keys) {
-					htmlElement 'td' @{} {
-						foreach ($technique in $Mappings[$tactic].Keys){
-							htmlElement 'p' @{} {
-								htmlElement 'div' @{} {
-									$successCounter = 0
-									foreach ($id in $Mappings[$tactic][$technique].Keys) {
-										if($Mappings[$tactic][$technique][$id] -eq $true){
-											$successCounter++
-										}
-									}
-									$url = get-MitreLink -technique -id $technique
-						            htmlElement 'a' @{href = $url } { "$technique" }
-									htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    htmlElement 'table' @{id='MITRETable'} {
+        htmlElement 'thead' @{id='MITREthead'} {
+            htmlElement 'tr' @{} {
+                foreach ($tactic in $Mappings.Keys) {
+                    $url = get-MitreLink -tactic -id $tactic
+                    htmlElement 'td' @{} {
+                        htmlElement 'a' @{href = $url } {"$tactic"}
+                    }
+                }
+            }
+        }
+        htmlElement 'tbody' @{id='MITREtbody'} {
+            htmlElement 'tr' @{} {
+                foreach ($tactic in $Mappings.Keys) {
+                    htmlElement 'td' @{id='MITREtbody'} {
+                        foreach ($technique in $Mappings[$tactic].Keys){
+                            htmlElement 'div' @{id='MITRETechniques'} {
+                                htmlElement 'div' @{class='MITRETechnique'} {  
+                                    $successCounter = 0
+                                    foreach ($id in $Mappings[$tactic][$technique].Keys) {
+                                        if($Mappings[$tactic][$technique][$id] -eq $true){
+                                            $successCounter++
+                                        }
+                                    }
+                                    $url = get-MitreLink -technique -id $technique
+                                    htmlElement 'a' @{href = $url } { "$technique" } 
+                                    htmlElement 'span' @{id='MITREtd'} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 function Get-ColorValue{
