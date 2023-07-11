@@ -31,7 +31,6 @@ InModuleScope ATAPHtmlReport {
 
             $Sections = $Section1, $Section2
 
-
             $mapping = $Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object { return $_.SubSections } | ForEach-Object { return $_.AuditInfos } | Merge-CisAuditsToMitreMap
             foreach ($tactic in $mapping.Keys) {
                 Write-Host "$tactic = "
@@ -42,8 +41,8 @@ InModuleScope ATAPHtmlReport {
                     }
                 }
             }
-            # $mapping.Print()
 
+            $mapping.GetType() | Should-Be "MitreMap"
             $mapping.Map["TA0001"]["T1078"]["1.1.4"] | Should -Be False
             $mapping.Map["TA0006"]["T1110"]["1.2.3"] | Should -Be True
         }
