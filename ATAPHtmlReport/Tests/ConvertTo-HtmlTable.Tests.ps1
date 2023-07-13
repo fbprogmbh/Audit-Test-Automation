@@ -44,7 +44,7 @@ InModuleScope ATAPHtmlReport {
             $tags = (ConvertTo-HtmlTable $Mappings.map).Split("<").Split(">")
             $tags | Should -Contain 'table id="MITRETable"'
             $tags | Should -Contain 'a href="https://attack.mitre.org/tactics/TA0007/"'
-            $tags | Should -Contain 'TA0007'
+            $tags | Should -Contain 'Discovery'
         }
     }
 }

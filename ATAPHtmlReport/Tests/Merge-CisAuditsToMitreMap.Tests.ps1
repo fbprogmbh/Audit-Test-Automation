@@ -42,7 +42,7 @@ InModuleScope ATAPHtmlReport {
                 }
             }
 
-            $mapping.GetType() | Should-Be "MitreMap"
+            $mapping.GetType() | Should -Be "MitreMap"
             $mapping.Map["TA0001"]["T1078"]["1.1.4"] | Should -Be False
             $mapping.Map["TA0006"]["T1110"]["1.2.3"] | Should -Be True
         }
