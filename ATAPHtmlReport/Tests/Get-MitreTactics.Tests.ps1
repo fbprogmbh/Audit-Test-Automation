@@ -3,7 +3,7 @@
 
 InModuleScope ATAPHtmlReport {
     Describe 'Testing Get-MitreTactics' {
-        It 'tests with example techniques' {
+        It 'tests with example Values' {
 
             Get-MitreTactics -TechniqueID "T1591" | Should -Be 'TA0043'
 

@@ -40,6 +40,9 @@ $ModuleVersion = (Import-PowerShellDataFile -Path "$ScriptRoot\ATAPHtmlReport.ps
 $StatusValues = 'True', 'False', 'Warning', 'None', 'Error'
 $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, @{ Name = 'Status' }
 
+# $MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json -AsHashtable   <- this is only available from powersehll v 6 onwards
+$MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json
+
 $MitreTechniquesToTacticsMap = @{
 	T1069='TA0007'
 	T1563='TA0008'
@@ -238,6 +241,25 @@ $MitreTechniquesToTacticsMap = @{
 	T1113='TA0009'
 	T1566='TA0001'
 	}
+
+
+function Get-MitreTacticName {
+		<#
+	.SYNOPSIS
+		Returns the corresponding name for a given Mitre Tactic Id
+
+	.EXAMPLE
+		Get-MitreTacticName TacticId 'TA0043'
+	#>
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]
+		$TacticId
+	)
+
+	# $MitreTacticsStore[$tacticId] cannot be used because MitreTacticsStore is a customObject and not a map
+	return $MitreTacticsStore.$tacticId
+}
 
 function Get-MitreTactics {
 	<#
@@ -809,9 +831,10 @@ function ConvertTo-HtmlTable {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
                     $url = get-MitreLink -tactic -id $tactic
-                    htmlElement 'td' @{} {
-                        htmlElement 'a' @{href = $url } {"$tactic"}
-                    }
+					htmlElement 'td' @{} {
+						$tacticName = Get-MitreTacticName -TacticId $tactic
+						htmlElement 'a' @{href = $url } {"$tacticName"}
+					}
                 }
             }
         }
