@@ -720,104 +720,35 @@ function Merge-CisAuditsToMitreMap {
         $Audit
     )
     Begin {
-		$finally = $true;
-		try{
-			#start the excel com to make its API available
-			$CISMappingPath = "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1.11.0.xlsx"
-			
-			$excelObject = New-Object -ComObject Excel.Application
-
-			$workbook = $excelObject.Workbooks.Open($CISMappingPath)
-			$worksheet = $workbook.Sheets | Where-Object { $_.Name -eq "MITRE ATT&CK Mappings" }
-			
-			$cisIdColumn = "B"
-			$cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
-
-			$mitreMap = [MitreMap]::new()
-			$finally = $false;
-		}
-		catch {
-			Write-Host $_.Message
-		}
-		finally {
-			if($finally) {
-				# release Com Object
-				if($workbook) {
-					$workbook.Close($false)
-				}
-				if($excelObject) {
-					$excelObject.Quit()
-					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-				}
-				if($workbook -or $excelObject) {
-					[System.GC]::Collect()
-					[System.GC]::WaitForPendingFinalizers()
-				}
-			}
-		}
+		$json = Get-Content -Raw "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1-MITRE ATT&CK Mappings.json" | ConvertFrom-Json
+		$mitreMap = [MitreMap]::new()
     }
         
     Process {
-		$finally = $true;
-		try {
-			$id = $Audit.Id
-			$cisIdLocation = $cisIdRange.Find($id)
+		$id = $Audit.Id
+		$technique1 = $json.$id.'Technique1'
+		$technique2 = $json.$id.'Technique2'
 
-			if ($cisIdLocation) {
-				$row = $cisIdLocation.Row
-				$technique1 = ($worksheet.Cells.Item($row, 7).Text).Trim()
-				$technique2 = ($worksheet.Cells.Item($row, 8).Text).Trim()
-			
-				foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
-					if($tactic -and $technique1) {
-						$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
-					}
-				}
-				foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
-					if($tactic -and $technique2) {
-						$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
-					}
+		if($technique1) {
+			foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
+				if($tactic) {
+					$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
 				}
 			}
-			$finally = $false;
-		}
-		catch {
-			Write-Host $_.Message
-		}
-		finally {
-			if($finally) {
-				# release Com Object
-				if($workbook) {
-					$workbook.Close($false)
-				}
-				if($excelObject) {
-					$excelObject.Quit()
-					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-				}
-				if($workbook -or $excelObject) {
-					[System.GC]::Collect()
-					[System.GC]::WaitForPendingFinalizers()
-				}
-			}	
-		}
-    }
-        
-    End {
-        # release Com Object
-		if($workbook) {
-			$workbook.Close($false)
-		}
-		if($excelObject) {
-			$excelObject.Quit()
-			[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-		}
-		if($workbook -or $excelObject) {
-			[System.GC]::Collect()
-			[System.GC]::WaitForPendingFinalizers()
 		}
 
-        return [MitreMap] $mitreMap
-    }
+		if($technique2) {
+			foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
+				if($tactic) {
+					$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
+				}
+			}
+		}
+	}
+
+	End {
+		return [MitreMap] $mitreMap
+	}
 }
 
 function ConvertTo-HtmlTable {
