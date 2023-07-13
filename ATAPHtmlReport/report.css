@@ -269,22 +269,30 @@ button{
 }
 
 #MITREthead {
-    background-color: #1ebd40;
     border: 1px solid #141414;
 	text-align:center;
 }
 
 #MITREthead th {
-    padding: 8px;
+    /*padding: 8px;*/
     border: 1px solid #141414;
 	font-weight:bold;
 	display: inline-flex;
 }
 
-.MITRETechnique {
-    padding: 8px;
-    border: 1px solid #000000;
-    background-color: #ffffff;
+#MITRETechniques div{
+	padding: 8px;
+    border: 1px solid #000000 !important;
+}
+
+.success{
+	background-color:green;
+	background-clip: border-box;
+}
+
+.failure{
+	background-color:red;
+	background-clip: border-box;
 }
   
 #riskMatrixContainer{

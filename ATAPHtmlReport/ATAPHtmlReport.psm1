@@ -799,6 +799,12 @@ function Merge-CisAuditsToMitreMap {
 }
 
 function ConvertTo-HtmlTable {
+	<#
+	.Synopsis 
+		Generates a html table using the mapping keys of the tactics and techniques
+		It also adds the links to the table using the function "get-MitreLink"
+		and colours the cells
+	#>
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Mappings
@@ -818,10 +824,10 @@ function ConvertTo-HtmlTable {
         htmlElement 'tbody' @{id='MITREtbody'} {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
-                    htmlElement 'td' @{id='MITREtbody'} {
+                    htmlElement 'td' @{id='MITREtbody'; class =$colorClass} {
                         foreach ($technique in $Mappings[$tactic].Keys){
-                            htmlElement 'div' @{id='MITRETechniques'} {
-                                htmlElement 'div' @{class='MITRETechnique'} {  
+                            htmlElement 'div' @{id='MITRETechniques'; class=Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count} {
+                                #htmlElement 'div' @{class='MITRETechnique'} {  
                                     $successCounter = 0
                                     foreach ($id in $Mappings[$tactic][$technique].Keys) {
                                         if($Mappings[$tactic][$technique][$id] -eq $true){
@@ -829,9 +835,12 @@ function ConvertTo-HtmlTable {
                                         }
                                     }
                                     $url = get-MitreLink -technique -id $technique
-                                    htmlElement 'a' @{href = $url } { "$technique" } 
-                                    htmlElement 'span' @{id='MITREtd'} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
-                                }
+									$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
+									htmlElement 'div' @{id='MITRETechniques'; class=$colorClass} {
+                                    	htmlElement 'a' @{href = $url } { "$technique" } 
+										htmlElement 'span' @{id='MITREtd'} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
+									}
+                               # }
                             }
                         }
                     }
@@ -857,10 +866,10 @@ function Get-ColorValue{
     )
 
     if ($FirstValue -eq $SecondValue) {
-        return 1
+        return "success"
     }
     else {
-        return 0
+        return "failure"
     }
 }
 
