@@ -1007,6 +1007,23 @@ $isIPv6Disabled = Get-IPv6Disabled
     }
 }
 [AuditTest] @{
+    Id = "1.8.1"
+    Task = "Ensure GNOME Display Manager is removed"
+    Test = {
+        $test1 = dpkg -l | grep -o gdm3
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
     Id = "1.8.2"
     Task = "Ensure GNOME Display Manager is removed"
     Test = {
@@ -2510,6 +2527,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         }
     }
 }
+
 [AuditTest] @{
     Id = "4.1.3"
     Task = "Ensure events that modify date and time information are collected"
@@ -3175,23 +3193,24 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         }
     }
 }
-[AuditTest] @{
-    Id = "4.2.1.5"
-    Task = "Ensure rsyslog is configured to send logs to a remote log host"
-    Test = {
-        $test1 = grep -E '^\s*([^#]+\s+)?action\(([^#]+\s+)?\btarget=\"?[^#"]+\"?\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
-        if($test1 -match "target"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
+# [AuditTest] @{
+#     Id = "4.2.1.5"
+#     Task = "Ensure rsyslog is configured to send logs to a remote log host"
+#     Test = {
+#         $test1 = grep -E '^\s*([^#]+\s+)?action\(([^#]+\s+)?\btarget=\"?[^#"]+\"?\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+#         grep -E '^\s*([^#]+\s+)?action\(([^#]+\s+)?\btarget=\"?[^#"]+\"?\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+#         if($test1 -match "target"){
+#             return @{
+#                 Message = "Compliant"
+#                 Status = "True"
+#             }
+#         }
+#         return @{
+#             Message = "Not-Compliant"
+#             Status = "False"
+#         }
+#     }
+# }
 [AuditTest] @{
     Id = "4.2.2.1"
     Task = "Ensure journald is configured to send logs to rsyslog"
@@ -4558,7 +4577,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "6.1.10"
     Task = "Ensure no world writable files exist"
     Test = {
-        # $partitions = mapfile -t partitions < (sudo fdisk -l | grep -o '/dev/[^ ]*')
+        #$partitions = mapfile -t partitions < (sudo fdisk -l | grep -o '/dev/[^ ]*')
         $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
         if($test1 -eq $null){
             return @{
