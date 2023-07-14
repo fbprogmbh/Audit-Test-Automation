@@ -804,6 +804,9 @@ function ConvertTo-HtmlTable {
 		Generates a html table using the mapping keys of the tactics and techniques
 		It also adds the links to the table using the function "get-MitreLink"
 		and colours the cells
+	.Example
+		ConvertTo-HtmlTable $Mappings.map
+
 	#>
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -824,7 +827,7 @@ function ConvertTo-HtmlTable {
         htmlElement 'tbody' @{id='MITREtbody'} {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
-                    htmlElement 'td' @{id='MITREtbody'; class =$colorClass} {
+                    htmlElement 'td' @{} {
                         foreach ($technique in $Mappings[$tactic].Keys){
                             htmlElement 'div' @{id='MITRETechniques'; class=Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count} { 
                                     $successCounter = 0
@@ -837,7 +840,7 @@ function ConvertTo-HtmlTable {
 									$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
 									htmlElement 'div' @{id='MITRETechniques'; class=$colorClass} {
                                     	htmlElement 'a' @{href = $url } { "$technique" } 
-										htmlElement 'span' @{id='MITREtd'} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
+										htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
 									}
                             }
                         }
