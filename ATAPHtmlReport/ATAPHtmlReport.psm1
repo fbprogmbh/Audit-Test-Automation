@@ -818,73 +818,6 @@ function Get-ColorValue{
     }
 }
 
-
-
-function Show-ReportSections {
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string]
-		$Title,
-
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[string]
-		$Description,
-
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[alias('AuditInfos')]
-		[array]
-		$ConfigAudits,
-
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[alias('Sections')]
-		[array]
-		$Subsections,
-
-		[Parameter(Mandatory = $false)]
-		[string]
-		$Prefix
-	)
-
-	process {
-		$id = $Prefix + " " + $Title
-		# $sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
-
-		#check if main section
-		if ($null -ne $Description) {
-			Write-Host ""
-			Write-Host "$id   -----------------------------------------------------------------"
-			Write-Host $Description
-		}
-
-		#check if subsection
-		if ($null -ne $ConfigAudits) {
-			#table head
-			foreach ($columnName in $AuditProperties.Name) {
-				Write-Host -NoNewline "$columnName  |  "
-			}
-			Write-Host ""
-			#table rows
-			foreach ($configAudit in $ConfigAudits) {
-				foreach ($property in $AuditProperties) {
-					$value = $configAudit | Select-Object -ExpandProperty $property.Name
-					#highlight important information
-					if ($Property.Name -eq 'Status' -or $Property.Name -eq 'Id' ) {
-						$value = "--> $value <--"
-					}
-					Write-Host -NoNewline "$value  |  "
-				}
-				Write-Host ""
-			}
-		}
-
-		if ($null -ne $Subsections) {				
-			foreach ($subsection in $Subsections) {
-				$subsection | Show-ReportSections -Prefix ($Prefix + $Title)
-			}
-		}
-	}
-}
-
 #in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
 #but the versions don't match so the function prints the status in the HTML but doesn't block Merge-CisAuditsToMitreMap
 function Compare-EqualCISVersions {
@@ -1197,6 +1130,7 @@ function Get-ATAPHtmlReport {
 	)
 
 	process {
+		Write-Progress -Activity "Creating HTML report head" -Status "Progress:" -PercentComplete 0
 		$allConfigResults = foreach ($section in $Sections) { $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status' }
 		$completionStatus, $sectionTotalCountHash, $sectionCountHash = Get-CompletionStatus -Statuses $allConfigResults -sections $Sections
 
@@ -1218,6 +1152,8 @@ function Get-ATAPHtmlReport {
 				Get-Content $jsPath
 			}
 		}
+		
+		Write-Progress -Activity "Creating HTML report body" -Status "Progress:" -PercentComplete 13
 		$body = htmlElement 'body' @{onload = "startConditions()" } {
 			# Header
 			htmlElement 'div' @{ class = 'header content' } {
@@ -1323,6 +1259,7 @@ function Get-ATAPHtmlReport {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
 					}
 
+					Write-Progress -Activity "Creating settings overview page" -Status "Progress:" -PercentComplete 25
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
@@ -1337,12 +1274,10 @@ function Get-ATAPHtmlReport {
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
 							$section | Get-HtmlReportSection
-							$section | Where-Object { $_.Title -eq "CIS Benchmarks" } | Show-ReportSections 
 						}
-						$Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
 					}
 
-
+					Write-Progress -Activity "Creating summary page" -Status "Progress:" -PercentComplete 38
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
 						# htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
@@ -1530,7 +1465,7 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-
+					Write-Progress -Activity "Creating foundation data page" -Status "Progress:" -PercentComplete 50
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						#Tab: Foundation Data (Only works for Windows OS!)
 						if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
@@ -1666,8 +1601,8 @@ function Get-ATAPHtmlReport {
 						foreach ($section in $FoundationSections) { $section | Get-HtmlReportSection }
 					}
 					
-					
 					if($RiskScore){
+						Write-Progress -Activity "Creating risk score  page" -Status "Progress:" -PercentComplete 63
 						htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 							htmlElement 'h1'@{} {"Risk Score"}
 							htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
@@ -1827,6 +1762,7 @@ function Get-ATAPHtmlReport {
 
 					if($MITRE) {
 						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
 								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
@@ -1848,7 +1784,7 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-
+					Write-Progress -Activity "Creating references page" -Status "Progress:" -PercentComplete 83
 					htmlElement 'div' @{class = 'tabContent'; id = 'references'}{
 						htmlElement 'h1' @{} {"About us"}
 						htmlElement 'h2' @{} {"What makes FB Pro GmbH different"}
