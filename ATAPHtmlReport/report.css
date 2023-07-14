@@ -274,7 +274,6 @@ button{
 }
 
 #MITREthead th {
-    /*padding: 8px;*/
     border: 1px solid #141414;
 	font-weight:bold;
 	display: inline-flex;
@@ -282,7 +281,7 @@ button{
 
 #MITRETechniques div{
 	padding: 8px;
-    border: 1px solid #000000 !important;
+    border: 1px solid #000000;
 }
 
 .success{
