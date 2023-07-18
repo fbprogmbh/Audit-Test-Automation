@@ -87,14 +87,17 @@ class MitreMap {
 
 		#read in techniques from json-file
 		$techniques = Get-Content -Raw "$PSScriptRoot\enterprise-attack-v13-techniques.json" | ConvertFrom-Json
+		#can't access $MitreTacticsStore int this function so read in file again
+		$tactics = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json
+
+		foreach($tacitc in $tactics.psobject.properties.name) {
+			$this.Map[$tacitc] = @{}
+		}
 
 		#add all techniques and tactics to map
 		foreach($technique in $techniques.psobject.properties.name){
 			$tactics = Get-MitreTactics -TechniqueID $techniques.$technique.'ID'
 			foreach($tactic in $tactics){
-				if($null -eq $this.Map[$tactic]) {
-					$this.Map[$tactic] = @{}
-				}
 				if($null -eq $this.Map[$tactic][$techniques.$technique.'ID']) {
 					$this.Map[$tactic][$techniques.$technique.'ID'] = @{}
 				}
