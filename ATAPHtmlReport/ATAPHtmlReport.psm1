@@ -40,204 +40,29 @@ $ModuleVersion = (Import-PowerShellDataFile -Path "$ScriptRoot\ATAPHtmlReport.ps
 $StatusValues = 'True', 'False', 'Warning', 'None', 'Error'
 $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, @{ Name = 'Status' }
 
-$MitreTechniquesToTacticsMap = @{
-	T1069='TA0007'
-	T1563='TA0008'
-	T1219='TA0011'
-	T1580='TA0007'
-	T1046='TA0007'
-	T1190='TA0001'
-	T1529='TA0040'
-	T1486='TA0040'
-	T1090='TA0011'
-	T1008='TA0011'
-	T1651='TA0002'
-	T1218='TA0005'
-	T1136='TA0003'
-	T1615='TA0007'
-	T1559='TA0002'
-	T1105='TA0011'
-	T1213='TA0009'
-	T1135='TA0007'
-	T1556='TA0006', 'TA0005', 'TA0003'
-	T1647='TA0005'
-	T1095='TA0011'
-	T1048='TA0010'
-	T1070='TA0005'
-	T1176='TA0003'
-	T1140='TA0005'
-	T1010='TA0007'
-	T1110='TA0006'
-	T1055='TA0004', 'TA0005'
-	T1578='TA0005'
-	T1104='TA0011'
-	T1001='TA0011'
-	T1594='TA0043'
-	T1546='TA0004', 'TA0003'
-	T1588='TA0042'
-	T1137='TA0003'
-	T1205='TA0005', 'TA0011', 'TA0003'
-	T1614='TA0007'
-	T1059='TA0002'
-	T1597='TA0043'
-	T1071='TA0011'
-	T1534='TA0008'
-	T1496='TA0040'
-	T1589='TA0043'
-	T1123='TA0009'
-	T1565='TA0040'
-	T1550='TA0008', 'TA0005'
-	T1211='TA0005'
-	T1652='TA0007'
-	T1574='TA0004', 'TA0005', 'TA0003'
-	T1648='TA0002'
-	T1598='TA0043'
-	T1222='TA0005'
-	T1091='TA0008', 'TA0001'
-	T1601='TA0005'
-	T1074='TA0009'
-	T1207='TA0005'
-	T1072='TA0008', 'TA0002'
-	T1203='TA0002'
-	T1087='TA0007'
-	T1611='TA0004'
-	T1542='TA0005', 'TA0003'
-	T1132='TA0011'
-	T1133='TA0001', 'TA0003'
-	T1609='TA0002'
-	T1027='TA0005'
-	T1057='TA0007'
-	T1120='TA0007'
-	T1572='TA0011'
-	T1102='TA0011'
-	T1037='TA0004', 'TA0003'
-	T1119='TA0009'
-	T1189='TA0001'
-	T1571='TA0011'
-	T1040='TA0006', 'TA0007'
-	T1056='TA0009', 'TA0006'
-	T1014='TA0005'
-	T1124='TA0007'
-	T1036='TA0005'
-	T1129='TA0002'
-	T1530='TA0009'
-	T1041='TA0010'
-	T1049='TA0007'
-	T1092='TA0011'
-	T1484='TA0004', 'TA0005'
-	T1125='TA0009'
-	T1482='TA0007'
-	T1528='TA0006'
-	T1538='TA0007'
-	T1047='TA0002'
-	T1111='TA0006'
-	T1560='TA0009'
-	T1573='TA0011'
-	T1011='TA0010'
-	T1569='TA0002'
-	T1599='TA0005'
-	T1112='TA0005'
-	T1622='TA0005', 'TA0007'
-	T1216='TA0005'
-	T1497='TA0005', 'TA0007'
-	T1561='TA0040'
-	T1078='TA0004', 'TA0005', 'TA0001', 'TA0003'
-	T1548='TA0004', 'TA0005'
-	T1608='TA0042'
-	T1583='TA0042'
-	T1552='TA0006'
-	T1012='TA0007'
-	T1200='TA0001'
-	T1220='TA0005'
-	T1021='TA0008'
-	T1621='TA0006'
-	T1531='TA0040'
-	T1202='TA0005'
-	T1199='TA0001'
-	T1020='TA0010'
-	T1620='TA0005'
-	T1480='TA0005'
-	T1585='TA0042'
-	T1217='TA0007'
-	T1127='TA0005'
-	T1491='TA0040'
-	T1490='TA0040'
-	T1083='TA0007'
-	T1650='TA0042'
-	T1029='TA0010'
-	T1606='TA0006'
-	T1526='TA0007'
-	T1568='TA0011'
-	T1610='TA0002', 'TA0005'
-	T1134='TA0004', 'TA0005'
-	T1499='TA0040'
-	T1612='TA0005'
-	T1602='TA0009'
-	T1114='TA0009'
-	T1537='TA0010'
-	T1003='TA0006'
-	T1553='TA0005'
-	T1115='TA0009'
-	T1018='TA0007'
-	T1543='TA0004', 'TA0003'
-	T1221='TA0005'
-	T1052='TA0010'
-	T1505='TA0003'
-	T1212='TA0006'
-	T1593='TA0043'
-	T1555='TA0006'
-	T1547='TA0004', 'TA0003'
-	T1030='TA0010'
-	T1053='TA0004', 'TA0002', 'TA0003'
-	T1195='TA0001'
-	T1006='TA0005'
-	T1498='TA0040'
-	T1204='TA0002'
-	T1025='TA0009'
-	T1082='TA0007'
-	T1080='TA0008'
-	T1596='TA0043'
-	T1590='TA0043'
-	T1518='TA0007'
-	T1586='TA0042'
-	T1557='TA0009', 'TA0006'
-	T1210='TA0008'
-	T1485='TA0040'
-	T1033='TA0007'
-	T1201='TA0007'
-	T1185='TA0009'
-	T1595='TA0043'
-	T1197='TA0005', 'TA0003'
-	T1558='TA0006'
-	T1649='TA0006'
-	T1039='TA0009'
-	T1098='TA0003'
-	T1570='TA0008'
-	T1535='TA0005'
-	T1619='TA0007'
-	T1005='TA0009'
-	T1562='TA0005'
-	T1584='TA0042'
-	T1567='TA0010'
-	T1613='TA0007'
-	T1016='TA0007'
-	T1007='TA0007'
-	T1495='TA0040'
-	T1525='TA0003'
-	T1068='TA0004'
-	T1539='TA0006'
-	T1187='TA0006'
-	T1587='TA0042'
-	T1489='TA0040'
-	T1600='TA0005'
-	T1592='TA0043'
-	T1591='TA0043'
-	T1564='TA0005'
-	T1554='TA0003'
-	T1106='TA0002'
-	T1113='TA0009'
-	T1566='TA0001'
-	}
+# $MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json -AsHashtable   <- this is only available from powersehll v 6 onwards
+$MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json
+
+$MitreTechniquesToTacticsMap = Get-Content -Raw "$PSScriptRoot\TechniquesToTactics.json" | ConvertFrom-Json
+
+
+function Get-MitreTacticName {
+		<#
+	.SYNOPSIS
+		Returns the corresponding name for a given Mitre Tactic Id
+
+	.EXAMPLE
+		Get-MitreTacticName TacticId 'TA0043'
+	#>
+	param(
+		[Parameter(Mandatory = $true)]
+		[string]
+		$TacticId
+	)
+
+	# $MitreTacticsStore[$tacticId] cannot be used because MitreTacticsStore is a customObject and not a map
+	return $MitreTacticsStore.$tacticId
+}
 
 function Get-MitreTactics {
 	<#
@@ -248,10 +73,10 @@ function Get-MitreTactics {
 		Get-MitreTactics -TechniqueID 'T1133'
 	#>
     param(
-        [Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true)]
         $TechniqueID
     )
-	return $MitreTechniquesToTacticsMap[$TechniqueID]
+	return $MitreTechniquesToTacticsMap.$TechniqueID
 }
 
 class MitreMap {
@@ -260,47 +85,19 @@ class MitreMap {
 	MitreMap() {
 		$this.Map = @{}
 
-		#start the excel com to make its API available
-		$MitreAttackPath = "$PSScriptRoot\enterprise-attack-v13.1.xlsx"
-		$excelObject = New-Object -ComObject Excel.Application
-		$workbook = $excelObject.Workbooks.Open($MitreAttackPath)
-		try{
-			$techniquesSheet = $workbook.Sheets | Where-Object { $_.Name -eq "techniques" }
-			
-			$idColumn = "A"
-			$isSubtechniqueColumn = 12
-			$rowCount = 608
-			$techniquesRange = $techniquesSheet.Range($idColumn + "2:" + $idColumn + $rowCount)
+		#read in techniques from json-file
+		$techniques = Get-Content -Raw "$PSScriptRoot\enterprise-attack-v13-techniques.json" | ConvertFrom-Json
 
-			#add all techniques and tactics to map
-			foreach($techniqeCell in $techniquesRange){
-				$row = $techniqeCell.Row
-				$isSubtechnique = ($techniquesSheet.Cells.Item($row, $isSubtechniqueColumn).Text).Trim()
-				if($isSubtechnique -eq "FALSCH"){   #why is that german?
-					$technique = $techniqeCell.Value()
-					$tactics = Get-MitreTactics -TechniqueID $technique
-					foreach($tactic in $tactics){
-						if($null -eq $this.Map[$tactic]) {
-							$this.Map[$tactic] = @{}
-						}
-						if($null -eq $this.Map[$tactic][$technique]) {
-							$this.Map[$tactic][$technique] = @{}
-						}
-					}
+		#add all techniques and tactics to map
+		foreach($technique in $techniques.psobject.properties.name){
+			$tactics = Get-MitreTactics -TechniqueID $techniques.$technique.'ID'
+			foreach($tactic in $tactics){
+				if($null -eq $this.Map[$tactic]) {
+					$this.Map[$tactic] = @{}
 				}
-			}
-		}
-		finally{
-			if($workbook) {
-				$workbook.Close($false)
-			}
-			if($excelObject) {
-				$excelObject.Quit()
-				[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-			}
-			if($workbook -or $excelObject) {
-				[System.GC]::Collect()
-				[System.GC]::WaitForPendingFinalizers()
+				if($null -eq $this.Map[$tactic][$techniques.$technique.'ID']) {
+					$this.Map[$tactic][$techniques.$technique.'ID'] = @{}
+				}
 			}
 		}
 	}
@@ -698,104 +495,35 @@ function Merge-CisAuditsToMitreMap {
         $Audit
     )
     Begin {
-		$finally = $true;
-		try{
-			#start the excel com to make its API available
-			$CISMappingPath = "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1.11.0.xlsx"
-			
-			$excelObject = New-Object -ComObject Excel.Application
-
-			$workbook = $excelObject.Workbooks.Open($CISMappingPath)
-			$worksheet = $workbook.Sheets | Where-Object { $_.Name -eq "MITRE ATT&CK Mappings" }
-			
-			$cisIdColumn = "B"
-			$cisIdRange = $worksheet.Range($cisIdColumn + ":" + $cisIdColumn)
-
-			$mitreMap = [MitreMap]::new()
-			$finally = $false;
-		}
-		catch {
-			Write-Host $_.Message
-		}
-		finally {
-			if($finally) {
-				# release Com Object
-				if($workbook) {
-					$workbook.Close($false)
-				}
-				if($excelObject) {
-					$excelObject.Quit()
-					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-				}
-				if($workbook -or $excelObject) {
-					[System.GC]::Collect()
-					[System.GC]::WaitForPendingFinalizers()
-				}
-			}
-		}
+		$json = Get-Content -Raw "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1-MITRE ATT&CK Mappings.json" | ConvertFrom-Json
+		$mitreMap = [MitreMap]::new()
     }
         
     Process {
-		$finally = $true;
-		try {
-			$id = $Audit.Id
-			$cisIdLocation = $cisIdRange.Find($id)
+		$id = $Audit.Id
+		$technique1 = $json.$id.'Technique1'
+		$technique2 = $json.$id.'Technique2'
 
-			if ($cisIdLocation) {
-				$row = $cisIdLocation.Row
-				$technique1 = ($worksheet.Cells.Item($row, 7).Text).Trim()
-				$technique2 = ($worksheet.Cells.Item($row, 8).Text).Trim()
-			
-				foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
-					if($tactic -and $technique1) {
-						$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
-					}
-				}
-				foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
-					if($tactic -and $technique2) {
-						$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
-					}
+		if($technique1) {
+			foreach ($tactic in Get-MitreTactics -TechniqueID $technique1){
+				if($tactic) {
+					$mitreMap.Add($tactic, $technique1, $id, $Audit.Status)
 				}
 			}
-			$finally = $false;
-		}
-		catch {
-			Write-Host $_.Message
-		}
-		finally {
-			if($finally) {
-				# release Com Object
-				if($workbook) {
-					$workbook.Close($false)
-				}
-				if($excelObject) {
-					$excelObject.Quit()
-					[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-				}
-				if($workbook -or $excelObject) {
-					[System.GC]::Collect()
-					[System.GC]::WaitForPendingFinalizers()
-				}
-			}	
-		}
-    }
-        
-    End {
-        # release Com Object
-		if($workbook) {
-			$workbook.Close($false)
-		}
-		if($excelObject) {
-			$excelObject.Quit()
-			[void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($excelObject)					
-		}
-		if($workbook -or $excelObject) {
-			[System.GC]::Collect()
-			[System.GC]::WaitForPendingFinalizers()
 		}
 
-        return [MitreMap] $mitreMap
-    }
+		if($technique2) {
+			foreach ($tactic in Get-MitreTactics -TechniqueID $technique2){
+				if($tactic) {
+					$mitreMap.Add($tactic, $technique2, $id, $Audit.Status)
+				}
+			}
+		}
+	}
+
+	End {
+		return [MitreMap] $mitreMap
+	}
 }
 
 function ConvertTo-HtmlTable {
@@ -818,9 +546,10 @@ function ConvertTo-HtmlTable {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
                     $url = get-MitreLink -tactic -id $tactic
-                    htmlElement 'td' @{} {
-                        htmlElement 'a' @{href = $url } {"$tactic"}
-                    }
+					htmlElement 'td' @{} {
+						$tacticName = Get-MitreTacticName -TacticId $tactic
+						htmlElement 'a' @{href = $url } {"$tacticName"}
+					}
                 }
             }
         }
@@ -872,73 +601,6 @@ function Get-ColorValue{
     else {
         return "failure"
     }
-}
-
-
-
-function Show-ReportSections {
-	param(
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string]
-		$Title,
-
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[string]
-		$Description,
-
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[alias('AuditInfos')]
-		[array]
-		$ConfigAudits,
-
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[alias('Sections')]
-		[array]
-		$Subsections,
-
-		[Parameter(Mandatory = $false)]
-		[string]
-		$Prefix
-	)
-
-	process {
-		$id = $Prefix + " " + $Title
-		# $sectionStatus = Get-SectionStatus -ConfigAudits $ConfigAudits -Subsections $Subsections
-
-		#check if main section
-		if ($null -ne $Description) {
-			Write-Host ""
-			Write-Host "$id   -----------------------------------------------------------------"
-			Write-Host $Description
-		}
-
-		#check if subsection
-		if ($null -ne $ConfigAudits) {
-			#table head
-			foreach ($columnName in $AuditProperties.Name) {
-				Write-Host -NoNewline "$columnName  |  "
-			}
-			Write-Host ""
-			#table rows
-			foreach ($configAudit in $ConfigAudits) {
-				foreach ($property in $AuditProperties) {
-					$value = $configAudit | Select-Object -ExpandProperty $property.Name
-					#highlight important information
-					if ($Property.Name -eq 'Status' -or $Property.Name -eq 'Id' ) {
-						$value = "--> $value <--"
-					}
-					Write-Host -NoNewline "$value  |  "
-				}
-				Write-Host ""
-			}
-		}
-
-		if ($null -ne $Subsections) {				
-			foreach ($subsection in $Subsections) {
-				$subsection | Show-ReportSections -Prefix ($Prefix + $Title)
-			}
-		}
-	}
 }
 
 #in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
@@ -1253,6 +915,7 @@ function Get-ATAPHtmlReport {
 	)
 
 	process {
+		Write-Progress -Activity "Creating HTML report head" -Status "Progress:" -PercentComplete 0
 		$allConfigResults = foreach ($section in $Sections) { $section | Select-ConfigAudit | Select-Object -ExpandProperty 'Status' }
 		$completionStatus, $sectionTotalCountHash, $sectionCountHash = Get-CompletionStatus -Statuses $allConfigResults -sections $Sections
 
@@ -1274,6 +937,8 @@ function Get-ATAPHtmlReport {
 				Get-Content $jsPath
 			}
 		}
+		
+		Write-Progress -Activity "Creating HTML report body" -Status "Progress:" -PercentComplete 13
 		$body = htmlElement 'body' @{onload = "startConditions()" } {
 			# Header
 			htmlElement 'div' @{ class = 'header content' } {
@@ -1379,6 +1044,7 @@ function Get-ATAPHtmlReport {
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'referenceBtn'; onclick = "clickButton('3')" } { "About Us" }
 					}
 
+					Write-Progress -Activity "Creating settings overview page" -Status "Progress:" -PercentComplete 25
 					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'} {
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
@@ -1393,12 +1059,10 @@ function Get-ATAPHtmlReport {
 						# Report Sections for hardening settings
 						foreach ($section in $Sections) {
 							$section | Get-HtmlReportSection
-							$section | Where-Object { $_.Title -eq "CIS Benchmarks" } | Show-ReportSections 
 						}
-						$Sections | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object {return $_.SubSections} | ForEach-Object {return $_.AuditInfos} | Merge-CisAuditsToMitreMap
 					}
 
-
+					Write-Progress -Activity "Creating summary page" -Status "Progress:" -PercentComplete 38
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
 						# htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
@@ -1586,7 +1250,7 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-
+					Write-Progress -Activity "Creating foundation data page" -Status "Progress:" -PercentComplete 50
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						#Tab: Foundation Data (Only works for Windows OS!)
 						if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
@@ -1722,8 +1386,8 @@ function Get-ATAPHtmlReport {
 						foreach ($section in $FoundationSections) { $section | Get-HtmlReportSection }
 					}
 					
-					
 					if($RiskScore){
+						Write-Progress -Activity "Creating risk score  page" -Status "Progress:" -PercentComplete 63
 						htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 							htmlElement 'h1'@{} {"Risk Score"}
 							htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
@@ -1883,6 +1547,7 @@ function Get-ATAPHtmlReport {
 
 					if($MITRE) {
 						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
 								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
@@ -1904,7 +1569,7 @@ function Get-ATAPHtmlReport {
 						}
 					}
 
-
+					Write-Progress -Activity "Creating references page" -Status "Progress:" -PercentComplete 83
 					htmlElement 'div' @{class = 'tabContent'; id = 'references'}{
 						htmlElement 'h1' @{} {"About us"}
 						htmlElement 'h2' @{} {"What makes FB Pro GmbH different"}

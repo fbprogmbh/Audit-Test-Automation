@@ -2,8 +2,8 @@
 & "$PSScriptRoot\updateATAP.ps1"
 
 InModuleScope ATAPHtmlReport {
-    Describe 'Testing Merge-CisAuditsToMitreMap' {
-        It 'tests with an example Report' {
+    Describe 'Testing Get-MitreTactics' {
+        It 'tests with example Values' {
 
             Get-MitreTactics -TechniqueID "T1591" | Should -Be 'TA0043'
 
