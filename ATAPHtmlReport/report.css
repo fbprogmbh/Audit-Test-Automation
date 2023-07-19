@@ -279,7 +279,7 @@ button{
 	display: inline-flex;
 }
 
-#MITRETechniques div{
+.MITRETechniques div {
 	padding: 8px;
     border: 1px solid #000000;
 }

@@ -829,7 +829,7 @@ function ConvertTo-HtmlTable {
                 foreach ($tactic in $Mappings.Keys) {
                     htmlElement 'td' @{} {
                         foreach ($technique in $Mappings[$tactic].Keys){
-                            htmlElement 'div' @{id='MITRETechniques'; class=Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count} { 
+                            htmlElement 'div' @{class="MITRETechniques class=Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count"} { 
                                     $successCounter = 0
                                     foreach ($id in $Mappings[$tactic][$technique].Keys) {
                                         if($Mappings[$tactic][$technique][$id] -eq $true){
@@ -838,7 +838,7 @@ function ConvertTo-HtmlTable {
                                     }
                                     $url = get-MitreLink -technique -id $technique
 									$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
-									htmlElement 'div' @{id='MITRETechniques'; class=$colorClass} {
+									htmlElement 'div' @{class=$colorClass} {
                                     	htmlElement 'a' @{href = $url } { "$technique" } 
 										htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
 									}
