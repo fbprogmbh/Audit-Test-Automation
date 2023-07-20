@@ -593,7 +593,10 @@ function Get-ColorValue{
         [int]$SecondValue
     )
 
-    if ($FirstValue -eq $SecondValue) {
+	if (0 -eq $SecondValue) {
+		return "empty"
+	}
+    elseif ($FirstValue -eq $SecondValue) {
         return "success"
     }
     else {
