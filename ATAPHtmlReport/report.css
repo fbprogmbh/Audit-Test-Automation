@@ -284,6 +284,11 @@ button{
     border: 1px solid #000000;
 }
 
+.empty{
+	background-color:grey;
+	background-clip: border-box;
+}
+
 .success{
 	background-color:green;
 	background-clip: border-box;
