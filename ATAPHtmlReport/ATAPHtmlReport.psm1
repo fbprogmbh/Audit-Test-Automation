@@ -40,11 +40,8 @@ $ModuleVersion = (Import-PowerShellDataFile -Path "$ScriptRoot\ATAPHtmlReport.ps
 $StatusValues = 'True', 'False', 'Warning', 'None', 'Error'
 $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, @{ Name = 'Status' }
 
-# $MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json -AsHashtable   <- this is only available from powersehll v 6 onwards
-$MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json
-
-$MitreTechniquesToTacticsMap = Get-Content -Raw "$PSScriptRoot\TechniquesToTactics.json" | ConvertFrom-Json
-
+#read in all information needed for Mitre Attack Mapping from json file
+$global:CISToAttackMappingData = Get-Content -Raw "$PSScriptRoot\resources\CISToAttackMappingData.json" | ConvertFrom-Json
 
 function Get-MitreTacticName {
 		<#
@@ -60,8 +57,8 @@ function Get-MitreTacticName {
 		$TacticId
 	)
 
-	# $MitreTacticsStore[$tacticId] cannot be used because MitreTacticsStore is a customObject and not a map
-	return $MitreTacticsStore.$tacticId
+	# $CISToAttackMappingData[AttackTactics][$tacticId] cannot be used because CISToAttackMappingData is a customObject and not a map
+	return $CISToAttackMappingData.'AttackTactics'.$tacticId
 }
 
 function Get-MitreTactics {
@@ -76,7 +73,7 @@ function Get-MitreTactics {
 		[Parameter(Mandatory = $true)]
         $TechniqueID
     )
-	return $MitreTechniquesToTacticsMap.$TechniqueID
+	return $CISToAttackMappingData.'TechniquesToTactis'.$TechniqueID
 }
 
 class MitreMap {
@@ -86,9 +83,8 @@ class MitreMap {
 		$this.Map = @{}
 
 		#read in techniques from json-file
-		$techniques = Get-Content -Raw "$PSScriptRoot\enterprise-attack-v13-techniques.json" | ConvertFrom-Json
-		#can't access $MitreTacticsStore int this function so read in file again
-		$tactics = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json
+		$techniques = $global:CISToAttackMappingData.'AttackTechniques'
+		$tactics = $global:CISToAttackMappingData.'AttackTactics'
 
 		foreach($tacitc in $tactics.psobject.properties.name) {
 			$this.Map[$tacitc] = @{}
@@ -498,7 +494,7 @@ function Merge-CisAuditsToMitreMap {
         $Audit
     )
     Begin {
-		$json = Get-Content -Raw "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1-MITRE ATT&CK Mappings.json" | ConvertFrom-Json
+		$json = $global:CISToAttackMappingData.'CISAttackMapping'
 		$mitreMap = [MitreMap]::new()
     }
         
