@@ -76,6 +76,21 @@ function Get-MitreTactics {
 	return $CISToAttackMappingData.'TechniquesToTactis'.$TechniqueID
 }
 
+function Get-MitreTechniqueName {
+	<#
+	.SYNOPSIS
+		Returns the name of a Mitre technique for a given Mitre Technique Id
+
+	.EXAMPLE
+		Get-MitreTechniqueName -TechniqueID 'T1133'
+	#>
+    param(
+		[Parameter(Mandatory = $true)]
+        $TechniqueID
+    )
+	return $CISToAttackMappingData.'AttackTechniques'.$TechniqueID.'name'
+}
+
 class MitreMap {
     [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, AuditInfoStatus]]]]]] $Map
 
@@ -566,7 +581,9 @@ function ConvertTo-HtmlTable {
 							$url = get-MitreLink -technique -id $technique
 							$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
 							htmlElement 'div' @{class="MITRETechnique $colorClass"} {
-								htmlElement 'a' @{href = $url } { "$technique" } 
+								htmlElement 'a' @{href = $url; class = "tooltip"} { "$technique" 
+									htmlElement 'span' @{class = "tooltiptext"} { Get-MitreTechniqueName -TechniqueID $technique }
+								} 
 								htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
 							}
                         }
