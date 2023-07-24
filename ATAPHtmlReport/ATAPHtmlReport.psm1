@@ -91,6 +91,28 @@ function Get-MitreTechniqueName {
 	return $CISToAttackMappingData.'AttackTechniques'.$TechniqueID.'name'
 }
 
+function Test-CompatibleMitreReport {
+	<#
+	.SYNOPSIS
+		Returns if the report is compatible with the current mitre heatmap
+
+	.EXAMPLE
+		Test-CompatibleMitreReport -Title "Windows 10 Report" -os "Win32NT"
+	#>
+	param(
+		[Parameter(Mandatory = $true)]
+        $Title,
+		[Parameter(Mandatory = $true)]
+        $os
+    )
+	if(($Title -eq "Windows 10 Report" -or $Title -eq "Windows 11 Report" -or $Title -eq "Windows Server 2019 Audit Report" -or $Title -eq "Windows Server 2022 Audit Report") -and $os -match "Win32NT") {
+		return $true
+	}
+	else {
+		return $false
+	}
+}
+
 class MitreMap {
     [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, AuditInfoStatus]]]]]] $Map
 
@@ -1053,7 +1075,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
 						if($MITRE){
-							if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+							if(Test-CompatibleMitreReport -Title $Title -os $os){
 								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
 							}
 						}
@@ -1563,7 +1585,7 @@ function Get-ATAPHtmlReport {
 					}
 
 					if($MITRE) {
-						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+						if(Test-CompatibleMitreReport -Title $Title -os $os){
 							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
