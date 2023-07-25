@@ -1588,11 +1588,38 @@ function Get-ATAPHtmlReport {
 						if(Test-CompatibleMitreReport -Title $Title -os $os){
 							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
-								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
-								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
 								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+								htmlElement 'h2'@{} {"Version of CIS in MITRE Mapping and tests"}
+								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
 								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
+								htmlElement 'p' @{id='Tip'} {'Tip: Hover over the MITRE IDs to get a quick information to each Technique'}
+								htmlElement 'p' @{} {'Explanation of the cell colors:'}
+
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='SSquareSquare'} {} 
+									htmlElement 'div'@{} {'= 100% of the tests were successful, the system is protected in the best possible way'}
+								}
+								
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='FSquareSquare'} {}
+									htmlElement 'div'@{} {'= 0% of the tests were successful, consider looking into possibilities to harden your system regarding this tactic / technique'}
+								}
+								
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='GradientExSquare'} {}
+									htmlElement 'div'@{} {'= the color gradient moves in 10% steps. The greener the cell, the more tests were successful'}
+								}
+								
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='NoTestSquare'} {}
+									htmlElement 'div'@{} {'= No tests available yet'}
+								}
+								
+								htmlElement 'label' @{} {
+									"hide techniques that are performed outside of enterprise defenses and controls: "
+									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
+								}
 
 								$Mappings = $Sections | 
 								Where-Object { $_.Title -eq "CIS Benchmarks" } | 

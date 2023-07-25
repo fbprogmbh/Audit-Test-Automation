@@ -323,6 +323,40 @@ button{
 	visibility: visible;
 }
 
+
+#Tip p{
+	font-weight: bold;
+	padding: 5px;
+}
+
+.square-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.square {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+}
+
+#SSquareSquare {
+    background: green;
+}
+
+#FSquareSquare {
+    background: red;
+}
+
+#GradientExSquare {
+    background: linear-gradient(green, red);
+}
+
+#NoTestSquare {
+    background: grey;
+}
+ 
 #riskMatrixContainer{
 	display: grid;
 	position: relative;
