@@ -655,7 +655,7 @@ function Compare-EqualCISVersions {
 		$BasedOn
 	)
 	$os = [System.Environment]::OSVersion.Platform
-	if($os -match "Win32NT" -and $Title -match "Windows 10"){
+	if(Test-CompatibleMitreReport -Title $Title -os $os){
 		$testVersion = $BasedOn[0].Split(',')[1]
 		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
 		$mappingVersion = $BasedOn[1].Split(',')[0]
