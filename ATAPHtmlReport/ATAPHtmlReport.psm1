@@ -631,15 +631,28 @@ function Get-ColorValue{
         [int]$SecondValue
     )
 
-	if (0 -eq $SecondValue) {
-		return "empty"
+	if($SecondValue -eq 0) {
+		$result = 'empty'
 	}
-    elseif ($FirstValue -eq $SecondValue) {
-        return "success"
-    }
-    else {
-        return "failure"
-    }
+	else {
+		$successPercentage = ($FirstValue / $SecondValue)
+
+		switch ($successPercentage) {
+			1 {$result = 'hundred'}
+			{$_ -le 0.99} {$result = 'ninety'}
+			{$_ -le 0.89} {$result = 'eighty'}
+			{$_ -le 0.79} {$result = 'seventy'}
+			{$_ -le 0.69} {$result = 'sixty'}
+			{$_ -le 0.59} {$result = 'fifty'}
+			{$_ -le 0.49} {$result = 'fourty'}
+			{$_ -le 0.39} {$result = 'thirty'}
+			{$_ -le 0.29} {$result = 'twenty'}
+			{$_ -le 0.19} {$result = 'ten'}
+			{$_ -le 0.09} {$result = 'zero'}
+		}
+	}
+
+	return $result
 }
 
 #in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
