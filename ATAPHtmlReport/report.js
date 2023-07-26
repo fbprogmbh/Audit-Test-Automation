@@ -228,3 +228,13 @@ function calcDotPosition(){
     document.getElementById("CurrentRiskScoreRS").appendChild(copyRiskResult);
 
 }
+
+function hideMitreTechniques(checkbox){
+    if (checkbox.checked) {
+      console.log("hide mitre techniques");
+      /*TODO*/
+    } else {
+      console.log("show mitre techniques again");
+      /* TODO */
+    }
+}

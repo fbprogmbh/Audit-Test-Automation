@@ -40,11 +40,8 @@ $ModuleVersion = (Import-PowerShellDataFile -Path "$ScriptRoot\ATAPHtmlReport.ps
 $StatusValues = 'True', 'False', 'Warning', 'None', 'Error'
 $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, @{ Name = 'Status' }
 
-# $MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json -AsHashtable   <- this is only available from powersehll v 6 onwards
-$MitreTacticsStore = Get-Content -Raw "$PSScriptRoot\resources\MitreTactics.json" | ConvertFrom-Json
-
-$MitreTechniquesToTacticsMap = Get-Content -Raw "$PSScriptRoot\TechniquesToTactics.json" | ConvertFrom-Json
-
+#read in all information needed for Mitre Attack Mapping from json file
+$global:CISToAttackMappingData = Get-Content -Raw "$PSScriptRoot\resources\CISToAttackMappingData.json" | ConvertFrom-Json
 
 function Get-MitreTacticName {
 		<#
@@ -60,8 +57,8 @@ function Get-MitreTacticName {
 		$TacticId
 	)
 
-	# $MitreTacticsStore[$tacticId] cannot be used because MitreTacticsStore is a customObject and not a map
-	return $MitreTacticsStore.$tacticId
+	# $CISToAttackMappingData[AttackTactics][$tacticId] cannot be used because CISToAttackMappingData is a customObject and not a map
+	return $CISToAttackMappingData.'AttackTactics'.$tacticId
 }
 
 function Get-MitreTactics {
@@ -76,7 +73,22 @@ function Get-MitreTactics {
 		[Parameter(Mandatory = $true)]
         $TechniqueID
     )
-	return $MitreTechniquesToTacticsMap.$TechniqueID
+	return $CISToAttackMappingData.'TechniquesToTactis'.$TechniqueID
+}
+
+function Get-MitreTechniqueName {
+	<#
+	.SYNOPSIS
+		Returns the name of a Mitre technique for a given Mitre Technique Id
+
+	.EXAMPLE
+		Get-MitreTechniqueName -TechniqueID 'T1133'
+	#>
+    param(
+		[Parameter(Mandatory = $true)]
+        $TechniqueID
+    )
+	return $CISToAttackMappingData.'AttackTechniques'.$TechniqueID.'name'
 }
 
 class MitreMap {
@@ -86,15 +98,17 @@ class MitreMap {
 		$this.Map = @{}
 
 		#read in techniques from json-file
-		$techniques = Get-Content -Raw "$PSScriptRoot\enterprise-attack-v13-techniques.json" | ConvertFrom-Json
+		$techniques = $global:CISToAttackMappingData.'AttackTechniques'
+		$tactics = $global:CISToAttackMappingData.'AttackTactics'
+
+		foreach($tacitc in $tactics.psobject.properties.name) {
+			$this.Map[$tacitc] = @{}
+		}
 
 		#add all techniques and tactics to map
 		foreach($technique in $techniques.psobject.properties.name){
 			$tactics = Get-MitreTactics -TechniqueID $techniques.$technique.'ID'
 			foreach($tactic in $tactics){
-				if($null -eq $this.Map[$tactic]) {
-					$this.Map[$tactic] = @{}
-				}
 				if($null -eq $this.Map[$tactic][$techniques.$technique.'ID']) {
 					$this.Map[$tactic][$techniques.$technique.'ID'] = @{}
 				}
@@ -495,7 +509,7 @@ function Merge-CisAuditsToMitreMap {
         $Audit
     )
     Begin {
-		$json = Get-Content -Raw "$PSScriptRoot\CIS_Microsoft_Windows_10_Enterprise_Release_21H1_Benchmark_v1-MITRE ATT&CK Mappings.json" | ConvertFrom-Json
+		$json = $global:CISToAttackMappingData.'CISAttackMapping'
 		$mitreMap = [MitreMap]::new()
     }
         
@@ -527,6 +541,15 @@ function Merge-CisAuditsToMitreMap {
 }
 
 function ConvertTo-HtmlTable {
+	<#
+	.Synopsis 
+		Generates a html table using the mapping keys of the tactics and techniques
+		It also adds the links to the table using the function "get-MitreLink"
+		and colours the cells
+	.Example
+		ConvertTo-HtmlTable $Mappings.map
+
+	#>
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Mappings
@@ -546,24 +569,25 @@ function ConvertTo-HtmlTable {
                 }
             }
         }
-        htmlElement 'tbody' @{id='MITREtbody'} {
+		htmlElement 'tbody' @{id='MITREtbody'} {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
-                    htmlElement 'td' @{id='MITREtbody'} {
+                    htmlElement 'td' @{} {
                         foreach ($technique in $Mappings[$tactic].Keys){
-                            htmlElement 'div' @{id='MITRETechniques'} {
-                                htmlElement 'div' @{class='MITRETechnique'} {  
-                                    $successCounter = 0
-                                    foreach ($id in $Mappings[$tactic][$technique].Keys) {
-                                        if($Mappings[$tactic][$technique][$id] -eq [AuditInfoStatus]::True){
-                                            $successCounter++
-                                        }
-                                    }
-                                    $url = get-MitreLink -technique -id $technique
-                                    htmlElement 'a' @{href = $url } { "$technique" } 
-                                    htmlElement 'span' @{id='MITREtd'} {": $successCounter /" + $Mappings[$tactic][$technique].Count }
-                                }
-                            }
+							$successCounter = 0
+							foreach ($id in $Mappings[$tactic][$technique].Keys) {
+								if($Mappings[$tactic][$technique][$id] -eq [AuditInfoStatus]::True){
+									$successCounter++
+								}
+							}
+							$url = get-MitreLink -technique -id $technique
+							$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
+							htmlElement 'div' @{class="MITRETechnique $colorClass"} {
+								htmlElement 'a' @{href = $url; class = "tooltip"} { "$technique" 
+									htmlElement 'span' @{class = "tooltiptext"} { Get-MitreTechniqueName -TechniqueID $technique }
+								} 
+								htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
+							}
                         }
                     }
                 }
@@ -587,12 +611,28 @@ function Get-ColorValue{
         [int]$SecondValue
     )
 
-    if ($FirstValue -eq $SecondValue) {
-        return 1
-    }
-    else {
-        return 0
-    }
+	if($SecondValue -eq 0) {
+		$result = 'empty'
+	}
+	else {
+		$successPercentage = ($FirstValue / $SecondValue)
+
+		switch ($successPercentage) {
+			1 {$result = 'hundred'}
+			{$_ -le 0.99} {$result = 'ninety'}
+			{$_ -le 0.89} {$result = 'eighty'}
+			{$_ -le 0.79} {$result = 'seventy'}
+			{$_ -le 0.69} {$result = 'sixty'}
+			{$_ -le 0.59} {$result = 'fifty'}
+			{$_ -le 0.49} {$result = 'fourty'}
+			{$_ -le 0.39} {$result = 'thirty'}
+			{$_ -le 0.29} {$result = 'twenty'}
+			{$_ -le 0.19} {$result = 'ten'}
+			{$_ -le 0.09} {$result = 'zero'}
+		}
+	}
+
+	return $result
 }
 
 function Get-TacticCounter{
@@ -1573,11 +1613,38 @@ function Get-ATAPHtmlReport {
 						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
 							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
-								htmlElement 'h1'@{} {"Version of CIS in MITRE Mapping and tests"}
-								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
 								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
+								htmlElement 'h2'@{} {"Version of CIS in MITRE Mapping and tests"}
+								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
 								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
+								htmlElement 'p' @{id='Tip'} {'Tip: Hover over the MITRE IDs to get a quick information to each Technique'}
+								htmlElement 'p' @{} {'Explanation of the cell colors:'}
+
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='SSquareSquare'} {} 
+									htmlElement 'div'@{} {'= 100% of the tests were successful, the system is protected in the best possible way'}
+								}
+								
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='FSquareSquare'} {}
+									htmlElement 'div'@{} {'= 0% of the tests were successful, consider looking into possibilities to harden your system regarding this tactic / technique'}
+								}
+								
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='GradientExSquare'} {}
+									htmlElement 'div'@{} {'= the color gradient moves in 10% steps. The greener the cell, the more tests were successful'}
+								}
+								
+								htmlElement 'div' @{class='square-container'}{
+									htmlElement 'div' @{class='square'; id='NoTestSquare'} {}
+									htmlElement 'div'@{} {'= No tests available yet'}
+								}
+								
+								htmlElement 'label' @{} {
+									"hide techniques that are performed outside of enterprise defenses and controls: "
+									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
+								}
 
 								$Mappings = $Sections | 
 								Where-Object { $_.Title -eq "CIS Benchmarks" } | 

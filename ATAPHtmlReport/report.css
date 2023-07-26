@@ -269,24 +269,139 @@ button{
 }
 
 #MITREthead {
-    background-color: #1ebd40;
     border: 1px solid #141414;
 	text-align:center;
 }
 
 #MITREthead th {
-    padding: 8px;
     border: 1px solid #141414;
 	font-weight:bold;
 	display: inline-flex;
 }
 
 .MITRETechnique {
-    padding: 8px;
+	padding: 8px;
     border: 1px solid #000000;
-    background-color: #ffffff;
 }
+
+.empty{
+	background-color:#a7a7a7;
+	background-clip: border-box;
+}
+
+.hundred{
+	background-color:#33cca6;
+	background-clip: border-box;
+}
+
+.ninety{
+	background-color:#52CC8F;
+	background-clip: border-box;
+}
+
+.eighty{
+	background-color:#70CC78;
+	background-clip: border-box;
+}
+
+.seventy{
+	background-color:#8FCC61;
+	background-clip: border-box;
+}
+
+.sixty{
+	background-color:#ADCC4A;
+	background-clip: border-box;
+}
+
+.fifty{
+	background-color:#CCCC33;
+	background-clip: border-box;
+}
+
+.fourty{
+	background-color:#CCA329;
+	background-clip: border-box;
+}
+
+.thirty{
+	background-color:#CC7A1F;
+	background-clip: border-box;
+}
+
+.twenty{
+	background-color:#CC5214;
+	background-clip: border-box;
+}
+
+.ten{
+	background-color:#CC290A;
+	background-clip: border-box;
+}
+
+.zero{
+	background-color:#cc0000;
+	background-clip: border-box;
+}
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
   
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}
+
+
+#Tip p{
+	font-weight: bold;
+	padding: 5px;
+}
+
+.square-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.square {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+}
+
+#SSquareSquare {
+    background: green;
+}
+
+#FSquareSquare {
+    background: red;
+}
+
+#GradientExSquare {
+    background: linear-gradient(green, red);
+}
+
+#NoTestSquare {
+    background: grey;
+}
+ 
 #riskMatrixContainer{
 	display: grid;
 	position: relative;
