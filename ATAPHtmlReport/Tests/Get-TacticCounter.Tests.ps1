@@ -64,20 +64,6 @@ InModuleScope ATAPHtmlReport {
                 $Mappings.Map["TA0043"]["T1592"]["18.9.87.1"] | Should -Be True
                 $Mappings.Map["TA0043"]["T1592"]["18.9.48.13"] | Should -Be True
                 $Mappings.Map["TA0043"]["T1592"].count | Should -Be 2
-                #$Mappings.Print()
-                #$Mappings.map['TA0043'].count | Should -Be 10
-            #     $TacticCount = 0
-            #     $successCounter = 0
-            #     if($Mappings.Map["TA0043"]["T1592"]["18.9.87.1"] -eq $True){
-			# 	    $successCounter++
-			#     }
-            #     if($Mappings.Map["TA0043"]["T1592"]["18.9.48.13"] -eq [AuditInfoStatus]::True){
-			# 	    $successCounter++
-			#     }
-            #     $successCounter | should -Be 2
-			#    # if($successCounter -eq $Mappings.Map["TA0043"]["T1592"].Count -And $successCounter -gt 0){
-			# 	#    $TacticCount++
-			#     #}
                 Get-TacticCounter "TA0043" $Mappings.Map | Should -Be 1
             }
         }

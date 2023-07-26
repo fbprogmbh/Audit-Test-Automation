@@ -651,10 +651,8 @@ function Get-TacticCounter{
     )
 	$TacticCount = 0
 	foreach ($technique in $Mappings[$tactic].Keys){
-		#Write-Host "Test1"
 		$successCounter = 0
 		foreach ($id in $Mappings[$tactic][$technique].Keys) {
-			#Write-Host "Test2"
 			if($Mappings[$tactic][$technique][$id] -eq [AuditInfoStatus]::True){
 				$successCounter++
 			}
@@ -663,7 +661,6 @@ function Get-TacticCounter{
 			}
 		}    
 	}     
-	Write-Host $TacticCount
 	return $TacticCount                      
 }
 
