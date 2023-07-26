@@ -600,7 +600,7 @@ function Get-TacticCounter{
 	.Synopsis 
 		Counts the amount of successful techniques per tactic
 	.Example 
-		$colorValue = Get-TacticCounter $tactic $Mappings
+		$TacticCounter = Get-TacticCounter $tactic $Mappings
 	#>
 	param (
         [Parameter(Mandatory=$true, ValueFromPipeline = $true)]
