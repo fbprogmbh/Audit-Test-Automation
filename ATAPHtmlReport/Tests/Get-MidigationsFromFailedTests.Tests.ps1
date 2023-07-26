@@ -7,19 +7,58 @@ InModuleScope ATAPHtmlReport {
             #Dummy-Data
             $AuditInfos = 
             @{
+                #Mitigation M1017
+                Id = "18.9.11.1"
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1018 M1027
                 Id = "1.1.4"
                 Status = [AuditInfoStatus]::False
             },
             @{
-                Id = "1.2.3"
+                #Mitigation M1021 M1022
+                Id = "5.14"
                 Status = [AuditInfoStatus]::True
             },
             @{
-                Id = "1.2.5"
-                Status = [AuditInfoStatus]::False
-            }, 
+                #Mitigation M1027
+                Id = "18.2"
+                Status = [AuditInfoStatus]::True
+            },
             @{
-                Id = "1.4.5"
+                #Mitigation M1028
+                Id = "18.5.11"
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1017
+                Id = ""
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1017
+                Id = ""
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1017
+                Id = ""
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1017
+                Id = ""
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1017
+                Id = ""
+                Status = [AuditInfoStatus]::True
+            },
+            @{
+                #Mitigation M1027
+                Id = "1.2.3"
                 Status = [AuditInfoStatus]::True
             }
             $Subsection = @{AuditInfos = $AuditInfos }
@@ -28,14 +67,12 @@ InModuleScope ATAPHtmlReport {
             }
             
             $mitreMap = $Section1 | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object { return $_.SubSections } | ForEach-Object { return $_.AuditInfos } | Merge-CisAuditsToMitreMap
-            #$mitreMap.Print()
+            $mitreMap.Print()
 
             #Tests
-            $mitreMap.GetType() | Should -Be "MitreMap"
-            $mitreMap.Map["TA0001"]["T1078"]["1.1.4"].GetType() | Should -Be 'AuditInfoStatus'
-            $mitreMap.Map["TA0001"]["T1078"]["1.1.4"] | Should -Be False
-            $mitreMap.Map["TA0006"]["T1110"]["1.2.3"] | Should -Be True
-            $mitreMap.Map | Get-MitigationsFromFailedTests
+            $CISAMitigations = $mitreMap.Map | Get-MitigationsFromFailedTests
+            $CISAMitigations.Keys | Should -Be @('M1018', 'M1027')
+
         } 
     }
 }
