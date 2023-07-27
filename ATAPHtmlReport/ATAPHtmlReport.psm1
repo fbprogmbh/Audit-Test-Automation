@@ -1622,7 +1622,7 @@ function Get-ATAPHtmlReport {
 								}
 
 								$Mappings = $Sections | 
-								Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+								Where-Object { $_.Title -eq "CIS Benchmarks" -or $_.Title -eq "CIS Stand-alone Benchmarks"} | 
 								ForEach-Object { return $_.SubSections } | 
 								ForEach-Object { return $_.AuditInfos } | 
 								Merge-CisAuditsToMitreMap
