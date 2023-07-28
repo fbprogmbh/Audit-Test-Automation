@@ -113,6 +113,23 @@ function Test-CompatibleMitreReport {
 	}
 }
 
+function Get-MitreTechniqueCategories {
+	<#
+	.SYNOPSIS
+		Returns the categories of a Mitre technique in order to apply filters to the report.
+		Will return a string that provides all categories stored in the JSON file.
+
+	.EXAMPLE
+		Get-MitreTechniqueCategories -TechniqueID 'T1133'
+	#>
+    param(
+		[Parameter(Mandatory = $true)]
+        $TechniqueID
+    )
+	return $CISToAttackMappingData.'AttackTechniques'.$TechniqueID.'categories'
+}
+
+
 class MitreMap {
     [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, [System.Collections.Generic.Dictionary[string, AuditInfoStatus]]]]]] $Map
 
@@ -602,7 +619,8 @@ function ConvertTo-HtmlTable {
 							}
 							$url = get-MitreLink -technique -id $technique
 							$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
-							htmlElement 'div' @{class="MITRETechnique $colorClass"} {
+							$categories = Get-MitreTechniqueCategories -TechniqueID $technique
+							htmlElement 'div' @{class="MITRETechnique $colorClass $categories"} {
 								htmlElement 'a' @{href = $url; class = "tooltip"} { "$technique" 
 									htmlElement 'span' @{class = "tooltiptext"} { Get-MitreTechniqueName -TechniqueID $technique }
 								} 
