@@ -669,11 +669,15 @@ function Compare-EqualCISVersions {
 	)
 	$os = [System.Environment]::OSVersion.Platform
 	if(Test-CompatibleMitreReport -Title $Title -os $os){
-		$testVersion = $BasedOn[0].Split(',')[1]
+		$testVersion = $BasedOn | Where-Object {$_ -match 'CIS' -and $_ -notmatch 'based on'}
+		$testVersion = $testVersion.Split(',')[1]
 		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
-		$mappingVersion = $BasedOn[1].Split(',')[0]
+
+		$mappingVersion = $BasedOn | Where-Object {$_ -match 'CIS' -and $_ -match 'based on'}
+		$mappingVersion = $mappingVersion.Split(',')[0]
 		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
-		if($testVersion -eq $mappingVersion){
+		
+		if($null -ne $testVersion -and $null -ne $mappingVersion -and $testVersion -eq $mappingVersion){
 			return "The CIS Versions used for the MITRE mapping and testing are the same."
 		}
 		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."

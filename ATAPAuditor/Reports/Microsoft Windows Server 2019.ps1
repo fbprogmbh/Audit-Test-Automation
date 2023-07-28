@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
         "Windows Server 2019 Security Technical Implementation Guide, Version: 1.5, Date: 2020-06-17"
-		"MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+		"MITRE ATT&CK Mapping (based on CIS Microsoft Windows Server 2019 Benchmark (Version: 1.3.0)), Version 1.0.0, Date: 2023-07-13"
 		"CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18"
 		"Microsoft Security baseline for Windows Server 2019, Version: FINAL, Date 2019-06-18"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
