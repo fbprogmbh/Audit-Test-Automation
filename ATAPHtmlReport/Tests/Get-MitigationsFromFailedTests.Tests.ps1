@@ -1,5 +1,5 @@
 #Import-Module
-#& "$PSScriptRoot\updateATAP.ps1"
+& "$PSScriptRoot\updateATAP.ps1"
 $global:CISToAttackMappingData = Get-Content -Raw "$PSScriptRoot\..\resources\CISToAttackMappingData.json" | ConvertFrom-Json
 
 InModuleScope ATAPHtmlReport {
@@ -29,7 +29,7 @@ InModuleScope ATAPHtmlReport {
         }
     }
     Describe 'testing function Get-MitigationsFromFailedTests' {
-        It 'tests with an example report where every status is [AuditInfoStatus]::False' {
+        It 'tests with an example report where every status is [AuditInfoStatus]::False and if then all Techniques are in CISAMitigation' {
             $global:AuditInfos = @()
 
             Add-ToAuditInfos -Mitigation 'M1017' -AllIDsFalse $true
@@ -56,13 +56,6 @@ InModuleScope ATAPHtmlReport {
             #Tests
             $CISAMitigations = $mitreMap.Map | Get-MitigationsFromFailedTests
             $CISAMitigations.Keys | Should -Be @('M1017', 'M1018', 'M1021', 'M1027', 'M1028', 'M1030', 'M1031', 'M1038', 'M1041', 'M1042')
-            <#foreach($Mitigation in $CISAMitigations.Keys) {
-                foreach($Technique in $CISAMitigations[$Mitigation]['MitreTechniqueIDs']) {
-                    $IDs = $json.psobject.properties.name | Where-Object {$json.$_.'Technique1' -eq $Technique -or $json.$_.'Technique2' -eq $Technique}
-                    #$Techniques = $IDs | Where-Object {$json.$_.'Mitigation1' -eq $Mitigation -or $json.$_.'Mitigation2' -eq $Mitigation}
-                    #Write-Host ($CISAMitigations[$Mitigation]['MitreTechniqueIDs'] -eq $Techniques)
-                }
-            }#>
             foreach($Mitigation in $CISAMitigations.Keys) {
                 $Techniques = @()
                 $json.psobject.properties.name | 
@@ -75,12 +68,14 @@ InModuleScope ATAPHtmlReport {
                         $Techniques += $json.$_.'Technique2'
                     }
                 }
-                Write-Host ($CISAMitigations[$Mitigation]['MitreTechniqueIDs'] | Sort-Object)
-                Write-Host ($Techniques | Sort-Object)
-                Write-Host $CISAMitigations[$Mitigation]['MitreTechniqueIDs'].Length $Techniques.Length
+                $Techniques = $Techniques | Sort-Object
+                $CISAMitigations[$Mitigation]['MitreTechniqueIDs'] = $CISAMitigations[$Mitigation]['MitreTechniqueIDs'] | Sort-Object
+                for($i = 0; $i -lt $CISAMitigations[$Mitigation]['MitreTechniqueIDs'].length; $i++) {
+                    $CISAMitigations[$Mitigation]['MitreTechniqueIDs'][$i] | Should -Be $Techniques[$i]
+                }
             }
         }
-        <#It 'tests with an example report where every status is [AuditInfoStatus]::True' {
+        It 'tests with an example report where every status is [AuditInfoStatus]::True' {
             $global:AuditInfos = @() 
 
             Add-ToAuditInfos -Mitigation 'M1017' -AllIDsFalse $false
@@ -365,6 +360,6 @@ InModuleScope ATAPHtmlReport {
             #Tests
             $CISAMitigations = $mitreMap.Map | Get-MitigationsFromFailedTests
             $CISAMitigations.Keys | Should -Contain @('M1042')
-        }#>
+        }
     }
 }
