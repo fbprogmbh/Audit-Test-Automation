@@ -1648,7 +1648,7 @@ function Get-ATAPHtmlReport {
 							}
 						}
 						else {
-							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Windows 10 Report`". The Mitre Heatmap will not be generated"
+							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Microsoft Windows 10`", `"Microsoft Windows 10 Stand-alone`", `"Microsoft Windows 11`", `"Microsoft Windows 11 Stand-alone`", `"Microsoft Windows Server 2019`" or `"Microsoft Windows Server 2022`". The Mitre Heatmap will not be generated"
 						}
 					}
 
