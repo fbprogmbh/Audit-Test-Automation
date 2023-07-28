@@ -91,6 +91,28 @@ function Get-MitreTechniqueName {
 	return $CISToAttackMappingData.'AttackTechniques'.$TechniqueID.'name'
 }
 
+function Test-CompatibleMitreReport {
+	<#
+	.SYNOPSIS
+		Returns if the report is compatible with the current mitre heatmap
+
+	.EXAMPLE
+		Test-CompatibleMitreReport -Title "Windows 10 Report" -os "Win32NT"
+	#>
+	param(
+		[Parameter(Mandatory = $true)]
+        $Title,
+		[Parameter(Mandatory = $true)]
+        $os
+    )
+	if(($Title -eq "Windows 10 Report" -or $Title -eq "Windows 11 Report" -or $Title -eq "Windows Server 2019 Audit Report" -or $Title -eq "Windows Server 2022 Audit Report") -and $os -match "Win32NT") {
+		return $true
+	}
+	else {
+		return $false
+	}
+}
+
 function Get-MitreTechniqueCategories {
 	<#
 	.SYNOPSIS
@@ -664,12 +686,16 @@ function Compare-EqualCISVersions {
 		$BasedOn
 	)
 	$os = [System.Environment]::OSVersion.Platform
-	if($os -match "Win32NT" -and $Title -match "Windows 10"){
-		$testVersion = $BasedOn[0].Split(',')[1]
+	if(Test-CompatibleMitreReport -Title $Title -os $os){
+		$testVersion = $BasedOn | Where-Object {$_ -match 'CIS' -and $_ -notmatch 'based on'}
+		$testVersion = $testVersion.Split(',')[1]
 		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
-		$mappingVersion = $BasedOn[1].Split(',')[0]
+
+		$mappingVersion = $BasedOn | Where-Object {$_ -match 'CIS' -and $_ -match 'based on'}
+		$mappingVersion = $mappingVersion.Split(',')[0]
 		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
-		if($testVersion -eq $mappingVersion){
+		
+		if($null -ne $testVersion -and $null -ne $mappingVersion -and $testVersion -eq $mappingVersion){
 			return "The CIS Versions used for the MITRE mapping and testing are the same."
 		}
 		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
@@ -1084,7 +1110,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
 						}
 						if($MITRE){
-							if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+							if(Test-CompatibleMitreReport -Title $Title -os $os){
 								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
 							}
 						}
@@ -1594,7 +1620,7 @@ function Get-ATAPHtmlReport {
 					}
 
 					if($MITRE) {
-						if($Title -eq "Windows 10 Report" -and $os -match "Win32NT"){
+						if(Test-CompatibleMitreReport -Title $Title -os $os){
 							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
@@ -1631,7 +1657,7 @@ function Get-ATAPHtmlReport {
 								}
 
 								$Mappings = $Sections | 
-								Where-Object { $_.Title -eq "CIS Benchmarks" } | 
+								Where-Object { $_.Title -eq "CIS Benchmarks" -or $_.Title -eq "CIS Stand-alone Benchmarks"} | 
 								ForEach-Object { return $_.SubSections } | 
 								ForEach-Object { return $_.AuditInfos } | 
 								Merge-CisAuditsToMitreMap
@@ -1640,7 +1666,7 @@ function Get-ATAPHtmlReport {
 							}
 						}
 						else {
-							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Windows 10 Report`". The Mitre Heatmap will not be generated"
+							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Microsoft Windows 10`", `"Microsoft Windows 10 Stand-alone`", `"Microsoft Windows 11`", `"Microsoft Windows 11 Stand-alone`", `"Microsoft Windows Server 2019`" or `"Microsoft Windows Server 2022`". The Mitre Heatmap will not be generated"
 						}
 					}
 

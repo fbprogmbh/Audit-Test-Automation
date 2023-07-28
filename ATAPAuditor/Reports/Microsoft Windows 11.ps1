@@ -3,6 +3,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14"
+		"MITRE ATT&CK Mapping (based on CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark (Version: 21H2)), Version 1.0.0, Date: 2023-07-13"
 		"Security baseline for Microsoft Windows 11, Version: 20H2, Date: 2020-12-17"
 		"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"SiSyPHuS Recommendations for Telemetry Components: Version 1.1, Date: 2019-07-31"
