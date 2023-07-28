@@ -56,13 +56,28 @@ InModuleScope ATAPHtmlReport {
             #Tests
             $CISAMitigations = $mitreMap.Map | Get-MitigationsFromFailedTests
             $CISAMitigations.Keys | Should -Be @('M1017', 'M1018', 'M1021', 'M1027', 'M1028', 'M1030', 'M1031', 'M1038', 'M1041', 'M1042')
-            foreach($Mitigation in $CISAMitigations.Keys) {
+            <#foreach($Mitigation in $CISAMitigations.Keys) {
                 foreach($Technique in $CISAMitigations[$Mitigation]['MitreTechniqueIDs']) {
-                    Write-Host $Technique
-                    <#$json.psobject.properties.name | Where-Object {$json.$_.'Technique1' -eq $Technique -or $json.$_.'Technique2' -eq $Technique} | ForEach-Object {
-                        Write-Host $_.'Mitigation1'#$_.'Mitigation1' -eq $Mitigation -or $_.'Mitigation2' -eq $Mitigation | Should -Be $true
-                    }#>
+                    $IDs = $json.psobject.properties.name | Where-Object {$json.$_.'Technique1' -eq $Technique -or $json.$_.'Technique2' -eq $Technique}
+                    #$Techniques = $IDs | Where-Object {$json.$_.'Mitigation1' -eq $Mitigation -or $json.$_.'Mitigation2' -eq $Mitigation}
+                    #Write-Host ($CISAMitigations[$Mitigation]['MitreTechniqueIDs'] -eq $Techniques)
                 }
+            }#>
+            foreach($Mitigation in $CISAMitigations.Keys) {
+                $Techniques = @()
+                $json.psobject.properties.name | 
+                Where-Object {$json.$_.'Mitigation1' -eq $Mitigation -or $json.$_.'Mitigation2' -eq $Mitigation} |
+                ForEach-Object {
+                    if($null -ne $json.$_.'Technique1' -and $Techniques -notcontains $json.$_.'Technique1'){
+                        $Techniques += $json.$_.'Technique1'
+                    }
+                    if($null -ne $json.$_.'Technique2' -and $Techniques -notcontains $json.$_.'Technique2'){
+                        $Techniques += $json.$_.'Technique2'
+                    }
+                }
+                Write-Host ($CISAMitigations[$Mitigation]['MitreTechniqueIDs'] | Sort-Object)
+                Write-Host ($Techniques | Sort-Object)
+                Write-Host $CISAMitigations[$Mitigation]['MitreTechniqueIDs'].Length $Techniques.Length
             }
         }
         <#It 'tests with an example report where every status is [AuditInfoStatus]::True' {
