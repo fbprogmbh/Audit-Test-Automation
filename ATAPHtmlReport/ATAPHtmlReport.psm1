@@ -697,9 +697,11 @@ function ConvertTo-HtmlTable {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
                     $url = get-MitreLink -tactic -id $tactic
+					$TacticCount = Get-TacticCounter $tactic $Mappings
 					htmlElement 'td' @{} {
 						$tacticName = Get-MitreTacticName -TacticId $tactic
-						htmlElement 'a' @{href = $url } {"$tacticName"}
+						$link = htmlElement 'a' @{href = $url } {"$tacticName"}
+						htmlElement 'p' @{} {$link + "`n" +"$TacticCount/" + $Mappings[$tactic].Count}
 					}
                 }
             }
@@ -711,7 +713,7 @@ function ConvertTo-HtmlTable {
                         foreach ($technique in $Mappings[$tactic].Keys){
 							$successCounter = 0
 							foreach ($id in $Mappings[$tactic][$technique].Keys) {
-								if($Mappings[$tactic][$technique][$id] -eq $true){
+								if($Mappings[$tactic][$technique][$id] -eq [AuditInfoStatus]::True){
 									$successCounter++
 								}
 							}
@@ -821,6 +823,35 @@ function Get-ColorValue{
 	}
 
 	return $result
+}
+
+function Get-TacticCounter{
+	<#
+	.Synopsis 
+		Counts the amount of successful techniques per tactic
+	.Example 
+		$TacticCounter = Get-TacticCounter $tactic $Mappings
+	#>
+	param (
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true)]
+        [object]$tactic,
+
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
+        [object]$Mappings
+    )
+	$TacticCount = 0
+	foreach ($technique in $Mappings[$tactic].Keys){
+		$successCounter = 0
+		foreach ($id in $Mappings[$tactic][$technique].Keys) {
+			if($Mappings[$tactic][$technique][$id] -eq [AuditInfoStatus]::True){
+				$successCounter++
+			}
+			if($successCounter -eq $Mappings[$tactic][$technique].Count -And $successCounter -gt 0){
+				$TacticCount++
+			}
+		}    
+	}     
+	return $TacticCount                      
 }
 
 #in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
