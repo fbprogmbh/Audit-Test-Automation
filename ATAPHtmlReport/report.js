@@ -229,12 +229,25 @@ function calcDotPosition(){
 
 }
 
+const categoryElements = document.getElementsByClassName('orgMeasure');
 function hideMitreTechniques(checkbox){
     if (checkbox.checked) {
-      console.log("hide mitre techniques");
-      /*TODO*/
+        for (let i = 0; i < categoryElements.length; i++) {
+            categoryElements[i].style = 'padding: 0.1em;';
+
+            const children = categoryElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style = 'display: none;';
+            }
+        }
     } else {
-      console.log("show mitre techniques again");
-      /* TODO */
+        for (let i = 0; i < categoryElements.length; i++) {
+            categoryElements[i].style.removeProperty('padding');
+
+            const children = categoryElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style.removeProperty('display'); 
+            }
+        }
     }
 }
