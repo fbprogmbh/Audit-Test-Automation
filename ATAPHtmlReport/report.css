@@ -414,19 +414,19 @@ button{
 }
 
 #SSquareSquare {
-    background: green;
+    background: #33cca6;
 }
 
 #FSquareSquare {
-    background: red;
+    background: #cc0000;
 }
 
 #GradientExSquare {
-    background: linear-gradient(green, red);
+    background: linear-gradient(#33cca6,#cc0000);
 }
 
 #NoTestSquare {
-    background: grey;
+    background: #a7a7a7;
 }
  
 #riskMatrixContainer{
