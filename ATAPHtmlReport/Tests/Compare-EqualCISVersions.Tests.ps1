@@ -5,20 +5,26 @@
 
 InModuleScope ATAPHtmlReport {
     Describe 'Testing Compare-EqualCISVersions' {
+
         It 'Test Windows 7' {
             # provide BasedOn with only one value in the arrey.
             $BasedOn = @(
                 "CIS Microsoft Windows 7 Workstation Benchmark, Version: 3.1.0, Date: 2018-03-02"
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be $null   
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."   
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test Windows 10' {
@@ -33,14 +39,19 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test Windows 10 stand-alone' {
@@ -53,14 +64,19 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test Windows 11' {
@@ -73,14 +89,19 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test Windows 11 stand-alone' {
@@ -93,14 +114,19 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test Windows Server 2019' {
@@ -112,14 +138,19 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test Windows Server 2022' {
@@ -131,19 +162,24 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08"
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15"
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14"
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18"
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2022 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."   
+                Compare-EqualCISVersions -Title "Windows Server 2022 Audit Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."   
             }
             # empty catch block required by compiler
             catch {
-                
+                $false | Should -Be $true
             }
         }
         It 'Test for unmatching versions of CIS and MITRE mapping' {
             $BasedOn = @(
-                "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
+                "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.15.0, Date: 2023-02-15"
                 "DISA Windows 10 Security Technical Implementation Guide, Version: V1R16, Date: 2019-10-25"
                 "Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
                 "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
@@ -152,8 +188,13 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.11.0)), Version x.x, Date: xxxx-xx-xx"
-            Compare-EqualCISVersions -Title "Windows 10 Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
+            Compare-EqualCISVersions -Title "Windows 10 Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
         }
         
         It 'Test for matching versions of CIS and MITRE mapping' {
@@ -167,8 +208,13 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version x.x, Date: xxxx-xx-xx"
-            Compare-EqualCISVersions -Title "Windows 10 Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
+            Compare-EqualCISVersions -Title "Windows 10 Report" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."
         }
 
         It 'Test for matching versions of CIS and MITRE mapping but wrong OS' {
@@ -182,24 +228,13 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version x.x, Date: xxxx-xx-xx"
-            Compare-EqualCISVersions -Title "Debian 10" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Be $null
-        }
-
-        It 'Test for wrong parameters' {
-            # provide BasedOn with only one value in the arrey.
-            $BasedOn = @(
-                "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
-            )
-            $MitreMappingBasedOn = "MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version x.x, Date: xxxx-xx-xx"
-            # assert that calling this method with invalid values will throw an exception
-            try {
-                Compare-EqualCISVersions -Title "Windows 10 Report" -ReportBasedOn:$BasedOn -MitreMappingBasedOn:$MitreMappingBasedOn | Should -Throw    
-            }
-            # empty catch block required by compiler
-            catch {
-                
-            }
+            $MitreMappingCompatible =   @("CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08",
+            "CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.0, Date: 2022-11-15",
+            "CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15",
+            "CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14",
+            "CIS Microsoft Windows Server 2019 Benchmark, Version: 1.3.0, Date: 2022-03-18",
+            "CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14")
+            Compare-EqualCISVersions -Title "Debian 10" -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible | Should -Be $null
         }
     }
 }

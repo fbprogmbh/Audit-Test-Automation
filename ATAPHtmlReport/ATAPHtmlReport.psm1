@@ -43,16 +43,19 @@ $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, 
 #read in all information needed for Mitre Attack Mapping from json file
 $global:CISToAttackMappingData = Get-Content -Raw "$PSScriptRoot\resources\CISToAttackMappingData.json" | ConvertFrom-Json
 
-function Get-MitreMappingVersion {
+function Get-MitreMappingMetaData {
 	<#
-.SYNOPSIS
-	Returns the information on which version the Mitre Mappin is based
-
-.EXAMPLE
-	Get-MitreMappingVersion
-#>
-
-return $CISToAttackMappingData.'MitreMappingBasedOn'
+	.SYNOPSIS
+		Returns the specified metadata to the mapping data 
+	.EXAMPLE
+		Get-MitreMappingMetaData -Get BasedOn
+		Get-MitreMappingMetaData BasedOn
+	#>
+	param(
+		[Parameter(Mandatory)][ValidateSet('Version', 'BasedOn', 'Compatible')]
+		[string]$Get
+	)
+	return $CISToAttackMappingData.'MappingMetaData'.$Get
 }
 
 function Get-MitreTacticName {
@@ -721,16 +724,16 @@ function Get-TacticCounter{
 function Compare-EqualCISVersions {
 	<#
 	.Synopsis 
-		Returns a String, that explains if the $ReportBasedOn and $MitreMappingBasedOn Versions can be used together.
+		Returns a String, that explains if the $ReportBasedOn and $MitreMappingCompatible Versions can be used together.
 		Returns null when when the report is not compatible with any mitre mapping. 
 	.Parameter  $Title
 		The Title of the Report
 	.Parameter  $ReportBasedOn
 		The BasedOn information from the report
-	.Parameter  $MitreMappingBasedOn
-		The BasedOn Information of the mitre mapping
+	.Parameter  $MitreMappingCompatible
+		The Compatible CIS versions of the mitre mapping
 	.Example 
-		Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$ReportBasedOn -MitreMappingBasedOn:$MitreMappingBasedOn
+		Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$ReportBasedOn -MitreMappingCompatible:$MitreMappingCompatible
 	#>
 
 	param(
@@ -744,22 +747,27 @@ function Compare-EqualCISVersions {
 
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string[]]
-		$MitreMappingBasedOn
+		$MitreMappingCompatible
 	)
 	$os = [System.Environment]::OSVersion.Platform
-	if(Test-CompatibleMitreReport -Title $Title -os $os){
-		$testVersion = $ReportBasedOn | Where-Object {$_ -match 'CIS' -and $_ -notmatch 'based on'}
-		$testVersion = $testVersion.Split(',')[1]
-		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
-		
-		$mappingVersion = $MitreMappingBasedOn.Split(',')[0]
-		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
 
-		if($null -ne $testVersion -and $null -ne $mappingVersion -and $testVersion -eq $mappingVersion){
+	if(Test-CompatibleMitreReport -Title $Title -os $os){
+		$ReportBasedOn = $ReportBasedOn | Where-Object {$_ -match 'CIS'}
+		
+
+		# Write-Host $($null -ne $ReportBasedOn)
+		# Write-Host $($null -ne $MitreMappingCompatible) 
+		# Write-Host $("$MitreMappingCompatible" -match "$ReportBasedOn")
+		# Write-Host $($ReportBasedOn -in $MitreMappingCompatible)
+		# Write-Host $($MitreMappingCompatible -like $ReportBasedOn)
+		# Write-Host $MitreMappingCompatible.contains("$ReportBasedOn")
+		# Write-Host $MitreMappingCompatible.GetType()
+		if($null -ne $ReportBasedOn -and $null -ne $MitreMappingCompatible -and $($ReportBasedOn -in $MitreMappingCompatible)){
 			return "The CIS Versions used for the MITRE mapping and testing are the same."
 		}
 		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
 	}
+	return $null
 }
 
 function Get-HtmlReportSection {
@@ -1686,8 +1694,10 @@ function Get-ATAPHtmlReport {
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
 								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
 								htmlElement 'h2'@{} {"Version of CIS in MITRE Mapping and tests"}
-								htmlElement 'p'@{} {Get-MitreMappingVersion + "."}
-								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$BasedOn -MitreMappingBasedOn:Get-MitreMappingVersion}
+								htmlElement 'p'@{} {$(Get-MitreMappingMetaData Version) + "."}
+								htmlElement 'p'@{} {"Based on: " + $(Get-MitreMappingMetaData BasedOn) + "."}
+								$MitreMappingCompatible = Get-MitreMappingMetaData Compatible
+								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible}
 								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 								htmlElement 'p' @{id='Tip'} {'Tip: Hover over the MITRE IDs to get a quick information to each Technique'}
 								htmlElement 'p' @{} {'Explanation of the cell colors:'}
