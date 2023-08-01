@@ -753,15 +753,6 @@ function Compare-EqualCISVersions {
 
 	if(Test-CompatibleMitreReport -Title $Title -os $os){
 		$ReportBasedOn = $ReportBasedOn | Where-Object {$_ -match 'CIS'}
-		
-
-		# Write-Host $($null -ne $ReportBasedOn)
-		# Write-Host $($null -ne $MitreMappingCompatible) 
-		# Write-Host $("$MitreMappingCompatible" -match "$ReportBasedOn")
-		# Write-Host $($ReportBasedOn -in $MitreMappingCompatible)
-		# Write-Host $($MitreMappingCompatible -like $ReportBasedOn)
-		# Write-Host $MitreMappingCompatible.contains("$ReportBasedOn")
-		# Write-Host $MitreMappingCompatible.GetType()
 		if($null -ne $ReportBasedOn -and $null -ne $MitreMappingCompatible -and $($ReportBasedOn -in $MitreMappingCompatible)){
 			return "The CIS Versions used for the MITRE mapping and testing are the same."
 		}
