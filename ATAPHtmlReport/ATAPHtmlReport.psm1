@@ -642,7 +642,6 @@ function Get-MitigationsFromFailedTests {
 				$Mappings[$tactic][$technique].Keys | 
 				Where-Object {$Mappings[$tactic][$technique][$_] -eq [AuditInfoStatus]::False} | 
 				ForEach-Object {
-					Write-Host $technique
 					if($null -ne $json.$_.'Mitigation1' -and $CISAMitigationsFromPaper.Keys -contains $json.$_.'Mitigation1') {
 						if($CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] -notcontains $technique) {
 							$CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] += $technique
@@ -664,21 +663,7 @@ function Get-MitigationsFromFailedTests {
 		}
 		$CISAMitigationsFromPaper.Keys | ForEach-Object {
 			$CISAMitigationsFromPaper[$_]['MitreTechniqueIDs'] = $CISAMitigationsFromPaper[$_]['MitreTechniqueIDs'] | Sort-Object
-		} 
-		<#foreach($Mitigation in $CISAMitigations) {
-			$Techniques = @()
-			$json.psobject.properties.name | 
-			Where-Object {$json.$_.'Mitigation1' -eq $Mitigation -or $json.$_.'Mitigation2' -eq $Mitigation} |
-			ForEach-Object {
-				if($null -ne $json.$_.'Technique1' -and $Techniques -notcontains $json.$_.'Technique1'){
-					$Techniques += $json.$_.'Technique1'
-				}
-				if($null -ne $json.$_.'Technique2' -and $Techniques -notcontains $json.$_.'Technique2'){
-					$Techniques += $json.$_.'Technique2'
-				}
-			}
-			$CISAMitigationsFromPaper[$Mitigation]['MitreTechniqueIDs'] += $Techniques
-		}#>
+		}
 		$CISAMitigationsFromPaper.Keys | Where-Object {$CISAMitigations -notcontains $_} | ForEach-Object {$KeysToRemove += $_}
 		$KeysToRemove | ForEach-Object {$CISAMitigationsFromPaper.Remove($_)}
 	}
