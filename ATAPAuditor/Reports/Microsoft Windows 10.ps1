@@ -3,7 +3,6 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
-		"MITRE ATT&CK Mapping (based on CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark (Version: 1.12.0)), Version 1.0.0, Date: 2023-07-13"
 		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R16, Date: 2019-10-25"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
 		"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
