@@ -643,11 +643,17 @@ function Get-MitigationsFromFailedTests {
 				Where-Object {$Mappings[$tactic][$technique][$_] -eq [AuditInfoStatus]::False} | 
 				ForEach-Object {
 					if($null -ne $json.$_.'Mitigation1' -and $CISAMitigationsFromPaper.Keys -contains $json.$_.'Mitigation1') {
+						if($CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] -notcontains $technique) {
+							$CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] += $technique
+						}
 						if($CISAMitigations -notcontains $json.$_.'Mitigation1') {
 							$CISAMitigations += $json.$_.'Mitigation1'
 						}
 					}
 					if($null -ne $json.$_.'Mitigation2' -and $CISAMitigationsFromPaper.Keys -contains $json.$_.'Mitigation2') {
+						if($CISAMitigationsFromPaper[$json.$_.'Mitigation2']['MitreTechniqueIDs'] -notcontains $technique) {
+							$CISAMitigationsFromPaper[$json.$_.'Mitigation2']['MitreTechniqueIDs'] += $technique
+						}
 						if($CISAMitigations -notcontains $json.$_.'Mitigation2') {
 							$CISAMitigations += $json.$_.'Mitigation2'
 						}
@@ -655,19 +661,8 @@ function Get-MitigationsFromFailedTests {
 				}
 			}
 		}
-		foreach($Mitigation in $CISAMitigations) {
-			$Techniques = @()
-			$json.psobject.properties.name | 
-			Where-Object {$json.$_.'Mitigation1' -eq $Mitigation -or $json.$_.'Mitigation2' -eq $Mitigation} |
-			ForEach-Object {
-				if($null -ne $json.$_.'Technique1' -and $Techniques -notcontains $json.$_.'Technique1'){
-					$Techniques += $json.$_.'Technique1'
-				}
-				if($null -ne $json.$_.'Technique2' -and $Techniques -notcontains $json.$_.'Technique2'){
-					$Techniques += $json.$_.'Technique2'
-				}
-			}
-			$CISAMitigationsFromPaper[$Mitigation]['MitreTechniqueIDs'] += $Techniques
+		$CISAMitigationsFromPaper.Keys | ForEach-Object {
+			$CISAMitigationsFromPaper[$_]['MitreTechniqueIDs'] = $CISAMitigationsFromPaper[$_]['MitreTechniqueIDs'] | Sort-Object
 		}
 		$CISAMitigationsFromPaper.Keys | Where-Object {$CISAMitigations -notcontains $_} | ForEach-Object {$KeysToRemove += $_}
 		$KeysToRemove | ForEach-Object {$CISAMitigationsFromPaper.Remove($_)}
