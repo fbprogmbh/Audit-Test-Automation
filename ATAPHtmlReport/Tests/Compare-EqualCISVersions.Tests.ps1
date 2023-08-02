@@ -13,7 +13,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $null   
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $false   
             }
             # empty catch block required by compiler
             catch {
@@ -35,7 +35,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $true    
             }
             # empty catch block required by compiler
             catch {
@@ -55,7 +55,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $true    
             }
             # empty catch block required by compiler
             catch {
@@ -75,7 +75,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $true    
             }
             # empty catch block required by compiler
             catch {
@@ -95,7 +95,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $true    
             }
             # empty catch block required by compiler
             catch {
@@ -114,7 +114,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."    
+                Compare-EqualCISVersions -Title "Windows Server 2019 Audit Report" -BasedOn:$BasedOn | Should -Be $true    
             }
             # empty catch block required by compiler
             catch {
@@ -133,7 +133,7 @@ InModuleScope ATAPHtmlReport {
             )
             # assert that calling this method with invalid values will throw an exception
             try {
-                Compare-EqualCISVersions -Title "Windows Server 2022 Audit Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."   
+                Compare-EqualCISVersions -Title "Windows Server 2022 Audit Report" -BasedOn:$BasedOn | Should -Be $true   
             }
             # empty catch block required by compiler
             catch {
@@ -167,7 +167,7 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            Compare-EqualCISVersions -Title "Windows 10 Report" -BasedOn:$BasedOn | Should -Be "The CIS Versions used for the MITRE mapping and testing are the same."
+            Compare-EqualCISVersions -Title "Windows 10 Report" -BasedOn:$BasedOn | Should -Be $true
         }
 
         It 'Test for matching versions of CIS and MITRE mapping but wrong OS' {
@@ -182,7 +182,7 @@ InModuleScope ATAPHtmlReport {
                 "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
                 "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
             )
-            Compare-EqualCISVersions -Title "Debian 10" -BasedOn:$BasedOn | Should -Be $null
+            Compare-EqualCISVersions -Title "Debian 10" -BasedOn:$BasedOn | Should -Be $false
         }
 
         It 'Test for wrong parameters' {

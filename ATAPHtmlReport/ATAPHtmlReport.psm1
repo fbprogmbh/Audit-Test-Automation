@@ -726,10 +726,7 @@ function Compare-EqualCISVersions {
 		$mappingVersion = $mappingVersion.Split(',')[0]
 		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
 		
-		if($null -ne $testVersion -and $null -ne $mappingVersion -and $testVersion -eq $mappingVersion){
-			return "The CIS Versions used for the MITRE mapping and testing are the same."
-		}
-		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
+		return $($null -ne $testVersion -and $null -ne $mappingVersion -and $testVersion -eq $mappingVersion)
 	}
 }
 
@@ -1657,7 +1654,9 @@ function Get-ATAPHtmlReport {
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
 								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
 								htmlElement 'h2'@{} {"Version of CIS in MITRE Mapping and tests"}
-								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
+								if (-not $(Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn)){
+									htmlElement 'p'@{style = "font-size: 1.2em; color: red;"} {"The CIS version used for the MITRE mapping doesn't match with the CIS version used for the tests."}
+								}
 								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 								htmlElement 'p' @{id='Tip'} {'Tip: Hover over the MITRE IDs to get a quick information to each Technique'}
 								htmlElement 'p' @{} {'Explanation of the cell colors:'}
