@@ -163,7 +163,7 @@ class MitreMap {
             if($null -eq $this.Map[$tactic][$technique]) {
                 $this.Map[$tactic][$technique] = @{}
             }
-            $this.Map[$tactic][$technique][$id] += $value
+            $this.Map[$tactic][$technique][$id] = $value
         }
         else {
 			if(!$tactic) {
@@ -660,9 +660,6 @@ function Get-MitigationsFromFailedTests {
 					}
 				}
 			}
-		}
-		$CISAMitigationsFromPaper.Keys | ForEach-Object {
-			$CISAMitigationsFromPaper[$_]['MitreTechniqueIDs'] = $CISAMitigationsFromPaper[$_]['MitreTechniqueIDs'] | Sort-Object
 		}
 		$CISAMitigationsFromPaper.Keys | Where-Object {$CISAMitigations -notcontains $_} | ForEach-Object {$KeysToRemove += $_}
 		$KeysToRemove | ForEach-Object {$CISAMitigationsFromPaper.Remove($_)}
