@@ -724,8 +724,7 @@ function Get-TacticCounter{
 function Compare-EqualCISVersions {
 	<#
 	.Synopsis 
-		Returns a String, that explains if the $ReportBasedOn and $MitreMappingCompatible Versions can be used together.
-		Returns null when when the report is not compatible with any mitre mapping. 
+		Returns a boolean, if the $ReportBasedOn and $MitreMappingCompatible Versions can be used together or not.
 	.Parameter  $Title
 		The Title of the Report
 	.Parameter  $ReportBasedOn
