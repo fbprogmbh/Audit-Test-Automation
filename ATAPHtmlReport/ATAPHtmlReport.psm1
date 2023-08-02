@@ -654,7 +654,7 @@ function Get-MitigationsFromFailedTests {
 		foreach ($tactic in $Mappings.Keys) {
 			foreach ($technique in $Mappings[$tactic].Keys) {
 				$Mappings[$tactic][$technique].Keys | 
-				#checks for each technique if there is a at least one test which was false
+				#checks for each technique if there is a failed test
 				Where-Object {$Mappings[$tactic][$technique][$_] -eq [AuditInfoStatus]::False} | 
 				ForEach-Object {
 					#if the mitigation from the failed test is in ihe mitigation from the cisa paper
@@ -663,7 +663,7 @@ function Get-MitigationsFromFailedTests {
 						if($CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] -notcontains $technique) {
 							$CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] += $technique
 						}
-						#put the mitigation in a sperat array (no doubles)
+						#put the mitigation in a separate array (no doubles)
 						if($CISAMitigations -notcontains $json.$_.'Mitigation1') {
 							$CISAMitigations += $json.$_.'Mitigation1'
 						}
@@ -674,7 +674,7 @@ function Get-MitigationsFromFailedTests {
 						if($CISAMitigationsFromPaper[$json.$_.'Mitigation2']['MitreTechniqueIDs'] -notcontains $technique) {
 							$CISAMitigationsFromPaper[$json.$_.'Mitigation2']['MitreTechniqueIDs'] += $technique
 						}
-						#put the mitigation in a sperat array (no doubles)
+						#put the mitigation in a separate array (no doubles)
 						if($CISAMitigations -notcontains $json.$_.'Mitigation2') {
 							$CISAMitigations += $json.$_.'Mitigation2'
 						}
@@ -682,7 +682,7 @@ function Get-MitigationsFromFailedTests {
 				}
 			}
 		}
-		#write keys which where not in the sperat mitigation array in $KeysToRemove beacause you can't delete in a foreach from the object you want to delete from
+		#write keys which where not in the sperat mitigation array in $KeysToRemove beacause you can't delete in a foreach over the object you want to delete from
 		$CISAMitigationsFromPaper.Keys | Where-Object {$CISAMitigations -notcontains $_} | ForEach-Object {$KeysToRemove += $_}
 		#delete the keys from $CISAMitigation from paper which were not in the sperate mitigation array
 		$KeysToRemove | ForEach-Object {$CISAMitigationsFromPaper.Remove($_)}
