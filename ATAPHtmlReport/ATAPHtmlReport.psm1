@@ -580,12 +580,26 @@ function Merge-CisAuditsToMitreMap {
 }
 
 function Get-MitigationsFromFailedTests {
+	<#
+	.Synopsis
+		Returns a map with a array with all Techniques which had a failed test and the Mitigation.
+
+    .PARAMETER Mappings
+        Is a mitre Mapping from Get-MitigationsFromFailedTests
+		
+	.EXAMPLE
+		$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
+	#>
+
 	param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Mappings
     )
 	Begin {
 		$json = $global:CISToAttackMappingData.'CISAttackMapping'
+		#mapping with Mitigation IDs as keys
+		#array with all techniques where the mititgation is in the cisa paper and a tests failed
+		#mitigation from the cisa paper
 		$CISAMitigationsFromPaper = [ordered]@{
 			'M1017' = @{
 				'MitreTechniqueIDs' = @()
@@ -727,6 +741,13 @@ function ConvertTo-HtmlTable {
 }
 
 function ConvertTo-HtmlCISA {
+	<#
+	.Synopsis 
+		Generates a html table using the CISA Mitigation, Mitre Mitigation id and failed techniques
+	.Example
+		ConvertTo-HtmlCISA $CISAMitigations
+	#>
+
 	param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $CISAMitigations
