@@ -43,6 +43,21 @@ $AuditProperties = @{ Name = 'Id' }, @{ Name = 'Task' }, @{ Name = 'Message' }, 
 #read in all information needed for Mitre Attack Mapping from json file
 $global:CISToAttackMappingData = Get-Content -Raw "$PSScriptRoot\resources\CISToAttackMappingData.json" | ConvertFrom-Json
 
+function Get-MitreMappingMetaData {
+	<#
+	.SYNOPSIS
+		Returns the specified metadata to the mapping data 
+	.EXAMPLE
+		Get-MitreMappingMetaData -Get BasedOn
+		Get-MitreMappingMetaData BasedOn
+	#>
+	param(
+		[Parameter(Mandatory)][ValidateSet('Version', 'BasedOn', 'Compatible')]
+		[string]$Get
+	)
+	return $CISToAttackMappingData.'MappingMetaData'.$Get
+}
+
 function Get-MitreTacticName {
 		<#
 	.SYNOPSIS
@@ -739,14 +754,14 @@ function ConvertTo-HtmlTable {
 								htmlElement 'a' @{href = $url; class = "tooltip"} { "$technique" 
 									htmlElement 'span' @{class = "tooltiptext"} { Get-MitreTechniqueName -TechniqueID $technique }
 								} 
-								htmlElement 'span' @{} {": $successCounter /" + $Mappings[$tactic][$technique].Count}
+								htmlElement 'span' @{} {": $successCounter/" + $Mappings[$tactic][$technique].Count}
 							}
-                        }
-                    }
-                }
-            }
-        }
-    }
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 function ConvertTo-HtmlCISA {
@@ -882,6 +897,20 @@ function Get-TacticCounter{
 #in the current state the function checks the cis version used for the mapping and used in the Save-ATAPHtmlReport
 #but the versions don't match so the function prints the status in the HTML but doesn't block Merge-CisAuditsToMitreMap
 function Compare-EqualCISVersions {
+	<#
+	.Synopsis 
+		Returns a String, that explains if the $ReportBasedOn and $MitreMappingCompatible Versions can be used together.
+		Returns null when when the report is not compatible with any mitre mapping. 
+	.Parameter  $Title
+		The Title of the Report
+	.Parameter  $ReportBasedOn
+		The BasedOn information from the report
+	.Parameter  $MitreMappingCompatible
+		The Compatible CIS versions of the mitre mapping
+	.Example 
+		Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$ReportBasedOn -MitreMappingCompatible:$MitreMappingCompatible
+	#>
+
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]
@@ -889,23 +918,22 @@ function Compare-EqualCISVersions {
 
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string[]]
-		$BasedOn
+		$ReportBasedOn,
+
+		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		[string[]]
+		$MitreMappingCompatible
 	)
 	$os = [System.Environment]::OSVersion.Platform
-	if(Test-CompatibleMitreReport -Title $Title -os $os){
-		$testVersion = $BasedOn | Where-Object {$_ -match 'CIS' -and $_ -notmatch 'based on'}
-		$testVersion = $testVersion.Split(',')[1]
-		$testVersion = $testVersion.Substring(($testVersion.IndexOf(':')+2), ($testVersion.Length)-($testVersion.IndexOf(':')+2))
 
-		$mappingVersion = $BasedOn | Where-Object {$_ -match 'CIS' -and $_ -match 'based on'}
-		$mappingVersion = $mappingVersion.Split(',')[0]
-		$mappingVersion = $mappingVersion.Substring($mappingVersion.IndexOf("Version: ")+9,($mappingVersion.Length-2)-($mappingVersion.IndexOf("Version: ")+9))
-		
-		if($null -ne $testVersion -and $null -ne $mappingVersion -and $testVersion -eq $mappingVersion){
+	if(Test-CompatibleMitreReport -Title $Title -os $os){
+		$ReportBasedOn = $ReportBasedOn | Where-Object {$_ -match 'CIS'}
+		if($null -ne $ReportBasedOn -and $null -ne $MitreMappingCompatible -and $($ReportBasedOn -in $MitreMappingCompatible)){
 			return "The CIS Versions used for the MITRE mapping and testing are the same."
 		}
 		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
 	}
+	return $null
 }
 
 function Get-HtmlReportSection {
@@ -1839,11 +1867,13 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
 								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
-								htmlElement 'h2'@{} {"Version of CIS in MITRE Mapping and tests"}
-								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -BasedOn:$BasedOn}
-								htmlElement 'h2' @{id = 'CurrentATT&CKHeatpmap'} {"Current ATT&CK heatmap on tested System: "}
 								htmlElement 'p' @{id='Tip'} {'Tip: Hover over the MITRE IDs to get a quick information to each Technique'}
-								htmlElement 'p' @{} {'Explanation of the cell colors:'}
+								htmlElement 'h2'@{} {"Version of CIS in MITRE Mapping and tests"}
+								htmlElement 'p'@{} {$(Get-MitreMappingMetaData Version) + "."}
+								htmlElement 'p'@{} {"Based on: " + $(Get-MitreMappingMetaData BasedOn) + "."}
+								$MitreMappingCompatible = Get-MitreMappingMetaData Compatible
+								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible}
+								htmlElement 'h2' @{} {'Explanation of the cell colors'}
 
 								htmlElement 'div' @{class='square-container'}{
 									htmlElement 'div' @{class='square'; id='SSquareSquare'} {} 
@@ -1865,10 +1895,20 @@ function Get-ATAPHtmlReport {
 									htmlElement 'div'@{} {'= No tests available yet'}
 								}
 								
+								htmlElement 'h2' @{} {"Filters"}
+
 								htmlElement 'label' @{} {
-									"hide techniques that are performed outside of enterprise defenses and controls: "
+									"hide techniques that are performed outside of enterprise defenses and controls:"
 									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
 								}
+
+								htmlElement 'h2' @{} {"Current ATT&CK heatmap on tested System"}
+
+								$Mappings = $Sections | 
+								Where-Object { $_.Title -eq "CIS Benchmarks" -or $_.Title -eq "CIS Stand-alone Benchmarks"} | 
+								ForEach-Object { return $_.SubSections } | 
+								ForEach-Object { return $_.AuditInfos } | 
+								Merge-CisAuditsToMitreMap
 
 								ConvertTo-HtmlTable $Mappings.map
 							}

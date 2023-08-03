@@ -289,25 +289,44 @@ button{
 }
 
 #MITRETable {
-    width: 100%;
-    border-collapse: collapse; 
-    border: 1px solid #ffffff;
-    font-family: Arial, sans-serif;
+	width: 100%;
+	border-collapse: collapse; 
+	border: 1px solid #ffffff;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
 }
 
-#MITREthead {
-    border: 1px solid #141414;
-	text-align:center;
+#MITREthead a {
+	color: #000000;
+	text-decoration: none;
+	font-weight: bold;
 }
 
-#MITREthead th {
-    border: 1px solid #141414;
-	font-weight:bold;
-	display: inline-flex;
+#MITREtbody a {
+	color: #000000;
+	text-decoration: none;
+}
+
+#MITREtbody tr , #MITREthead tr {
+	display: flex;
+}
+
+#MITREtbody td , #MITREthead td {
+	min-width: 75px;
+	border: 1px solid #cccccc;
+	padding: 6px;
+	flex: 1;
+	flex-basis: 0;
+}
+
+#MITREthead td {
+	overflow: hidden;
+	overflow-wrap: break-word;
 }
 
 .MITRETechnique {
-	padding: 8px;
+	padding: 6px;
     border: 1px solid #000000;
 }
 
@@ -394,7 +413,6 @@ button{
 .tooltip:hover .tooltiptext {
 	visibility: visible;
 }
-
 
 #Tip p{
 	font-weight: bold;
