@@ -1904,12 +1904,6 @@ function Get-ATAPHtmlReport {
 
 								htmlElement 'h2' @{} {"Current ATT&CK heatmap on tested System"}
 
-								$Mappings = $Sections | 
-								Where-Object { $_.Title -eq "CIS Benchmarks" -or $_.Title -eq "CIS Stand-alone Benchmarks"} | 
-								ForEach-Object { return $_.SubSections } | 
-								ForEach-Object { return $_.AuditInfos } | 
-								Merge-CisAuditsToMitreMap
-
 								ConvertTo-HtmlTable $Mappings.map
 							}
 							htmlElement 'div' @{class = 'tabContent'; id = 'CISA' } {
