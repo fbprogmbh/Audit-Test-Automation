@@ -64,6 +64,8 @@ function startConditions(){
     if(isMITREValue != null) {
         document.getElementById("MITRE").style.display = "none";
         document.getElementById("MITREBtn").style.backgroundColor= 'transparent';
+        document.getElementById("CISA").style.display = "none";
+        document.getElementById("CISABtn").style.backgroundColor= 'transparent';
     }
 }
 
@@ -113,6 +115,10 @@ function clickButton(value){
         case 6:
             document.getElementById("MITRE").style.display = "block";
             document.getElementById("MITREBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 7:
+            document.getElementById("CISA").style.display = "block";
+            document.getElementById("CISABtn").style.backgroundColor= '#ff9933';
         break;
     }
 

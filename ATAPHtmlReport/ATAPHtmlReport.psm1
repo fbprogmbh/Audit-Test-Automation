@@ -178,7 +178,7 @@ class MitreMap {
             if($null -eq $this.Map[$tactic][$technique]) {
                 $this.Map[$tactic][$technique] = @{}
             }
-            $this.Map[$tactic][$technique][$id] += $value
+            $this.Map[$tactic][$technique][$id] = $value
         }
         else {
 			if(!$tactic) {
@@ -594,6 +594,119 @@ function Merge-CisAuditsToMitreMap {
 	}
 }
 
+function Get-MitigationsFromFailedTests {
+	<#
+	.Synopsis
+		Returns a map with a array with all Techniques which had a failed test and the Mitigation.
+
+    .PARAMETER Mappings
+        Is a mitre Mapping from Get-MitigationsFromFailedTests
+		
+	.EXAMPLE
+		$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
+	#>
+
+	param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Mappings
+    )
+	Begin {
+		$json = $global:CISToAttackMappingData.'CISAttackMapping'
+		#mapping with Mitigation IDs as keys
+		#array with all techniques where the mititgation is in the cisa paper and a tests failed
+		#mitigation from the cisa paper
+		$CISAMitigationsFromPaper = [ordered]@{
+			'M1017' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Train users to be aware of access or manipulation attempts by an adversary to reduce the risk of successful spear-phishing and social engineering.'
+			}
+			'M1018' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Manage the creation, modification, use, and permissions associated to user accounts.'
+			}
+			'M1021' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Restrict or block certain websites.'
+			}
+			'M1027' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Set and enforce secure password policies for accounts.'
+			}
+			'M1028' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Make configuration changes related to the operating system or a common feature of the operating system that result in system hardening against techniques.'
+			}
+			'M1030' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Architect sections of the network to isolate critical systems, functions, or resources. Use physical and logical segmentation to prevent access to sensitive systems and information.'
+			}
+			'M1031' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Configure Network Intrusion Prevention systems to block malicious file signatures and file types at the network boundary.'
+			}
+			'M1038' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Block execution of code on a system.'
+			}
+			'M1041' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Use strong encryption mechanisms to protect sensitive data.'
+			}
+			'M1042' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Remove or deny access to unnecessary and potentially vulnerable software to prevent abuse by adversaries.'
+			}
+			'M1057' = @{
+				'MitreTechniqueIDs' = @()
+				'Mitigation' = 'Use a data loss prevention (DLP) strategy to categorize sensitive data, identify data formats indicative of personally identifiable information (PII), and restrict exfiltration of sensitive data.'
+			}
+		}
+		$CISAMitigations = @()
+		$KeysToRemove = @()
+    }
+
+	Process {
+		foreach ($tactic in $Mappings.Keys) {
+			foreach ($technique in $Mappings[$tactic].Keys) {
+				$Mappings[$tactic][$technique].Keys | 
+				#checks for each technique if there is a failed test
+				Where-Object {$Mappings[$tactic][$technique][$_] -eq [AuditInfoStatus]::False} | 
+				ForEach-Object {
+					#if the mitigation from the failed test is in ihe mitigation from the cisa paper
+					if($null -ne $json.$_.'Mitigation1' -and $CISAMitigationsFromPaper.Keys -contains $json.$_.'Mitigation1') {
+						#put the technique in the mapping (no doubles)
+						if($CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] -notcontains $technique) {
+							$CISAMitigationsFromPaper[$json.$_.'Mitigation1']['MitreTechniqueIDs'] += $technique
+						}
+						#put the mitigation in a separate array (no doubles)
+						if($CISAMitigations -notcontains $json.$_.'Mitigation1') {
+							$CISAMitigations += $json.$_.'Mitigation1'
+						}
+					}
+					#if the mitigation from the failed test is in ihe mitigation from the cisa paper
+					if($null -ne $json.$_.'Mitigation2' -and $CISAMitigationsFromPaper.Keys -contains $json.$_.'Mitigation2') {
+						#put the technique in the mapping (no doubles)
+						if($CISAMitigationsFromPaper[$json.$_.'Mitigation2']['MitreTechniqueIDs'] -notcontains $technique) {
+							$CISAMitigationsFromPaper[$json.$_.'Mitigation2']['MitreTechniqueIDs'] += $technique
+						}
+						#put the mitigation in a separate array (no doubles)
+						if($CISAMitigations -notcontains $json.$_.'Mitigation2') {
+							$CISAMitigations += $json.$_.'Mitigation2'
+						}
+					}
+				}
+			}
+		}
+		#write keys which where not in the sperat mitigation array in $KeysToRemove beacause you can't delete in a foreach over the object you want to delete from
+		$CISAMitigationsFromPaper.Keys | Where-Object {$CISAMitigations -notcontains $_} | ForEach-Object {$KeysToRemove += $_}
+		#delete the keys from $CISAMitigation from paper which were not in the sperate mitigation array
+		$KeysToRemove | ForEach-Object {$CISAMitigationsFromPaper.Remove($_)}
+	}
+	End{
+		return $CISAMitigationsFromPaper
+	}
+}
+
 function ConvertTo-HtmlTable {
 	<#
 	.Synopsis 
@@ -643,12 +756,74 @@ function ConvertTo-HtmlTable {
 								} 
 								htmlElement 'span' @{} {": $successCounter/" + $Mappings[$tactic][$technique].Count}
 							}
-                        }
-                    }
-                }
-            }
-        }
-    }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+function ConvertTo-HtmlCISA {
+	<#
+	.Synopsis 
+		Generates a html table using the CISA Mitigation, Mitre Mitigation id and failed techniques
+	.Example
+		ConvertTo-HtmlCISA $CISAMitigations
+	#>
+
+	param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $CISAMitigations
+    )
+	#create CISA table
+	htmlElement 'table' @{id='CISATable'} {
+		#create table head with the column CISA Mitigation, MITRE Mitigation ID, MITRE Technique IDs
+        htmlElement 'thead' @{id='CISAthead'} {
+			htmlElement 'tr' @{} {
+				htmlElement 'th' @{class='CISAMitigations'} {
+					htmlElement 'a' @{} {
+						'CISA Mitigation'
+					}
+				}
+				htmlElement 'th' @{class='CISAMitigationIDs'} {
+					htmlElement 'a' @{} {
+						'MITRE Mitigation ID'
+					}
+				}
+				htmlElement 'th' @{class='CISAMitreTechniqueIDs'} {
+					htmlElement 'a' @{} {
+						'MITRE Technqiue IDs'
+					}
+				}
+			}
+		}
+		#fill the columns with the information from the $CISAMitigation map
+		htmlElement 'tbody' @{id='CISAtbody'} {
+			$CISAMitigations.Keys | ForEach-Object {
+				htmlElement 'tr' @{} {
+					htmlElement 'td' @{class='CISAMitigations'} {
+						htmlElement 'a' @{} {
+							$CISAMitigations[$_]['Mitigation']
+						}	
+					}
+					htmlElement 'td' @{class='CISAMitigationIDs'} {
+						htmlElement 'a' @{} {
+							$_
+						}
+					}
+					htmlElement 'td' @{class='CISAMitreTechniqueIDs'} {
+						$CISAMitigations[$_]['MitreTechniqueIDs'] | ForEach-Object {
+							htmlElement 'a' @{} {
+								$_
+								" "
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 function Get-ColorValue{
@@ -1171,6 +1346,7 @@ function Get-ATAPHtmlReport {
 						if($MITRE){
 							if(Test-CompatibleMitreReport -Title $Title -os $os){
 								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
+								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'CISABtn'; onclick = "clickButton('7')" } { "CISA" }
 							}
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
@@ -1681,6 +1857,13 @@ function Get-ATAPHtmlReport {
 					if($MITRE) {
 						if(Test-CompatibleMitreReport -Title $Title -os $os){
 							Write-Progress -Activity "Creating mitre heatmap page" -Status "Progress:" -PercentComplete 75
+							
+							$Mappings = $Sections | 
+							Where-Object { $_.Title -eq "CIS Benchmarks" -or $_.Title -eq "CIS Stand-alone Benchmarks"} | 
+							ForEach-Object { return $_.SubSections } | 
+							ForEach-Object { return $_.AuditInfos } | 
+							Merge-CisAuditsToMitreMap
+							
 							htmlElement 'div' @{class = 'tabContent'; id = 'MITRE' } {
 								htmlElement 'h1'@{} {"MITRE ATT&CK"}
 								htmlElement 'p'@{} {'To get a quick overview of how good your system is hardened in terms of the MITRE ATT&CK Framework we made a heatmap.'}
@@ -1721,13 +1904,14 @@ function Get-ATAPHtmlReport {
 
 								htmlElement 'h2' @{} {"Current ATT&CK heatmap on tested System"}
 
-								$Mappings = $Sections | 
-								Where-Object { $_.Title -eq "CIS Benchmarks" -or $_.Title -eq "CIS Stand-alone Benchmarks"} | 
-								ForEach-Object { return $_.SubSections } | 
-								ForEach-Object { return $_.AuditInfos } | 
-								Merge-CisAuditsToMitreMap
-
 								ConvertTo-HtmlTable $Mappings.map
+							}
+							htmlElement 'div' @{class = 'tabContent'; id = 'CISA' } {
+								htmlElement 'h1'@{} {"CISA Mitigation"}
+								htmlElement 'p'@{} {'To get a quick overview of which Mitigation you should take, based on the MITRE ATT&CK heatmap'}
+
+								$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
+								ConvertTo-HtmlCISA $CISAMitigations
 							}
 						}
 						else {

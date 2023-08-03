@@ -7,7 +7,7 @@ InModuleScope ATAPHtmlReport {
     Describe 'Testing MitreMap' {
         It 'tests correct amount of techniques per tacitc' {
             $mitreMap = [MitreMap]::new()
-            $mitreMap.Print()
+            #$mitreMap.Print()
 
             $mitreMap.map['TA0043'].count | Should -Be 10
             $mitreMap.map['TA0042'].count | Should -Be 8
@@ -63,13 +63,39 @@ InModuleScope ATAPHtmlReport {
             }
             
             $mitreMap = $Section1 | Where-Object { $_.Title -eq "CIS Benchmarks" } | ForEach-Object { return $_.SubSections } | ForEach-Object { return $_.AuditInfos } | Merge-CisAuditsToMitreMap
-            $mitreMap.Print()
+            #$mitreMap.Print()
 
             #Tests
             $mitreMap.GetType() | Should -Be "MitreMap"
             $mitreMap.Map["TA0001"]["T1078"]["1.1.4"].GetType() | Should -Be 'AuditInfoStatus'
             $mitreMap.Map["TA0001"]["T1078"]["1.1.4"] | Should -Be False
             $mitreMap.Map["TA0006"]["T1110"]["1.2.3"] | Should -Be True
+
+            $failedIDs = @()
+            foreach ($tactic in $mitreMap.Map.Keys) {
+                foreach ($technique in $mitreMap.Map[$tactic].Keys) {
+                    $mitreMap.Map[$tactic][$technique].Keys | 
+                    Where-Object {$mitreMap.Map[$tactic][$technique][$_] -eq [AuditInfoStatus]::False} | 
+                    ForEach-Object {
+                        if($failedIDs -notcontains $_){
+                            $failedIDs += $_
+                        }
+                    }
+                }
+            }
+            $CISAMedigations = @()
+            $json = Get-Content -Raw "$PSScriptRoot\..\resources\CISToAttackMappingData.json" | ConvertFrom-Json
+            foreach($i in $failedIDs) {
+                if($null -ne $json.'CISAttackMapping'.$i.'Mitigation1' -and $CISAMedigations -notcontains $json.'CISAttackMapping'.$i.'Mitigation1'){
+                    $CISAMedigations += $json.'CISAttackMapping'.$i.'Mitigation1'
+                }
+                if($null -ne $json.'CISAttackMapping'.$i.'Mitigation2' -and $CISAMedigations -notcontains $json.'CISAttackMapping'.$i.'Mitigation2'){
+                    $CISAMedigations += $json.'CISAttackMapping'.$i.'Mitigation2'
+                }
+            }
+            foreach($i in $CISAMedigations) {
+                Write-Host $i
+            }
         } 
     }
 }
