@@ -244,7 +244,7 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(5,160px);
+	grid-template-columns: repeat(6,160px);
 }
 button{
 	margin-left: 10px;
@@ -257,6 +257,196 @@ button{
 	text-align: center;
 }
 
+#CISA {
+	font-family: Arial, sans-serif;
+}
+
+#CISATable {
+    width: 100%;
+    border-collapse: collapse; 
+    border: 1px solid #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+#CISAthead {
+    border: 1px solid #141414;
+}
+
+.CISAMitigations{
+	width: 70%;
+}
+
+.CISAMitreTechniqueIDs{
+	width: auto;
+}
+
+.CISAMitigationIDs{
+	width: auto;
+}
+
+#MITRE {
+    font-family: Arial, sans-serif;
+}
+
+#MITRETable {
+	width: 100%;
+	border-collapse: collapse; 
+	border: 1px solid #ffffff;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+}
+
+#MITREthead a {
+	color: #000000;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#MITREtbody a {
+	color: #000000;
+	text-decoration: none;
+}
+
+#MITREtbody tr , #MITREthead tr {
+	display: flex;
+}
+
+#MITREtbody td , #MITREthead td {
+	min-width: 75px;
+	border: 1px solid #cccccc;
+	padding: 6px;
+	flex: 1;
+	flex-basis: 0;
+}
+
+#MITREthead td {
+	overflow: hidden;
+	overflow-wrap: break-word;
+}
+
+.MITRETechnique {
+	padding: 6px;
+    border: 1px solid #000000;
+}
+
+.empty{
+	background-color:#a7a7a7;
+	background-clip: border-box;
+}
+
+.hundred{
+	background-color:#33cca6;
+	background-clip: border-box;
+}
+
+.ninety{
+	background-color:#52CC8F;
+	background-clip: border-box;
+}
+
+.eighty{
+	background-color:#70CC78;
+	background-clip: border-box;
+}
+
+.seventy{
+	background-color:#8FCC61;
+	background-clip: border-box;
+}
+
+.sixty{
+	background-color:#ADCC4A;
+	background-clip: border-box;
+}
+
+.fifty{
+	background-color:#CCCC33;
+	background-clip: border-box;
+}
+
+.fourty{
+	background-color:#CCA329;
+	background-clip: border-box;
+}
+
+.thirty{
+	background-color:#CC7A1F;
+	background-clip: border-box;
+}
+
+.twenty{
+	background-color:#CC5214;
+	background-clip: border-box;
+}
+
+.ten{
+	background-color:#CC290A;
+	background-clip: border-box;
+}
+
+.zero{
+	background-color:#cc0000;
+	background-clip: border-box;
+}
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+  
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}
+
+#Tip p{
+	font-weight: bold;
+	padding: 5px;
+}
+
+.square-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.square {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+}
+
+#SSquareSquare {
+    background: #33cca6;
+}
+
+#FSquareSquare {
+    background: #cc0000;
+}
+
+#GradientExSquare {
+    background: linear-gradient(#33cca6,#cc0000);
+}
+
+#NoTestSquare {
+    background: #a7a7a7;
+}
+ 
 #riskMatrixContainer{
 	display: grid;
 	position: relative;
@@ -277,7 +467,7 @@ button{
 	grid-column-start: 1;
 	grid-column-end: 2;
 	grid-row-start: 1;
-	grid-row-end: 6;
+	grid-row-end: 7;
 	position: relative;
 }
 
@@ -777,6 +967,16 @@ button{
 
 #hashTable thead tr th{
 	vertical-align: middle;
+}
+
+#CurrentATTCKHeatmap{
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%;
+  	grid-template-rows: 20% 20% 20% 20% 20%;
+    margin-top: 30px;
+    border: 1px solid black;
+    margin-right: auto;
+	
 }
 
 @media only screen and (max-width: 1900px) {

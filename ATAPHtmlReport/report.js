@@ -12,6 +12,7 @@ let SeverityCompliance;
 
 function startConditions(){
     let isRiskScoreValue = document.getElementById("riskScore");
+    let isMITREValue = document.getElementById("MITRE");
 
     /* Default-Value: Display summary always at the beginning */
     document.getElementById("summary").style.display = "block";
@@ -59,6 +60,13 @@ function startConditions(){
             }
         })
     }
+
+    if(isMITREValue != null) {
+        document.getElementById("MITRE").style.display = "none";
+        document.getElementById("MITREBtn").style.backgroundColor= 'transparent';
+        document.getElementById("CISA").style.display = "none";
+        document.getElementById("CISABtn").style.backgroundColor= 'transparent';
+    }
 }
 
 
@@ -103,6 +111,14 @@ function clickButton(value){
         case 5:
             document.getElementById("foundationData").style.display = "block";
             document.getElementById("foundationDataBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 6:
+            document.getElementById("MITRE").style.display = "block";
+            document.getElementById("MITREBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 7:
+            document.getElementById("CISA").style.display = "block";
+            document.getElementById("CISABtn").style.backgroundColor= '#ff9933';
         break;
     }
 
@@ -217,4 +233,27 @@ function calcDotPosition(){
     document.getElementById("CurrentRiskScoreRS").textContent = summary;
     document.getElementById("CurrentRiskScoreRS").appendChild(copyRiskResult);
 
+}
+
+const categoryElements = document.getElementsByClassName('orgMeasure');
+function hideMitreTechniques(checkbox){
+    if (checkbox.checked) {
+        for (let i = 0; i < categoryElements.length; i++) {
+            categoryElements[i].style = 'padding: 0.1em;';
+
+            const children = categoryElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style = 'display: none;';
+            }
+        }
+    } else {
+        for (let i = 0; i < categoryElements.length; i++) {
+            categoryElements[i].style.removeProperty('padding');
+
+            const children = categoryElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style.removeProperty('display'); 
+            }
+        }
+    }
 }
