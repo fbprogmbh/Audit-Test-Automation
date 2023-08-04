@@ -775,7 +775,7 @@ function ConvertTo-HtmlCISA {
 			htmlElement 'tr' @{} {
 				htmlElement 'th' @{class='CISAMitigationIDs'} {
 					htmlElement 'a' @{} {
-						'Mitigation ID'
+						'ID'
 					}
 				}
 				htmlElement 'th' @{class='CISAMitigations'} {
@@ -1905,14 +1905,14 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{class = 'tabContent'; id = 'CISA' } {
 								htmlElement 'h1'@{} {"CISA Recommendations"}
 								htmlElement 'p' @{} {
-									"This table shows the top mitigations, that prevent against the most used attack techniques. 
+									"This table shows the top mitigations, that help against the most used attack techniques. 
 									Implementing these mitigations has the biggest impact on the overall security of the system. 
 									The table is based on the Information from CISAs " 
-									htmlElement 'a' @{href = "https://www.cisa.gov/sites/default/files/publications/RVA_INFOGRAPHIC_508c.pdf"} 
-										{"Risk and Vulverability Assessment (RVA) Mapped to the MITRE ATT&CK Framework."}
+									htmlElement 'a' @{href = "https://www.cisa.gov/sites/default/files/publications/RVA_INFOGRAPHIC_508c.pdf"} {
+										"Risk and Vulverability Assessment (RVA) Mapped to the MITRE ATT&CK Framework. "
 									}
 									"Additionaly the table is sorted, based on how many Audits have failed, that could be prevented by a given mitigation."
-
+								}
 								htmlElement 'h1'@{} {'Mitigation for top techniques'}
 
 								$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
