@@ -785,7 +785,7 @@ function ConvertTo-HtmlCISA {
 				}
 				htmlElement 'th' @{class='CISAMitreTechniqueIDs'} {
 					htmlElement 'a' @{} {
-						'Failed Audits'
+						'caused Audit failures'
 					}
 				}
 			}
@@ -1342,7 +1342,7 @@ function Get-ATAPHtmlReport {
 						if($MITRE){
 							if(Test-CompatibleMitreReport -Title $Title -os $os){
 								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
-								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'CISABtn'; onclick = "clickButton('7')" } { "CISA" }
+								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'CISABtn'; onclick = "clickButton('7')" } { "CISA Recommendations" }
 							}
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
@@ -1903,8 +1903,17 @@ function Get-ATAPHtmlReport {
 								ConvertTo-HtmlTable $Mappings.map
 							}
 							htmlElement 'div' @{class = 'tabContent'; id = 'CISA' } {
-								htmlElement 'h1'@{} {"CISA Mitigation"}
-								htmlElement 'p'@{} {'To get a quick overview of which Mitigation you should take, based on the MITRE ATT&CK heatmap'}
+								htmlElement 'h1'@{} {"CISA Recommendations"}
+								htmlElement 'p' @{} {
+									"This table shows the top mitigations, that prevent against the most used attack techniques. 
+									Implementing these mitigations has the biggest impact on the overall security of the system. 
+									The table is based on the Information from CISAs " 
+									htmlElement 'a' @{href = "https://www.cisa.gov/sites/default/files/publications/RVA_INFOGRAPHIC_508c.pdf"} 
+										{"Risk and Vulverability Assessment (RVA) Mapped to the MITRE ATT&CK Framework."}
+									}
+									"Additionaly the table is sorted, based on how many Audits have failed, that could be prevented by a given mitigation."
+
+								htmlElement 'h1'@{} {'Mitigation for top techniques'}
 
 								$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
 								ConvertTo-HtmlCISA $CISAMitigations
