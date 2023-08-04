@@ -220,29 +220,21 @@ function get-MitreLink{
     .PARAMETER id
         id of the tactic or technique
 		
-    .PARAMETER tactic
-        flag to show you want a tactic
-		
-    .PARAMETER technique
-        flag to show you want a technique
+    .PARAMETER type
+		one of 'tactic', 'technique' or 'mitigations'
 
 	.EXAMPLE
-		get-MitreLink -technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
+		get-MitreLink -type technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
 	#>
 
 	param(
 		[string] $id,
-		[switch] $tactic,
-		[switch] $technique
+		[Parameter(Mandatory)][ValidateSet('tactics', 'techniques', 'mitigations')]
+		[string]$type
 	)
 
 	$url = 'https://attack.mitre.org/'
-	if ($tactic) {
-		$url += "tactics/$id/"
-	}
-	elseif ($technique) {
-		$url += "techniques/$id/"
-	}
+	$url += "$type/$id/"
 	return $url
 }
 
@@ -726,7 +718,7 @@ function ConvertTo-HtmlTable {
         htmlElement 'thead' @{id='MITREthead'} {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
-                    $url = get-MitreLink -tactic -id $tactic
+                    $url = get-MitreLink -type tactics -id $tactic
 					$TacticCount = Get-TacticCounter $tactic $Mappings
 					htmlElement 'td' @{} {
 						$tacticName = Get-MitreTacticName -TacticId $tactic
@@ -747,7 +739,7 @@ function ConvertTo-HtmlTable {
 									$successCounter++
 								}
 							}
-							$url = get-MitreLink -technique -id $technique
+							$url = get-MitreLink -type techniques -id $technique
 							$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
 							$categories = Get-MitreTechniqueCategories -TechniqueID $technique
 							htmlElement 'div' @{class="MITRETechnique $colorClass $categories"} {
@@ -781,42 +773,46 @@ function ConvertTo-HtmlCISA {
 		#create table head with the column CISA Mitigation, MITRE Mitigation ID, MITRE Technique IDs
         htmlElement 'thead' @{id='CISAthead'} {
 			htmlElement 'tr' @{} {
-				htmlElement 'th' @{class='CISAMitigations'} {
-					htmlElement 'a' @{} {
-						'CISA Mitigation'
-					}
-				}
 				htmlElement 'th' @{class='CISAMitigationIDs'} {
 					htmlElement 'a' @{} {
-						'MITRE Mitigation ID'
+						'Mitigation ID'
+					}
+				}
+				htmlElement 'th' @{class='CISAMitigations'} {
+					htmlElement 'a' @{} {
+						'Mitigation Description'
 					}
 				}
 				htmlElement 'th' @{class='CISAMitreTechniqueIDs'} {
 					htmlElement 'a' @{} {
-						'MITRE Technqiue IDs'
+						'Failed Audits'
 					}
 				}
 			}
 		}
 		#fill the columns with the information from the $CISAMitigation map
 		htmlElement 'tbody' @{id='CISAtbody'} {
-			$CISAMitigations.Keys | ForEach-Object {
+			$KeyOrder = $CISAMitigations.GetEnumerator() | Sort-Object { $_.Value.MitreTechniqueIDs.Count } -Descending
+			$KeyOrder | ForEach-Object {
 				htmlElement 'tr' @{} {
-					htmlElement 'td' @{class='CISAMitigations'} {
-						htmlElement 'a' @{} {
-							$CISAMitigations[$_]['Mitigation']
-						}	
-					}
 					htmlElement 'td' @{class='CISAMitigationIDs'} {
-						htmlElement 'a' @{} {
-							$_
+						htmlElement 'a' @{href = $(get-MitreLink -type mitigations -id $_.Key)} {
+							$_.Key
 						}
 					}
+					htmlElement 'td' @{class='CISAMitigations'} {
+						htmlElement 'a' @{} {
+							$CISAMitigations[$_.Key]['Mitigation']
+						}	
+					}
 					htmlElement 'td' @{class='CISAMitreTechniqueIDs'} {
-						$CISAMitigations[$_]['MitreTechniqueIDs'] | ForEach-Object {
-							htmlElement 'a' @{} {
-								$_
-								" "
+						$mitigationsList = $CISAMitigations[$_.Key]['MitreTechniqueIDs']
+						for ($i = 0; $i -lt $mitigationsList.Length; $i++) {
+							htmlElement 'a' @{href = $(get-MitreLink -type techniques -id $mitigationsList[$i])} {
+								$mitigationsList[$i]
+								if($i -lt $mitigationsList.Length - 1){
+									" | "
+								}
 							}
 						}
 					}
