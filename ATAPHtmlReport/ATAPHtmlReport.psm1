@@ -774,19 +774,13 @@ function ConvertTo-HtmlCISA {
         htmlElement 'thead' @{id='CISAthead'} {
 			htmlElement 'tr' @{} {
 				htmlElement 'th' @{class='CISAMitigationIDs'} {
-					htmlElement 'p' @{} {
-						'ID'
-					}
+					'ID'
 				}
 				htmlElement 'th' @{class='CISAMitigations'} {
-					htmlElement 'p' @{} {
-						'Mitigation Description'
-					}
+					'Mitigation Description'
 				}
 				htmlElement 'th' @{class='CISAMitreTechniqueIDs'} {
-					htmlElement 'p' @{} {
-						'caused Audit failures'
-					}
+					'caused Audit failures'
 				}
 			}
 		}
@@ -895,8 +889,7 @@ function Get-TacticCounter{
 function Compare-EqualCISVersions {
 	<#
 	.Synopsis 
-		Returns a String, that explains if the $ReportBasedOn and $MitreMappingCompatible Versions can be used together.
-		Returns null when when the report is not compatible with any mitre mapping. 
+		Returns a boolean, if the $ReportBasedOn and $MitreMappingCompatible Versions can be used together or not.
 	.Parameter  $Title
 		The Title of the Report
 	.Parameter  $ReportBasedOn
@@ -924,12 +917,9 @@ function Compare-EqualCISVersions {
 
 	if(Test-CompatibleMitreReport -Title $Title -os $os){
 		$ReportBasedOn = $ReportBasedOn | Where-Object {$_ -match 'CIS'}
-		if($null -ne $ReportBasedOn -and $null -ne $MitreMappingCompatible -and $($ReportBasedOn -in $MitreMappingCompatible)){
-			return "The CIS Versions used for the MITRE mapping and testing are the same."
-		}
-		return "The CIS Version used for the MITRE mapping doesn't match with the CIS Version used for the tests."
+		return $($null -ne $ReportBasedOn -and $null -ne $MitreMappingCompatible -and $($ReportBasedOn -in $MitreMappingCompatible))
 	}
-	return $null
+	return $false
 }
 
 function Get-HtmlReportSection {
@@ -1868,7 +1858,10 @@ function Get-ATAPHtmlReport {
 								htmlElement 'p'@{} {$(Get-MitreMappingMetaData Version) + "."}
 								htmlElement 'p'@{} {"Based on: " + $(Get-MitreMappingMetaData BasedOn) + "."}
 								$MitreMappingCompatible = Get-MitreMappingMetaData Compatible
-								htmlElement 'p'@{} {Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible}
+								if (-not $(Compare-EqualCISVersions -Title:$Title -ReportBasedOn:$BasedOn -MitreMappingCompatible:$MitreMappingCompatible)){
+									Write-Warning "The CIS version used for the MITRE mapping doesn't match with the CIS version used for the tests. The Mitre heatmap will still be generated but might contain false information."
+									htmlElement 'p'@{style = "font-size: 1.2em; color: red;"} {"The CIS version used for the MITRE mapping doesn't match with the CIS version used for the tests."}
+								}
 								htmlElement 'h2' @{} {'Explanation of the cell colors'}
 
 								htmlElement 'div' @{class='square-container'}{
@@ -1913,6 +1906,7 @@ function Get-ATAPHtmlReport {
 									}
 									"Additionaly the table is sorted, based on the number of Audits that failed but could be prevented by a given mitigation."
 								}
+								htmlElement 'p'@{} {'The table presents three columns: The first column lists the mitigations recommended by CISA, the second column contains the corresponding mitigation IDs from MITRE, and the third column shows the techniques that have at least one CISA-recommended mitigation and have experienced at least one test failure.'}
 								htmlElement 'h1'@{} {'Mitigation for top techniques'}
 
 								$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
@@ -1920,7 +1914,7 @@ function Get-ATAPHtmlReport {
 							}
 						}
 						else {
-							Write-Host -ForegroundColor DarkYellow "Warning: Mitre Heatmap can only be used on a Windows System together with `"Microsoft Windows 10`", `"Microsoft Windows 10 Stand-alone`", `"Microsoft Windows 11`", `"Microsoft Windows 11 Stand-alone`", `"Microsoft Windows Server 2019`" or `"Microsoft Windows Server 2022`". The Mitre Heatmap will not be generated"
+							Write-Warning "Mitre Heatmap can only be used on a Windows System together with `"Microsoft Windows 10`", `"Microsoft Windows 10 Stand-alone`", `"Microsoft Windows 11`", `"Microsoft Windows 11 Stand-alone`", `"Microsoft Windows Server 2019`" or `"Microsoft Windows Server 2022`". The Mitre Heatmap will not be generated"
 						}
 					}
 
