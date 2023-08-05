@@ -1908,6 +1908,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{class = 'tabContent'; id = 'CISA' } {
 								htmlElement 'h1'@{} {"CISA Mitigation"}
 								htmlElement 'p'@{} {'To get a quick overview of which Mitigation you should take, based on the MITRE ATT&CK heatmap'}
+								htmlElement 'p'@{} {'The table presents three columns: The first column lists the mitigations recommended by CISA, the second column contains the corresponding mitigation IDs from MITRE, and the third column shows the techniques that have at least one CISA-recommended mitigation and have experienced at least one test failure.'}
 
 								$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
 								ConvertTo-HtmlCISA $CISAMitigations
