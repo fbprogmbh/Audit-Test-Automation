@@ -275,13 +275,23 @@ button{
 
 .CISAMitreTechniqueIDs{
 	width: auto;
+	line-height: 1.5;
+}
+
+.CISAMitreTechniqueIDs a{
+	border-radius: 0.3em;
+	background-color: #cc0000; 
+	color: #ffffff; 
+	padding: 0.2em;
+	margin: 0.2em;
+	text-decoration: none;
 }
 
 .CISAMitigationIDs{
 	width: auto;
 }
 
-#CISATable a {
+.CISAMitigationIDs a {
 	color: #000000;
 	text-decoration: none;
 }

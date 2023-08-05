@@ -774,17 +774,17 @@ function ConvertTo-HtmlCISA {
         htmlElement 'thead' @{id='CISAthead'} {
 			htmlElement 'tr' @{} {
 				htmlElement 'th' @{class='CISAMitigationIDs'} {
-					htmlElement 'a' @{} {
+					htmlElement 'p' @{} {
 						'ID'
 					}
 				}
 				htmlElement 'th' @{class='CISAMitigations'} {
-					htmlElement 'a' @{} {
+					htmlElement 'p' @{} {
 						'Mitigation Description'
 					}
 				}
 				htmlElement 'th' @{class='CISAMitreTechniqueIDs'} {
-					htmlElement 'a' @{} {
+					htmlElement 'p' @{} {
 						'caused Audit failures'
 					}
 				}
@@ -810,9 +810,9 @@ function ConvertTo-HtmlCISA {
 						for ($i = 0; $i -lt $mitigationsList.Length; $i++) {
 							htmlElement 'a' @{href = $(get-MitreLink -type techniques -id $mitigationsList[$i])} {
 								$mitigationsList[$i]
-								if($i -lt $mitigationsList.Length - 1){
-									" | "
-								}
+								# if($i -lt $mitigationsList.Length - 1){
+								# 	" | "
+								# }
 							}
 						}
 					}
