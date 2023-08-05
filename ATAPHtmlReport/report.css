@@ -262,9 +262,8 @@ button{
 }
 
 #CISATable {
-    margin-left: 10%;
-    margin-right: 10%;
-    width: 80%;
+    margin-right: 15%;
+    width: 85%;
     border-collapse: collapse; 
     border: 1px solid #ffffff;
     font-family: Arial, sans-serif;

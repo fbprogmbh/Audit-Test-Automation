@@ -1911,7 +1911,7 @@ function Get-ATAPHtmlReport {
 									htmlElement 'a' @{href = "https://www.cisa.gov/sites/default/files/publications/RVA_INFOGRAPHIC_508c.pdf"} {
 										"Risk and Vulverability Assessment (RVA) Mapped to the MITRE ATT&CK Framework. "
 									}
-									"Additionaly the table is sorted, based on how many Audits have failed, that could be prevented by a given mitigation."
+									"Additionaly the table is sorted, based on the number of Audits that failed but could be prevented by a given mitigation."
 								}
 								htmlElement 'h1'@{} {'Mitigation for top techniques'}
 
