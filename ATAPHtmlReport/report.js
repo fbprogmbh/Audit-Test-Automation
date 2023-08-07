@@ -258,26 +258,27 @@ function hideMitreTechniques(checkbox){
     }
 }
 
-const mailElements = document.getElementsByClassName('mailVector');
 
 function hideEverythingButMailTechniques(checkbox) {
+    let allOtherNotMailTechniques = document.querySelectorAll('.MITRETechnique:not(.mailVector)');
     if (checkbox.checked) {
-        for (let i = 0; i < mailElements.length; i++) {
-            mailElements[i].style.padding = '0.1em';
+        for (let i = 0; i < allOtherNotMailTechniques.length; i++) {
+            allOtherNotMailTechniques[i].style.padding = '0.1em';
 
-            const children = mailElements[i].querySelectorAll('*');
+            const children = allOtherNotMailTechniques[i].querySelectorAll('*');
             for (let j = 0; j < children.length; j++) {
                 children[j].style.display = 'none';
             }
         }
     } else {
-        for (let i = 0; i < mailElements.length; i++) {
-            mailElements[i].style.removeProperty('padding');
+        for (let i = 0; i < allOtherNotMailTechniques.length; i++) {
+            allOtherNotMailTechniques[i].style.removeProperty('padding');
 
-            const children = mailElements[i].querySelectorAll('*');
+            const children = allOtherNotMailTechniques[i].querySelectorAll('*');
             for (let j = 0; j < children.length; j++) {
                 children[j].style.removeProperty('display');
             }
         }
     }
 }
+
