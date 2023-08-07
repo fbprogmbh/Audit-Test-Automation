@@ -1906,6 +1906,13 @@ function Get-ATAPHtmlReport {
 									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
 								}
 
+								htmlElement 'p' @{}{
+									htmlElement 'label' @{}{
+										"Display only techniques related to the attack vector 'E-Mail'"
+										htmlElement 'input' @{type = "checkbox"; id = "mailFilterCheckbox"; onchange = "hideEverythingButMailTechniques(this)"} {}
+									}
+								}
+
 								htmlElement 'h2' @{} {"Current ATT&CK heatmap on tested System"}
 
 								ConvertTo-HtmlTable $Mappings.map
