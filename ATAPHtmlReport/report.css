@@ -262,26 +262,52 @@ button{
 }
 
 #CISATable {
-    width: 100%;
+    margin-right: 15%;
+    width: 85%;
     border-collapse: collapse; 
     border: 1px solid #ffffff;
     font-family: Arial, sans-serif;
 }
 
-#CISAthead {
-    border: 1px solid #141414;
-}
-
 .CISAMitigations{
-	width: 70%;
+	width: 60%;
 }
 
 .CISAMitreTechniqueIDs{
 	width: auto;
+	line-height: 1.5;
+}
+
+.CISAMitreTechniqueIDs a{
+	border-radius: 0.3em;
+	background-color: #cc0000; 
+	color: #ffffff; 
+	padding: 0.2em;
+	margin: 0.2em;
+	text-decoration: none;
 }
 
 .CISAMitigationIDs{
 	width: auto;
+}
+
+.CISAMitigationIDs a {
+	color: #000000;
+	text-decoration: none;
+}
+
+#CISAthead{
+	border-bottom-width: 2px;
+	background-color: lightgray;
+	border: 1px solid #d2d2d2;
+}
+
+#CISAtbody tr:nth-child(even) {
+	background-color: #efefef;
+	border: 1px solid #d2d2d2;
+}
+#CISAtbody tr td {
+	border: 1px solid #d2d2d2;
 }
 
 #MITRE {
