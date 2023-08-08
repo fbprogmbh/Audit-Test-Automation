@@ -257,3 +257,26 @@ function hideMitreTechniques(checkbox){
         }
     }
 }
+
+const noEasyMitigationElements = document.getElementsByClassName('noEasyMitigation');
+function noEasyMitigation(checkbox){
+    if (checkbox.checked) {
+        for (let i = 0; i < noEasyMitigationElements.length; i++) {
+            noEasyMitigationElements[i].style.padding = '0.1em';
+
+            const children = noEasyMitigationElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style.display = 'none';
+            }
+        }
+    } else {
+        for (let i = 0; i < noEasyMitigationElements.length; i++) {
+            noEasyMitigationElements[i].style.removeProperty('padding');
+
+            const children = noEasyMitigationElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style.removeProperty('display'); 
+            }
+        }
+    }
+}

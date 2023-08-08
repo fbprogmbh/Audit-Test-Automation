@@ -1896,6 +1896,13 @@ function Get-ATAPHtmlReport {
 									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
 								}
 
+								htmlElement 'p' @{} {
+									htmlElement 'label' @{} {
+										"hide techniques that cannot be easily mitigated with preventive controls:"
+										htmlElement 'input' @{type = "checkbox"; id = "noEasyMitigationCheckbox"; onchange = "noEasyMitigation(this)"} {}
+									}
+								}
+
 								htmlElement 'h2' @{} {"Current ATT&CK heatmap on tested System"}
 
 								ConvertTo-HtmlTable $Mappings.map
