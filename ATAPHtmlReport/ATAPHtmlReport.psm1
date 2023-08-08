@@ -722,7 +722,7 @@ function ConvertTo-HtmlTable {
 					$TacticCount = Get-TacticCounter $tactic $Mappings
 					htmlElement 'td' @{} {
 						$tacticName = Get-MitreTacticName -TacticId $tactic
-						$link = htmlElement 'a' @{href = $url } {"$tacticName"}
+						$link = htmlElement 'a' @{href = $url; target="_blank"} {"$tacticName"}
 						htmlElement 'p' @{} {$link + "`n" +"$TacticCount/" + $Mappings[$tactic].Count}
 					}
                 }
@@ -743,7 +743,7 @@ function ConvertTo-HtmlTable {
 							$color = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
 							$categories = Get-MitreTechniqueCategories -TechniqueID $technique
 							htmlElement 'div' @{class="MITRETechnique $categories"; style="background-color: $color; background-clip: border-box"} {
-								htmlElement 'a' @{href = $url; class = "tooltip"} { "$technique" 
+								htmlElement 'a' @{href = $url; target="_blank"; class = "tooltip"} { "$technique" 
 									htmlElement 'span' @{class = "tooltiptext"} { Get-MitreTechniqueName -TechniqueID $technique }
 								} 
 								htmlElement 'span' @{} {": $successCounter/" + $Mappings[$tactic][$technique].Count}
