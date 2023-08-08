@@ -1892,14 +1892,21 @@ function Get-ATAPHtmlReport {
 								htmlElement 'h2' @{} {"Filters"}
 
 								htmlElement 'label' @{} {
-									"hide techniques that are performed outside of enterprise defenses and controls:"
+									"Hide techniques that are performed outside of enterprise defenses and controls:"
 									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
 								}
 
 								htmlElement 'p' @{} {
 									htmlElement 'label' @{} {
-										"hide techniques that cannot be easily mitigated with preventive controls:"
+										"Hide techniques that cannot be easily mitigated with preventive controls:"
 										htmlElement 'input' @{type = "checkbox"; id = "noEasyMitigationCheckbox"; onchange = "noEasyMitigation(this)"} {}
+									}
+								}
+
+								htmlElement 'p' @{}{
+									htmlElement 'label' @{}{
+										"Display only techniques related to the attack vector 'E-Mail'"
+										htmlElement 'input' @{type = "checkbox"; id = "mailFilterCheckbox"; onchange = "hideEverythingButMailTechniques(this)"} {}
 									}
 								}
 
