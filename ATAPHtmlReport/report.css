@@ -356,66 +356,6 @@ button{
     border: 1px solid #000000;
 }
 
-.empty{
-	background-color:#a7a7a7;
-	background-clip: border-box;
-}
-
-.hundred{
-	background-color:#33cca6;
-	background-clip: border-box;
-}
-
-.ninety{
-	background-color:#52CC8F;
-	background-clip: border-box;
-}
-
-.eighty{
-	background-color:#70CC78;
-	background-clip: border-box;
-}
-
-.seventy{
-	background-color:#8FCC61;
-	background-clip: border-box;
-}
-
-.sixty{
-	background-color:#ADCC4A;
-	background-clip: border-box;
-}
-
-.fifty{
-	background-color:#CCCC33;
-	background-clip: border-box;
-}
-
-.fourty{
-	background-color:#CCA329;
-	background-clip: border-box;
-}
-
-.thirty{
-	background-color:#CC7A1F;
-	background-clip: border-box;
-}
-
-.twenty{
-	background-color:#CC5214;
-	background-clip: border-box;
-}
-
-.ten{
-	background-color:#CC290A;
-	background-clip: border-box;
-}
-
-.zero{
-	background-color:#cc0000;
-	background-clip: border-box;
-}
-
 .tooltip {
 	position: relative;
 	display: inline-block;
@@ -455,22 +395,6 @@ button{
     width: 20px;
     height: 20px;
     border: 1px solid black;
-}
-
-#SSquareSquare {
-    background: #33cca6;
-}
-
-#FSquareSquare {
-    background: #cc0000;
-}
-
-#GradientExSquare {
-    background: linear-gradient(#33cca6,#cc0000);
-}
-
-#NoTestSquare {
-    background: #a7a7a7;
 }
  
 #riskMatrixContainer{
