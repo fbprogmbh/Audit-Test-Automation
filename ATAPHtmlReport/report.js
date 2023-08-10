@@ -235,73 +235,42 @@ function calcDotPosition(){
 
 }
 
-const categoryElements = document.getElementsByClassName('orgMeasure');
-function hideMitreTechniques(checkbox){
+/*
+techniques are hidden or shown based on the status of the provided checkboxes and classes 
+classes must be in a compatible format for document.querySelectorAll()
+examples with first all nodes in the 'orgMeasure' class and second all nodes that are in the 'MITRETechnique' but not in the 'mailVector' class:
+hideMitreTechniques(this, '.orgMeasure')
+hideMitreTechniques(this, '.MITRETechnique:not(.mailVector)')
+*/
+let activeFilter = new Array();
+function hideMitreTechniques(checkbox, classes){
+    let classElements = document.querySelectorAll(classes);
     if (checkbox.checked) {
-        for (let i = 0; i < categoryElements.length; i++) {
-            categoryElements[i].style.padding = '0.1em';
+        /* push the current classes into the activeFilter array to determine which filters are currently active. */
+        activeFilter.push(classes);
+        for (let i = 0; i < classElements.length; i++) {
+            classElements[i].style.padding = '0.1em';
 
-            const children = categoryElements[i].querySelectorAll('*');
+            const children = classElements[i].querySelectorAll('*');
             for (let j = 0; j < children.length; j++) {
                 children[j].style.display = 'none';
             }
         }
-    } else {
-        for (let i = 0; i < categoryElements.length; i++) {
-            categoryElements[i].style.removeProperty('padding');
-
-            const children = categoryElements[i].querySelectorAll('*');
+    } 
+    else {
+        activeFilter.splice(activeFilter.indexOf(classes),1);
+        /* create an array from the classElements since it makes filtering easier. */
+        let elementsToHide = Array.from(classElements);
+        /* create an array that includes all elements from the remaining active filters */
+        let elementsNotToHide = (activeFilter.length === 0) ? new Array() : Array.from(document.querySelectorAll(activeFilter));
+        /* filter the elementsToHide array to retrieve and display only the elements that are not hidden by other filters */
+        elementsToHide = elementsToHide.filter(element => !elementsNotToHide.includes(element));
+        for (let i = 0; i < elementsToHide.length; i++) {
+            elementsToHide[i].style.removeProperty('padding');
+            const children = elementsToHide[i].querySelectorAll('*');
             for (let j = 0; j < children.length; j++) {
                 children[j].style.removeProperty('display'); 
             }
         }
     }
 }
-
-const noEasyMitigationElements = document.getElementsByClassName('noEasyMitigation');
-function noEasyMitigation(checkbox){
-    if (checkbox.checked) {
-        for (let i = 0; i < noEasyMitigationElements.length; i++) {
-            noEasyMitigationElements[i].style.padding = '0.1em';
-
-            const children = noEasyMitigationElements[i].querySelectorAll('*');
-            for (let j = 0; j < children.length; j++) {
-                children[j].style.display = 'none';
-            }
-        }
-    } else {
-        for (let i = 0; i < noEasyMitigationElements.length; i++) {
-            noEasyMitigationElements[i].style.removeProperty('padding');
-
-            const children = noEasyMitigationElements[i].querySelectorAll('*');
-            for (let j = 0; j < children.length; j++) {
-                children[j].style.removeProperty('display'); 
-            }
-        }
-    }
-}
-
-
-function hideEverythingButMailTechniques(checkbox) {
-    let allOtherNotMailTechniques = document.querySelectorAll('.MITRETechnique:not(.mailVector)');
-    if (checkbox.checked) {
-        for (let i = 0; i < allOtherNotMailTechniques.length; i++) {
-            allOtherNotMailTechniques[i].style.padding = '0.1em';
-
-            const children = allOtherNotMailTechniques[i].querySelectorAll('*');
-            for (let j = 0; j < children.length; j++) {
-                children[j].style.display = 'none';
-            }
-        }
-    } else {
-        for (let i = 0; i < allOtherNotMailTechniques.length; i++) {
-            allOtherNotMailTechniques[i].style.removeProperty('padding');
-
-            const children = allOtherNotMailTechniques[i].querySelectorAll('*');
-            for (let j = 0; j < children.length; j++) {
-                children[j].style.removeProperty('display');
-            }
-        }
-    }
-}
-
