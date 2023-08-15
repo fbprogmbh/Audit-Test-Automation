@@ -6,12 +6,15 @@
 InModuleScope ATAPHtmlReport {
     Describe 'Testing get-MitreLink' {
         It 'tests for tactics' {
-            get-MitreLink -tactic -id 'TA0001' | Should -Be 'https://attack.mitre.org/tactics/TA0001/'
-            get-MitreLink -tactic -id 'TA0008' | Should -Be 'https://attack.mitre.org/tactics/TA0008/'
+            get-MitreLink -type tactics -id 'TA0001' | Should -Be 'https://attack.mitre.org/tactics/TA0001/'
+            get-MitreLink -type tactics -id 'TA0008' | Should -Be 'https://attack.mitre.org/tactics/TA0008/'
         }
         It 'tests for techniques' {
-            get-MitreLink -technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
-            get-MitreLink -technique -id 'T1119' | Should -Be 'https://attack.mitre.org/techniques/T1119/'
+            get-MitreLink -type techniques -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
+            get-MitreLink -type techniques -id 'T1119' | Should -Be 'https://attack.mitre.org/techniques/T1119/'
+        }
+        It 'tests for techniques' {
+            get-MitreLink -type mitigations -id 'M1047' | Should -Be 'https://attack.mitre.org/mitigations/M1047/'
         }
     }
 }

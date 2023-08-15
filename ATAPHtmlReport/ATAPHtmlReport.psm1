@@ -220,29 +220,21 @@ function get-MitreLink{
     .PARAMETER id
         id of the tactic or technique
 		
-    .PARAMETER tactic
-        flag to show you want a tactic
-		
-    .PARAMETER technique
-        flag to show you want a technique
+    .PARAMETER type
+		one of 'tactic', 'technique' or 'mitigations'
 
 	.EXAMPLE
-		get-MitreLink -technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
+		get-MitreLink -type technique -id 'T1548' | Should -Be 'https://attack.mitre.org/techniques/T1548/'
 	#>
 
 	param(
 		[string] $id,
-		[switch] $tactic,
-		[switch] $technique
+		[Parameter(Mandatory)][ValidateSet('tactics', 'techniques', 'mitigations')]
+		[string]$type
 	)
 
 	$url = 'https://attack.mitre.org/'
-	if ($tactic) {
-		$url += "tactics/$id/"
-	}
-	elseif ($technique) {
-		$url += "techniques/$id/"
-	}
+	$url += "$type/$id/"
 	return $url
 }
 
@@ -726,11 +718,11 @@ function ConvertTo-HtmlTable {
         htmlElement 'thead' @{id='MITREthead'} {
             htmlElement 'tr' @{} {
                 foreach ($tactic in $Mappings.Keys) {
-                    $url = get-MitreLink -tactic -id $tactic
+                    $url = get-MitreLink -type tactics -id $tactic
 					$TacticCount = Get-TacticCounter $tactic $Mappings
 					htmlElement 'td' @{} {
 						$tacticName = Get-MitreTacticName -TacticId $tactic
-						$link = htmlElement 'a' @{href = $url } {"$tacticName"}
+						$link = htmlElement 'a' @{href = $url; target="_blank"} {"$tacticName"}
 						htmlElement 'p' @{} {$link + "`n" +"$TacticCount/" + $Mappings[$tactic].Count}
 					}
                 }
@@ -747,11 +739,11 @@ function ConvertTo-HtmlTable {
 									$successCounter++
 								}
 							}
-							$url = get-MitreLink -technique -id $technique
-							$colorClass = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
+							$url = get-MitreLink -type techniques -id $technique
+							$color = Get-ColorValue $successCounter $Mappings[$tactic][$technique].Count
 							$categories = Get-MitreTechniqueCategories -TechniqueID $technique
-							htmlElement 'div' @{class="MITRETechnique $colorClass $categories"} {
-								htmlElement 'a' @{href = $url; class = "tooltip"} { "$technique" 
+							htmlElement 'div' @{class="MITRETechnique $categories"; style="background-color: $color; background-clip: border-box"} {
+								htmlElement 'a' @{href = $url; target="_blank"; class = "tooltip"} { "$technique" 
 									htmlElement 'span' @{class = "tooltiptext"} { Get-MitreTechniqueName -TechniqueID $technique }
 								} 
 								htmlElement 'span' @{} {": $successCounter/" + $Mappings[$tactic][$technique].Count}
@@ -781,42 +773,40 @@ function ConvertTo-HtmlCISA {
 		#create table head with the column CISA Mitigation, MITRE Mitigation ID, MITRE Technique IDs
         htmlElement 'thead' @{id='CISAthead'} {
 			htmlElement 'tr' @{} {
-				htmlElement 'th' @{class='CISAMitigations'} {
-					htmlElement 'a' @{} {
-						'CISA Mitigation'
-					}
-				}
 				htmlElement 'th' @{class='CISAMitigationIDs'} {
-					htmlElement 'a' @{} {
-						'MITRE Mitigation ID'
-					}
+					'ID'
+				}
+				htmlElement 'th' @{class='CISAMitigations'} {
+					'Mitigation Description'
 				}
 				htmlElement 'th' @{class='CISAMitreTechniqueIDs'} {
-					htmlElement 'a' @{} {
-						'MITRE Technqiue IDs'
-					}
+					'caused Audit failures'
 				}
 			}
 		}
 		#fill the columns with the information from the $CISAMitigation map
 		htmlElement 'tbody' @{id='CISAtbody'} {
-			$CISAMitigations.Keys | ForEach-Object {
+			$KeyOrder = $CISAMitigations.GetEnumerator() | Sort-Object { $_.Value.MitreTechniqueIDs.Count } -Descending
+			$KeyOrder | ForEach-Object {
 				htmlElement 'tr' @{} {
-					htmlElement 'td' @{class='CISAMitigations'} {
-						htmlElement 'a' @{} {
-							$CISAMitigations[$_]['Mitigation']
-						}	
-					}
 					htmlElement 'td' @{class='CISAMitigationIDs'} {
-						htmlElement 'a' @{} {
-							$_
+						htmlElement 'a' @{href = $(get-MitreLink -type mitigations -id $_.Key); target="_blank"} {
+							$_.Key
 						}
 					}
+					htmlElement 'td' @{class='CISAMitigations'} {
+						htmlElement 'a' @{} {
+							$CISAMitigations[$_.Key]['Mitigation']
+						}	
+					}
 					htmlElement 'td' @{class='CISAMitreTechniqueIDs'} {
-						$CISAMitigations[$_]['MitreTechniqueIDs'] | ForEach-Object {
-							htmlElement 'a' @{} {
-								$_
-								" "
+						$mitigationsList = $CISAMitigations[$_.Key]['MitreTechniqueIDs']
+						for ($i = 0; $i -lt $mitigationsList.Length; $i++) {
+							htmlElement 'a' @{href = $(get-MitreLink -type techniques -id $mitigationsList[$i]); target="_blank"} {
+								$mitigationsList[$i]
+								# if($i -lt $mitigationsList.Length - 1){
+								# 	" | "
+								# }
 							}
 						}
 					}
@@ -842,23 +832,23 @@ function Get-ColorValue{
     )
 
 	if($SecondValue -eq 0) {
-		$result = 'empty'
+		$result = '#a7a7a7'
 	}
 	else {
 		$successPercentage = ($FirstValue / $SecondValue)
 
 		switch ($successPercentage) {
-			1 {$result = 'hundred'}
-			{$_ -le 0.99} {$result = 'ninety'}
-			{$_ -le 0.89} {$result = 'eighty'}
-			{$_ -le 0.79} {$result = 'seventy'}
-			{$_ -le 0.69} {$result = 'sixty'}
-			{$_ -le 0.59} {$result = 'fifty'}
-			{$_ -le 0.49} {$result = 'fourty'}
-			{$_ -le 0.39} {$result = 'thirty'}
-			{$_ -le 0.29} {$result = 'twenty'}
-			{$_ -le 0.19} {$result = 'ten'}
-			{$_ -le 0.09} {$result = 'zero'}
+			1 {$result = '#33cca6'}
+			{$_ -le 0.99} {$result = '#52CC8F'}
+			{$_ -le 0.89} {$result = '#70CC78'}
+			{$_ -le 0.79} {$result = '#8FCC61'}
+			{$_ -le 0.69} {$result = '#ADCC4A'}
+			{$_ -le 0.59} {$result = '#CCCC33'}
+			{$_ -le 0.49} {$result = '#CCA329'}
+			{$_ -le 0.39} {$result = '#CC7A1F'}
+			{$_ -le 0.29} {$result = '#CC5214'}
+			{$_ -le 0.19} {$result = '#CC290A'}
+			{$_ -le 0.09} {$result = '#cc0000'}
 		}
 	}
 
@@ -1342,7 +1332,7 @@ function Get-ATAPHtmlReport {
 						if($MITRE){
 							if(Test-CompatibleMitreReport -Title $Title -os $os){
 								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'MITREBtn'; onclick = "clickButton('6')" } { "MITRE ATT&CK" }
-								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'CISABtn'; onclick = "clickButton('7')" } { "CISA" }
+								htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'CISABtn'; onclick = "clickButton('7')" } { "CISA Recommendations" }
 							}
 						}
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'settingsOverviewBtn'; onclick = "clickButton('4')" } { "Hardening Settings" }
@@ -1875,30 +1865,49 @@ function Get-ATAPHtmlReport {
 								htmlElement 'h2' @{} {'Explanation of the cell colors'}
 
 								htmlElement 'div' @{class='square-container'}{
-									htmlElement 'div' @{class='square'; id='SSquareSquare'} {} 
+									$color_S = Get-ColorValue 1 1
+									htmlElement 'div' @{class='square'; style="background: $color_S"} {} 
 									htmlElement 'div'@{} {'= 100% of the tests were successful, the system is protected in the best possible way'}
 								}
 								
 								htmlElement 'div' @{class='square-container'}{
-									htmlElement 'div' @{class='square'; id='FSquareSquare'} {}
+									$color_F = Get-ColorValue 0 1
+									htmlElement 'div' @{class='square'; style="background: $color_F"} {}
 									htmlElement 'div'@{} {'= 0% of the tests were successful, consider looking into possibilities to harden your system regarding this tactic / technique'}
 								}
 								
 								htmlElement 'div' @{class='square-container'}{
-									htmlElement 'div' @{class='square'; id='GradientExSquare'} {}
+									$color_S = Get-ColorValue 1 1
+									$color_F = Get-ColorValue 0 1
+									htmlElement 'div' @{class='square'; style="background: linear-gradient($color_S,$color_F)"} {}
 									htmlElement 'div'@{} {'= the color gradient moves in 10% steps. The greener the cell, the more tests were successful'}
 								}
 								
 								htmlElement 'div' @{class='square-container'}{
-									htmlElement 'div' @{class='square'; id='NoTestSquare'} {}
+									$color_E = Get-ColorValue 1 0
+									htmlElement 'div' @{class='square'; style="background: $color_E"} {}
 									htmlElement 'div'@{} {'= No tests available yet'}
 								}
 								
 								htmlElement 'h2' @{} {"Filters"}
 
 								htmlElement 'label' @{} {
-									"hide techniques that are performed outside of enterprise defenses and controls:"
-									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this)"} {}
+									"Hide techniques that are performed outside of enterprise defenses and controls:"
+									htmlElement 'input' @{type = "checkbox"; id = "mitreFilterCheckbox"; onchange = "hideMitreTechniques(this, '.orgMeasure')"} {}
+								}
+
+								htmlElement 'p' @{} {
+									htmlElement 'label' @{} {
+										"Hide techniques that cannot be easily mitigated with preventive controls:"
+										htmlElement 'input' @{type = "checkbox"; id = "noEasyMitigationCheckbox"; onchange = "hideMitreTechniques(this, '.noEasyMitigation')"} {}
+									}
+								}
+
+								htmlElement 'p' @{}{
+									htmlElement 'label' @{}{
+										"Display only techniques related to the attack vector 'E-Mail'"
+										htmlElement 'input' @{type = "checkbox"; id = "mailFilterCheckbox"; onchange = "hideMitreTechniques(this, '.MITRETechnique:not(.mailVector)')"} {}
+									}
 								}
 
 								htmlElement 'h2' @{} {"Current ATT&CK heatmap on tested System"}
@@ -1906,8 +1915,18 @@ function Get-ATAPHtmlReport {
 								ConvertTo-HtmlTable $Mappings.map
 							}
 							htmlElement 'div' @{class = 'tabContent'; id = 'CISA' } {
-								htmlElement 'h1'@{} {"CISA Mitigation"}
-								htmlElement 'p'@{} {'To get a quick overview of which Mitigation you should take, based on the MITRE ATT&CK heatmap'}
+								htmlElement 'h1'@{} {"CISA Recommendations"}
+								htmlElement 'p' @{} {
+									"This table shows the top mitigations, that help against the most used attack techniques. 
+									Implementing these mitigations has the biggest impact on the overall security of the system. 
+									The table is based on the Information from CISAs " 
+									htmlElement 'a' @{href = "https://www.cisa.gov/sites/default/files/publications/RVA_INFOGRAPHIC_508c.pdf"; target="_blank"} {
+										"Risk and Vulnerability Assessment (RVA) mapped to the MITRE ATT&CK Framework."
+									}
+									"Additionally, the table is sorted based on the number of audits that failed but could be prevented by a given mitigation."
+								}
+								htmlElement 'p'@{} {'The table presents three columns: The first column lists the mitigations recommended by CISA, the second column contains the corresponding mitigation IDs from MITRE, and the third column shows the techniques that have at least one CISA-recommended mitigation and have experienced at least one test failure.'}
+								htmlElement 'h1'@{} {'Mitigation for top techniques'}
 
 								$CISAMitigations = $Mappings.Map | Get-MitigationsFromFailedTests
 								ConvertTo-HtmlCISA $CISAMitigations
