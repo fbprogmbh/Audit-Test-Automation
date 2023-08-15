@@ -51,8 +51,6 @@ Describe "ATAPHtmlReport" {
 				"My Benchmark 2 v1.0.0 - 10-05-2017"
 				"My Benchmark 3 v1.0.0 - 10-05-2017"
 			)
-			# DarkMode = $true
-			# ComplianceStatus = $true
 		}
 		Get-ATAPHtmlReport @args -Sections @(
 			[PSCustomObject]@{

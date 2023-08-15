@@ -1203,8 +1203,6 @@ function Get-ATAPHtmlReport {
 		[hashtable]
 		$hashtable_sha256,
 
-		#[switch] $DarkMode,
-
 		[switch] $ComplianceStatus
 	)
 
@@ -1220,9 +1218,7 @@ function Get-ATAPHtmlReport {
 			htmlElement 'meta' @{ 'http-equiv' = 'X-UA-Compatible'; content = 'ie=edge' } { }
 			htmlElement 'title' @{} { "$Title [$(Get-Date)]" }
 			htmlElement 'style' @{} {
-				$cssEnding = ''
-				#if ($DarkMode) { $cssEnding = '.dark' }
-				$cssPath = $ScriptRoot | Join-path -ChildPath "/report$($cssEnding).css"
+				$cssPath = $ScriptRoot | Join-path -ChildPath "/report.css"
 				Get-Content $cssPath
 				Get-OverallComplianceCSS $completionStatus
 			}
