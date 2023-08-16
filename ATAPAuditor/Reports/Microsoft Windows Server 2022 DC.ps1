@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"Security baseline for Microsoft Windows Server 2022, Version: FINAL, Date 2021-09-27"
-		"CIS Microsoft Windows Server 2022, Version: 1.0.0, Date 2022-02-14"
+		"CIS Microsoft Windows Server 2022, Version: 2.0.0, Date 2023-04-14"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
