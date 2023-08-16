@@ -37,19 +37,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-1.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-1.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-1.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-1.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AuditPolicies"
 				}
 			)
 		}
