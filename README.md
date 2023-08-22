@@ -105,21 +105,21 @@ Short explanation for BSI (see related links):
  * Logging and forensics for all profiles (Logging)
 
 ## How to install
-We offer several ways of how you can use our free of charge AuditTAP. 
+We offer several ways of how you can use our free of charge . 
 Find several detailed explanations below and use them as follows:
 
 * Installation via PSGallery - just install our package directly from PowerShell Gallery.
 * Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
-* New::star:Use our installer to install or update AuditTAP :star:
+* New::star:Use our installer to install or update  :star:
 
 ### Installation from PS Gallery
-Simple and straight-forward. Install AuditTAP with a single line of code.
+Simple and straight-forward. Install  with a single line of code.
 ```PowerShell
 Install-Module -Name ATAPAuditor
 ```
 
 ### Video tutorial for manual installation
-Following the well-known phrase "A picture is worth a thousand words" we visualized AuditTAP-installation in a roughly three minute video.
+Following the well-known phrase "A picture is worth a thousand words" we visualized -installation in a roughly three minute video.
 The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
 
 <div align="center">
@@ -210,10 +210,6 @@ Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -Force -RiskScore
 ```
 
-* The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
-* Some reports take more than a few seconds because hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs 😉
-* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
-=======
 * `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
 * Some reports take more than a few seconds because hundreds of individual settings and controls are checked. Please be patient, the result will satisfy your needs 😉
 * If you used old versions of AuditTAP you may want to clean up your modules. Be sure you have not integrated AuditTAP functionality in reporting processes. In order to accomplish this task you can use the following script.
