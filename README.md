@@ -24,6 +24,33 @@ AuditTAP Release 5.5:\
 	</table>
 </div>
 
+
+## Table of contents
+
+- [Audit Test Automation Package](#audit-test-automation-package)
+  - [Table of contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Modules](#modules)
+  - [Reports](#reports)
+    - [**Application**](#application)
+    - [**Microsoft OS**](#microsoft-os)
+    - [**Unix OS**](#unix-os)
+  - [How to install](#how-to-install)
+    - [Installation from PS Gallery](#installation-from-ps-gallery)
+    - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
+    - [Installer](#installer)
+    - [Linux](#linux)
+  - [Usage](#usage)
+  - [How to Update](#how-to-update)
+  - [Good to know](#good-to-know)
+  - [Sample reports](#sample-reports)
+  - [Customization](#customization)
+  - [Related links](#related-links)
+    - [AuditTAP information](#audittap-information)
+    - [Hardening recommendations in general](#hardening-recommendations-in-general)
+  - [Questions, issues or project support](#questions-issues-or-project-support)
+
+
 ## Overview
 
 Our Audit Test Automation Package enables you to get an overview about the compliance
@@ -66,6 +93,8 @@ Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
 
+The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
+
 ### **Microsoft OS**
 
 Report | DISA | CIS | Microsoft | BSI | ACSC
@@ -86,23 +115,18 @@ Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 DC | - | - | FINAL | - | -
 
-### **Unix OS**
-
-Report | DISA | CIS | Microsoft | BSI | ACSC
---------- | -----| --- | -- | --- | ---
-Debian 10 | - | - | - | - | -
-Fedora 35 | - | - | - | - | -
-Red Hat Enterprise Linux 8 | - | - | - | - | -
-Ubuntu 20.04 | - | - | - | - | -
-
-The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
-Short explanation for BSI (see related links):
- * Normal protection needs standalone computer (NE)
- * Normal protection needs domain member (ND)
- * Increased protection needs domain member (HD)
- * Logging and forensics for all profiles (Logging)
+### **Unix OS**
+
+Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
+--------- | -----| --- | -- | --- | --- | ---
+Debian 10 | - | - | - | - | - | Base
+Fedora 35 | - | - | - | - | - | Base
+Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
+Ubuntu 20.04 | - | - | - | - | - | Base
+
+
 
 ## How to install
 We offer several ways of how you can use our free of charge . 
