@@ -1,5 +1,5 @@
 ﻿[Report] @{
-	Title = "Windows 10 Report"
+	Title = "Windows 10 Stand-alone Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-02-08"
