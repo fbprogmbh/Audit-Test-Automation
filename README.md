@@ -93,6 +93,8 @@ Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
 
+The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
+
 ### **Microsoft OS**
 
 Report | DISA | CIS | Microsoft | BSI | ACSC
@@ -113,6 +115,8 @@ Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 DC | - | - | FINAL | - | -
 
+The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
+
 ### **Unix OS**
 
 Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
@@ -122,14 +126,7 @@ Fedora 35 | - | - | - | - | - | Base
 Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
 Ubuntu 20.04 | - | - | - | - | - | Base
 
-The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
-The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
-Short explanation for BSI (see related links):
- * Normal protection needs standalone computer (NE)
- * Normal protection needs domain member (ND)
- * Increased protection needs domain member (HD)
- * Logging and forensics for all profiles (Logging)
 
 ## How to install
 We offer several ways of how you can use our free of charge AuditTAP. 
