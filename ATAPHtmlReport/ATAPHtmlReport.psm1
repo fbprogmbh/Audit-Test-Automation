@@ -1,6 +1,6 @@
 ﻿<#
 BSD 3-Clause License
-Copyright (c) 2018, FB Pro GmbH
+Copyright (c) 2023, FB Pro GmbH
 All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -1203,8 +1203,6 @@ function Get-ATAPHtmlReport {
 		[hashtable]
 		$hashtable_sha256,
 
-		#[switch] $DarkMode,
-
 		[switch] $ComplianceStatus
 	)
 
@@ -1220,9 +1218,7 @@ function Get-ATAPHtmlReport {
 			htmlElement 'meta' @{ 'http-equiv' = 'X-UA-Compatible'; content = 'ie=edge' } { }
 			htmlElement 'title' @{} { "$Title [$(Get-Date)]" }
 			htmlElement 'style' @{} {
-				$cssEnding = ''
-				#if ($DarkMode) { $cssEnding = '.dark' }
-				$cssPath = $ScriptRoot | Join-path -ChildPath "/report$($cssEnding).css"
+				$cssPath = $ScriptRoot | Join-path -ChildPath "/report.css"
 				Get-Content $cssPath
 				Get-OverallComplianceCSS $completionStatus
 			}

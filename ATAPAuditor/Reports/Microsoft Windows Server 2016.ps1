@@ -79,10 +79,6 @@
 					Title = "Account Policies"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-Microsoft-FINAL#AccountPolicies"
 				}
-				# [ReportSection] @{
-				# 	Title = "Windows Firewall with Advanced Security"
-				# 	AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.1.0#FirewallProfileSettings"
-				# }
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-Microsoft-FINAL#AuditPolicies"
