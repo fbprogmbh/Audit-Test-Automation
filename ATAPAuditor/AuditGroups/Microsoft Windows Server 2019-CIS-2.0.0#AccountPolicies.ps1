@@ -13,9 +13,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 24)) {
+        if (($setPolicy -gt 24 -or $setPolicy -lt 0)) {
             return @{
-                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x >= 24"
+                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x <= 24 and x >= 0"
                 Status = "False"
             }
         }
@@ -139,7 +139,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.1.7"
+    Id = "1.1.6"
     Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -209,7 +209,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -le 5 -or $setPolicy -gt 0)) {
+        if (($setPolicy -gt 5 -or $setPolicy -le 0)) {
             return @{
                 Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 5 and x > 0"
                 Status = "False"
@@ -223,7 +223,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.2.3"
+    Id = "1.2.4"
     Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
