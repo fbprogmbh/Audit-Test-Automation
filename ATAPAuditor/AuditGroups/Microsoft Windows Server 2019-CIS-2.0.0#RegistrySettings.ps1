@@ -490,12 +490,12 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
 [AuditTest] @{
     Id = "2.3.6.3"
     Task = "(L1) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -529,12 +529,12 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
 [AuditTest] @{
     Id = "2.3.6.4"
     Task = "(L1) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -568,12 +568,12 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
 [AuditTest] @{
     Id = "2.3.6.5"
     Task = "(L1) Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -604,15 +604,15 @@ $windefrunning = CheckWindefRunning
         return @{
             Message = "Compliant"
             Status = "True"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
         }
     }
 }
 [AuditTest] @{
     Id = "2.3.6.6"
     Task = "(L1) Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1239,7 +1239,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -1575,7 +1575,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "2.3.10.9 A"
-    Task = "(L1) Configure 'Network access: Remotely accessible registry paths and sub-paths' [WINS Role Feature and CA Role Service NOT installed]"
+    Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature and CA Role Service NOT installed]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2349,7 +2349,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 2) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 3"
                     Status = "False"
                 }
             }
@@ -5696,7 +5696,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 3"
                     Status = "False"
                 }
             }
@@ -8093,7 +8093,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 0) -and ($regValue -ne 1)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0 or x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 1"
                     Status = "False"
                 }
             }
@@ -11268,7 +11268,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 0)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 0"
                     Status = "False"
                 }
             }

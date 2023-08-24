@@ -112,11 +112,10 @@ Microsoft Windows Server 2016 | 1.12 | 1.4.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.4.0 | FINAL | - | -
 Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2019 DC | V1R2 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
-Microsoft Windows Server 2022 DC | - | - | FINAL | - | -
+Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 DC | - | 2.0.0 | FINAL | - | -
 
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
-
 
 ### **Unix OS**
 
