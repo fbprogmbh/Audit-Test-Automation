@@ -10,7 +10,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SAM" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SAM" `
                 -Name "RelaxMinimumPasswordLengthLimits" `
                 | Select-Object -ExpandProperty "RelaxMinimumPasswordLengthLimits"
         
@@ -46,7 +46,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "NoConnectedUser" `
                 | Select-Object -ExpandProperty "NoConnectedUser"
         
@@ -82,7 +82,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "LimitBlankPasswordUse" `
                 | Select-Object -ExpandProperty "LimitBlankPasswordUse"
         
@@ -118,7 +118,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "SCENoApplyLegacyAuditPolicy" `
                 | Select-Object -ExpandProperty "SCENoApplyLegacyAuditPolicy"
         
@@ -154,7 +154,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "CrashOnAuditFail" `
                 | Select-Object -ExpandProperty "CrashOnAuditFail"
         
@@ -190,7 +190,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
                 -Name "AllocateDASD" `
                 | Select-Object -ExpandProperty "AllocateDASD"
         
@@ -226,7 +226,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers" `
                 -Name "AddPrinterDrivers" `
                 | Select-Object -ExpandProperty "AddPrinterDrivers"
         
@@ -262,7 +262,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
                 -Name "RequireSignOrSeal" `
                 | Select-Object -ExpandProperty "RequireSignOrSeal"
         
@@ -298,7 +298,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
                 -Name "SealSecureChannel" `
                 | Select-Object -ExpandProperty "SealSecureChannel"
         
@@ -334,7 +334,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
                 -Name "SignSecureChannel" `
                 | Select-Object -ExpandProperty "SignSecureChannel"
         
@@ -370,7 +370,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
                 -Name "DisablePasswordChange" `
                 | Select-Object -ExpandProperty "DisablePasswordChange"
         
@@ -406,7 +406,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
                 -Name "MaximumPasswordAge" `
                 | Select-Object -ExpandProperty "MaximumPasswordAge"
         
@@ -442,7 +442,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
                 -Name "RequireStrongKey" `
                 | Select-Object -ExpandProperty "RequireStrongKey"
         
@@ -478,7 +478,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "DisableCAD" `
                 | Select-Object -ExpandProperty "DisableCAD"
         
@@ -514,7 +514,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "DontDisplayLastUserName" `
                 | Select-Object -ExpandProperty "DontDisplayLastUserName"
         
@@ -550,7 +550,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "MaxDevicePasswordFailedAttempts" `
                 | Select-Object -ExpandProperty "MaxDevicePasswordFailedAttempts"
         
@@ -586,7 +586,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "InactivityTimeoutSecs" `
                 | Select-Object -ExpandProperty "InactivityTimeoutSecs"
         
@@ -622,7 +622,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "LegalNoticeText" `
                 | Select-Object -ExpandProperty "LegalNoticeText"
         
@@ -658,7 +658,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "LegalNoticeCaption" `
                 | Select-Object -ExpandProperty "LegalNoticeCaption"
         
@@ -694,7 +694,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
                 -Name "CachedLogonsCount" `
                 | Select-Object -ExpandProperty "CachedLogonsCount"
         
@@ -730,7 +730,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
                 -Name "PasswordExpiryWarning" `
                 | Select-Object -ExpandProperty "PasswordExpiryWarning"
         
@@ -766,7 +766,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
                 -Name "ScRemoveOption" `
                 | Select-Object -ExpandProperty "ScRemoveOption"
         
@@ -802,7 +802,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
                 -Name "RequireSecuritySignature" `
                 | Select-Object -ExpandProperty "RequireSecuritySignature"
         
@@ -838,7 +838,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
                 -Name "EnableSecuritySignature" `
                 | Select-Object -ExpandProperty "EnableSecuritySignature"
         
@@ -874,7 +874,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
                 -Name "EnablePlainTextPassword" `
                 | Select-Object -ExpandProperty "EnablePlainTextPassword"
         
@@ -910,7 +910,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
                 -Name "AutoDisconnect" `
                 | Select-Object -ExpandProperty "AutoDisconnect"
         
@@ -946,7 +946,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
                 -Name "RequireSecuritySignature" `
                 | Select-Object -ExpandProperty "RequireSecuritySignature"
         
@@ -982,7 +982,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
                 -Name "EnableSecuritySignature" `
                 | Select-Object -ExpandProperty "EnableSecuritySignature"
         
@@ -1018,7 +1018,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
                 -Name "enableforcedlogoff" `
                 | Select-Object -ExpandProperty "enableforcedlogoff"
         
@@ -1054,7 +1054,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
                 -Name "SMBServerNameHardeningLevel" `
                 | Select-Object -ExpandProperty "SMBServerNameHardeningLevel"
         
@@ -1090,7 +1090,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "TurnOffAnonymousBlock" `
                 | Select-Object -ExpandProperty "TurnOffAnonymousBlock"
         
@@ -1126,7 +1126,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "RestrictAnonymousSAM" `
                 | Select-Object -ExpandProperty "RestrictAnonymousSAM"
         
@@ -1162,7 +1162,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "RestrictAnonymous" `
                 | Select-Object -ExpandProperty "RestrictAnonymous"
         
@@ -1198,7 +1198,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "DisableDomainCreds" `
                 | Select-Object -ExpandProperty "DisableDomainCreds"
         
@@ -1234,7 +1234,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "EveryoneIncludesAnonymous" `
                 | Select-Object -ExpandProperty "EveryoneIncludesAnonymous"
         
@@ -1276,7 +1276,7 @@ $windefrunning = CheckWindefRunning
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: ' '"
                     Status = "False"
                 }
             }
@@ -1306,7 +1306,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths" `
                 -Name "Machine" `
                 | Select-Object -ExpandProperty "Machine"
         
@@ -1343,11 +1343,11 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "2.3.10.8"
-    Task = "(L1) Configure 'Network access: Remotely accessible registry paths and sub-paths' [WINS Role Feature and CA Role Service NOT installed]"
+    Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
                 | Select-Object -ExpandProperty "Machine"
         
@@ -1468,13 +1468,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
                 -Name "NullSessionShares" `
                 | Select-Object -ExpandProperty "NullSessionShares"
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: ' '"
                     Status = "False"
                 }
             }
@@ -1504,7 +1504,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "ForceGuest" `
                 | Select-Object -ExpandProperty "ForceGuest"
         
@@ -1540,7 +1540,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "UseMachineId" `
                 | Select-Object -ExpandProperty "UseMachineId"
         
@@ -1576,7 +1576,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
                 -Name "AllowNullSessionFallback" `
                 | Select-Object -ExpandProperty "AllowNullSessionFallback"
         
@@ -1612,7 +1612,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\pku2u" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\pku2u" `
                 -Name "AllowOnlineID" `
                 | Select-Object -ExpandProperty "AllowOnlineID"
         
@@ -1648,13 +1648,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters" `
                 -Name "SupportedEncryptionTypes" `
                 | Select-Object -ExpandProperty "SupportedEncryptionTypes"
         
-            if (($regValue -ne 2147483640)) {
+            if ($regValue -ne 2147483640) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2147483640"
+                    Message = "Registry value is '$regValue'. Expected: 2147483640"
                     Status = "False"
                 }
             }
@@ -1684,7 +1684,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "NoLMHash" `
                 | Select-Object -ExpandProperty "NoLMHash"
         
@@ -1720,7 +1720,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
                 -Name "LmCompatibilityLevel" `
                 | Select-Object -ExpandProperty "LmCompatibilityLevel"
         
@@ -1756,7 +1756,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LDAP" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP" `
                 -Name "LDAPClientIntegrity" `
                 | Select-Object -ExpandProperty "LDAPClientIntegrity"
         
@@ -1792,7 +1792,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
                 -Name "NTLMMinClientSec" `
                 | Select-Object -ExpandProperty "NTLMMinClientSec"
         
@@ -1828,7 +1828,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
                 -Name "NTLMMinServerSec" `
                 | Select-Object -ExpandProperty "NTLMMinServerSec"
         
@@ -1864,13 +1864,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Cryptography" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography" `
                 -Name "ForceKeyProtection" `
                 | Select-Object -ExpandProperty "ForceKeyProtection"
         
             if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -1900,7 +1900,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Kernel" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel" `
                 -Name "ObCaseInsensitive" `
                 | Select-Object -ExpandProperty "ObCaseInsensitive"
         
@@ -1936,7 +1936,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager" `
                 -Name "ProtectionMode" `
                 | Select-Object -ExpandProperty "ProtectionMode"
         
@@ -1972,7 +1972,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "FilterAdministratorToken" `
                 | Select-Object -ExpandProperty "FilterAdministratorToken"
         
@@ -2008,7 +2008,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "ConsentPromptBehaviorAdmin" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
         
@@ -2044,7 +2044,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "ConsentPromptBehaviorUser" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorUser"
         
@@ -2080,7 +2080,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "EnableInstallerDetection" `
                 | Select-Object -ExpandProperty "EnableInstallerDetection"
         
@@ -2116,7 +2116,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "EnableSecureUIAPaths" `
                 | Select-Object -ExpandProperty "EnableSecureUIAPaths"
         
@@ -2152,7 +2152,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "EnableLUA" `
                 | Select-Object -ExpandProperty "EnableLUA"
         
@@ -2188,7 +2188,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "PromptOnSecureDesktop" `
                 | Select-Object -ExpandProperty "PromptOnSecureDesktop"
         
@@ -2224,7 +2224,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "EnableVirtualization" `
                 | Select-Object -ExpandProperty "EnableVirtualization"
         
@@ -3873,7 +3873,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile";
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
         $key = "EnableFirewall";
         $expectedValue = 1;
@@ -3892,7 +3892,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
         $key = "DefaultInboundAction"
         $expectedValue = 1;
@@ -3911,7 +3911,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
         $key = "DefaultOutboundAction"
         $expectedValue = 0;
@@ -3930,7 +3930,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
         $key = "DisableNotifications"
         $expectedValue = 1;
@@ -3949,7 +3949,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"       
         $key = "LogFilePath"
         $expectedValue = "%SystemRoot%\System32\logfiles\firewall\domainfw.log";
@@ -3968,7 +3968,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
         $key = "LogFileSize"
         $expectedValue = 16384;
@@ -3987,7 +3987,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
         $key = "LogDroppedPackets"
         $expectedValue = 1;
@@ -4006,7 +4006,7 @@ $windefrunning = CheckWindefRunning
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
         $key = "LogSuccessfulConnections"
         $expectedValue = 1;
@@ -4022,7 +4022,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.1"
     Task = "(L1) Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "EnableFirewall"
         $expectedValue = 1;
@@ -4038,7 +4038,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.2"
     Task = "(L1) Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "DefaultInboundAction"
         $expectedValue = 1;
@@ -4054,7 +4054,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.3"
     Task = "(L1) Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "DefaultOutboundAction"
         $expectedValue = 0;
@@ -4070,7 +4070,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.4"
     Task = "(L1) Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
         $key = "DisableNotifications"
         $expectedValue = 1;
@@ -4086,7 +4086,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.5"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"       
         $key = "LogFilePath"
         $expectedValue = "%SystemRoot%\System32\logfiles\firewall\privatefw.log";
@@ -4102,7 +4102,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.6"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"         
         $key = "LogFileSize"
         $expectedValue = 16384;
@@ -4118,7 +4118,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.7"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"         
         $key = "LogDroppedPackets"
         $expectedValue = 1;
@@ -4134,7 +4134,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.2.8"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"         
         $key = "LogSuccessfulConnections"
         $expectedValue = 1;
@@ -4150,7 +4150,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.1"
     Task = "(L1) Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "EnableFirewall"
         $expectedValue = 1;
@@ -4166,7 +4166,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.2"
     Task = "(L1) Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "DefaultInboundAction"
         $expectedValue = 1;
@@ -4182,7 +4182,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.3"
     Task = "(L1) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "DefaultOutboundAction"
         $expectedValue = 0;
@@ -4198,7 +4198,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.4"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "DisableNotifications"
         $expectedValue = 1;
@@ -4214,7 +4214,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.5"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "AllowLocalPolicyMerge"
         $expectedValue = 0;
@@ -4230,7 +4230,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.6"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
         $key = "AllowLocalIPsecPolicyMerge"
         $expectedValue = 0;
@@ -4246,7 +4246,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.7"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogFilePath"
         $expectedValue = "%SystemRoot%\System32\logfiles\firewall\publicfw.log";
@@ -4262,7 +4262,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.8"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogFileSize"
         $expectedValue = 16384;
@@ -4278,7 +4278,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.9"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogDroppedPackets"
         $expectedValue = 1;
@@ -4294,7 +4294,7 @@ $windefrunning = CheckWindefRunning
     Id = "9.3.10"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
         $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
         $key = "LogSuccessfulConnections"
         $expectedValue = 1;
@@ -4312,7 +4312,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Personalization" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Personalization" `
                 -Name "NoLockScreenCamera" `
                 | Select-Object -ExpandProperty "NoLockScreenCamera"
         
@@ -4348,7 +4348,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Personalization" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Personalization" `
                 -Name "NoLockScreenSlideshow" `
                 | Select-Object -ExpandProperty "NoLockScreenSlideshow"
         
@@ -4888,7 +4888,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
                 -Name "AutoAdminLogon" `
                 | Select-Object -ExpandProperty "AutoAdminLogon"
         
@@ -4924,7 +4924,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip6\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" `
                 -Name "DisableIPSourceRouting" `
                 | Select-Object -ExpandProperty "DisableIPSourceRouting"
         
@@ -4960,7 +4960,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" `
                 -Name "DisableIPSourceRouting" `
                 | Select-Object -ExpandProperty "DisableIPSourceRouting"
         
@@ -4996,7 +4996,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\RasMan\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RasMan\Parameters" `
                 -Name "disablesavepassword" `
                 | Select-Object -ExpandProperty "disablesavepassword"
         
@@ -5032,7 +5032,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" `
                 -Name "EnableICMPRedirect" `
                 | Select-Object -ExpandProperty "EnableICMPRedirect"
         
@@ -5068,7 +5068,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" `
                 -Name "KeepAliveTime" `
                 | Select-Object -ExpandProperty "KeepAliveTime"
         
@@ -5104,7 +5104,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NetBT\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NetBT\Parameters" `
                 -Name "nonamereleaseondemand" `
                 | Select-Object -ExpandProperty "nonamereleaseondemand"
         
@@ -5140,7 +5140,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" `
                 -Name "PerformRouterDiscovery" `
                 | Select-Object -ExpandProperty "PerformRouterDiscovery"
         
@@ -5212,7 +5212,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
                 -Name "ScreenSaverGracePeriod" `
                 | Select-Object -ExpandProperty "ScreenSaverGracePeriod"
         
@@ -5248,7 +5248,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\TCPIP6\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters" `
                 -Name "tcpmaxdataretransmissions" `
                 | Select-Object -ExpandProperty "tcpmaxdataretransmissions"
         
@@ -5284,7 +5284,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Tcpip\Parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" `
                 -Name "tcpmaxdataretransmissions" `
                 | Select-Object -ExpandProperty "tcpmaxdataretransmissions"
         
@@ -5824,7 +5824,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Peernet" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Peernet" `
                 -Name "Disabled" `
                 | Select-Object -ExpandProperty "Disabled"
         
@@ -5932,7 +5932,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Network Connections" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Network Connections" `
                 -Name "NC_StdDomainUserSetLocation" `
                 | Select-Object -ExpandProperty "NC_StdDomainUserSetLocation"
         
@@ -5968,7 +5968,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
@@ -6004,7 +6004,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
@@ -6044,9 +6044,9 @@ $windefrunning = CheckWindefRunning
                 -Name "DisabledComponents" `
                 | Select-Object -ExpandProperty "DisabledComponents"
         
-            if (($regValue -ne 255)) {
+            if ($regValue -ne 255) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 255"
+                    Message = "Registry value is '$regValue'. Expected: 255"
                     Status = "False"
                 }
             }
@@ -6076,7 +6076,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
                 -Name "EnableRegistrars" `
                 | Select-Object -ExpandProperty "EnableRegistrars"
         
@@ -6112,7 +6112,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\UI" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\UI" `
                 -Name "DisableWcnUi" `
                 | Select-Object -ExpandProperty "DisableWcnUi"
         
@@ -6148,7 +6148,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WcmSvc\GroupPolicy" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy" `
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
@@ -6184,7 +6184,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WcmSvc\GroupPolicy" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy" `
                 -Name "fBlockNonDomain" `
                 | Select-Object -ExpandProperty "fBlockNonDomain"
         
@@ -6256,7 +6256,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers" `
                 -Name "RegisterSpoolerRemoteRpcEndPoint" `
                 | Select-Object -ExpandProperty "RegisterSpoolerRemoteRpcEndPoint"
         
@@ -6292,7 +6292,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers" `
                 -Name "RedirectionGuardPolicy" `
                 | Select-Object -ExpandProperty "RedirectionGuardPolicy"
         
@@ -6508,7 +6508,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" `
                 -Name "RestrictDriverInstallationToAdministrators" `
                 | Select-Object -ExpandProperty "RestrictDriverInstallationToAdministrators"
         
@@ -6580,7 +6580,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" `
                 -Name "NoWarningNoElevationOnInstall" `
                 | Select-Object -ExpandProperty "NoWarningNoElevationOnInstall"
         
@@ -6616,7 +6616,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" `
                 -Name "UpdatePromptSettings" `
                 | Select-Object -ExpandProperty "UpdatePromptSettings"
         
@@ -6838,7 +6838,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 3"
                     Status = "False"
                 }
             }
@@ -7048,7 +7048,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
                 -Name "DenyDeviceIDs" `
                 | Select-Object -ExpandProperty "DenyDeviceIDs"
         
@@ -7084,7 +7084,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs" `
                 -Name "1" `
                 | Select-Object -ExpandProperty "1"
         
@@ -7120,7 +7120,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
                 -Name "DenyDeviceIDsRetroactive" `
                 | Select-Object -ExpandProperty "DenyDeviceIDsRetroactive"
         
@@ -7156,7 +7156,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
                 -Name "DenyDeviceClasses" `
                 | Select-Object -ExpandProperty "DenyDeviceClasses"
         
@@ -7192,7 +7192,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
                 -Name "1" `
                 | Select-Object -ExpandProperty "1"
         
@@ -7228,7 +7228,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
                 -Name "2" `
                 | Select-Object -ExpandProperty "2"
         
@@ -7264,7 +7264,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
                 -Name "3" `
                 | Select-Object -ExpandProperty "3"
         
@@ -7300,7 +7300,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses" `
                 -Name "4" `
                 | Select-Object -ExpandProperty "4"
         
@@ -7336,7 +7336,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
                 -Name "DenyDeviceClassesRetroactive" `
                 | Select-Object -ExpandProperty "DenyDeviceClassesRetroactive"
         
@@ -7408,7 +7408,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Policies\EarlyLaunch" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\EarlyLaunch" `
                 -Name "DriverLoadPolicy" `
                 | Select-Object -ExpandProperty "DriverLoadPolicy"
         
@@ -7444,7 +7444,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}" `
                 -Name "NoBackgroundPolicy" `
                 | Select-Object -ExpandProperty "NoBackgroundPolicy"
         
@@ -7480,7 +7480,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}" `
                 -Name "NoGPOListChanges" `
                 | Select-Object -ExpandProperty "NoGPOListChanges"
         
@@ -7552,7 +7552,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "DisableBkGndGroupPolicy" `
                 | Select-Object -ExpandProperty "DisableBkGndGroupPolicy"
         
@@ -7624,7 +7624,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers" `
                 -Name "DisableWebPnPDownload" `
                 | Select-Object -ExpandProperty "DisableWebPnPDownload"
         
@@ -7660,7 +7660,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\TabletPC" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\TabletPC" `
                 -Name "PreventHandwritingDataSharing" `
                 | Select-Object -ExpandProperty "PreventHandwritingDataSharing"
         
@@ -7696,7 +7696,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\HandwritingErrorReports" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\HandwritingErrorReports" `
                 -Name "PreventHandwritingErrorReports" `
                 | Select-Object -ExpandProperty "PreventHandwritingErrorReports"
         
@@ -7732,7 +7732,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Internet Connection Wizard" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Internet Connection Wizard" `
                 -Name "ExitOnMSICW" `
                 | Select-Object -ExpandProperty "ExitOnMSICW"
         
@@ -7768,7 +7768,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "NoWebServices" `
                 | Select-Object -ExpandProperty "NoWebServices"
         
@@ -7804,7 +7804,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers" `
                 -Name "DisableHTTPPrinting" `
                 | Select-Object -ExpandProperty "DisableHTTPPrinting"
         
@@ -7840,7 +7840,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Registration Wizard Control" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Registration Wizard Control" `
                 -Name "NoRegistration" `
                 | Select-Object -ExpandProperty "NoRegistration"
         
@@ -7876,7 +7876,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\SearchCompanion" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SearchCompanion" `
                 -Name "DisableContentFileUpdates" `
                 | Select-Object -ExpandProperty "DisableContentFileUpdates"
         
@@ -7912,7 +7912,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "NoOnlinePrintsWizard" `
                 | Select-Object -ExpandProperty "NoOnlinePrintsWizard"
         
@@ -7948,7 +7948,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "NoPublishingWizard" `
                 | Select-Object -ExpandProperty "NoPublishingWizard"
         
@@ -7984,7 +7984,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Messenger\Client" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Messenger\Client" `
                 -Name "CEIP" `
                 | Select-Object -ExpandProperty "CEIP"
         
@@ -8020,7 +8020,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\SQMClient\Windows" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SQMClient\Windows" `
                 -Name "CEIPEnable" `
                 | Select-Object -ExpandProperty "CEIPEnable"
         
@@ -8056,7 +8056,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Windows Error Reporting" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" `
                 -Name "Disabled" `
                 | Select-Object -ExpandProperty "Disabled"
         
@@ -8092,7 +8092,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\PCHealth\ErrorReporting" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\PCHealth\ErrorReporting" `
                 -Name "DoReport" `
                 | Select-Object -ExpandProperty "DoReport"
         
@@ -8128,7 +8128,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\kerberos\parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\kerberos\parameters" `
                 -Name "DevicePKInitBehavior" `
                 | Select-Object -ExpandProperty "DevicePKInitBehavior"
         
@@ -8164,7 +8164,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\kerberos\parameters" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\kerberos\parameters" `
                 -Name "DevicePKInitEnabled" `
                 | Select-Object -ExpandProperty "DevicePKInitEnabled"
         
@@ -8236,7 +8236,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "AllowCustomSSPsAPs" `
                 | Select-Object -ExpandProperty "AllowCustomSSPsAPs"
         
@@ -8308,7 +8308,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Control Panel\International" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Control Panel\International" `
                 -Name "BlockUserInputMethodsForSignIn" `
                 | Select-Object -ExpandProperty "BlockUserInputMethodsForSignIn"
         
@@ -8380,7 +8380,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "DontDisplayNetworkSelectionUI" `
                 | Select-Object -ExpandProperty "DontDisplayNetworkSelectionUI"
         
@@ -8416,7 +8416,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "DontEnumerateConnectedUsers" `
                 | Select-Object -ExpandProperty "DontEnumerateConnectedUsers"
         
@@ -8452,7 +8452,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "EnumerateLocalUsers" `
                 | Select-Object -ExpandProperty "EnumerateLocalUsers"
         
@@ -8488,7 +8488,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "DisableLockScreenAppNotifications" `
                 | Select-Object -ExpandProperty "DisableLockScreenAppNotifications"
         
@@ -8524,7 +8524,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "BlockDomainPicturePassword" `
                 | Select-Object -ExpandProperty "BlockDomainPicturePassword"
         
@@ -8560,7 +8560,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" `
                 -Name "AllowDomainPINLogon" `
                 | Select-Object -ExpandProperty "AllowDomainPINLogon"
         
@@ -8740,7 +8740,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Power\PowerSettings\abfc2519-3608-4c2a-94ea-171b0ed546ab" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\abfc2519-3608-4c2a-94ea-171b0ed546ab" `
                 -Name "DCSettingIndex" `
                 | Select-Object -ExpandProperty "DCSettingIndex"
         
@@ -8776,7 +8776,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Power\PowerSettings\abfc2519-3608-4c2a-94ea-171b0ed546ab" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\abfc2519-3608-4c2a-94ea-171b0ed546ab" `
                 -Name "ACSettingIndex" `
                 | Select-Object -ExpandProperty "ACSettingIndex"
         
@@ -8812,7 +8812,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51" `
                 -Name "DCSettingIndex" `
                 | Select-Object -ExpandProperty "DCSettingIndex"
         
@@ -8848,7 +8848,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51" `
                 -Name "ACSettingIndex" `
                 | Select-Object -ExpandProperty "ACSettingIndex"
         
@@ -8884,7 +8884,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\policies\Microsoft\Windows NT\Terminal Services" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\policies\Microsoft\Windows NT\Terminal Services" `
                 -Name "fAllowUnsolicited" `
                 | Select-Object -ExpandProperty "fAllowUnsolicited"
         
@@ -8920,7 +8920,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\policies\Microsoft\Windows NT\Terminal Services" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\policies\Microsoft\Windows NT\Terminal Services" `
                 -Name "fAllowToGetHelp" `
                 | Select-Object -ExpandProperty "fAllowToGetHelp"
         
@@ -8956,7 +8956,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Rpc" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Rpc" `
                 -Name "EnableAuthEpResolution" `
                 | Select-Object -ExpandProperty "EnableAuthEpResolution"
         
@@ -8992,7 +8992,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Rpc" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Rpc" `
                 -Name "RestrictRemoteClients" `
                 | Select-Object -ExpandProperty "RestrictRemoteClients"
         
@@ -9064,7 +9064,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WDI\{9c5a40da-b965-4fc3-8781-88dd50a6299d}" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WDI\{9c5a40da-b965-4fc3-8781-88dd50a6299d}" `
                 -Name "ScenarioExecutionEnabled" `
                 | Select-Object -ExpandProperty "ScenarioExecutionEnabled"
         
@@ -9244,7 +9244,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Appx" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Appx" `
                 -Name "BlockNonAdminUserInstall" `
                 | Select-Object -ExpandProperty "BlockNonAdminUserInstall"
         
@@ -9316,7 +9316,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "MSAOptional" `
                 | Select-Object -ExpandProperty "MSAOptional"
         
@@ -9388,7 +9388,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer" `
                 -Name "NoAutoplayfornonVolume" `
                 | Select-Object -ExpandProperty "NoAutoplayfornonVolume"
         
@@ -9460,7 +9460,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "NoDriveTypeAutoRun" `
                 | Select-Object -ExpandProperty "NoDriveTypeAutoRun"
         
@@ -9532,13 +9532,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "FDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ''"
+                    Message = "Registry value is '$regValue'. Expected: ' '"
                     Status = "False"
                 }
             }
@@ -9892,7 +9892,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "FDVPassphrase" `
                 | Select-Object -ExpandProperty "FDVPassphrase"
         
@@ -9928,7 +9928,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "FDVAllowUserCert" `
                 | Select-Object -ExpandProperty "FDVAllowUserCert"
         
@@ -9964,7 +9964,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "FDVEnforceUserCert" `
                 | Select-Object -ExpandProperty "FDVEnforceUserCert"
         
@@ -10000,7 +10000,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "UseEnhancedPin" `
                 | Select-Object -ExpandProperty "UseEnhancedPin"
         
@@ -10036,7 +10036,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "OSAllowSecureBootForIntegrity" `
                 | Select-Object -ExpandProperty "OSAllowSecureBootForIntegrity"
         
@@ -10396,7 +10396,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "OSPassphrase" `
                 | Select-Object -ExpandProperty "OSPassphrase"
         
@@ -10504,13 +10504,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: "
+                    Message = "Registry value is '$regValue'. Expected: ' '"
                     Status = "False"
                 }
             }
@@ -10864,7 +10864,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "RDVPassphrase" `
                 | Select-Object -ExpandProperty "RDVPassphrase"
         
@@ -10900,7 +10900,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "RDVAllowUserCert" `
                 | Select-Object -ExpandProperty "RDVAllowUserCert"
         
@@ -10936,7 +10936,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "RDVEnforceUserCert" `
                 | Select-Object -ExpandProperty "RDVEnforceUserCert"
         
@@ -10972,7 +10972,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\Microsoft\FVE" `
                 -Name "RDVDenyWriteAccess" `
                 | Select-Object -ExpandProperty "RDVDenyWriteAccess"
         
@@ -11008,7 +11008,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\FVE" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
                 -Name "RDVDenyCrossOrg" `
                 | Select-Object -ExpandProperty "RDVDenyCrossOrg"
         
@@ -11260,7 +11260,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\CredUI" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CredUI" `
                 -Name "DisablePasswordReveal" `
                 | Select-Object -ExpandProperty "DisablePasswordReveal"
         
@@ -11296,7 +11296,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\CredUI" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI" `
                 -Name "EnumerateAdministrators" `
                 | Select-Object -ExpandProperty "EnumerateAdministrators"
         
@@ -11368,13 +11368,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection" `
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
             if (($regValue -ne 0) -and ($regValue -ne 1)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0 or x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 1"
                     Status = "False"
                 }
             }
@@ -11656,7 +11656,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeliveryOptimization" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" `
                 -Name "DODownloadMode" `
                 | Select-Object -ExpandProperty "DODownloadMode"
         
@@ -11836,7 +11836,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Application" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application" `
                 -Name "Retention" `
                 | Select-Object -ExpandProperty "Retention"
         
@@ -11872,7 +11872,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Application" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application" `
                 -Name "MaxSize" `
                 | Select-Object -ExpandProperty "MaxSize"
         
@@ -11908,7 +11908,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Security" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" `
                 -Name "Retention" `
                 | Select-Object -ExpandProperty "Retention"
         
@@ -11944,7 +11944,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Security" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security" `
                 -Name "MaxSize" `
                 | Select-Object -ExpandProperty "MaxSize"
         
@@ -11980,7 +11980,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Setup" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup" `
                 -Name "Retention" `
                 | Select-Object -ExpandProperty "Retention"
         
@@ -12016,7 +12016,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\Setup" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup" `
                 -Name "MaxSize" `
                 | Select-Object -ExpandProperty "MaxSize"
         
@@ -12052,7 +12052,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\System" `
                 -Name "Retention" `
                 | Select-Object -ExpandProperty "Retention"
         
@@ -12088,7 +12088,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\EventLog\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\System" `
                 -Name "MaxSize" `
                 | Select-Object -ExpandProperty "MaxSize"
         
@@ -12124,7 +12124,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer" `
                 -Name "NoDataExecutionPrevention" `
                 | Select-Object -ExpandProperty "NoDataExecutionPrevention"
         
@@ -12196,7 +12196,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer" `
                 -Name "NoHeapTerminationOnCorruption" `
                 | Select-Object -ExpandProperty "NoHeapTerminationOnCorruption"
         
@@ -12232,7 +12232,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "PreXPSP2ShellProtocolBehavior" `
                 | Select-Object -ExpandProperty "PreXPSP2ShellProtocolBehavior"
         
@@ -12268,7 +12268,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\HomeGroup" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\HomeGroup" `
                 -Name "DisableHomeGroup" `
                 | Select-Object -ExpandProperty "DisableHomeGroup"
         
@@ -12466,7 +12466,7 @@ $windefrunning = CheckWindefRunning
                 }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
                 | Select-Object -ExpandProperty "SpynetReporting"
         
@@ -13388,7 +13388,7 @@ $windefrunning = CheckWindefRunning
                 }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\MpEngine" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine" `
                 -Name "EnableFileHashComputation" `
                 | Select-Object -ExpandProperty "EnableFileHashComputation"
         
@@ -13568,7 +13568,7 @@ $windefrunning = CheckWindefRunning
                 }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableScriptScanning" `
                 | Select-Object -ExpandProperty "DisableScriptScanning"
         
@@ -13783,15 +13783,6 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'"
     Test = {
         try {
-            if($avstatus){
-
-                if ((-not $windefrunning)) {
-                    return @{
-                        Message = "This rule requires Windows Defender Antivirus to be enabled."
-                        Status = "None"
-                    }
-                }
-            }
             if($avstatus){
 
                 if ((-not $windefrunning)) {
@@ -14090,7 +14081,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\OneDrive" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\OneDrive" `
                 -Name "DisableFileSyncNGSC" `
                 | Select-Object -ExpandProperty "DisableFileSyncNGSC"
         
@@ -14558,7 +14549,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Terminal Services" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" `
                 -Name "fEncryptRPCTraffic" `
                 | Select-Object -ExpandProperty "fEncryptRPCTraffic"
         
@@ -15314,7 +15305,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WTDS\Components" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WTDS\Components" `
                 -Name "NotifyMalicious" `
                 | Select-Object -ExpandProperty "NotifyMalicious"
         
@@ -15350,7 +15341,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WTDS\Components" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WTDS\Components" `
                 -Name "NotifyPasswordReuse" `
                 | Select-Object -ExpandProperty "NotifyPasswordReuse"
         
@@ -15386,7 +15377,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WTDS\Components" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WTDS\Components" `
                 -Name "NotifyUnsafeApp" `
                 | Select-Object -ExpandProperty "NotifyUnsafeApp"
         
@@ -15422,7 +15413,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WTDS\Components" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WTDS\Components" `
                 -Name "ServiceEnabled" `
                 | Select-Object -ExpandProperty "ServiceEnabled"
         
@@ -15746,7 +15737,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer" `
                 -Name "EnableUserControl" `
                 | Select-Object -ExpandProperty "EnableUserControl"
         
@@ -15818,7 +15809,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer" `
                 -Name "SafeForScripting" `
                 | Select-Object -ExpandProperty "SafeForScripting"
         
@@ -15854,7 +15845,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "EnableMPR" `
                 | Select-Object -ExpandProperty "EnableMPR"
         
@@ -15890,7 +15881,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "DisableAutomaticRestartSignOn" `
                 | Select-Object -ExpandProperty "DisableAutomaticRestartSignOn"
         
@@ -15998,7 +15989,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client" `
                 -Name "AllowBasic" `
                 | Select-Object -ExpandProperty "AllowBasic"
         
@@ -16034,7 +16025,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client" `
                 -Name "AllowUnencryptedTraffic" `
                 | Select-Object -ExpandProperty "AllowUnencryptedTraffic"
         
@@ -16070,7 +16061,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Client" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client" `
                 -Name "AllowDigest" `
                 | Select-Object -ExpandProperty "AllowDigest"
         
@@ -16106,7 +16097,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service" `
                 -Name "AllowBasic" `
                 | Select-Object -ExpandProperty "AllowBasic"
         
@@ -16178,7 +16169,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service" `
                 -Name "AllowUnencryptedTraffic" `
                 | Select-Object -ExpandProperty "AllowUnencryptedTraffic"
         
@@ -16214,7 +16205,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service" `
                 -Name "DisableRunAs" `
                 | Select-Object -ExpandProperty "DisableRunAs"
         
@@ -16250,7 +16241,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WinRM\Service\WinRS" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\WinRS" `
                 -Name "AllowRemoteShellAccess" `
                 | Select-Object -ExpandProperty "AllowRemoteShellAccess"
         
@@ -16403,7 +16394,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" `
                 -Name "NoAutoRebootWithLoggedOnUsers" `
                 | Select-Object -ExpandProperty "NoAutoRebootWithLoggedOnUsers"
         
@@ -16439,7 +16430,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" `
                 -Name "NoAutoUpdate" `
                 | Select-Object -ExpandProperty "NoAutoUpdate"
         
@@ -16475,7 +16466,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" `
                 -Name "ScheduledInstallDay" `
                 | Select-Object -ExpandProperty "ScheduledInstallDay"
         
@@ -16583,7 +16574,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" `
                 -Name "DeferFeatureUpdates" `
                 | Select-Object -ExpandProperty "DeferFeatureUpdates"
         
@@ -16619,7 +16610,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" `
                 -Name "DeferFeatureUpdatesPeriodInDays" `
                 | Select-Object -ExpandProperty "DeferFeatureUpdatesPeriodInDays"
         
@@ -16655,7 +16646,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" `
                 -Name "DeferQualityUpdates" `
                 | Select-Object -ExpandProperty "DeferQualityUpdates"
         
@@ -16691,7 +16682,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" `
                 -Name "DeferQualityUpdatesPeriodInDays" `
                 | Select-Object -ExpandProperty "DeferQualityUpdatesPeriodInDays"
         
@@ -16727,7 +16718,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Control Panel\Desktop" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" `
                 -Name "ScreenSaveActive" `
                 | Select-Object -ExpandProperty "ScreenSaveActive"
         
@@ -16763,7 +16754,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Control Panel\Desktop" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" `
                 -Name "ScreenSaverIsSecure" `
                 | Select-Object -ExpandProperty "ScreenSaverIsSecure"
         
@@ -16799,7 +16790,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Control Panel\Desktop" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" `
                 -Name "ScreenSaveTimeOut" `
                 | Select-Object -ExpandProperty "ScreenSaveTimeOut"
         
@@ -16871,7 +16862,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Assistance\Client\1.0" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0" `
                 -Name "NoImplicitFeedback" `
                 | Select-Object -ExpandProperty "NoImplicitFeedback"
         
@@ -16907,7 +16898,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
                 -Name "SaveZoneInformation" `
                 | Select-Object -ExpandProperty "SaveZoneInformation"
         
@@ -16943,7 +16934,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
                 -Name "ScanWithAntiVirus" `
                 | Select-Object -ExpandProperty "ScanWithAntiVirus"
         
@@ -16979,7 +16970,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
                 -Name "ConfigureWindowsSpotlight" `
                 | Select-Object -ExpandProperty "ConfigureWindowsSpotlight"
         
@@ -17015,7 +17006,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableThirdPartySuggestions" `
                 | Select-Object -ExpandProperty "DisableThirdPartySuggestions"
         
@@ -17051,7 +17042,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableTailoredExperiencesWithDiagnosticData" `
                 | Select-Object -ExpandProperty "DisableTailoredExperiencesWithDiagnosticData"
         
@@ -17087,7 +17078,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableWindowsSpotlightFeatures" `
                 | Select-Object -ExpandProperty "DisableWindowsSpotlightFeatures"
         
@@ -17123,7 +17114,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableSpotlightCollectionOnDesktop" `
                 | Select-Object -ExpandProperty "DisableSpotlightCollectionOnDesktop"
         
@@ -17159,7 +17150,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "NoInplaceSharing" `
                 | Select-Object -ExpandProperty "NoInplaceSharing"
         
@@ -17195,7 +17186,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Installer" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Installer" `
                 -Name "AlwaysInstallElevated" `
                 | Select-Object -ExpandProperty "AlwaysInstallElevated"
         
@@ -17231,7 +17222,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\WindowsMediaPlayer" `
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\WindowsMediaPlayer" `
                 -Name "PreventCodecDownload" `
                 | Select-Object -ExpandProperty "PreventCodecDownload"
         
