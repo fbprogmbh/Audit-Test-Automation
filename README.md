@@ -110,8 +110,8 @@ Microsoft Windows 11 | - | 2.0.0 | 20H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 1.4.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.4.0 | FINAL | - | -
-Microsoft Windows Server 2019 | 1.5 | 1.3.0 | FINAL | - | -
-Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
+Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2019 DC | V1R2 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 DC | - | 2.0.0 | FINAL | - | -
 
