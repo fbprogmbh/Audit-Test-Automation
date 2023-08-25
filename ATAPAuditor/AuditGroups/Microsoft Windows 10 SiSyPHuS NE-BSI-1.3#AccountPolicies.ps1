@@ -69,9 +69,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 24 -or $setPolicy -lt 0)) {
+        if ($setPolicy -ne 24) {
             return @{
-                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x <= 24 and x >= 0"
+                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: 24"
                 Status = "False"
             }
         }
