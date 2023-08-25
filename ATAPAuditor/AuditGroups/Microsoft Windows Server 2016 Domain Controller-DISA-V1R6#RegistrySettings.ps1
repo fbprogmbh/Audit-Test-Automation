@@ -476,9 +476,9 @@
                 -Name "RequirePlatformSecurityFeatures" `
                 | Select-Object -ExpandProperty "RequirePlatformSecurityFeatures"
         
-            if ($regValue -ne 3) {
+            if (($regValue -ne 1) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 3"
                     Status = "False"
                 }
             }
