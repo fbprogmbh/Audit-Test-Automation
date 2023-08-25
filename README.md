@@ -124,7 +124,7 @@ Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
 Debian 10 | - | - | - | - | - | Base
 Fedora 35 | - | - | - | - | - | Base
 Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
-Ubuntu 20.04 | - | - | - | - | - | Base
+Ubuntu 20.04 | - | 1.1.0 | - | - | - | Base
 
 
 
@@ -134,7 +134,7 @@ Find several detailed explanations below and use them as follows:
 
 * Installation via PSGallery - just install our package directly from PowerShell Gallery.
 * Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
-* New::star:Use our installer to install or update  :star:
+* Use our installer to install or update
 
 ### Installation from PS Gallery
 Simple and straight-forward. Install  with a single line of code.
