@@ -999,6 +999,11 @@ function Get-ATAPHostInformation {
 			"Free physical memory" = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space"      = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
 			"System Uptime"				= uptime -p
+			"System Type"				= dpkg --print-architecture
+			"System Manufacturer"		= (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
+			"System SKU"				= (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
+			"System Serialnumber"		= (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
+			"BIOS Version"				= dmidecode -s bios-version
 		}
 	}
  else {
@@ -1548,7 +1553,13 @@ function Get-ATAPHtmlReport {
 							$FoundationSections = $FoundationReport.Sections
 						}
 						htmlElement 'h1' @{} {"Security Base Data"}
-						htmlElement 'div' @{id="systemData"} {
+						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+							$floating = "float:right"
+						}
+						else{
+							$floating = "float:none"
+						}
+						htmlElement 'div' @{style="$floating"; id="systemData"} {
 							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
 							$hostInformation = Get-ATAPHostInformation;
 							htmlElement 'table' @{id='hardwareInformation'}{
@@ -1570,15 +1581,18 @@ function Get-ATAPHtmlReport {
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("System SKU")) }
 									}
 									#Operating System
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System Model" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Model")) }
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "System Model" }
+											htmlElement 'td' @{} { $($hostInformation.Get_Item("System Model")) }
+										}
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Serialnumber")) }
 									}
+									
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
@@ -1635,9 +1649,11 @@ function Get-ATAPHtmlReport {
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Type")) }
 									}
 									#Build Number
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
+											htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+										}
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
@@ -1645,9 +1661,11 @@ function Get-ATAPHtmlReport {
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("Installation Language")) }
 									}
 									#Domain role
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Domain role" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
+											htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
+										}
 									}
 									#Free disk space
 									htmlElement 'tr' @{} {
@@ -1660,21 +1678,25 @@ function Get-ATAPHtmlReport {
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
 									}
 									#licence activation status
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "License Status" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "License Status" }
+											htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
+										}
 									}
 								}
 							}
 						}
-						htmlElement 'h2' @{} {"Table Of Contents"}
-						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
-						htmlElement 'ul' @{} {
-							foreach ($section in $FoundationSections) { $section | Get-HtmlToc }
+						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+							htmlElement 'h2' @{} {"Table Of Contents"}
+							htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
+							htmlElement 'ul' @{} {
+								foreach ($section in $Sections) { $section | Get-HtmlToc }
+							}
+							htmlElement 'h2' @{} {"Security Base Data Details"}
+							# Report Sections
+							foreach ($section in $Sections) { $section | Get-HtmlReportSection }
 						}
-						htmlElement 'h2' @{} {"Security Base Data Details"}
-						# Report Sections for base data
-						foreach ($section in $FoundationSections) { $section | Get-HtmlReportSection }
 					}
 					
 					if($RiskScore){
@@ -2042,12 +2064,17 @@ function Get-ATAPHtmlReport {
 			$name = Split-Path -Path $Path -Leaf
 			$Path = Split-Path -Path $Path -Parent
 			New-Item -Path $Path -Name $name -ItemType File -Value $html -Force 
+
 		} else {
 			$Title = $Title -replace " Audit Report",""
 			$auditReport += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
 			New-Item -Path $Path -Name $auditReport -ItemType File -Value $html -Force 
 		}
-
+		if([System.Environment]::OSVersion.Platform -eq 'Unix'){
+			# $shellPath = $Path"/"$name
+			# bash -c "chmod o+r $($shellPath)"
+			# Write-Host $shellPath
+		}
 		#Create Report file
 		#$html | Out-File -FilePath $auditReport -Encoding utf8
 	}
