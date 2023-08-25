@@ -1,31 +1,5 @@
 ﻿[AuditTest] @{
-    Id = "2.3.1.1"
-    Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled'"
-    Test = {
-        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
-        $setOption = $securityOption['System Access']["EnableAdminAccount"]
-        
-        if ($null -eq $setOption) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        if ($setOption -ne 0) {
-            return @{
-                Message = "'EnableAdminAccount' currently set to: $setOption. Expected: 0"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.3.1.3"
+    Id = "2.3.1.2"
     Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
@@ -51,7 +25,7 @@
     }
 }
 [AuditTest] @{
-    Id = "2.3.1.5"
+    Id = "2.3.1.4"
     Task = "(L1) Configure 'Accounts: Rename administrator account'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
@@ -77,7 +51,7 @@
     }
 }
 [AuditTest] @{
-    Id = "2.3.1.6"
+    Id = "2.3.1.5"
     Task = "(L1) Configure 'Accounts: Rename guest account'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"

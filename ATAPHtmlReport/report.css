@@ -244,7 +244,7 @@ span.auditstatus {
 	margin-top: 15px;
 	display: grid;
 	grid-template-rows: 50px;
-	grid-template-columns: repeat(5,160px);
+	grid-template-columns: repeat(6,160px);
 }
 button{
 	margin-left: 10px;
@@ -257,6 +257,146 @@ button{
 	text-align: center;
 }
 
+#CISA {
+	font-family: Arial, sans-serif;
+}
+
+#CISATable {
+    margin-right: 15%;
+    width: 85%;
+    border-collapse: collapse; 
+    border: 1px solid #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+.CISAMitigations{
+	width: 60%;
+}
+
+.CISAMitreTechniqueIDs{
+	width: auto;
+	line-height: 1.5;
+}
+
+.CISAMitreTechniqueIDs a{
+	border-radius: 0.3em;
+	background-color: #cc0000; 
+	color: #ffffff; 
+	padding: 0.2em;
+	margin: 0.2em;
+	text-decoration: none;
+}
+
+.CISAMitigationIDs{
+	width: auto;
+}
+
+.CISAMitigationIDs a {
+	color: #000000;
+	text-decoration: none;
+}
+
+#CISAthead{
+	border-bottom-width: 2px;
+	background-color: lightgray;
+	border: 1px solid #d2d2d2;
+}
+
+#CISAtbody tr:nth-child(even) {
+	background-color: #efefef;
+	border: 1px solid #d2d2d2;
+}
+#CISAtbody tr td {
+	border: 1px solid #d2d2d2;
+}
+
+#MITRE {
+    font-family: Arial, sans-serif;
+}
+
+#MITRETable {
+	width: 100%;
+	border-collapse: collapse; 
+	border: 1px solid #ffffff;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+}
+
+#MITREthead a {
+	color: #000000;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#MITREtbody a {
+	color: #000000;
+	text-decoration: none;
+}
+
+#MITREtbody tr , #MITREthead tr {
+	display: flex;
+}
+
+#MITREtbody td , #MITREthead td {
+	min-width: 75px;
+	border: 1px solid #cccccc;
+	padding: 6px;
+	flex: 1;
+	flex-basis: 0;
+}
+
+#MITREthead td {
+	overflow: hidden;
+	overflow-wrap: break-word;
+}
+
+.MITRETechnique {
+	padding: 6px;
+    border: 1px solid #000000;
+}
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+  
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}
+
+#Tip p{
+	font-weight: bold;
+	padding: 5px;
+}
+
+.square-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+.square {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+}
+ 
 #riskMatrixContainer{
 	display: grid;
 	position: relative;
@@ -277,7 +417,7 @@ button{
 	grid-column-start: 1;
 	grid-column-end: 2;
 	grid-row-start: 1;
-	grid-row-end: 6;
+	grid-row-end: 7;
 	position: relative;
 }
 
@@ -777,6 +917,16 @@ button{
 
 #hashTable thead tr th{
 	vertical-align: middle;
+}
+
+#CurrentATTCKHeatmap{
+	display: grid;
+	grid-template-columns: 20% 20% 20% 20% 20%;
+  	grid-template-rows: 20% 20% 20% 20% 20%;
+    margin-top: 30px;
+    border: 1px solid black;
+    margin-right: auto;
+	
 }
 
 @media only screen and (max-width: 1900px) {

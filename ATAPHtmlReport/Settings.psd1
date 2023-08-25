@@ -1,7 +1,7 @@
 ﻿<#
 BSD 3-Clause License
 
-Copyright (c) 2018, FB Pro GmbH
+Copyright (c) 2023, FB Pro GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

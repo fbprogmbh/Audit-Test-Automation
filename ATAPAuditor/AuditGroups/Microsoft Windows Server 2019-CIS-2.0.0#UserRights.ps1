@@ -152,7 +152,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.3"
-    Task = "(L1) Ensure 'Access this computer from the network' is set to  'Administrators, Authenticated Users' (MS only)"
+    Task = "(L1) Ensure 'Access this computer from the network' is set to 'Administrators, Authenticated Users' (MS only)"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )

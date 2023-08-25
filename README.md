@@ -24,6 +24,33 @@ AuditTAP Release 5.5:\
 	</table>
 </div>
 
+
+## Table of contents
+
+- [Audit Test Automation Package](#audit-test-automation-package)
+  - [Table of contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Modules](#modules)
+  - [Reports](#reports)
+    - [**Application**](#application)
+    - [**Microsoft OS**](#microsoft-os)
+    - [**Unix OS**](#unix-os)
+  - [How to install](#how-to-install)
+    - [Installation from PS Gallery](#installation-from-ps-gallery)
+    - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
+    - [Installer](#installer)
+    - [Linux](#linux)
+  - [Usage](#usage)
+  - [How to Update](#how-to-update)
+  - [Good to know](#good-to-know)
+  - [Sample reports](#sample-reports)
+  - [Customization](#customization)
+  - [Related links](#related-links)
+    - [AuditTAP information](#audittap-information)
+    - [Hardening recommendations in general](#hardening-recommendations-in-general)
+  - [Questions, issues or project support](#questions-issues-or-project-support)
+
+
 ## Overview
 
 Our Audit Test Automation Package enables you to get an overview about the compliance
@@ -65,60 +92,58 @@ Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
 Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
 Microsoft Office 2016 Word | V1R1 | - | - | - | -
 Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
+Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
+
+The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
 
 ### **Microsoft OS**
 
 Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
-Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R23 | 1.12.0 | 21H1 | SiSyPHuS 1.3 | 21H1
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
-Microsoft Windows 10 BSI | - | - | - | BPOL - SiM-08202, SiSyPHuS 1.3 | -
+Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
 Microsoft Windows 10 Stand-alone | - | Stand-alone 1.0.1 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 Stand-alone | - | Stand-alone 1.0.1 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 | - | 1.0.0 | 20H2 | SiSyPHuS 1.3 | -
+Microsoft Windows 11 | - | 2.0.0 | 20H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 1.4.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 1.4.0 | FINAL | - | -
-Microsoft Windows Server 2019 | 1.5 | 1.3.0 | FINAL | - | -
-Microsoft Windows Server 2019 DC | V1R2 | 1.1.0 | FINAL | - | -
-Microsoft Windows Server 2022 | V1R1 | 1.0.0 | FINAL | - | -
+Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2019 DC | V1R2 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 DC | - | 2.0.0 | FINAL | - | -
+
+The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
 ### **Unix OS**
 
-Report | DISA | CIS | Microsoft | BSI | ACSC
---------- | -----| --- | -- | --- | ---
-Debian 10 | - | - | - | - | -
-Fedora 35 | - | - | - | - | -
-Red Hat Enterprise Linux 8 | - | - | - | - | -
-Ubuntu 20.04 | - | - | - | - | -
+Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
+--------- | -----| --- | -- | --- | --- | ---
+Debian 10 | - | - | - | - | - | Base
+Fedora 35 | - | - | - | - | - | Base
+Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
+Ubuntu 20.04 | - | - | - | - | - | Base
 
-The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
-The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
-Short explanation for BSI (see related links):
- * Normal protection needs standalone computer (NE)
- * Normal protection needs domain member (ND)
- * Increased protection needs domain member (HD)
- * Logging and forensics for all profiles (Logging)
 
 ## How to install
-We offer several ways of how you can use our free of charge AuditTAP. 
+We offer several ways of how you can use our free of charge . 
 Find several detailed explanations below and use them as follows:
 
 * Installation via PSGallery - just install our package directly from PowerShell Gallery.
 * Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
-* New::star:Use our installer to install or update AuditTAP :star:
+* New::star:Use our installer to install or update  :star:
 
 ### Installation from PS Gallery
-Simple and straight-forward. Install AuditTAP with a single line of code.
+Simple and straight-forward. Install  with a single line of code.
 ```PowerShell
 Install-Module -Name ATAPAuditor
 ```
 
 ### Video tutorial for manual installation
-Following the well-known phrase "A picture is worth a thousand words" we visualized AuditTAP-installation in a roughly three minute video.
+Following the well-known phrase "A picture is worth a thousand words" we visualized -installation in a roughly three minute video.
 The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
 
 <div align="center">
@@ -209,10 +234,6 @@ Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -Force -RiskScore
 ```
 
-* The `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
-* Some reports take more than a few seconds because hundreds of individual settings and controls checked. So please be patient, the result will satisfy your needs 😉
-* If you used old versions of Audit TAP you may want to clean up your modules. Be sure you have not integrated Audit TAP functionality in reporting processes. In order to accomplish this task you can use the following script.
-=======
 * `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
 * Some reports take more than a few seconds because hundreds of individual settings and controls are checked. Please be patient, the result will satisfy your needs 😉
 * If you used old versions of AuditTAP you may want to clean up your modules. Be sure you have not integrated AuditTAP functionality in reporting processes. In order to accomplish this task you can use the following script.
