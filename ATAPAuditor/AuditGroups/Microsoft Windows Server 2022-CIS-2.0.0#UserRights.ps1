@@ -702,12 +702,6 @@ if($hyperVStatus -ne "Enabled"){
                 "S-1-5-32-544"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
 
-            if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-                return @{
-                    Status = "None"
-                    Message = "Hyper-V installed."
-                }
-            }
             
             $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
             $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
@@ -749,13 +743,6 @@ else{
                 "S-1-5-32-544"
                 "S-1-5-83-0"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-
-            if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-                return @{
-                    Status = "None"
-                    Message = "Hyper-V not installed."
-                }
-            }
             
             $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
             $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
