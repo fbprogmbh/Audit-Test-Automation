@@ -336,7 +336,7 @@ $RootPath = Split-Path $RootPath -Parent
 		try{
 			$startdateObjects =  get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
 			if ($null -eq $startdateObjects) {
-				@{
+				return @{
 					Message = "Your device needs to restart to install updates"
 					Status = "None"
 				}
