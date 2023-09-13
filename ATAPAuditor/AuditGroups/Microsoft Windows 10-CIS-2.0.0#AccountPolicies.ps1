@@ -13,9 +13,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 24) {
+        if (($setPolicy -gt 24 -or $setPolicy -lt 0)) {
             return @{
-                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: 24"
+                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x <= 24 and x >= 0"
                 Status = "False"
             }
         }
@@ -223,7 +223,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.2.3"
+    Id = "1.2.4"
     Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
