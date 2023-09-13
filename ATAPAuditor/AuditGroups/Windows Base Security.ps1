@@ -334,13 +334,7 @@ $RootPath = Split-Path $RootPath -Parent
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
 		try{
-			$startdateObjects =  get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
-			if ($null -eq $startdateObjects) {
-				return @{
-					Message = "Your device needs to restart to install updates"
-					Status = "None"
-				}
-			}
+			$startdateObjects = get-wmiobject -class win32_quickfixengineering | Sort-Object -Property InstalledOn -Descending -ErrorAction Stop
 			$startdate = $startdateObjects[0].InstalledOn
 			if ($null -eq $startdate) {
 				$startdate = (New-Object -com "Microsoft.Update.AutoUpdate").Results.LastInstallationSuccessDate
@@ -380,6 +374,12 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 			return $status
+		}
+		catch [System.Management.Automation.GetValueInvocationException]{
+			return @{
+				Message = "Your device needs to restart to install updates"
+				Status = "None"
+			}
 		}
 		catch {
             return @{
