@@ -1549,9 +1549,6 @@ function Get-ATAPHtmlReport {
 					Write-Progress -Activity "Creating foundation data page" -Status "Progress:" -PercentComplete 50
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						#Tab: Foundation Data (Only works for Windows OS!)
-						if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
-							$FoundationSections = $FoundationReport.Sections
-						}
 						htmlElement 'h1' @{} {"Security Base Data"}
 						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 							$floating = "float:right"
@@ -1691,11 +1688,11 @@ function Get-ATAPHtmlReport {
 							htmlElement 'h2' @{} {"Table Of Contents"}
 							htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
 							htmlElement 'ul' @{} {
-								foreach ($section in $Sections) { $section | Get-HtmlToc }
+								foreach ($section in $FoundationReport.Sections) { $section | Get-HtmlToc }
 							}
 							htmlElement 'h2' @{} {"Security Base Data Details"}
 							# Report Sections
-							foreach ($section in $Sections) { $section | Get-HtmlReportSection }
+							foreach ($section in $FoundationReport.Sections) { $section | Get-HtmlReportSection }
 						}
 					}
 					
