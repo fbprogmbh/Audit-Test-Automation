@@ -549,9 +549,9 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$RiskScore,
 
-		[Parameter(Mandatory = $false)]
-		[switch]
-		$MITRE,
+		# [Parameter(Mandatory = $false)]
+		# [switch]
+		# $MITRE,
 
 		[Parameter()]
 		[switch]
