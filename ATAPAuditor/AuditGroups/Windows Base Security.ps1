@@ -353,26 +353,26 @@ $RootPath = Split-Path $RootPath -Parent
 			}
 			$tdiff = New-TimeSpan -Start $startdate -End (Get-Date)
 			if ($tdiff.Days -ge 5) {
-				@{
+				return @{
 					Message = "Compliant"
 					Status = "True"
 				}
 			} else {
 				$status = switch ($tdiff.Hours) {
 					{($PSItem -ge 0) -and ($PSItem -le 24*5)}{
-						@{
+						return @{
 							Message = "Compliant"
 							Status = "True"
 						}
 					}
 					{($PSItem -gt 24*5) -and ($PSItem -le 24*31)}{
-						@{
+						return @{
 							Message = "Last installation of updates was within the last month."
 							Status = "Warning"
 						}
 					}
 					Default {
-						@{
+						return @{
 							Message = "Last installation of updates was more than a month ago."
 							Status = "False"
 						}
@@ -397,25 +397,25 @@ $RootPath = Split-Path $RootPath -Parent
 			$obj = (Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).VirtualizationBasedSecurityStatus
 			$status = switch ($obj) {
 				{$PSItem -eq 2} {
-					@{
+					return @{
 						Message = "Compliant"
 						Status = "True"
 					}
 				}
 				{$PSItem -eq 1} {
-					@{
+					return @{
 						Message = "VBS is activated but not running."
 						Status = "False"
 					}
 				}
 				{$PSItem -eq 0} {
-					@{
+					return @{
 						Message = "VBS is not activated."
 						Status = "False"
 					}
 				}
 				default {
-					@{
+					return @{
 						Message = "Cannot get the VBS status."
 						Status = "Error"
 					}
