@@ -539,7 +539,6 @@ if($hyperVStatus -ne "Enabled"){
             $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
             $identityAccounts = @(
                 "S-1-5-32-544"
-                "S-1-5-83-0"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
 
             if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
@@ -584,6 +583,7 @@ else{
             $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
             $identityAccounts = @(
                 "S-1-5-32-544"
+                "S-1-5-83-0"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
             
         if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
