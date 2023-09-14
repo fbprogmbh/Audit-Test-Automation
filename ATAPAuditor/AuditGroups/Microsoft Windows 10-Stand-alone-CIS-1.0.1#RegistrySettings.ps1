@@ -5292,7 +5292,7 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
+            if ($regValue -notmatch "RequireMutualAuthentication=1,\s*RequireIntegrity=1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
                     Status = "False"
@@ -5328,7 +5328,7 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
+            if ($regValue -notmatch "RequireMutualAuthentication=1,\s*RequireIntegrity=1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
                     Status = "False"
