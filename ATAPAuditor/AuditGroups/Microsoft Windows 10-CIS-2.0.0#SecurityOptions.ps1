@@ -76,3 +76,29 @@
         }
     }
 }
+[AuditTest] @{
+    Id = "2.3.11.6"
+    Task = "(L1) Ensure 'Network security: Force logoff when logon hours expire' is set to 'Enabled'"
+    Test = {
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
+        $setOption = $securityOption['System Access']["ForceLogoffWhenHourExpire"]
+        
+        if ($null -eq $setOption) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        if ($setOption -ne 1) {
+            return @{
+                Message = "'ForceLogoffWhenHourExpire' currently set to: $setOption. Expected: 1"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
