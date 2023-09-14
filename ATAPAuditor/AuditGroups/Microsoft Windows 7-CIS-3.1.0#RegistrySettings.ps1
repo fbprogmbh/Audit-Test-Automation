@@ -5144,9 +5144,11 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "DisableBkGndGroupPolicy" `
                 | Select-Object -ExpandProperty "DisableBkGndGroupPolicy"
         
-            return @{
-                Message = "Registry value found."
-                Status = "False"
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {

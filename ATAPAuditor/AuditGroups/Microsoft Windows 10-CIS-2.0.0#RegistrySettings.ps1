@@ -7516,7 +7516,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "DisableBkGndGroupPolicy" `
                 | Select-Object -ExpandProperty "DisableBkGndGroupPolicy"
         
@@ -7529,14 +7529,14 @@ $windefrunning = CheckWindefRunning
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant. Registry value not found."
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant. Registry key not found."
+                Status = "True"
             }
         }
         
