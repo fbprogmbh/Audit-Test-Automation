@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: 1.12, Date: 2020-06-17"
-		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 1.4.0, Date: 2022-04-21"
+		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 2.0.0, Date: 2023-04-14"
 		"Microsoft Security baseline for Windows Server 2016, Version: FINAL, Date 2016-10-17"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
@@ -43,23 +43,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-1.4.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#UserRights"
 				}
 			)
 		}
