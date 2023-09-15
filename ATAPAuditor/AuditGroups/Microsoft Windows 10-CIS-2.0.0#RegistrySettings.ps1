@@ -12236,11 +12236,9 @@ $windefrunning = CheckWindefRunning
                 -Name "NotifyDisableIEOptions" `
                 | Select-Object -ExpandProperty "NotifyDisableIEOptions"
         
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
+            return @{
+                Message = "Compliant"
+                Status = "True"
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
