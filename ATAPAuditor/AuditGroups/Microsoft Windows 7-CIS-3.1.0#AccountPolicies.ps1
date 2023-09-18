@@ -42,6 +42,9 @@
         $setPolicy = [long]$setPolicy
         
         if (($setPolicy -gt 60 -or $setPolicy -le 0)) {
+            if($setPolicy -eq -1){
+                $setPolicy = "Password never expires"
+            }
             return @{
                 Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 60 and x > 0"
                 Status = "False"

@@ -42,6 +42,9 @@
         $setPolicy = [long]$setPolicy
         
         if ($setPolicy -ne 1) {
+            if($setPolicy -eq -1){
+                $setPolicy = "Password never expires"
+            }
             return @{
                 Message = "'PasswordComplexity' currently set to: $setPolicy. Expected: 1"
                 Status = "False"
