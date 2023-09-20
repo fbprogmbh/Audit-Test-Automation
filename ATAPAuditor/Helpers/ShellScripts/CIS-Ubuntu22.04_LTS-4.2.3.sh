@@ -6,8 +6,7 @@
     find /var/log -type f | (
         while read -r fname; do
             bname="$(basename "$fname")"
-            case "$bname" in
-            lastlog | lastlog.* | wtmp | wtmp.* | btmp | btmp.*)
+            case "$bname" in lastlog | lastlog.* | wtmp | wtmp.* | btmp | btmp.*)
                 if ! stat -Lc "%a" "$fname" | grep -Pq -- '^\h*[0,2,4,6][0,2,4,6][0,4]\h*$'; then
                     output="$output\n- File: \"$fname\" mode: \"$(stat -Lc "%a" "$fname")\"\n"
                 fi
