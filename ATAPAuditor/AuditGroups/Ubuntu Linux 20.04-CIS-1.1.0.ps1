@@ -4139,7 +4139,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH MaxStartups is configured"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups        
             try{
                 $test2 = grep -Eis '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4752,25 +4752,27 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
         }
     }
 }
-[AuditTest] @{
-    Id = "6.2.5"
-    Task = "Ensure users own their home directories"
-    Test = {
-        $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.5.sh"
-        $result=bash $path
-        if($result -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
+# [AuditTest] @{
+#     Id = "6.2.5"
+#     Task = "Ensure users own their home directories"
+#     Test = {
+#         Write-Error "Test"
+#         $parentPath = Split-Path -Parent -Path $PSScriptRoot
+#         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu-6.2.5.sh"
+#         $result=bash $path
+#         Write-Error "Test"
+#         if($result -eq $null){
+#             return @{
+#                 Message = "Compliant"
+#                 Status = "True"
+#             }
+#         }
+#         return @{
+#             Message = "Not-Compliant"
+#             Status = "False"
+#         }
+#     }
+# }
 [AuditTest] @{
     Id = "6.2.6"
     Task = "Ensure users' home directories permissions are 750 or more restrictive"

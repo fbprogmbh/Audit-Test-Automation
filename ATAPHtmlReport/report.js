@@ -12,6 +12,7 @@ let SeverityCompliance;
 
 function startConditions(){
     let isRiskScoreValue = document.getElementById("riskScore");
+    let isMITREValue = document.getElementById("MITRE");
 
     /* Default-Value: Display summary always at the beginning */
     document.getElementById("summary").style.display = "block";
@@ -59,6 +60,13 @@ function startConditions(){
             }
         })
     }
+
+    if(isMITREValue != null) {
+        document.getElementById("MITRE").style.display = "none";
+        document.getElementById("MITREBtn").style.backgroundColor= 'transparent';
+        document.getElementById("CISA").style.display = "none";
+        document.getElementById("CISABtn").style.backgroundColor= 'transparent';
+    }
 }
 
 
@@ -103,6 +111,14 @@ function clickButton(value){
         case 5:
             document.getElementById("foundationData").style.display = "block";
             document.getElementById("foundationDataBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 6:
+            document.getElementById("MITRE").style.display = "block";
+            document.getElementById("MITREBtn").style.backgroundColor= '#ff9933';
+        break;
+        case 7:
+            document.getElementById("CISA").style.display = "block";
+            document.getElementById("CISABtn").style.backgroundColor= '#ff9933';
         break;
     }
 
@@ -217,4 +233,44 @@ function calcDotPosition(){
     document.getElementById("CurrentRiskScoreRS").textContent = summary;
     document.getElementById("CurrentRiskScoreRS").appendChild(copyRiskResult);
 
+}
+
+/*
+techniques are hidden or shown based on the status of the provided checkboxes and classes 
+classes must be in a compatible format for document.querySelectorAll()
+examples with first all nodes in the 'orgMeasure' class and second all nodes that are in the 'MITRETechnique' but not in the 'mailVector' class:
+hideMitreTechniques(this, '.orgMeasure')
+hideMitreTechniques(this, '.MITRETechnique:not(.mailVector)')
+*/
+let activeFilter = new Array();
+function hideMitreTechniques(checkbox, classes){
+    let classElements = document.querySelectorAll(classes);
+    if (checkbox.checked) {
+        /* push the current classes into the activeFilter array to determine which filters are currently active. */
+        activeFilter.push(classes);
+        for (let i = 0; i < classElements.length; i++) {
+            classElements[i].style.padding = '0.1em';
+
+            const children = classElements[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style.display = 'none';
+            }
+        }
+    } 
+    else {
+        activeFilter.splice(activeFilter.indexOf(classes),1);
+        /* create an array from the classElements since it makes filtering easier. */
+        let elementsToHide = Array.from(classElements);
+        /* create an array that includes all elements from the remaining active filters */
+        let elementsNotToHide = (activeFilter.length === 0) ? new Array() : Array.from(document.querySelectorAll(activeFilter));
+        /* filter the elementsToHide array to retrieve and display only the elements that are not hidden by other filters */
+        elementsToHide = elementsToHide.filter(element => !elementsNotToHide.includes(element));
+        for (let i = 0; i < elementsToHide.length; i++) {
+            elementsToHide[i].style.removeProperty('padding');
+            const children = elementsToHide[i].querySelectorAll('*');
+            for (let j = 0; j < children.length; j++) {
+                children[j].style.removeProperty('display'); 
+            }
+        }
+    }
 }
