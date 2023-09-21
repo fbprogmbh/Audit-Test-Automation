@@ -9537,8 +9537,11 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
+                if($regValue -eq "<none>"){
+                    $regValue = "&lt;none&gt;"
+                }
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ' '"
+                    Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"
                 }
             }
@@ -10508,12 +10511,15 @@ $windefrunning = CheckWindefRunning
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
-            if ($regValue -ne "") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: ' '"
-                    Status = "False"
+                if ($regValue -ne "") {
+                    if($regValue -eq "<none>"){
+                        $regValue = "&lt;none&gt;"
+                    }
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: This value should be empty."
+                        Status = "False"
+                    }
                 }
-            }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{

@@ -9501,8 +9501,11 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
+                if($regValue -eq "<none>"){
+                    $regValue = "&lt;none&gt;"
+                }
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ''"
+                    Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"
                 }
             }
@@ -10473,8 +10476,11 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
+                if($regValue -eq "<none>"){
+                    $regValue = "&lt;none&gt;"
+                }
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ''"
+                    Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"
                 }
             }
