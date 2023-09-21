@@ -12258,15 +12258,18 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Main" `
-                -Name "NotifyDisableIEOptions" `
-                | Select-Object -ExpandProperty "NotifyDisableIEOptions"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
+            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Internet Explorer\Main" `
+            -Name "NotifyDisableIEOptions" `
+            | Select-Object -ExpandProperty "NotifyDisableIEOptions"
+                
+            $idMapping = @{
+                0 = "Don't notify"
+                1 = "Always notify"
+                2 = "Notify once"
+            }
+            return @{
+                Message = "Compliant. Following setting is set: " + $idMapping[$regValue]
+                Status = "True"
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
