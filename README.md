@@ -17,7 +17,7 @@ ATAPAuditor:\
 			<td>
 
 
-AuditTAP Release 5.5:\
+AuditTAP Release 5.6:\
 [![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.5.zip)
 			</td>
 		</tr>
@@ -160,7 +160,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.5.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.6.zip -Verbose
 ```
 The following screenshot shows the output:
 
@@ -170,7 +170,7 @@ The following screenshot shows the output:
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.5.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.6.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
