@@ -2,10 +2,10 @@
 	Title = "Windows 11 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Microsoft Windows 11 Enterprise Release 21H2 Benchmark, Version: 21H2, Date: 2022-02-14"
+		"CIS Microsoft Windows 11 Enterprise 2.0.0 Benchmark, Version: 2.0.0, Date: 2023-03-07"
 		"Security baseline for Microsoft Windows 11, Version: 20H2, Date: 2020-12-17"
 		"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
-		"SiSyPHuS Recommendations for Telemetry Components: Version 1.1, Date: 2019-07-31"
+		"SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
 		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
@@ -16,23 +16,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-1.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-1.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-2.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-1.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-1.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-1.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-CIS-2.0.0#SecurityOptions"
 				}
 			)
 		}
@@ -141,7 +141,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-BSI-V1.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
 				}
 			)
 		}

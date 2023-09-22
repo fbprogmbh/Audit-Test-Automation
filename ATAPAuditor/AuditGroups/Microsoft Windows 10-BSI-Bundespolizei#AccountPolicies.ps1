@@ -42,6 +42,9 @@
         $setPolicy = [long]$setPolicy
         
         if ($setPolicy -ne 1) {
+            if($setPolicy -eq -1){
+                $setPolicy = "Password never expires"
+            }
             return @{
                 Message = "'PasswordComplexity' currently set to: $setPolicy. Expected: 1"
                 Status = "False"
@@ -153,9 +156,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 24)) {
+        if ($setPolicy -ne 24) {
             return @{
-                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x >= 24"
+                Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: 24"
                 Status = "False"
             }
         }

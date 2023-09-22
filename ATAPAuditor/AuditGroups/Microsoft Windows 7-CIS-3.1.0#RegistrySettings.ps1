@@ -1607,13 +1607,13 @@ $RootPath = Split-Path $RootPath -Parent
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Cryptography" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography" `
                 -Name "ForceKeyProtection" `
                 | Select-Object -ExpandProperty "ForceKeyProtection"
         
-            if (($regValue -lt 1)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 1"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -5144,9 +5144,11 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "DisableBkGndGroupPolicy" `
                 | Select-Object -ExpandProperty "DisableBkGndGroupPolicy"
         
-            return @{
-                Message = "Registry value found."
-                Status = "False"
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
@@ -6223,8 +6225,11 @@ $RootPath = Split-Path $RootPath -Parent
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
+                if($regValue -eq "<none>"){
+                    $regValue = "&lt;none&gt;"
+                }
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ''"
+                    Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"
                 }
             }

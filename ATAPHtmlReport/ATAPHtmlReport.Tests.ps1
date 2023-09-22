@@ -1,7 +1,7 @@
 <#
 BSD 3-Clause License
 
-Copyright (c) 2018, FB Pro GmbH
+Copyright (c) 2023, FB Pro GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -51,8 +51,6 @@ Describe "ATAPHtmlReport" {
 				"My Benchmark 2 v1.0.0 - 10-05-2017"
 				"My Benchmark 3 v1.0.0 - 10-05-2017"
 			)
-			# DarkMode = $true
-			# ComplianceStatus = $true
 		}
 		Get-ATAPHtmlReport @args -Sections @(
 			[PSCustomObject]@{

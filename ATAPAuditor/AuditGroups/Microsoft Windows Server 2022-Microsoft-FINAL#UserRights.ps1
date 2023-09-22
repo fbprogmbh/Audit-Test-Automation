@@ -106,7 +106,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-228"
-    Task = "Ensure 'SeCreateTokenPrivilege' is set to ''"
+    Task = "Ensure 'SeCreateTokenPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateTokenPrivilege"]
@@ -388,7 +388,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-237"
-    Task = "Ensure 'SeEnableDelegationPrivilege' is set to ''"
+    Task = "Ensure 'SeEnableDelegationPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
@@ -422,7 +422,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-238"
-    Task = "Ensure 'SeCreatePermanentPrivilege' is set to ''"
+    Task = "Ensure 'SeCreatePermanentPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePermanentPrivilege"]
@@ -718,7 +718,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-246"
-    Task = "Ensure 'SeLockMemoryPrivilege' is set to ''"
+    Task = "Ensure 'SeLockMemoryPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLockMemoryPrivilege"]
@@ -752,7 +752,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-247"
-    Task = "Ensure 'SeTcbPrivilege' is set to ''"
+    Task = "Ensure 'SeTcbPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTcbPrivilege"]
@@ -856,7 +856,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "UserRight-428"
-    Task = "Ensure 'SeTrustedCredManAccessPrivilege' is set to ''"
+    Task = "Ensure 'SeTrustedCredManAccessPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTrustedCredManAccessPrivilege"]
