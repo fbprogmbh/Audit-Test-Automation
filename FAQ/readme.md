@@ -3,14 +3,11 @@ This section is dedicated to an ever-growing list of frequently asked questions
 
 ### Table of contents
 
-
-- [Frequently Asked Questions](#frequently-asked-questions)
-    - [Table of contents](#table-of-contents)
-      - [When printing html to PDF, color-scheme-formatting is lost \[Back to TOC\]](#when-printing-html-to-pdf-color-scheme-formatting-is-lost-back-to-toc)
-      - [Can we add specific exclusions to be more compliant? \[Back to TOC\]](#can-we-add-specific-exclusions-to-be-more-compliant-back-to-toc)
-      - [When downloading my anti virus scanner detects malicious behavior. What does that mean?](#when-downloading-my-anti-virus-scanner-detects-malicious-behavior-what-does-that-mean)
-      - [Why is PowerShell console stating commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor"? \[Back to TOC\]](#why-is-powershell-console-stating-commandlet-save-ataphtmlreport-was-not-found-in-the-module-atapauditor-back-to-toc)
-      - [How long does it take to create a report from AuditTAP?](#how-long-does-it-take-to-create-a-report-from-audittap)
+  - [When printing html to PDF, color-scheme-formatting is lost](#when-printing-html-to-pdf-color-scheme-formatting-is-lost-back-to-toc)
+  - [Can we add specific exclusions to be more compliant?](#can-we-add-specific-exclusions-to-be-more-compliant-back-to-toc)
+  - [When downloading my anti virus scanner detects malicious behavior. What does that mean?](#when-downloading-my-anti-virus-scanner-detects-malicious-behavior-what-does-that-mean)
+  - [Why is PowerShell console stating commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor"?](#why-is-powershell-console-stating-commandlet-save-ataphtmlreport-was-not-found-in-the-module-atapauditor-back-to-toc)
+  - [How long does it take to create a report from AuditTAP?](#how-long-does-it-take-to-create-a-report-from-audittap)
 
 
 #### When printing html to PDF, color-scheme-formatting is lost [[Back to TOC]](https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/FAQ/readme.md#table-of-contents)
