@@ -8055,6 +8055,12 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
+            if($regValue -eq $null){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
 
             $missingElements = @()
@@ -8101,6 +8107,12 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
+            if($regValue -eq $null){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
 
             $missingElements = @()

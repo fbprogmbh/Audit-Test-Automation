@@ -5968,10 +5968,16 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
+            if($regValue -eq $null){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
 
             $missingElements = @()
@@ -6014,10 +6020,16 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
+            if($regValue -eq $null){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
 
             $missingElements = @()

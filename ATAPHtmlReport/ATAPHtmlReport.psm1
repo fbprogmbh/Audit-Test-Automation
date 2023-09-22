@@ -1035,7 +1035,7 @@ function Get-ATAPHostInformation {
 			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
 			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
 			"System Type"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
-			"System SKU"				= (GWMI -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
+			"System SKU"				= (Get-WmiObject -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
 			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
 			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
 			"License Status"			= $LicenseStatus
