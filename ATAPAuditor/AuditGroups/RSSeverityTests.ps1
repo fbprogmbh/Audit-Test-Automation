@@ -449,7 +449,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 A"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -510,7 +510,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 B"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -571,7 +571,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 C"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block execution of potentially obfuscated scripts'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -632,7 +632,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 D"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -693,7 +693,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 E"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Adobe Reader from creating child processes'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -754,7 +754,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 F"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -815,7 +815,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 G"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -876,7 +876,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 H"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -937,7 +937,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 I"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block executable content from email client and webmail'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -998,7 +998,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 J"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block JavaScript or VBScript from launching downloaded executable content'"
     Test = {
        try {
             if ((-not $windefrunning)) {
@@ -1059,7 +1059,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 K"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating child processes'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1120,7 +1120,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 L"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block persistence through WMI event subscription'"
     Test = {
         try {
             if ((-not $windefrunning)) {
