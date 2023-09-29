@@ -9562,7 +9562,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.10.43.6.1.2 G"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe)'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -9623,7 +9623,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.10.43.6.1.2 H"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB'"
     Test = {
         try {
             if ((-not $windefrunning)) {

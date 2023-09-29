@@ -645,7 +645,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 K"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe)'"
     Test = {
         try {
             if($avstatus){
@@ -709,7 +709,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 L"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block process creations originating from PSExec and WMI commands)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block process creations originating from PSExec and WMI commands"
     Test = {
         try {
             if($avstatus){
@@ -773,7 +773,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 M"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB' is configured"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB'"
     Test = {
         try {
             if($avstatus){

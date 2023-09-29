@@ -815,7 +815,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 G"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe)'"
     Test = {
         try {
             if ((-not $windefrunning)) {
