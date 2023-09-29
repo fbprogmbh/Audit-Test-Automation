@@ -22,7 +22,7 @@
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#UserRights"
+					AuditInfos = Start-Job -ScriptBlock {Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#UserRights"}
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'

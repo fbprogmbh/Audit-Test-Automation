@@ -127,16 +127,16 @@ function Test-ArrayEqual {
 	return $true
 }
 
-function Get-LicenseStatus{
+function Get-LicenseStatus {
 	$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
-	switch($licenseStatus){
-		"0" {$lcStatus = "Unlicensed"}
-		"1" {$lcStatus = "Licensed"}
-		"2" {$lcStatus = "OOBGrace"}
-		"3" {$lcStatus = "OOTGrace"}
-		"4" {$lcStatus = "NonGenuineGrace"}
-		"5" {$lcStatus = "Notification"}
-		"6" {$lcStatus = "ExtendedGrace"}
+	switch ($licenseStatus) {
+		"0" { $lcStatus = "Unlicensed" }
+		"1" { $lcStatus = "Licensed" }
+		"2" { $lcStatus = "OOBGrace" }
+		"3" { $lcStatus = "OOTGrace" }
+		"4" { $lcStatus = "NonGenuineGrace" }
+		"5" { $lcStatus = "Notification" }
+		"6" { $lcStatus = "ExtendedGrace" }
 	}
 	return $lcStatus
 }
@@ -153,11 +153,11 @@ function Get-DomainRole {
 	$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 	switch ($domainRole) {
 		0 { $result = "Standalone Workstation" }
-		1 { $result = "Member Workstation"}
+		1 { $result = "Member Workstation" }
 		2 { $result = "Standalone Server" }
-		3 { $result = "Member Server"}
+		3 { $result = "Member Server" }
 		4 { $result = "Backup Domain Controller" }
-		5 { $result = "Primary Domain Controller"}
+		5 { $result = "Primary Domain Controller" }
 	}
 	return $result
 }
@@ -169,26 +169,26 @@ function Get-FoundationReport {
 	
 	$Sections = @(
 		[ReportSection] @{
-			Title = "Security Base Data"
+			Title       = "Security Base Data"
 			SubSections = @(
 				[ReportSection] @{
-					Title = 'Platform Security'
+					Title      = 'Platform Security'
 					AuditInfos = Test-AuditGroup "Platform Security"
 				}
 				[ReportSection] @{
-					Title = 'Windows Base Security'
+					Title      = 'Windows Base Security'
 					AuditInfos = Test-AuditGroup "Windows Base Security"
 				}
 				[ReportSection] @{
-					Title = 'PowerShell Security'
+					Title      = 'PowerShell Security'
 					AuditInfos = Test-AuditGroup "PowerShell Security"
 				}
 				[ReportSection] @{
-					Title = 'Connectivity Security'
+					Title      = 'Connectivity Security'
 					AuditInfos = Test-AuditGroup "Connectivity Security"
 				}
 				[ReportSection] @{
-					Title = 'Application Control'
+					Title      = 'Application Control'
 					AuditInfos = Test-AuditGroup "Application Control"
 				}
 			)
@@ -196,8 +196,8 @@ function Get-FoundationReport {
 	)
 
 	return ([FoundationReport]@{
-		Sections = $Sections
-	})
+			Sections = $Sections
+		})
 }
 
 
@@ -211,56 +211,56 @@ function Get-RSFullReport {
 
 	
 	return ([RSFullReport]@{
-		RSSeverityReport = $severity
-	})
+			RSSeverityReport = $severity
+		})
 }
 # function to generate RiskSeverityReport
 function Get-RSSeverityReport {
-    [CmdletBinding()]
-    [OutputType([RSSeverityReport])]
+	[CmdletBinding()]
+	[OutputType([RSSeverityReport])]
 
-    # Initialization
+	# Initialization
 	[AuditInfo[]]$tests = Test-AuditGroup "RSSeverityTests"
 
-    # gather results of tests and save it in resultTable
+	# gather results of tests and save it in resultTable
 	$resultTable = [ResultTable]::new()
-    foreach ($test in $tests) {
+	foreach ($test in $tests) {
 		if ($test.AuditInfoStatus -EQ "True") {
 			$resultTable.Success += 1
 		}
-        if ($test.AuditInfostatus -ne "True") {
-            $resultTable.Failed += 1
-        }
-    }
+		if ($test.AuditInfostatus -ne "True") {
+			$resultTable.Failed += 1
+		}
+	}
 
-    return ([RSSeverityReport]@{
-            AuditInfos  = $tests
-            ResultTable = $resultTable
-            Endresult   = Get-RSSeverityEndResult($resultTable)
-        })
+	return ([RSSeverityReport]@{
+			AuditInfos  = $tests
+			ResultTable = $resultTable
+			Endresult   = Get-RSSeverityEndResult($resultTable)
+		})
 }
 
 # helper for EndResult of RiskScoreSeverity
 function Get-RSSeverityEndResult {
-    [CmdletBinding()]
-    [OutputType([RSEndResult])]
+	[CmdletBinding()]
+	[OutputType([RSEndResult])]
 
-    param (
-        [Parameter(Mandatory = $true)]
-        [ResultTable[]]
-        $resultTable
-    )
+	param (
+		[Parameter(Mandatory = $true)]
+		[ResultTable[]]
+		$resultTable
+	)
 
-    $result = "Unknown"
+	$result = "Unknown"
 
-    $f = $resultTable.Failed
-    if ($f -eq 0) {
-        $result = "Low"
-    }
-    if ($f -ge 1) {
-        $result = "Critical"
-    }
-    return $result
+	$f = $resultTable.Failed
+	if ($f -eq 0) {
+		$result = "Low"
+	}
+	if ($f -ge 1) {
+		$result = "Critical"
+	}
+	return $result
 }
 
 #endregion
@@ -286,105 +286,105 @@ function Test-AuditGroup {
 	)
 
 	#Windows OS
-	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+	if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
 		$tests = . "$RootPath\AuditGroups\$($GroupName).ps1"
 	}
 	#Linux OS
-	else{
+	else {
 		$tests = . "$RootPath/AuditGroups/$($GroupName).ps1"
 	}
 
 
-		$i = 1
-		foreach ($test in $tests) {
-			[int]$p = $i++ / $tests.Count * 100
-			Write-Progress -Activity "Testing Report for '$GroupName'" -Status "Progress:" -PercentComplete $p
-			Write-Verbose "Testing $($test.Id)"
-			$message = "Test not implemented yet."
-			$status = [AuditInfoStatus]::None
-			#if audit test contains datatype "Constraints", proceed
-			if ($test.Constraints) {
-				$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
-				#get domain role of system
-				$currentRole = Get-DomainRole
-				#get domain roles, which are listed in AuditTest
-				$domainRoles = $DomainRoleConstraint.Values
-				if ($currentRole -notin $domainRoles) {
-					$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
-					switch ($roleValue) {
-						0 {	
-							$message = 'Not applicable. This audit does not apply to Standalone Workstation.'
-							$status = [AuditInfoStatus]::None
-						}
-						1 {	
-							$message = 'Not applicable. This audit does not apply to Member Workstation.'
-							$status = [AuditInfoStatus]::None
-						}
-						2 {	
-							$message = 'Not applicable. This audit does not apply to Standalone Server.'
-							$status = [AuditInfoStatus]::None
-						}
-						3 {	
-							$message = 'Not applicable. This audit does not apply to Member Server.'
-							$status = [AuditInfoStatus]::None
-						}
-						4 {	
-							$message = 'Not applicable. This audit does not apply to Backup Domain Controller.'
-							$status = [AuditInfoStatus]::None
-						}
-						5 {	
-							$message = 'Not applicable. This audit does not apply to Primary Domain Controller.'
-							$status = [AuditInfoStatus]::None
-						}
+	$i = 1
+	foreach ($test in $tests) {
+		[int]$p = $i++ / $tests.Count * 100
+		Write-Progress -Activity "Testing Report for '$GroupName'" -Status "Progress:" -PercentComplete $p
+		Write-Verbose "Testing $($test.Id)"
+		$message = "Test not implemented yet."
+		$status = [AuditInfoStatus]::None
+		#if audit test contains datatype "Constraints", proceed
+		if ($test.Constraints) {
+			$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
+			#get domain role of system
+			$currentRole = Get-DomainRole
+			#get domain roles, which are listed in AuditTest
+			$domainRoles = $DomainRoleConstraint.Values
+			if ($currentRole -notin $domainRoles) {
+				$roleValue = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+				switch ($roleValue) {
+					0 {	
+						$message = 'Not applicable. This audit does not apply to Standalone Workstation.'
+						$status = [AuditInfoStatus]::None
 					}
-					Write-Output ([AuditInfo]@{
-						Id = $test.Id
-						Task = $test.Task
+					1 {	
+						$message = 'Not applicable. This audit does not apply to Member Workstation.'
+						$status = [AuditInfoStatus]::None
+					}
+					2 {	
+						$message = 'Not applicable. This audit does not apply to Standalone Server.'
+						$status = [AuditInfoStatus]::None
+					}
+					3 {	
+						$message = 'Not applicable. This audit does not apply to Member Server.'
+						$status = [AuditInfoStatus]::None
+					}
+					4 {	
+						$message = 'Not applicable. This audit does not apply to Backup Domain Controller.'
+						$status = [AuditInfoStatus]::None
+					}
+					5 {	
+						$message = 'Not applicable. This audit does not apply to Primary Domain Controller.'
+						$status = [AuditInfoStatus]::None
+					}
+				}
+				Write-Output ([AuditInfo]@{
+						Id      = $test.Id
+						Task    = $test.Task
 						Message = $message
-						Status = $status
+						Status  = $status
 					})
+				continue
+			}
+		}
+
+		#Windows OS
+		if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
+			$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
+			if ($test.Task -match "(DC only)") {
+				if ($role.domainRole -ne 4 -and $role.domainRole -ne 5) {
+					$message = 'Not applicable. This audit does not apply to Member Server systems.'
+					$status = [AuditInfoStatus]::None
+					Write-Output ([AuditInfo]@{
+							Id      = $test.Id
+							Task    = $test.Task
+							Message = $message
+							Status  = $status
+						})
 					continue
 				}
 			}
-
-			#Windows OS
-			if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-				$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
-				if($test.Task -match "(DC only)"){
-					if($role.domainRole -ne 4 -and $role.domainRole -ne 5){
-						$message = 'Not applicable. This audit does not apply to Member Server systems.'
-						$status = [AuditInfoStatus]::None
-						Write-Output ([AuditInfo]@{
-							Id = $test.Id
-							Task = $test.Task
-							Message = $message
-							Status = $status
-						})
-						continue
-					}
-				}
-			}
-			try {
-				$innerResult = & $test.Test
-
-				if ($null -ne $innerResult) {
-					$message = $innerResult.Message
-					$status = [AuditInfoStatus]$innerResult.Status
-				}
-			}
-			catch {
-				Write-Error $_
-				$message = "An error occured!"
-				$status = [AuditInfoStatus]::Error
-			}
-
-			Write-Output ([AuditInfo]@{
-				Id = $test.Id
-				Task = $test.Task
-				Message = $message
-				Status = $status
-			})
 		}
+		try {
+			$innerResult = & $test.Test
+
+			if ($null -ne $innerResult) {
+				$message = $innerResult.Message
+				$status = [AuditInfoStatus]$innerResult.Status
+			}
+		}
+		catch {
+			Write-Error $_
+			$message = "An error occured!"
+			$status = [AuditInfoStatus]::Error
+		}
+
+		Write-Output ([AuditInfo]@{
+				Id      = $test.Id
+				Task    = $test.Task
+				Message = $message
+				Status  = $status
+			})
+	}
 }
 
 <#
@@ -406,7 +406,7 @@ function Get-AuditResource {
 		$Name
 	)
 	#Windows OS
-	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+	if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
 		if ($null -eq $script:loadedResources) {
 			return & "$RootPath\Resources\$($Name).ps1"
 		}
@@ -415,7 +415,7 @@ function Get-AuditResource {
 		}
 	}
 	#Linuxs OS
-	else{
+	else {
 		if ($null -eq $script:loadedResources) {
 			return & "$RootPath/Resources/$($Name).ps1"
 		}
@@ -445,7 +445,7 @@ function Get-ATAPReport {
 		$ReportName = "*"
 	)
 	#Windows OS
-	if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+	if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
 		return Get-ChildItem "$RootPath\Reports\$ReportName.ps1" | Select-Object -Property BaseName
 	}
 	#Linux OS
@@ -479,18 +479,19 @@ function Invoke-ATAPReport {
 
 	try {
 		#Windows OS
-		if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+		if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
 			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 			[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
 			$report.RSReport = Get-RSFullReport
 			$report.FoundationReport = Get-FoundationReport
 		}
 		#Linux OS
-		else{
+		else {
 			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath/ATAPAuditor.psd1"
 			[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
 		}
-	} catch [System.Management.Automation.CommandNotFoundException] {
+	}
+ catch [System.Management.Automation.CommandNotFoundException] {
 		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
 		break
 	} 
@@ -564,20 +565,21 @@ function Save-ATAPHtmlReport {
 	}
 
 	#if input path is not default one
-	if($parent -ne $script:atapReportsPath){
+	if ($parent -ne $script:atapReportsPath) {
 		$pathCheck = Test-Path -Path $parent -PathType Container
 		#if path doesn't exist
-		if($pathCheck -eq $False){
+		if ($pathCheck -eq $False) {
 			if (-not [string]::IsNullOrEmpty($parent) -and -not (Test-Path $parent)) {
 				New-Item -ItemType Directory -Path $parent -Force | Out-Null
 				Write-Warning "Could not find Path. Path will be created: $parent"
-			} else {
+			}
+			else {
 				Write-Warning "Could not find Path. Report will be created inside default path: $($script:atapReportsPath)"
 				$Path = $($script:atapReportsPath)
 			}
 		}
 	}
-	$LicenseStatus = Get-LicenseStatus
+	# $LicenseStatus = Get-LicenseStatus
 
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 
@@ -593,9 +595,9 @@ $completer = {
 	param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 
 	Get-ChildItem "$RootPath\Reports\*.ps1" `
-		| Select-Object -ExpandProperty BaseName `
-		| ForEach-Object { "`"$_`"" } `
-		| Where-Object { $_ -like "*$wordToComplete*" }
+	| Select-Object -ExpandProperty BaseName `
+	| ForEach-Object { "`"$_`"" } `
+	| Where-Object { $_ -like "*$wordToComplete*" }
 }.GetNewClosure()
 
 Register-ArgumentCompleter -CommandName Save-ATAPHtmlReport -ParameterName ReportName -ScriptBlock $completer
