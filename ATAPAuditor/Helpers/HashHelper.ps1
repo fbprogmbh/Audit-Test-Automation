@@ -45,7 +45,12 @@ function GenerateHashTable{
 		#add recommendation hash to overall hash
 		$overallHash_sha256 += $hash
 		#hash this value again
-		$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
+		try{
+			$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
+		}
+		catch{
+			Write-Warning "Hash code for report section couldn't be created."
+		}
 	}
 
 	$hashtable_sha256.add($report.Title, $overallHash_sha256) 
