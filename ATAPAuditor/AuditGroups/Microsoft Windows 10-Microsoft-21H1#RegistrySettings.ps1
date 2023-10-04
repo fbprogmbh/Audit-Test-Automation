@@ -495,7 +495,7 @@ $hyperVStatus = CheckHyperVStatus
 }
 [AuditTest] @{
     Id = "Registry-011"
-    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
     Test = {
         try {
             if($avstatus){
@@ -1007,7 +1007,7 @@ $hyperVStatus = CheckHyperVStatus
 }
 [AuditTest] @{
     Id = "Registry-019"
-    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes'"
     Test = {
         try {
             if($avstatus){
