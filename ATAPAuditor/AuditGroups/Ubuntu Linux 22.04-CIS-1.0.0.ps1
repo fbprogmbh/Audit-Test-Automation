@@ -2,25 +2,26 @@ function Get-IPv6-Status {
     $parentPath = Split-Path -Parent -Path $PSScriptRoot
     $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-IP6Status.sh"
     $result=bash $path | grep "enabled"
-    if($result -match "*** IPv6 is enabled on the system ***") {
-        return $true
+    if($null -eq $result) {
+        return $false
     }
-    return $false
+    return $true
 }
 $IPv6Status = Get-IPv6-Status
+<#
 $ntp = dpkg -s ntp
 $ntp = $?
 $chrony = dpkg -s chrony
 $chrony = $?
 $timesyncd = systemctl is-enabled systemd-timesyncd
-
+#>
 [AuditTest] @{
     Id = "1.1.1.1"
     Task = "Ensure mounting of cramfs filesystems is disabled"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.1.1.1.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -34,13 +35,14 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "1.1.1.2"
     Task = "Ensure mounting of squashfs filesystems is disabled"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.1.1.2.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -60,7 +62,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.1.1.3.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -556,7 +558,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
      Test = {
          $parentPath = Split-Path -Parent -Path $PSScriptRoot
          $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.1.10.sh"
-         $result=bash $path | grep "** PASS **"
+         $result=bash $path | grep " PASS "
          if($result -ne $null){
              return @{
                  Message = "Compliant"
@@ -643,6 +645,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "1.4.1"
     Task = "Ensure bootloader password is set"
@@ -695,6 +698,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "1.5.1"
     Task = "Ensure address space layout randomization (ASLR) is enabled"
@@ -786,6 +790,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "1.6.1.1"
     Task = "Ensure AppArmor is installed"
@@ -983,7 +988,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.2.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1003,7 +1008,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.3.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1023,7 +1028,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.4.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1043,7 +1048,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.5.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1056,13 +1061,14 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "1.8.6"
     Task = "Ensure GDM automatic mounting of removable media is disabled"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.6.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -1076,13 +1082,14 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "1.8.7"
     Task = "Ensure GDM disabling automatic mounting of removable media is not overridden"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.7.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -1103,7 +1110,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.8.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1123,7 +1130,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.9.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1154,6 +1161,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "2.1.1.1"
     Task = "Ensure a single time synchronization daemon is in use"
@@ -1161,7 +1169,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-2.1.1.1.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match "PASS:"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1555,6 +1563,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "3.1.1"
     Task = "Ensure system is checked to determine if IPv6 is enabled"
@@ -1600,7 +1609,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.2.1.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1619,7 +1628,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.2.2.sh"
         $result=bash $path
-        if($result -match "** PASS **") {
+        if($result -match " PASS ") {
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1638,7 +1647,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.1.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1657,7 +1666,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.2.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1676,7 +1685,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.3.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1695,7 +1704,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.4.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1714,7 +1723,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.5.sh"
         $result=bash $path
-        if($result -match "##TEST"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1733,7 +1742,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.6.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1752,7 +1761,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.7.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1771,7 +1780,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.8.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1790,7 +1799,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.3.9.sh"
         $result=bash $path
-        if($result -match "** PASS **"){
+        if($result -match " PASS "){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -1808,7 +1817,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.4.1.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -1827,7 +1836,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.4.2.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -1846,7 +1855,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.4.3.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -1865,7 +1874,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.4.4.sh"
-        $result=bash $path | grep "** PASS **"
+        $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
                 Message = "Compliant"
@@ -2341,23 +2350,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
-[AuditTest] @{
-    Id = "3.5.3.2.4"
-    Task = "Ensure iptables firewall rules exist for all open ports"
-    Test = {
-        $test1 =  nix
-        if($test1 -ne $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
+# 3.5.3.2.4 ...
 [AuditTest] @{
     Id = "3.5.3.3.1"
     Task = "Ensure ip6tables default deny firewall policy"
@@ -2454,9 +2447,9 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.3_1.sh"
-        $result1 = bash $path1 | grep "-w /var/log/sudo.log -p wa -k sudo_log_file"
+        $result1 = bash $path1 | grep "\-w /var/log/sudo.log -p wa -k sudo_log_file"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.3_2.sh"
-        $result2 = bash $path2 | grep "-w /var/log/sudo.log -p wa -k sudo_log_file"
+        $result2 = bash $path2 | grep "\-w /var/log/sudo.log -p wa -k sudo_log_file"
         if($result1 -ne $null -and $result2 -ne $null) {
             return @{
                 Message = "Compliant"
@@ -2475,13 +2468,13 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.4_1.sh"
-        $result11 = bash $path1 | grep "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -k time-change"
-        $result12 = bash $path1 | grep "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change"
-        $result13 = bash $path1 | grep "-w /etc/localtime -p wa -k time-change"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -k time-change"
+        $result12 = bash $path1 | grep "\-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change"
+        $result13 = bash $path1 | grep "\-w /etc/localtime -p wa -k time-change"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.4_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change"
-        $result22 = bash $path2 | grep "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -F key=time-change"
-        $result23 = bash $path2 | grep "-w /etc/localtime -p wa -k time-change"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change"
+        $result22 = bash $path2 | grep "\-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -F key=time-change"
+        $result23 = bash $path2 | grep "\-w /etc/localtime -p wa -k time-change"
         if($result11 -ne $null -and $result12 -ne $null -and $result13 -ne $null -and $result21 -ne $null -and $result22 -ne $null -and $result23 -ne $null) {
             return @{
                 Message = "Compliant"
@@ -2500,21 +2493,21 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.5_1.sh"
-        $result11 = bash $path1 | grep "-a always,exit -F arch=b64 -S sethostname,setdomainname -k system-locale"
-        $result12 = bash $path1 | grep "-a always,exit -F arch=b32 -S sethostname,setdomainname -k system-locale"
-        $result13 = bash $path1 | grep "-w /etc/issue -p wa -k system-locale"
-        $result14 = bash $path1 | grep "-w /etc/issue.net -p wa -k system-locale"
-        $result15 = bash $path1 | grep "-w /etc/hosts -p wa -k system-locale"
-        $result16 = bash $path1 | grep "-w /etc/networks -p wa -k system-locale"
-        $result17 = bash $path1 | grep "-w /etc/network/ -p wa -k system-locale"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S sethostname,setdomainname -k system-locale"
+        $result12 = bash $path1 | grep "\-a always,exit -F arch=b32 -S sethostname,setdomainname -k system-locale"
+        $result13 = bash $path1 | grep "\-w /etc/issue -p wa -k system-locale"
+        $result14 = bash $path1 | grep "\-w /etc/issue.net -p wa -k system-locale"
+        $result15 = bash $path1 | grep "\-w /etc/hosts -p wa -k system-locale"
+        $result16 = bash $path1 | grep "\-w /etc/networks -p wa -k system-locale"
+        $result17 = bash $path1 | grep "\-w /etc/network/ -p wa -k system-locale"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.5_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale"
-        $result22 = bash $path2 | grep "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale"
-        $result23 = bash $path2 | grep "-w /etc/issue -p wa -k system-locale"
-        $result24 = bash $path2 | grep "-w /etc/issue.net -p wa -k system-locale"
-        $result25 = bash $path2 | grep "-w /etc/hosts -p wa -k system-locale"
-        $result26 = bash $path2 | grep "-w /etc/networks -p wa -k system-locale"
-        $result27 = bash $path2 | grep "-w /etc/network/ -p wa -k system-locale"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale"
+        $result22 = bash $path2 | grep "\-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale"
+        $result23 = bash $path2 | grep "\-w /etc/issue -p wa -k system-locale"
+        $result24 = bash $path2 | grep "\-w /etc/issue.net -p wa -k system-locale"
+        $result25 = bash $path2 | grep "\-w /etc/hosts -p wa -k system-locale"
+        $result26 = bash $path2 | grep "\-w /etc/networks -p wa -k system-locale"
+        $result27 = bash $path2 | grep "\-w /etc/network/ -p wa -k system-locale"
         if($result11 -ne $null -and $result12 -ne $null -and $result13 -ne $null -and $result14 -ne $null -and $result15 -ne $null -and $result16 -ne $null -and $result17 -ne $null -and $result21 -ne $null -and $result22 -ne $null -and $result23 -ne $null -and $result24 -ne $null -and $result25 -ne $null -and $result26 -ne $null -and $result27 -ne $null) {
             return @{
                     Message = "Compliant"
@@ -2550,15 +2543,15 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.7_1.sh"
-        $result11 = bash $path1 | grep "-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access"
-        $result12 = bash $path1 | grep "-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access"
-        $result13 = bash $path1 | grep "-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access"
-        $result14 = bash $path1 | grep "-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access"
+        $result12 = bash $path1 | grep "\-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access"
+        $result13 = bash $path1 | grep "\-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access"
+        $result14 = bash $path1 | grep "\-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.7_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
-        $result22 = bash $path2 | grep "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
-        $result23 = bash $path2 | grep "-a always,exit -F arch=b32 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
-        $result24 = bash $path2 | grep "-a always,exit -F arch=b32 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
+        $result22 = bash $path2 | grep "\-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
+        $result23 = bash $path2 | grep "\-a always,exit -F arch=b32 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
+        $result24 = bash $path2 | grep "\-a always,exit -F arch=b32 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
         if($result11 -ne $null -and $result12 -ne $null -and $result13 -ne $null -and $result14 -ne $null -and $result21 -ne $null -and $result22 -ne $null -and $result23 -ne $null-and $result24 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2583,11 +2576,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
          ||/\/etc\/security\/opasswd/) \
         &&/ +-p *wa/ \
         &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $result11 = $output1 | grep "-w /etc/group -p wa -k identity"
-        $result12 = $output1 | grep "-w /etc/passwd -p wa -k identity"
-        $result13 = $output1 | grep "-w /etc/gshadow -p wa -k identity"
-        $result14 = $output1 | grep "-w /etc/shadow -p wa -k identity"
-        $result15 = $output1 | grep "-w /etc/security/opasswd -p wa -k identity"
+        $result11 = $output1 | grep "\-w /etc/group -p wa -k identity"
+        $result12 = $output1 | grep "\-w /etc/passwd -p wa -k identity"
+        $result13 = $output1 | grep "\-w /etc/gshadow -p wa -k identity"
+        $result14 = $output1 | grep "\-w /etc/shadow -p wa -k identity"
+        $result15 = $output1 | grep "\-w /etc/security/opasswd -p wa -k identity"
         $output2 = auditctl -l | awk '/^ *-w/ \
         &&(/\/etc\/group/ \
          ||/\/etc\/passwd/ \
@@ -2596,11 +2589,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
          ||/\/etc\/security\/opasswd/) \
         &&/ +-p *wa/ \
         &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
-        $result21 = $output2 | grep "-w /etc/group -p wa -k identity"
-        $result22 = $output2 | grep "-w /etc/passwd -p wa -k identity"
-        $result23 = $output2 | grep "-w /etc/gshadow -p wa -k identity"
-        $result24 = $output2 | grep "-w /etc/shadow -p wa -k identity"
-        $result25 = $output2 | grep "-w /etc/security/opasswd -p wa -k identity"
+        $result21 = $output2 | grep "\-w /etc/group -p wa -k identity"
+        $result22 = $output2 | grep "\-w /etc/passwd -p wa -k identity"
+        $result23 = $output2 | grep "\-w /etc/gshadow -p wa -k identity"
+        $result24 = $output2 | grep "\-w /etc/shadow -p wa -k identity"
+        $result25 = $output2 | grep "\-w /etc/security/opasswd -p wa -k identity"
         if($result11 -ne $null -and $result12 -ne $null -and $result13 -ne $null -and $result14 -and $result15 -ne $null -and $result21 -ne $null -and $result22 -ne $null -and $result23 -ne $null-and $result24 -ne $null -and $result25 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2619,19 +2612,19 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.9_1.sh"
-        $result11 = bash $path1 | grep "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod"
-        $result12 = bash $path1 | grep "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod"
-        $result13 = bash $path1 | grep "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod"
-        $result14 = bash $path1 | grep "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod"
-        $result15 = bash $path1 | grep "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod"
-        $result16 = bash $path1 | grep "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod"
+        $result12 = bash $path1 | grep "\-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod"
+        $result13 = bash $path1 | grep "\-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod"
+        $result14 = bash $path1 | grep "\-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod"
+        $result15 = bash $path1 | grep "\-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod"
+        $result16 = bash $path1 | grep "\-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.9_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
-        $result22 = bash $path2 | grep "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
-        $result23 = bash $path2 | grep "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
-        $result24 = bash $path2 | grep "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
-        $result25 = bash $path2 | grep "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
-        $result26 = bash $path2 | grep "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+        $result22 = bash $path2 | grep "\-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+        $result23 = bash $path2 | grep "\-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+        $result24 = bash $path2 | grep "\-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+        $result25 = bash $path2 | grep "\-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
+        $result26 = bash $path2 | grep "\-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"
         if($result11 -ne $null -and $result12 -ne $null -and $result13 -ne $null -and $result14 -ne $null -and $result15 -ne $null-and $result16 -ne $null -and $result21 -ne $null -and $result22 -ne $null -and $result23 -ne $null-and $result24 -ne $null-and $result25 -ne $null-and $result26 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2650,11 +2643,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.10_1.sh"
-        $result11 = bash $path1 | grep "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k mounts"
-        $result12 = bash $path1 | grep "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=unset -k mounts"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k mounts"
+        $result12 = bash $path1 | grep "\-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=unset -k mounts"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.10_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
-        $result22 = bash $path2 | grep "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
+        $result22 = bash $path2 | grep "\-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
         if($result11 -ne $null -and $result12 -ne $null -and $result21 -ne $null -and $result22 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2673,13 +2666,13 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.11_1.sh"
-        $result11 = bash $path1 | grep "-w /var/run/utmp -p wa -k session"
-        $result12 = bash $path1 | grep "-w /var/log/wtmp -p wa -k session"
-        $result13 = bash $path1 | grep "-w /var/log/btmp -p wa -k session"
+        $result11 = bash $path1 | grep "\-w /var/run/utmp -p wa -k session"
+        $result12 = bash $path1 | grep "\-w /var/log/wtmp -p wa -k session"
+        $result13 = bash $path1 | grep "\-w /var/log/btmp -p wa -k session"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.11_2.sh"
-        $result21 = bash $path2 | grep "-w /var/run/utmp -p wa -k session"
-        $result22 = bash $path2 | grep "-w /var/log/wtmp -p wa -k session"
-        $result23 = bash $path2 | grep "-w /var/log/btmp -p wa -k session"
+        $result21 = bash $path2 | grep "\-w /var/run/utmp -p wa -k session"
+        $result22 = bash $path2 | grep "\-w /var/log/wtmp -p wa -k session"
+        $result23 = bash $path2 | grep "\-w /var/log/btmp -p wa -k session"
         if($result11 -ne $null -and $result12 -ne $null -and $result13 -ne $null -and $result21 -ne $null -and $result22 -ne $null -and $result23 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2698,11 +2691,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.12_1.sh"
-        $result11 = bash $path1 | grep "-w /var/log/lastlog -p wa -k logins"
-        $result12 = bash $path1 | grep "-w /var/run/faillock -p wa -k logins"
+        $result11 = bash $path1 | grep "\-w /var/log/lastlog -p wa -k logins"
+        $result12 = bash $path1 | grep "\-w /var/run/faillock -p wa -k logins"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.12_2.sh"
-        $result21 = bash $path2 | grep "-w /var/log/lastlog -p wa -k logins"
-        $result22 = bash $path2 | grep "-w /var/run/faillock -p wa -k logins"
+        $result21 = bash $path2 | grep "\-w /var/log/lastlog -p wa -k logins"
+        $result22 = bash $path2 | grep "\-w /var/run/faillock -p wa -k logins"
         if($result11 -ne $null -and $result12 -ne $null -and $result21 -ne $null -and $result22 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2721,11 +2714,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.13_1.sh"
-        $result11 = bash $path1 | grep "a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete"
-        $result12 = bash $path1 | grep "-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete"
+        $result12 = bash $path1 | grep "\-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.13_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S rename,unlink,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"
-        $result22 = bash $path2 | grep "-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S rename,unlink,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"
+        $result22 = bash $path2 | grep "\-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"
         if($result11 -ne $null -and $result12 -ne $null -and $result21 -ne $null -and $result22 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2744,11 +2737,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.14_1.sh"
-        $result11 = bash $path1 | grep "-w /etc/apparmor/ -p wa -k MAC-policy"
-        $result12 = bash $path1 | grep "-w /etc/apparmor.d/ -p wa -k MAC-policy"
+        $result11 = bash $path1 | grep "\-w /etc/apparmor/ -p wa -k MAC-policy"
+        $result12 = bash $path1 | grep "\-w /etc/apparmor.d/ -p wa -k MAC-policy"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.14_2.sh"
-        $result21 = bash $path2 | grep "-w /etc/apparmor/ -p wa -k MAC-policy"
-        $result22 = bash $path2 | grep "-w /etc/apparmor.d/ -p wa -k MAC-policy"
+        $result21 = bash $path2 | grep "\-w /etc/apparmor/ -p wa -k MAC-policy"
+        $result22 = bash $path2 | grep "\-w /etc/apparmor.d/ -p wa -k MAC-policy"
         if($result11 -ne $null -and $result12 -ne $null -and $result21 -ne $null -and $result22 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2767,9 +2760,9 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.15_1.sh"
-        $result1 = bash $path1 | grep "-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng"
+        $result1 = bash $path1 | grep "\-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.15_2.sh"
-        $result2 = bash $path2 | grep "-a always,exit -S all -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng"
+        $result2 = bash $path2 | grep "\-a always,exit -S all -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng"
         if($result1 -ne $null -and $result2 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2788,9 +2781,9 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.16_1.sh"
-        $result1 = bash $path1 | grep "-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng"
+        $result1 = bash $path1 | grep "\-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.16_2.sh"
-        $result2 = bash $path2 | grep "-a always,exit -S all -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng"
+        $result2 = bash $path2 | grep "\-a always,exit -S all -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng"
         if($result1 -ne $null -and $result2 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2809,9 +2802,9 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.17_1.sh"
-        $result1 = bash $path1 | grep "-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd"
+        $result1 = bash $path1 | grep "\-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.17_2.sh"
-        $result2 = bash $path2 | grep "-a always,exit -S all -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=-1 -F key=priv_cmd"
+        $result2 = bash $path2 | grep "\-a always,exit -S all -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=-1 -F key=priv_cmd"
         if($result1 -ne $null -and $result2 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2830,9 +2823,9 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.18_1.sh"
-        $result1 = bash $path1 | grep "-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k usermod"
+        $result1 = bash $path1 | grep "\-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k usermod"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.18_2.sh"
-        $result2 = bash $path2 | grep "-a always,exit -S all -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=-1 -F key=usermod"
+        $result2 = bash $path2 | grep "\-a always,exit -S all -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=-1 -F key=usermod"
         if($result1 -ne $null -and $result2 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2851,11 +2844,11 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.19_1.sh"
-        $result11 = bash $path1 | grep "-a always,exit -F arch=b64 -S init_module,finit_module,delete_module,create_module,query_module -F auid>=1000 -F auid!=unset -k kernel_modules"
-        $result12 = bash $path1 | grep "-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k kernel_modules"
+        $result11 = bash $path1 | grep "\-a always,exit -F arch=b64 -S init_module,finit_module,delete_module,create_module,query_module -F auid>=1000 -F auid!=unset -k kernel_modules"
+        $result12 = bash $path1 | grep "\-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k kernel_modules"
         $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.19_2.sh"
-        $result21 = bash $path2 | grep "-a always,exit -F arch=b64 -S create_module,init_module,delete_module,query_module,finit_module -F auid>=1000 -F auid!=-1 -F key=kernel_modules"
-        $result22 = bash $path1 | grep "-a always,exit -S all -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=-1 -F key=kernel_modules"
+        $result21 = bash $path2 | grep "\-a always,exit -F arch=b64 -S create_module,init_module,delete_module,query_module,finit_module -F auid>=1000 -F auid!=-1 -F key=kernel_modules"
+        $result22 = bash $path1 | grep "\-a always,exit -S all -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=-1 -F key=kernel_modules"
         if($result11 -ne $null -and $result12 -ne $null -and $result21 -ne $null -and $result22 -ne $null){
             return @{
                 Message = "Compliant"
@@ -3185,23 +3178,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
-[AuditTest] @{
-    Id = "4.2.1.6"
-    Task = "Ensure journald log rotation is configured per site policy"
-    Test = {
-        $test1 = nix
-        if($test1 -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
+#4.2.1.6 ...
 #4.2.1.7 ...
 [AuditTest] @{
     Id = "4.2.1.1.1"
@@ -3386,23 +3363,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
-[AuditTest] @{
-    Id = "4.2.2.6"
-    Task = "Ensure rsyslog is configured to send logs to a remote log host"
-    Test = {
-        $test1 = nix
-        if($test1 -match "target"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
+# 4.2.2.6 ...
 [AuditTest] @{
     Id = "4.2.2.7"
     Task = "Ensure rsyslog is not configured to receive logs from a remote client"
@@ -3421,6 +3382,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
+
 [AuditTest] @{
     Id = "5.1.1"
     Task = "Ensure cron daemon is enabled and running"
@@ -3620,7 +3582,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-5.2.2.sh"
         $result=bash $path
-        if($result -match "** PASS **") {
+        if($result -match " PASS ") {
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -4337,23 +4299,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         }
     }
 }
-[AuditTest] @{
-    Id = "5.3.6"
-    Task = "Ensure sudo authentication timeout is configured correctly"
-    Test = {
-        $test1 = nix
-        if($test1 -match "!authenticate"){
-            return @{
-                Message = "Not-Compliant"
-                Status = "False"
-            }
-        }
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
+# 5.3.6 ...
 [AuditTest] @{
     Id = "5.3.7"
     Task = "Ensure access to the su command is restricted"
@@ -5049,7 +4995,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.11.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -5068,7 +5014,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.12.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -5087,7 +5033,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.13.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -5106,7 +5052,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.14.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -5125,7 +5071,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.15.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -5144,7 +5090,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.16.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -5163,7 +5109,7 @@ $timesyncd = systemctl is-enabled systemd-timesyncd
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.17.sh"
         $result=bash $path
-        if($result -eq "##TEST"){
+        if($result -match "PASSED"){
             return @{
                 Message = "Compliant"
                 Status = "True"

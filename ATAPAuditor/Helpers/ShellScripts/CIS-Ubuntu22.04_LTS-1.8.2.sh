@@ -8,8 +8,7 @@
     fi
     l_pcl="gdm gdm3" # Space seporated list of packages to check
     for l_pn in $l_pcl; do
-        $l_pq "$l_pn" >/dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists
-on the system\n - checking configuration"
+        $l_pq "$l_pn" >/dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
     done
     if [ -n "$l_pkgoutput" ]; then
         l_output="" l_output2=""
@@ -21,15 +20,13 @@ on the system\n - checking configuration"
             l_gdmprofile="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<<"$l_gdmfile")"
             # Check if banner message is enabled
             if grep -Pisq '^\h*banner-message-enable=true\b' "$l_gdmfile"; then
-                l_output="$l_output\n - The \"banner-message-enable\" option is enabled in
-\"$l_gdmfile\""
+                l_output="$l_output\n - The \"banner-message-enable\" option is enabled in \"$l_gdmfile\""
             else
                 l_output2="$l_output2\n - The \"banner-message-enable\" option is not enabled"
             fi
             l_lsbt="$(grep -Pios '^\h*banner-message-text=.*$' "$l_gdmfile")"
             if [ -n "$l_lsbt" ]; then
-                l_output="$l_output\n - The \"banner-message-text\" option is set in \"$l_gdmfile\"\n
-- banner-message-text is set to:\n - \"$l_lsbt\""
+                l_output="$l_output\n - The \"banner-message-text\" option is set in \"$l_gdmfile\"\n - banner-message-text is set to:\n - \"$l_lsbt\""
             else
                 l_output2="$l_output2\n - The \"banner-message-text\" option is not set"
             fi
@@ -41,15 +38,13 @@ on the system\n - checking configuration"
             if [ -f "/etc/dconf/db/$l_gdmprofile" ]; then
                 l_output="$l_output\n - The \"$l_gdmprofile\" profile exists in the dconf database"
             else
-                l_output2="$l_output2\n - The \"$l_gdmprofile\" profile doesn't exist in the dconf
-database"
+                l_output2="$l_output2\n - The \"$l_gdmprofile\" profile doesn't exist in the dconf database"
             fi
         else
             l_output2="$l_output2\n - The \"banner-message-enable\" option isn't configured"
         fi
     else
-        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not
-Applicable\n- Audit result:\n *** PASS ***\n"
+        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *** PASS ***\n"
     fi
     # Report results. If no failures output in l_output2, we pass
     if [ -z "$l_output2" ]; then
