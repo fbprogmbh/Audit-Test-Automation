@@ -46,7 +46,7 @@ function GenerateHashTable{
 		$overallHash_sha256 += $hash
 		#hash this value again
 		try{
-			$overallHash_sha256 = (Get-SHA256Hash $overallHash_sha256)
+			$overallHash_sha256 = Get-SHA256Hash $overallHash_sha256 -ErrorAction Stop
 		}
 		catch{
 			Write-Warning "Hash code for report section couldn't be created."
