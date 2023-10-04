@@ -305,7 +305,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "1909.03.4"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
     Test = {
         try {
             if($avstatus){

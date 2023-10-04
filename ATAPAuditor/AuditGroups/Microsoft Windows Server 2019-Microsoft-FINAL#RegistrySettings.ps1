@@ -5253,7 +5253,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-143"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
     Test = {
         try {
             if ((-not $windefrunning)) {

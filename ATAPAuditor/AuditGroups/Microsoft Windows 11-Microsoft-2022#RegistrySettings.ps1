@@ -1484,7 +1484,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-039"
-    Task = "Ensure 'Configure Attack Surface Reduction rules: Use advanced protection against ransomware'"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Use advanced protection against ransomware'"
     Test = {
         try {
             if($avstatus){
