@@ -70,7 +70,7 @@
 	Id = "SBD-039"
 	Task = "Ensure NetBios is set to 'Disabled'."
 	Test = {
-		$value = (Get-WmiObject -Class Win32_NetWorkAdapterConfiguration -Filter "IPEnabled=$true").TcpipNetbiosOptions
+		$value = (Get-CimInstance -Class Win32_NetWorkAdapterConfiguration -Filter "IPEnabled=$true").TcpipNetbiosOptions
         if($value -eq 2){
             return @{
                 Message = "Compliant"
@@ -1196,7 +1196,7 @@
     Task = "Check NETBIOS-Status for all active NICs"
     Test = {
         try{
-            $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetbiosOptions
+            $networkCards = Get-CimInstance win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetbiosOptions
             $nonCompliantCards = @()
             
             for($i = 0; $i -lt $networkCards.Count; $i++){
