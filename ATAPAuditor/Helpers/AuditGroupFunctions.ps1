@@ -226,14 +226,3 @@ function Get-AntiVirusStatus {
     }
     return $result
 } 
-
-function Is-DomainJoined {
-    if ((gwmi win32_computersystem).partofdomain) {
-        return $true
-    } 
-    return $false
-}
-
-function Get-OsName {
-    return (Get-ComputerInfo OsName).OsName
-}

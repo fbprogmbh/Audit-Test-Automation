@@ -162,6 +162,202 @@ function Get-DomainRole {
 	return $result
 }
 
+function checkReportNameWithOSSystem {
+	[CmdletBinding()]
+	param (
+		[Parameter()]
+		[string]
+		$ReportName
+	)
+	# helpers
+	function handleReportNameDiscrepancy {
+		param (
+			[Parameter()]
+			[string]
+			$ReportName,
+			[Parameter()]
+			[string]
+			$OsName,
+			[Parameter()]
+			[bool]
+			$ShouldBeStandAlone = $False,
+			[Parameter()]
+			[bool]
+			$ShouldBeDomainController = $False,
+			[Parameter()]
+			[bool]
+			$ShouldNotBeDomainController = $False
+		)
+		if ($ShouldBeDomainController -eq $True) {
+			Write-Host "You chose the Reportname $ReportName but the operating system is not a domaincontroller. Be aware that a different report type could affect the result."
+		}
+		elseif ($ShouldNotBeDomainController -eq $True) {
+			Write-Host "You chose the Reportname $ReportName but the operating system is a domaincontroller. Be aware that a different report type could affect the result."
+		}
+		elseif ($ShouldBeStandAlone -eq $True) {
+			Write-Host "You chose the Reportname $ReportName but the operating system is domain-joined. Be aware that a different report type could affect the result."
+		} 
+		else {
+			Write-Host "You chose the Reportname $ReportName but the operating system is $OsName. Be aware that a different report type could affect the result."
+		}
+		Write-Host ""
+		Write-Host "Choose one of the following options to continue: 1: Continue, 2: Exit Script"
+		$in = Read-Host
+		switch ($in) {
+			1 { Write-Host "You chose to continue" return $ReportName}
+			2 { Write-Host "Exiting..." Exit }
+			default { Write-Host "Your input was invalid, call Save-ATAPHtmlReport again with your desired report" Exit}
+		}
+	}
+	function returnSuitingReportName {
+		[CmdletBinding()]
+		param (
+			[Parameter()]
+			[string]
+			$ReportName,
+			[Parameter()]
+			[string]
+			$OsName,
+			[Parameter()]
+			[string]
+			$OsType,
+			[Parameter()]
+			[string]
+			$ShouldBeDomainController = $False,
+			[Parameter()]
+			[bool]
+			$ShouldBeStandAlone = $False
+		)
+
+		###
+		# similarity check
+		function isOsNameSimilarToType {
+			[CmdletBinding()]
+			param (
+				[Parameter()]
+				[string]
+				$OsName,
+				[Parameter()]
+				[string]
+				$OsType
+			)
+			if ($OsName -match $OsType) {
+				return $true
+			}
+			return $false
+		}
+		if (-not(isOsNameSimilarToType -OsName $osName -OsType $osType)) {
+			Write-Host $osName + " " + $osType
+			return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName
+		}
+
+		###
+		# get whether domaincontroller info for later use
+		function IsDomainController {	
+			$domainrole = Get-DomainRole
+			if ($domainrole -eq 5 -or $domainrole -eq 4){
+				return $true
+			}
+			return $false
+		}
+		$isDomainController = IsDomainController
+		# should be DC
+		if ($ShouldBeDomainController -eq $True) {
+			if (-not($isDomainController)) {
+				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
+			}
+		# should not be DC
+		} else {
+			if ($isDomainController) {
+				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldNotBeDomainController $True
+			}
+		}
+
+		###
+		# should be standalone
+		if ($ShouldBeStandAlone -eq $True){
+			function IsDomainedJoined{		
+				if ((Get-CimInstance win32_computersystem).partofdomain) {
+					return $true
+				} 
+				return $false
+			}
+			$isDomainJoined = IsDomainedJoined
+			if ($isDomainJoined){
+				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeStandAlone $True
+			}
+		}
+		return $ReportName
+	}
+	#helpers end
+
+	$osName = (Get-ComputerInfo OsName).OsName
+	function Get-OsType {		
+		switch ($ReportName) {
+			"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
+			"Microsoft Windows Server 2022 DC" { return "Microsoft Windows Server 2022" }
+			"Microsoft Windows Server 2019" { return "Microsoft Windows Server 2019" }
+			"Microsoft Windows Server 2019 DC" { return "Microsoft Windows Server 2019" }
+			"Microsoft Windows Server 2016" { return "Microsoft Windows Server 2016" }
+			"Microsoft Windows Server 2016 DC" { return "Microsoft Windows Server 2016" }
+			"Microsoft Windows Server 2012" { return "Microsoft Windows Server 2012" }
+			"Microsoft Windows 11" { return "Microsoft Windows 11" }
+			"Microsoft Windows 11 Stand-alone" { return "Microsoft Windows 11" }
+			"Microsoft Windows 10" { return "Microsoft Windows 10" }
+			"Microsoft Windows 10 Stand-alone" { return "Microsoft Windows 10" }
+			"Microsoft Windows 10 GDPR" { return "Microsoft Windows 10" }
+			"Microsoft Windows 10 BSI" { return "Microsoft Windows 10" }
+			"Microsoft Windows 7" { return "Microsoft Windows 7" }
+		}
+	}
+	$osType = Get-OsType
+	switch ($ReportName) {
+		"Microsoft Windows Server 2022" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
+		}
+		"Microsoft Windows Server 2022 DC" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
+		}
+		"Microsoft Windows Server 2019" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows Server 2019 DC" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
+		}
+		"Microsoft Windows Server 2016" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows Server 2016 DC" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
+		}
+		"Microsoft Windows Server 2012" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows 11" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows 11 Stand-alone" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeStandAlone $True
+		}
+		"Microsoft Windows 10" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows 10 Stand-alone" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeStandAlone $True
+		}
+		"Microsoft Windows 10 GDPR" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows 10 BSI" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+		"Microsoft Windows 7" { 
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+		}
+	}
+	return $ReportName
+}
+
 ### begin Foundation functions ###
 function Get-FoundationReport {
 	[CmdletBinding()]
@@ -481,6 +677,7 @@ function Invoke-ATAPReport {
 		#Windows OS
 		if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
+			[string]$ReportName = checkReportNameWithOSSystem -ReportName $ReportName
 			[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
 			$report.RSReport = Get-RSFullReport
 			$report.FoundationReport = Get-FoundationReport
