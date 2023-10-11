@@ -4232,9 +4232,9 @@ $windefrunning = CheckWindefRunning
                 -Name "EnableNetbios" `
                 | Select-Object -ExpandProperty "EnableNetbios"
         
-            if ($regValue -ne 2) {
+            if (-not( ($regValue -eq 0) -or ($regValue -eq 2) )) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 2"
                     Status = "False"
                 }
             }
