@@ -10199,9 +10199,9 @@ $windefrunning = CheckWindefRunning
                 -Name "OSRecoveryPassword" `
                 | Select-Object -ExpandProperty "OSRecoveryPassword"
         
-            if ($regValue -ne 2) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
