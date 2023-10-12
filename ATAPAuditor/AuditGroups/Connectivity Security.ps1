@@ -87,8 +87,8 @@
 	Id = "SBD-040"
 	Task = "Ensure SMBv1 is set to 'Disabled'."
 	Test = {
-		$value = (Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol).State
-        if($value -eq "Disabled"){
+		$value = Dism /Online /Get-Features /Format:Table | findstr /C:"SMB1Protocol "
+        if($value -match "Disabled"){
             return @{
                 Message = "Compliant"
                 Status = "True"
