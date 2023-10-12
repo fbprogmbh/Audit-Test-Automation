@@ -774,13 +774,13 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-	$LicenseStatus = Get-LicenseStatus
-
+	
 	$report = Invoke-ATAPReport -ReportName $ReportName 
-
+	
 	#hashes for each recommendation
 	$hashtable_sha256 = GenerateHashTable $report
-
+	
+	$LicenseStatus = Get-LicenseStatus
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus
 }
 
