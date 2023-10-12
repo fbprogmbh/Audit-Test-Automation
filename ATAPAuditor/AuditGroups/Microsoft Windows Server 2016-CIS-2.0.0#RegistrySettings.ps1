@@ -4224,7 +4224,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.4.1"
-    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'"
+    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution' or 'Enabled: Disable NetBIOS name resolution on public networks'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
