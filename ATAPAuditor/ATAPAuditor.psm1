@@ -263,12 +263,12 @@ function checkReportNameWithOSSystem {
 		$isDomainController = IsDomainController
 		# should be DC
 		if ($ShouldBeDomainController -eq $True) {
-			if (-not($isDomainController)) {
+			if (-not($isDomainController -eq $True)) {
 				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
 			}
 		# should not be DC
 		} else {
-			if ($isDomainController) {
+			if ($isDomainController -eq $True) {
 				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldNotBeDomainController $True
 			}
 		}
@@ -283,7 +283,7 @@ function checkReportNameWithOSSystem {
 				return $false
 			}
 			$isDomainJoined = IsDomainedJoined
-			if ($isDomainJoined){
+			if ($isDomainJoined -eq $True){
 				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeStandAlone $True
 			}
 		}
