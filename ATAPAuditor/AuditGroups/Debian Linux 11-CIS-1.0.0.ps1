@@ -1834,3 +1834,939 @@
         }
     }
 }
+[AuditTest] @{
+    Id = "3.2.1"
+    Task = "Ensure packet redirect sending is disabled"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.2.1.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.2.2"
+    Task = "Ensure IP forwarding is disabled"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.2.2.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.1"
+    Task = "Ensure source routed packets are not accepted"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.1.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.2"
+    Task = "Ensure ICMP redirects are not accepted"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.2.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.3"
+    Task = "Ensure secure ICMP redirects are not accepted"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.3.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.4"
+    Task = "Ensure suspicious packets are logged"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.4.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.5"
+    Task = "Ensure broadcast ICMP requests are ignored"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.5.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.6"
+    Task = "Ensure bogus ICMP responses are ignored"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.6.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.7"
+    Task = "Ensure Reverse Path Filtering is enabled"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.7.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.8"
+    Task = "Ensure TCP SYN Cookies is enabled"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.8.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.9"
+    Task = "Ensure IPv6 router advertisements are not accepted"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.3.9.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.1"
+    Task = "Ensure ufw is installed"
+    Test = {
+        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
+        if($result -match "ufw\s+install ok installeds\+installed"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.2"
+    Task = "Ensure iptables-persistent is not installed with ufw"
+    Test = {
+        $result = dpkg-query -s iptables-persistent
+        if($result -match "package 'iptables-persistent' is not installed and no information is available"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.3"
+    Task = "Ensure ufw service is enabled"
+    Test = {
+        $result1 = systemctl is-enabled ufw.service
+        $result2 = systemctl is-active ufw
+        $result3 = ufw status
+
+        if($result1 -match "enabled" -and $result2 -match "active" -and $result3 -match "Status: active"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.4"
+    Task = "Ensure ufw loopback traffic is configured"
+    Test = {
+        $result1 = ufw status verbose
+
+        if($result1 -match "enabled" -and $result2 -match "active" -and $result3 -match "Status: active"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.5"
+    Task = "Ensure ufw outbound connections are configured"
+    Test = {
+        return @{
+            Message = "Run the following command and verify all rules for new outbound connections match site policy: ufw status numbered"
+            Status = "None"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.6"
+    Task = "Ensure ufw firewall rules exist for all open ports"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-3.5.1.6.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.1.7"
+    Task = "Ensure ufw default deny firewall policy"
+    Test = {
+        $result = ufw status verbose | grep Default:
+
+        if($result -match "Default: (deny|reject|disabled) (incoming), (deny|reject|disabled) (outgoing), (deny|reject|disabled) (routed)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.1"
+    Task = "Ensure nftables is installed"
+    Test = {
+        $test = dpkg-query -s nftables | grep 'Status: install ok installed'
+        if($test -match "Status: install ok installed"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.2"
+    Task = "Ensure ufw is uninstalled or disabled with nftables"
+    Test = {
+        $test1 = dpkg-query -s ufw | grep 'Status: install ok installed'
+        $test2 = ufw status
+        if($test1 -match "package 'ufw' is not installed and no information is available" -and $test2 -match "ufw status"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.3"
+    Task = "Ensure iptables are flushed with nftables"
+    Test = {
+        return @{
+            Message = "Run the following commands to ensure no iptables rules exist for iptables: iptables -L \nNo rules should be returned for ip6tables: ip6tables -L \nNo rules should be returned"
+            Status = "None"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.4"
+    Task = "Ensure a nftables table exists"
+    Test = {
+        $test = nft list tables
+        if($test -match "table"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.5"
+    Task = "Ensure nftables base chains exist"
+    Test = {
+        try{
+            $test1 = nft list ruleset | grep 'hook input'
+            $test2 = nft list ruleset | grep 'hook forward'
+            $test3 = nft list ruleset | grep 'hook output'
+            if($test1 -match "type filter hook input" -and $test2 -match "type filter hook forward" -and $test3 -match "type filter hook output"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.6"
+    Task = "Ensure nftables loopback traffic is configured"
+    Test = {
+        try{
+            if($isIPv6Disabled -ne $true){
+                $test1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
+                $test2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
+                if($test1 -match 'iif "lo" accept' -and $test2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop"){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            else{
+                $test = nft list ruleset | awk '/hook input/,/}/' | grep 'ip6 saddr'
+                if($test -match 'ip6 saddr ::1 counter packets 0 bytes 0 drop'){
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.7"
+    Task = "Ensure nftables outbound and established connections are configured"
+    Test = {
+        try{
+            $test1 = nft list ruleset | awk '/hook input/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
+            $test2 = nft list ruleset | awk '/hook output/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
+            if($test1 -match "ip protocol tcp ct state established accept" -and $test1 -match "p protocol udp ct state established accept" -and $test1 -match "ip protocol icmp ct state established accept" -and $test2 -match "ip protocol tcp ct state established,related,new accep" -and $test2 -match "ip protocol udp ct state established,related,new accept" -and $test2 -match "ip protocol icmp ct state established,related,new accept"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.8"
+    Task = "Ensure nftables default deny firewall policy"
+    Test = {
+        try{
+            $test1 = nft list ruleset | grep 'hook input'
+            $test2 = nft list ruleset | grep 'hook forward'
+            $test3 = nft list ruleset | grep 'hook output'
+            if($test1 -match "policy drop" -and $test2 -match "policy drop" -and $test3 -match "policy drop"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.2.9"
+    Task = "Ensure nftables service is enabled"
+    Test = {
+        $test1 = systemctl is-enabled nftables
+        if($test1 -match "enabled"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.1.1"
+    Task = "Ensure iptables packages are installed"
+    Test = {
+        $test1 = apt list iptables iptables-persistent
+        $test1 = $?
+        if($test1 -match "True"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.1.2"
+    Task = "Ensure nftables is not installed with iptables"
+    Test = {
+        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' nftables
+        if($test1 -match "nftables\s+unknown ok not-installed\s+not-installed"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.1.3"
+    Task = "Ensure ufw is uninstalled or disabled with iptables"
+    Test = {
+        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
+        $test2 = ufw status
+        $test3 = systemctl is-enabled ufw
+        if($test1 -match "ufw\s+unknown ok not-installed\s+not-installed" -and $test2 -match "Status: inactive" -ant $test3 -match "masked"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.2.1"
+    Task = "Ensure iptables default deny firewall policy"
+    Test = {
+        $test1 = iptables -L
+        if($test1 -match "Chain INPUT (policy (DROP|REJCET))" -and $test1 -match "Chain FORWARD (policy (DROP|REJCET))" -and $test1 -match "Chain OUTPUT (policy (DROP|REJCET))"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.2.2"
+    Task = "Ensure iptables loopback traffic is configured"
+    Test = {
+        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        if($test1 -ne $null -and $test2 -ne $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.2.4"
+    Task = "Ensure iptables firewall rules exist for all open ports"
+    Test = {
+        $test1 = ss -4tuln
+        if($test1 -ne $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.3.1"
+    Task = "Ensure ip6tables default deny firewall policy"
+    Test = {
+        $test1 = ip6tables -L
+        if($test1 -match "Chain INPUT (policy (DROP|REJCET))" -and $test1 -match "Chain FORWARD (policy (DROP|REJCET))" -and $test1 -match "Chain OUTPUT (policy (DROP|REJCET))"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.5.3.3.3"
+    Task = "Ensure ip6tables outbound and established connections are configured"
+    Test = {
+        return @{
+            Message = "Run the following command and verify all rules for new outbound, and established connections match site policy: ip6tables -L -v -n"
+            Status = "None"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.1.1"
+    Task = "Ensure auditd is installed"
+    Test = {
+        $test = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' auditd audispd-plugins
+        if($test -match "audispd-plugins\s+install ok installed\s+installed" -and $test -match "auditd\s+install ok installed\s+installed"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.1.2"
+    Task = "Ensure auditd service is enabled and active"
+    Test = {
+        $test1 = systemctl is-enabled auditd
+        $test2 = systemctl is-active auditd
+        if($test1 -match "enabled" -and $test2 -match "active"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.1.3"
+    Task = "Ensure auditing for processes that start prior to auditd is enabled"
+    Test = {
+        $test = find /boot -type f -name 'grub.cfg' -exec grep -Ph -- '^\h*linux' {} + | grep -v 'audit=1'
+        if($test -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.1.4"
+    Task = "Ensure audit_backlog_limit is sufficient"
+    Test = {
+        $test = find /boot -type f -name 'grub.cfg' -exec grep -Ph -- '^\h*linux' {} + | grep -Pv 'audit_backlog_limit=\d+\b'
+        if($test -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.2.1"
+    Task = "Ensure audit log storage size is configured"
+    Test = {
+        $test = grep -Po -- '^\h*max_log_file\h*=\h*\d+\b' /etc/audit/auditd.conf
+        if($test -match "max_log_file ="){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.2.2"
+    Task = "Ensure audit logs are not automatically deleted"
+    Test = {
+        $test = grep max_log_file_action /etc/audit/auditd.conf
+        if($test -match "max_log_file_action = keep_logs"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.2.3"
+    Task = "Ensure system is disabled when audit logs are full"
+    Test = {
+        $test1 = grep space_left_action /etc/audit/auditd.conf
+        $test2 = grep action_mail_acct /etc/audit/auditd.conf
+        $test3 = grep -E 'admin_space_left_action\s*=\s*(halt|single)' /etc/audit/auditd.conf
+        if($test1 -match "space_left_action = email" -and $test2 -match "action_mail_acct = root" -and $test3 -match "admin_space_left_action = (halt|single)"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.1"
+    Task = "Ensure changes to system administration scope (sudoers) is collected"
+    Test = {
+        $test1 = awk '/^ *-w/ \ &&/\/etc\/sudoers/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test2 = auditctl -l | awk '/^ *-w/ \ &&/\/etc\/sudoers/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        if($test1 -match "-w /etc/sudoers -p wa -k scope" -and $test1 -match "-w /etc/sudoers.d -p wa -k scope" -and $test2 -match "-w /etc/sudoers -p wa -k scope" -and $test2 -match "-w /etc/sudoers.d -p wa -k scope"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.2"
+    Task = "Ensure actions as another user are always logged"
+    Test = {
+        $test1 = awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) \ &&(/ -C *euid!=uid/||/ -C *uid!=euid/) \ &&/ -S *execve/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test2 = auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) \ &&(/ -C *euid!=uid/||/ -C *uid!=euid/) \ &&/ -S *execve/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        if($test1 -match "-a always,exit -F arch=b64 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $test1 -match "-a always,exit -F arch=b32 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $test2 -match "-a always,exit -F arch=b64 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation" -and $test2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.3"
+    Task = "Ensure events that modify the sudo log file are collected"
+    Test = {
+        $test1 = { SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n" }
+        $test2 = {
+SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n" }
+        if($test1 -match "-w /var/log/sudo.log -p wa -k sudo_log_file" -and $test2 -match "-w /var/log/sudo.log -p wa -k sudo_log_file"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.4"
+    Task = "Ensure events that modify date and time information are collected"
+    Test = {
+        $test1 = { awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules }
+        $test2 = { auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' auditctl -l | awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'}
+        if($test1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday clock_settime -k time-change" -and $test1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $test1 -match "-w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $test2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday clock_settime -F key=time-change" -and $test3 -match "-w /etc/localtime -p wa -k time-change"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.5"
+    Task = "Ensure events that modify the system's network environment are collected"
+    Test = {
+        $test1 = awk '/^ *-a *always,exit/ \ &&/ -F *arch=b(32|64)/ \ &&/ -S/ \ &&(/sethostname/ \ ||/setdomainname/) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test2 = awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test3 = auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b(32|64)/ \ &&/ -S/ \ &&(/sethostname/ \ ||/setdomainname/) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $test4 = auditctl -l | awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        if($test1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday clock_settime -k time-change" -and $test1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $test1 -match "-w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $test2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday clock_settime -F key=time-change" -and $test3 -match "-w /etc/localtime -p wa -k time-change"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.6"
+    Task = "Ensure use of privileged commands are collected"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.3.6-A.sh"
+        $result1=bash $path
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.3.6-B.sh"
+        $result2=bash $path
+        if(!($line -match "nodev")){
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.3.8"
+    Task = "Ensure events that modify user/group information are collected"
+    Test = {
+        $test1 = awk '/^ *-w/ \ &&(/\/etc\/group/ \ ||/\/etc\/passwd/ \ ||/\/etc\/gshadow/ \ ||/\/etc\/shadow/ \ ||/\/etc\/security\/opasswd/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test2 = auditctl -l | awk '/^ *-w/ \ &&(/\/etc\/group/ \ ||/\/etc\/passwd/ \ ||/\/etc\/gshadow/ \ ||/\/etc\/shadow/ \ ||/\/etc\/security\/opasswd/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        if($test1 -match "-w /etc/group -p wa -k identity" -and $test1 -match "-w /etc/passwd -p wa -k identity" -and $test1 -match "-w /etc/gshadow -p wa -k identity" -and $test1 -match "-w /etc/shadow -p wa -k identity" -and $test1 -match "-w /etc/security/opasswd -p wa -k identity" -and $test2 -match "-w /etc/group -p wa -k identity" -and $test2 -match "-w /etc/passwd -p wa -k identity" -and $test2 -match "-w /etc/gshadow -p wa -k identity" -and $test2 -match "-w /etc/shadow -p wa -k identity" -and $test2 -match "-w /etc/security/opasswd -p wa -k identity"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
