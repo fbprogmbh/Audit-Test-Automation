@@ -204,9 +204,18 @@ function checkReportNameWithOSSystem {
 		Write-Host "Choose one of the following options to continue: 1: Continue, 2: Exit Script"
 		$in = Read-Host
 		switch ($in) {
-			1 { Write-Host "You chose to continue" return $ReportName}
-			2 { Write-Host "Exiting..." Exit }
-			default { Write-Host "Your input was invalid, call Save-ATAPHtmlReport again with your desired report" Exit}
+			1 { 
+				Write-Host "You chose to continue" 
+				return $ReportName
+			}
+			2 { 
+				Write-Host "You chose to exit the script" 
+				return "Exit"
+			}
+			default { 
+				Write-Host "Your input was invalid, call Save-ATAPHtmlReport again with your desired report" 
+				return "Exit"
+			}
 		}
 	}
 	function returnSuitingReportName {
@@ -678,6 +687,14 @@ function Invoke-ATAPReport {
 		if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 			[string]$ReportName = checkReportNameWithOSSystem -ReportName $ReportName
+			try {
+				if ($ReportName -eq "Exit") {
+					throw
+				}
+			} catch {
+				Write-Host "Script halted: Exiting..."
+				break
+			}
 			[Report]$report = (& "$RootPath\Reports\$ReportName.ps1")
 			$report.RSReport = Get-RSFullReport
 			$report.FoundationReport = Get-FoundationReport
@@ -690,7 +707,7 @@ function Invoke-ATAPReport {
 	} catch [System.Management.Automation.CommandNotFoundException] {
 		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
 		break
-	} 
+	}
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
 	return $report
 }
