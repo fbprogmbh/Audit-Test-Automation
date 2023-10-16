@@ -4125,3 +4125,55 @@
         }
     }
 }
+[AuditTest] @{
+    Id = "6.2.2"
+    Task = "Ensure /etc/shadow password fields are not empty"
+    Test = {
+        $test1 = awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
+        if($test1 -eq $null){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.4"
+    Task = "Ensure shadow group is empty"
+    Test = {
+        $test1 = awk -F: '($1=="shadow") {print $NF}' /etc/group
+        $test2 = awk -F: -v GID="$(awk -F: '($1=="shadow") {print $3}' /etc/group)" '($4==GID) {print $1}' /etc/passwd
+        if($test1 -eq $null -and $test2 -eq $null){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.10"
+    Task = "Ensure root is the only UID 0 account"
+    Test = {
+        $test1 = awk -F: '($3 == 0) { print $1 }' /etc/passwd
+        if($test1 -eq "root"){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
