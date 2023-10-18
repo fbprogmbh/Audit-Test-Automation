@@ -349,7 +349,7 @@ function Test-AuditGroup {
 
 			#Windows OS
 			if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-				$role = Get-CimInstance -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
+				$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
 				if($test.Task -match "(DC only)"){
 					if($role.domainRole -ne 4 -and $role.domainRole -ne 5){
 						$message = 'Not applicable. This audit does not apply to Member Server systems.'
