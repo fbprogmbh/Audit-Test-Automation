@@ -17,8 +17,8 @@ ATAPAuditor:\
 			<td>
 
 
-AuditTAP Release 5.6:\
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.6.zip)
+AuditTAP Release 5.6.2:\
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.6.2)
 			</td>
 		</tr>
 	</table>
