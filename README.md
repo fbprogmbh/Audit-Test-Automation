@@ -193,6 +193,10 @@ Import-Module -Name ATAPAuditor
 
 By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark. Append `-Path` to specify output folder.
 
+:exclamation: 
+ATAP is only compatible with PowerShell 5. When run in a different PowerShell version, the user will be prompted to open a PowerShell 5 console or stop the script.
+:exclamation: 
+
 **Examples:**
 ```PowerShell
 Save-ATAPHtmlReport -ReportName "Microsoft Windows 11 Stand-alone" -RiskScore -Path C:\Temp\report.html
