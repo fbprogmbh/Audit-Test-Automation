@@ -1266,7 +1266,7 @@
     Id = "2.1.4.2"
     Task = "Ensure ntp is configured with authorized timeserver"
     Test = {
-        $result = grep -P -- '^\h*restrict\h+((-4\h+)?|-6\h+)default\h+(?:[^#\n\r]+\h+)*(?!(?:\2|\3|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\3|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\3|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\3|\4))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h*(?:\h+\H+\h*)*(?:\h+#.*)?$' /etc/ntp.conf
+        $result = grep -P -- '^\h*(server|pool)\h+\H+' /etc/ntp.conf
         $wordsToCheck = "default", "kod", "nomodify", "notrap", "nopeer", "noquery"
         $pattern = "\b(" + ($wordsToCheck -join "|") + ")\b"
         if($result.Count -eq 2 -and $result[0] -match $pattern -and $result[1] -match $pattern){
@@ -2123,9 +2123,14 @@
     Id = "3.5.1.4"
     Task = "Ensure ufw loopback traffic is configured"
     Test = {
-        $result1 = ufw status verbose
-
-        if($result1 -match "enabled" -and $result2 -match "active" -and $result3 -match "Status: active"){
+        $test1 = ufw status verbose
+        $result1 = $test1 -match "^Anywhere on lo\s+ALLOW IN\s+Anywhere$"
+        $result2 = $test1 -match "^Anywhere\s+DENY IN\s+127.0.0.0/8$"
+        $result3 = $test1 -match "^Anywhere (v6) on lo\s+ALLOW IN\s+Anywhere (v6)$"
+        $result4 = $test1 -match "^Anywhere (v6)\s+DENY IN\s+::1$"
+        $result5 = $test1 -match "^Anywhere\s+ALLOW OUT\s+Anywhere on lo$"
+        $result6 = $test1 -match "^Anywhere (v6)\s+ALLOW OUT\s+Anywhere (v6) on lo$"
+        if($result1 -ne $null -and $result2 -ne $null -and $result3 -ne $null -and $result4 -ne $null -and $result5 -ne $null -and $result6 -ne $null){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -2854,8 +2859,25 @@
     Id = "4.1.4.1"
     Task = "Ensure audit log files are mode 0640 or less permissive"
     Test = {
-        $test = grep -Ph -- '^\h*-e\h+2\b' /etc/audit/rules.d/*.rules | tail -1
-        if($test -match "-e 2"){ 
+        $test = [ -f /etc/audit/auditd.conf ] && find "$(dirname $(awk -F "="'/^\s*log_file/ {print $2}' /etc/audit/auditd.conf | xargs))" -type f \( ! -perm 600 -a ! -perm 0400 -a ! -perm 0200 -a ! -perm 0000 -a ! -perm 0640 -a ! -perm 0440 -a ! -perm 0040 \) -exec stat -Lc "%n %#a" {} +
+        if($test -eq $null){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1.4.2"
+    Task = "Ensure only authorized users own audit log files"
+    Test = {
+        $test = [ -f /etc/audit/auditd.conf ] && find "$(dirname $(awk -F "="'/^\s*log_file/ {print $2}' /etc/audit/auditd.conf | xargs))" -type f ! -user root -exec stat -Lc "%n %U" {} +
+        if($test -eq $null){ 
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3219,7 +3241,7 @@
     Task = "Ensure journald is configured to send logs to rsyslog"
     Test = {
         $test1 = grep ^\s*ForwardToSyslog /etc/systemd/journald.conf
-        if($test1 -match "enabled"){ 
+        if($test1 -match "ForwardToSyslog=yes"){ 
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3900,6 +3922,23 @@
     }
 }
 [AuditTest] @{
+    Id = "5.3.1"
+    Task = "Ensure sudo is installed"
+    Test = {
+        $test = dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W - f='${binary:Package}\t${Status}\t${db:Status-Status}\n' sudo sudo-ldap | awk '($4=="installed" && $NF=="installed") {print "\n""PASS:""\n""Package ""\""$1"\""" is installed""\n"}' || echo -e "\nFAIL:\nneither \"sudo\" or \"sudo-ldap\" package is installed\n"
+        if(!($line -match "nodev")){
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "5.3.2"
     Task = "Ensure sudo commands use pty"
     Test = {
@@ -3920,8 +3959,60 @@
     Id = "5.3.3"
     Task = "Ensure sudo log file exists"
     Test = {
-        #todo
+        $test1 = grep -rPsi "^\h*Defaults\h+([^#]+,\h*)?logfile\h*=\h*(\"|\')?\H+(\"|\')?(,\h*\H+\h*)*\h* (#.*)?$" /etc/sudoers*
         if($test1 -match 'Defaults logfile="/var/log/sudo.log'){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.4"
+    Task = "Ensure users must provide password for privilege escalation"
+    Test = {
+        $test1 = grep -r "^[^#].*NOPASSWD" /etc/sudoers*
+        if($test1 -eq $null){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.5"
+    Task = "Ensure re-authentication for privilege escalation is not disabled globally"
+    Test = {
+        $test1 = grep -r "^[^#].*\!authenticate" /etc/sudoers*
+        if($test1 -match '!authenticate'){ 
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.3.6"
+    Task = "Ensure sudo authentication timeout is configured correctly"
+    Test = {
+        #todo
+        $test1 = grep -roP "timestamp_timeout=\K[0-9]*" /etc/sudoers*
+        if($test1 -match 'auth required pam_wheel.so use_uid group='){ 
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -3965,6 +4056,43 @@
         return @{
             Message = "Not-Compliant"
             Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.4"
+    Task = "Ensure password hashing algorithm is up to date with the latest standards"
+    Test = {
+        $test1 = grep -i "^\s*ENCRYPT_METHOD\s*yescrypt\s*$" /etc/login.defs
+        if($test1 -match 'ENCRYPT_METHOD yescrypt'){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.5"
+    Task = "Ensure all current passwords uses the configured hashing algorithm"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-5.4.5.sh"
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -4041,6 +4169,105 @@
     }
 }
 [AuditTest] @{
+    Id = "5.5.1.5"
+    Task = "Ensure all users last password change date is in the past"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-5.5.1.5.sh"
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.2"
+    Task = "Ensure system accounts are secured"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-5.5.2.sh"
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.3"
+    Task = "Ensure default group for the root account is GID 0"
+    Test = {
+        $test1 = grep "^root:" /etc/passwd | cut -f4 -d:
+        if($test1 -eq 0){ 
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.4"
+    Task = "Ensure default user umask is 027 or more restrictive"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-5.5.4.sh"
+        $result=grep -RPi '(^|^[^#]*)\s*umask\s+([0-7][0-7][01][0-7]\b|[0-7][0-7][0-7][0-6]\b|[0-7][01][0-7]\b|[0-7][0-7][0-6]\b|(u=[rwx]{0,3},)?(g=[rwx]{0,3},)?o=[rwx]+\b|(u=[rwx]{1,3},)?g=[^rx]{1,3}(,o=[rwx]{0,3})?\b)' /etc/login.defs /etc/profile* /etc/bash.bashrc*
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.5.5"
+    Task = "Ensure default user shell timeout is 900 seconds or less"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-5.5.5.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "6.1.1"
     Task = "Ensure permissions on /etc/passwd are configured"
     Test = {
@@ -4109,6 +4336,164 @@
     }
 }
 [AuditTest] @{
+    Id = "6.1.5"
+    Task = "Ensure permissions on /etc/shadow are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/shadow
+        if($test1 -eq "/etc/shadow 640 0/root 42/shadow"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.6"
+    Task = "Ensure permissions on /etc/shadow- are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/shadow-
+        if($test1 -eq "/etc/shadow 640 0/root 42/shadow-"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.7"
+    Task = "Ensure permissions on /etc/gshadow are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/gshadow
+        if($test1 -eq "/etc/gshadow 640 0/root 42/gshadow"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.8"
+    Task = "Ensure permissions on /etc/gshadow- are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/gshadow-
+        if($test1 -eq "/etc/gshadow- 640 0/root 42/shadow"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.9"
+    Task = "Ensure no world writable files exist"
+    Test = {
+        #$partitions = mapfile -t partitions < (sudo fdisk -l | grep -o '/dev/[^ ]*')
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.10"
+    Task = "Ensure no unowned files or directories exist"
+    Test = {
+        try{
+            $test1 = df --local -P | awk "{if (NR -ne 1) { print `$6 }}" | xargs -I '{}' find '{}' -xdev -nouser
+            if($test1 -eq $null){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }  
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.11"
+    Task = "Ensure no ungrouped files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -nogroup
+        if($test1 -eq $null){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.12"
+    Task = "Audit SUID executables"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -4000
+        $message = ""
+        foreach($line in $test1){
+            $message += "<br>$line"
+        }
+        return @{
+            Message = "Please review following list of files: $($message)"
+            Status = "None"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.1.13"
+    Task = "Audit SGID executables"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -2000
+        $message = ""
+        foreach($line in $test1){
+            $message += "<br>$line"
+        }
+        return @{
+            Message = "Please review following list of files: $($message)"
+            Status = "None"
+        }
+    }
+}
+[AuditTest] @{
     Id = "6.2.1"
     Task = "Ensure accounts in /etc/passwd use shadowed passwords"
     Test = {
@@ -4143,6 +4528,27 @@
     }
 }
 [AuditTest] @{
+    Id = "6.2.3"
+    Task = "Ensure all groups in /etc/passwd exist in /etc/group"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.3.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "6.2.4"
     Task = "Ensure shadow group is empty"
     Test = {
@@ -4161,6 +4567,111 @@
     }
 }
 [AuditTest] @{
+    Id = "6.2.5"
+    Task = "Ensure no duplicate UIDs exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.5.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.6"
+    Task = "Ensure no duplicate GIDs exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.6.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.7"
+    Task = "Ensure no duplicate user names exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.7.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.8"
+    Task = "Ensure no duplicate group names exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.8.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.9"
+    Task = "Ensure root PATH Integrity"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.9.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "6.2.10"
     Task = "Ensure root is the only UID 0 account"
     Test = {
@@ -4174,6 +4685,153 @@
         return @{
             Message = "Not-Compliant"
             Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.11"
+    Task = "Ensure local interactive user home directories exist"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.11.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.12"
+    Task = "Ensure local interactive users own their home directories"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.12.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.13"
+    Task = "Ensure local interactive user home directories are mode 750 or more restrictive"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.13.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.14"
+    Task = "Ensure no local interactive user has .netrc files"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.14.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.15"
+    Task = "Ensure no local interactive user has .forward files"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.15.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.16"
+    Task = "Ensure no local interactive user has .rhosts files"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.16.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "6.2.17"
+    Task = "Ensure local interactive user dot files are not group or world writable"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.17.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
+            }
+        }
+        return @{
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
