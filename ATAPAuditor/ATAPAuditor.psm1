@@ -593,7 +593,7 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-	Write-Verbose "Checking License status. This will take a while..."
+	Write-Host "Checking License status. This will take a while..."
 	$LicenseStatus = Get-LicenseStatus
 
 	$report = Invoke-ATAPReport -ReportName $ReportName 
