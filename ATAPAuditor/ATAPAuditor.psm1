@@ -558,9 +558,11 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
+	Write-Verbose "OS-Check"
 	if(-not([System.Environment]::OSVersion.Platform -eq 'Unix')){
 		#check Powershellversion and handle it
 		$psVersion = $PSVersionTable.PSVersion
+		Write-Verbose "PS-Check"
 		if ($psVersion.Major -ne 5) {
 			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
 			$in = Read-Host
