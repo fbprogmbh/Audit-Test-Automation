@@ -2,16 +2,16 @@
 	Title = "Debian 11 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"Security baseline for Debian"	
+		"CIS Debian 11, Version: 1.0.0, Date: 2022-09-22"
     )
 	Sections = @(
 		[ReportSection] @{
-			Title = "General Benchmarks"
-			Description = "This section contains the general benchmark results"
+			Title = "CIS Benchmarks"
+			Description = "This section contains all benchmarks from CIS"
 			SubSections = @(
 				[ReportSection] @{
-					Title = 'Security Base Data'
-					AuditInfos = Test-AuditGroup "Linux Security Base Data"
+					Title = 'CIS Recommendations'
+					AuditInfos = Test-AuditGroup "Debian Linux 11-CIS-1.0.0"
 				}
 			)
 		}
