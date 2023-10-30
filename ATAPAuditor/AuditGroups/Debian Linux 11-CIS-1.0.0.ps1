@@ -2859,16 +2859,20 @@
     Id = "4.1.4.1"
     Task = "Ensure audit log files are mode 0640 or less permissive"
     Test = {
-        $test = [ -f /etc/audit/auditd.conf ] && find "$(dirname $(awk -F "="'/^\s*log_file/ {print $2}' /etc/audit/auditd.conf | xargs))" -type f \( ! -perm 600 -a ! -perm 0400 -a ! -perm 0200 -a ! -perm 0000 -a ! -perm 0640 -a ! -perm 0440 -a ! -perm 0040 \) -exec stat -Lc "%n %#a" {} +
-        if($test -eq $null){ 
-            return @{
-                Message = "Compliant"
-                Status = "True"
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.4.1.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -2876,16 +2880,20 @@
     Id = "4.1.4.2"
     Task = "Ensure only authorized users own audit log files"
     Test = {
-        $test = [ -f /etc/audit/auditd.conf ] && find "$(dirname $(awk -F "="'/^\s*log_file/ {print $2}' /etc/audit/auditd.conf | xargs))" -type f ! -user root -exec stat -Lc "%n %U" {} +
-        if($test -eq $null){ 
-            return @{
-                Message = "Compliant"
-                Status = "True"
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.4.2.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -3959,16 +3967,20 @@
     Id = "5.3.3"
     Task = "Ensure sudo log file exists"
     Test = {
-        $test1 = grep -rPsi "^\h*Defaults\h+([^#]+,\h*)?logfile\h*=\h*(\"|\')?\H+(\"|\')?(,\h*\H+\h*)*\h* (#.*)?$" /etc/sudoers*
-        if($test1 -match 'Defaults logfile="/var/log/sudo.log'){ 
-            return @{
-                Message = "Compliant"
-                Status = "True"
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath+"/Helpers/ShellScripts/Debian_11/CIS-Debian-5.3.3.sh"
+        $result=bash $path
+        foreach($line in $result){
+            if(!($line -match "nodev")){
+                return @{
+                    Message = "Not-Compliant"
+                    Status = "False"
+                }
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status = "False"
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
@@ -4212,7 +4224,7 @@
     Id = "5.5.3"
     Task = "Ensure default group for the root account is GID 0"
     Test = {
-        $test1 = grep "^root:" /etc/passwd | cut -f4 -d:
+        $test1 = grep "^root:" /etc/passwd | cut -f4 -d ':'
         if($test1 -eq 0){ 
             return @{
                 Message = "Compliant"
