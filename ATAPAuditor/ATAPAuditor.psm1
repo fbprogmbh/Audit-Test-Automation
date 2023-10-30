@@ -256,7 +256,6 @@ function checkReportNameWithOSSystem {
 			return $false
 		}
 		if (-not(isOsNameSimilarToType -OsName $osName -OsType $osType)) {
-			Write-Host $osName + " " + $osType
 			return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName
 		}
 
