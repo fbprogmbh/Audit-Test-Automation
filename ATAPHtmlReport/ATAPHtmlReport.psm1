@@ -1422,7 +1422,7 @@ function Get-ATAPHtmlReport {
 							}
 							else{
 								if($RiskScore){
-									htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System:"}
+									htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score of tested System:"}
 									htmlElement 'h2' @{id = 'invalidOS'} {"N/A"}
 									htmlElement 'h3' @{} {'Risk Score calculation implemented for Microsoft Windows OS for now.'}
 									htmlElement 'div' @{id ='riskMatrixSummary'}{
@@ -1695,7 +1695,7 @@ function Get-ATAPHtmlReport {
 						htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 							htmlElement 'h1'@{} {"Risk Score"}
 							htmlElement 'p'@{} {"The risk scode allows you to get a quick overview of your system's security risk. The risk score is calculated through a quantity dimension (how many checks are positive) and a severity dimension (how severe are failed checks). The higher risk is used as the overall risk."}
-							htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk Score on tested System: "}
+							htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk Score of tested System: "}
 	
 							htmlElement 'div' @{id ='riskMatrixContainer'}{
 								htmlElement 'div' @{id='dotRiskScoreTab'}{}
@@ -1782,7 +1782,7 @@ function Get-ATAPHtmlReport {
 	
 	
 							htmlElement 'div' @{id ="severityCompliance"} {
-								htmlElement 'h2' @{}{'Details (see Security Base Data)'}
+								htmlElement 'h2' @{}{'Details'}
 								htmlElement 'p' @{id="complianceStatus"}{'Table Of Severity Rules'}
 								htmlElement 'span' @{class="sectionAction collapseButton"; id="severityComplianceCollapse"} {"-"}
 								htmlElement 'table' @{id = 'severityDetails'}{
