@@ -4,8 +4,7 @@
     dpkg-query -W chrony >/dev/null 2>&1 && l_chrony="y"
     dpkg-query -W ntp >/dev/null 2>&1 && l_ntp="y" || l_ntp=""
     systemctl list-units --all --type=service | grep -q 'systemd-
-timesyncd.service' && systemctl is-enabled systemd-timesyncd.service | grep -
-    q 'enabled' && l_sdtd="y"
+timesyncd.service' && systemctl is-enabled systemd-timesyncd.service | grep -q 'enabled' && l_sdtd="y"
     # ! systemctl is-enabled systemd-timesyncd.service | grep -q 'enabled' &&
     l_nsdtd="y" || l_nsdtd=""
     if [[ "$l_chrony" = "y" && "$l_ntp" != "y" && "$l_sdtd" != "y" ]]; then
@@ -17,8 +16,7 @@ timesyncd.service' && systemctl is-enabled systemd-timesyncd.service | grep -
     elif [[ "$l_chrony" != "y" && "$l_ntp" != "y" ]]; then
         if
             systemctl list-units --all --type=service | grep -q 'systemd-
-timesyncd.service' && systemctl is-enabled systemd-timesyncd.service | grep -
-            Eq '(enabled|disabled|masked)'
+timesyncd.service' && systemctl is-enabled systemd-timesyncd.service | grep -Eq '(enabled|disabled|masked)'
         then
             l_tsd="sdtd"
             output="$output\n- systemd-timesyncd is in use on the system"

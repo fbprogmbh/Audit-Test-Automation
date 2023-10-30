@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 {
     l_pkgoutput="" l_output="" l_output2=""
-    # Check if GNOME Desktop Manager is installed. If package isn't
-    installed, recommendation is Not Applicable\n
+    # Check if GNOME Desktop Manager is installed. If package isn't installed, recommendation is Not Applicable\n
     # determine system's package manager
     if command -v dpkg-query >/dev/null 2>&1; then
         l_pq="dpkg-query -W"

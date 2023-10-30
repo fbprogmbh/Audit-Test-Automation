@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 {
-    # Check if GNOME Desktop Manager is installed. If package isn't
-    installed, recommendation is Not Applicable\n
+    # Check if GNOME Desktop Manager is installed. If package isn't installed, recommendation is Not Applicable\n
     # determine system's package manager
     l_pkgoutput=""
     if command -v dpkg-query >/dev/null 2>&1; then
@@ -12,22 +11,14 @@
     # Check if GDM is installed
     l_pcl="gdm gdm3" # Space seporated list of packages to check
     for l_pn in $l_pcl; do
-        $l_pq "$l_pn" >/dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n -
-Package: \"$l_pn\" exists on the system\n - checking configuration"
+        $l_pq "$l_pn" >/dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n -Package: \"$l_pn\" exists on the system\n - checking configuration"
     done
     # Check configuration (If applicable)
     if [ -n "$l_pkgoutput" ]; then
         l_output="" l_output2=""
-        # Look for idle-delay to determine profile in use, needed for remaining
-        tests
-        l_kfd="/etc/dconf/db/$(grep -Psril '^\h*automount\b' /etc/dconf/db/*/ |
-            awk -F'/' '{split($(NF-1),a,".");print a[1]}').d" #set directory of key file
-        to be locked
-        l_kfd2="/etc/dconf/db/$(
-            grep -Psril '^\h*automount-open\b'
-            /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}'
-        ).d" #set
-        directory of key file to be locked
+        # Look for idle-delay to determine profile in use, needed for remaining tests
+        l_kfd="/etc/dconf/db/$(grep -Psril '^\h*automount\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d" #set directory of key file to be locked
+        l_kfd2="/etc/dconf/db/$(grep -Psril '^\h*automount-open\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}' ).d" #set directory of key file to be locked
         if [ -d "$l_kfd" ]; then # If key file directory doesn't exist, options can't be locked
             if
                 grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount\b'
