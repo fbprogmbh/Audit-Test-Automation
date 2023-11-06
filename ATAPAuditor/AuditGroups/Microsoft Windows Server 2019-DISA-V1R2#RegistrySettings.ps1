@@ -885,7 +885,7 @@
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
-            if ($regValue -ne 0) {
+            if (($regValue -ne 0) -and ($regValue -ne 1)) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
