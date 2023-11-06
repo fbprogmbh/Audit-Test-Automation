@@ -2304,7 +2304,7 @@
     Task = "The Windows SMB server must be configured to always perform SMB packet signing."
     Test = {
             try {
-                if((Get-SmbServerConfiguration).RequireSecuritySignature -ne $True){
+                if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
                     return @{
                         Message = "RequireSecuritySignature is not set to True"
                         Status = "False"
@@ -2389,7 +2389,7 @@
     Task = "The Windows SMB server must perform SMB packet signing when possible."
     Test = {
         try {
-            if((Get-SmbServerConfiguration).EnableSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).EnableSecuritySignature -ne $True){
                 return @{
                     Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
