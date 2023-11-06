@@ -53,9 +53,18 @@ else{
                     -Name "AllowTelemetry" `
                     | Select-Object -ExpandProperty "AllowTelemetry"
             
-                if ($regValue -ne 1) {
+                $saferClients = @("*Server*","*Education*","*Enterprise*")
+                $productname = Get-ComputerInfo | select -ExpandProperty OsName
+                if (($productname -notcontains $saferClients) -and ($regValue -eq 1)){
                     return @{
-                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                        Status = "Warning"
+                    }
+                }
+    
+                if ($regValue -ne 0) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 0"
                         Status = "False"
                     }
                 }
