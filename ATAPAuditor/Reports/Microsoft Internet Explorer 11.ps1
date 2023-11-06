@@ -13,7 +13,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 11-CIS-1.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Internet Explorer 11-CIS-1.0.0#RegistrySettings"
 				}
 			)
 		}
@@ -23,7 +23,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 11-DISA-V1R16#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Internet Explorer 11-DISA-V1R16#RegistrySettings"
 				}
 			)
 		}
@@ -33,7 +33,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Internet Explorer 11-MS-2004#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Internet Explorer 11-MS-2004#RegistrySettings"
 				}
 			)
 		}

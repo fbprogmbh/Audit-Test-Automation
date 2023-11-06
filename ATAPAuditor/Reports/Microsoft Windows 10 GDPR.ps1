@@ -14,7 +14,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Telemetry"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
 				}
 			)
 		}
@@ -24,7 +24,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 GDPR-MS-16082019#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10 GDPR-MS-16082019#RegistrySettings"
 				}
 			)
 		}

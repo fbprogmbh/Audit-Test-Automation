@@ -16,27 +16,27 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-DISA-V1R2#RegistrySettings"
 				},
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R2#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-DISA-V1R2#UserRights"
 				},
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R2#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-DISA-V1R2#AccountPolicies"
 				},
 				[ReportSection] @{
 					Title = "Windows Features"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R2#WindowsFeatures"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-DISA-V1R2#WindowsFeatures"
 				},
 				[ReportSection] @{
 					Title = "File System Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R2#FileSystemPermissions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-DISA-V1R2#FileSystemPermissions"
 				},
 				[ReportSection] @{
 					Title = "Registry Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R2#RegistryPermissions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-DISA-V1R2#RegistryPermissions"
 				}
 			)
 		}
@@ -46,23 +46,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-CIS-2.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-CIS-2.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019-CIS-2.0.0#AuditPolicies"
 				}
 			)
 		}
@@ -72,19 +72,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019 DC-Microsoft-FINAL#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019 DC-Microsoft-FINAL#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019 DC-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2019 DC-Microsoft-FINAL#AuditPolicies"
 				}
 			)
 		}

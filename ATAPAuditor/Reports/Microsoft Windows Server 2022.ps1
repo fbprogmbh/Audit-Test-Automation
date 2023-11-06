@@ -16,19 +16,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-CIS-2.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-CIS-2.0.0#AuditPolicies"
 				}
 			)
 		}
@@ -38,23 +38,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-Microsoft-FINAL#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-Microsoft-FINAL#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-Microsoft-FINAL#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-Microsoft-FINAL#SecurityOptions"
 				}
 			)
 		}
@@ -64,19 +64,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-DISA-1.1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-DISA-1.1#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-DISA-1.1#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2022-DISA-1.1#SecurityOptions"
 				}
 			)
 		}

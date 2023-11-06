@@ -12,15 +12,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 7-CIS-3.1.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 7-CIS-3.1.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 7-CIS-3.1.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 7-CIS-3.1.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 7-CIS-3.1.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 7-CIS-3.1.0#AuditPolicies"
 				}
 			)
 		}

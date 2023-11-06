@@ -18,27 +18,27 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows 10-CIS-2.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-CIS-2.0.0#AccountPolicies"
 				}
 				# [ReportSection] @{
 				# 	Title = 'Windows Firewall with Advanced Security'
-				# 	AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.8.1#FirewallProfileSettings"
+				# 	AuditInfos = Test-AuditGroup "MS Windows 10-CIS-1.8.1#FirewallProfileSettings"
 				# }
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows 10-CIS-2.0.0#SecurityOptions"
 				}
 			)
 		}
@@ -48,19 +48,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10-Microsoft-21H1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows 10-Microsoft-21H1#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-Microsoft-21H1#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-Microsoft-21H1#AuditPolicies"
 				}
 			)
 		}
@@ -70,23 +70,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10-DISA-1.23#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows 10-DISA-1.23#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-DISA-1.23#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-DISA-1.23#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows 10-DISA-1.23#SecurityOptions"
 				}
 			)
 		}
@@ -96,23 +96,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-ACSC-21H1#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10-ACSC-21H1#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10-ACSC-21H1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows 10-ACSC-21H1#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-ACSC-21H1#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows 10-ACSC-21H1#UserRights"
 				}
 			)
 		}
@@ -122,11 +122,11 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS Logging-BSI-1.3#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS Logging-BSI-1.3#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS Logging-BSI-1.3#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS Logging-BSI-1.3#AuditPolicies"
 				}
 			)
 		}
@@ -150,19 +150,19 @@
 				SubSections = @(
 					[ReportSection] @{
 						Title = 'Registry Settings/Group Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#RegistrySettings"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS HD-BSI-1.3#RegistrySettings"
 					}
 					[ReportSection] @{
 						Title = 'User Rights Assignment'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#UserRights"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS HD-BSI-1.3#UserRights"
 					}
 					[ReportSection] @{
 						Title = 'Account Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#AccountPolicies"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS HD-BSI-1.3#AccountPolicies"
 					}
 					[ReportSection] @{
 						Title = 'Security Options'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
 					}
 				)
 			}
@@ -172,19 +172,19 @@
 				SubSections = @(
 					[ReportSection] @{
 						Title = 'Registry Settings/Group Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
 					}
 					[ReportSection] @{
 						Title = 'User Rights Assignment'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
 					}
 					[ReportSection] @{
 						Title = 'Account Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
 					}
 					[ReportSection] @{
 						Title = 'Security Options'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
+						AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
 					}
 				)
 			}
@@ -195,7 +195,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
 				}
 			)
 		}

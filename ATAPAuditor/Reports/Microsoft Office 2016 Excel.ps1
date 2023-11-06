@@ -9,7 +9,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016 Excel-DISA-V1R2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016 Excel-DISA-V1R2#RegistrySettings"
 				}
 			)
 		}

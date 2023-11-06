@@ -16,31 +16,31 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-DISA-V1R6#RegistrySettings"
 				},
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-DISA-V1R6#UserRights"
 				},
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-DISA-V1R6#AccountPolicies"
 				},
 				[ReportSection] @{
 					Title = "Windows Features"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#WindowsFeatures"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-DISA-V1R6#WindowsFeatures"
 				},
 				[ReportSection] @{
 					Title = "File System Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#FileSystemPermissions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-DISA-V1R6#FileSystemPermissions"
 				},
 				[ReportSection] @{
 					Title = "Registry Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-DISA-V1R6#RegistryPermissions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-DISA-V1R6#RegistryPermissions"
 				}#,
 				# [ReportSection] @{
 				# 	Title = "Other"
-				# 	AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-#Other"
+				# 	AuditInfos = Test-AuditGroup "MS Windows Server 2016-DISA-#Other"
 				# }
 			)
 		}
@@ -50,23 +50,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016-CIS-2.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016-CIS-2.0.0#UserRights"
 				}
 			)
 		}
@@ -76,19 +76,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-Microsoft-FINAL#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-Microsoft-FINAL#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2016 DC-Microsoft-FINAL#AuditPolicies"
 				}
 			)
 		}

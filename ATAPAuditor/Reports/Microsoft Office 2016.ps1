@@ -16,23 +16,23 @@
 			subsections = @(
 				[ReportSection] @{
 					Title = "Microsoft Excel 2016 DISA Recommendations"
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016 Excel-DISA-V1R2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016 Excel-DISA-V1R2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Microsoft Outlook 2016 DISA Recommendations"
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016 Outlook-DISA-V1R2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016 Outlook-DISA-V1R2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Microsoft PowerPoint 2016 DISA Recommendations"
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016 PowerPoint-DISA-V1R1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016 PowerPoint-DISA-V1R1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Microsoft Skype for Business 2016 DISA Recommendations"
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016 SkypeForBusiness-DISA-V1R1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016 SkypeForBusiness-DISA-V1R1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Microsoft Word 2016 DISA Recommendations"
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016 Word-DISA-V1R1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016 Word-DISA-V1R1#RegistrySettings"
 				}
 			)
 		}
@@ -42,7 +42,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'CIS Microsoft Office 2016'
-					AuditInfos = Test-AuditGroup "Microsoft Office 2016-CIS-1.1.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Office 2016-CIS-1.1.0#RegistrySettings"
 				}
 			)
 		}

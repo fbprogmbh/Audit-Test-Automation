@@ -15,19 +15,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-CIS-2.6.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#UserRights"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-CIS-2.6.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-CIS-2.6.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-CIS-2.6.0#AuditPolicies"
 				}
 			)
 		}
@@ -38,15 +38,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#RegistrySettings"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-DISA-2.19#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#AccountPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-DISA-2.19#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#AuditPolicies"
+					AuditInfos = Test-AuditGroup "MS Windows Server 2012 R2-DISA-2.19#AuditPolicies"
 				}
 			)
 		}
