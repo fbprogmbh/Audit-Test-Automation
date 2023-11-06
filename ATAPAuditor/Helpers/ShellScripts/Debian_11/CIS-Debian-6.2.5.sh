@@ -1,4 +1,5 @@
 #!/bin/bash
+
 cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read x; do
     [ -z "$x" ] && break
     set - $x
