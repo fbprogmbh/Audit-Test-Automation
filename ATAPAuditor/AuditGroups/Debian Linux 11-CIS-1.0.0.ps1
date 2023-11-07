@@ -723,7 +723,8 @@
     Id   = "1.4.3"
     Task = "Ensure authentication required for single user mode"
     Test = {
-        $result = grep -Eq '^root:\$[0-9]' /etc/shadow || echo "root is locked"
+        $command = "grep -Eq '^root:\$[0-9]' /etc/shadow || echo 'root is locked'"
+        $result = bash -c $command
         if ($result -eq $null) {
             return @{
                 Message = "Compliant"
@@ -741,14 +742,17 @@
     Id   = "1.5.1"
     Task = "Ensure address space layout randomization (ASLR) is enabled"
     Test = {
-        $result = grep -Eq '^root:\$[0-9]' /etc/shadow || echo "root is locked"
-        if ($result -eq $null) {
-            return @{
-                Message = "Compliant"
-                Status  = "True"
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $path = $parentPath + "/Helpers/ShellScripts/Debian_11/CIS-Debian-1.5.1.sh"
+        $result = bash $path
+        foreach ($line in $result) {
+            if (!($line -match "PASS")) {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
             }
         }
-
         return @{
             Message = "Not-Compliant"
             Status  = "False"
@@ -776,7 +780,8 @@
     Id   = "1.5.3"
     Task = "Ensure Automatic Error Reporting is not enabled"
     Test = {
-        $result1 = dpkg-query -s apport > /dev/null 2>&1 && grep -Psi --'^\h*enabled\h*=\h*[^0]\b' /etc/default/apport
+        $command = "dpkg-query -s apport > /dev/null 2>&1 && grep -Psi --'^\h*enabled\h*=\h*[^0]\b' /etc/default/apport"
+        $result1 = bash -c $command
         $result2 = systemctl is-active apport.service | grep '^active'
         if ($result1 -eq $null -and $result2 -eq $null) {
             return @{
@@ -2835,10 +2840,10 @@
     Task = "Ensure changes to system administration scope (sudoers) is collected"
     Test = {
         try {
-            $res1 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules | grep "-w /etc/sudoers -p wa -k scope"
-            $res2 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules | grep "-w /etc/sudoers.d -p wa -k scope"
-            $res3 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep "-w /etc/sudoers -p wa -k scope"
-            $res4 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep "-w /etc/sudoers.d -p wa -k scope"
+            $res1 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules | grep -- "-w /etc/sudoers -p wa -k scope"
+            $res2 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules | grep -- "-w /etc/sudoers.d -p wa -k scope"
+            $res3 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep -- "-w /etc/sudoers -p wa -k scope"
+            $res4 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep -- "-w /etc/sudoers.d -p wa -k scope"
             if ($res1 -ne $null -and $res2 -ne $null -and $res3 -ne $null -and $res4 -ne $null) {
                 return @{
                     Message = "Compliant"
@@ -2862,8 +2867,8 @@
     Id   = "4.1.3.2"
     Task = "Ensure actions as another user are always logged"
     Test = {
-        $test1 = awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) \ &&(/ -C *euid!=uid/||/ -C *uid!=euid/) \ &&/ -S *execve/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) \ &&(/ -C *euid!=uid/||/ -C *uid!=euid/) \ &&/ -S *execve/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test2 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
         if ($test1 -match "-a always,exit -F arch=b64 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $test1 -match "-a always,exit -F arch=b32 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $test2 -match "-a always,exit -F arch=b64 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation" -and $test2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation") {
             return @{
                 Message = "Compliant"
@@ -2880,8 +2885,14 @@
     Id   = "4.1.3.3"
     Task = "Ensure events that modify the sudo log file are collected"
     Test = {
-        $test1 = { SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n" }
-        $test2 = { SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n" }
+        $command1 = @'
+SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
+'@
+        $command2 = @'
+SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
+'@
+        $test1 = bash -c $command1
+        $test2 = bash -c $command2
         if ($test1 -match "-w /var/log/sudo.log -p wa -k sudo_log_file" -and $test2 -match "-w /var/log/sudo.log -p wa -k sudo_log_file") {
             return @{
                 Message = "Compliant"
@@ -2916,10 +2927,10 @@
     Id   = "4.1.3.5"
     Task = "Ensure events that modify the system's network environment are collected"
     Test = {
-        $test1 = awk '/^ *-a *always,exit/ \ &&/ -F *arch=b(32|64)/ \ &&/ -S/ \ &&(/sethostname/ \ ||/setdomainname/) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
         $test2 = awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $test3 = auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b(32|64)/ \ &&/ -S/ \ &&(/sethostname/ \ ||/setdomainname/) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
-        $test4 = auditctl -l | awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $test3 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
         if ($test1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday clock_settime -k time-change" -and $test1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $test1 -match "-w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $test2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday clock_settime -F key=time-change" -and $test3 -match "-w /etc/localtime -p wa -k time-change") {
             return @{
                 Message = "Compliant"
@@ -3098,8 +3109,11 @@
     Id   = "4.1.4.1"
     Task = "Ensure audit log files are mode 0640 or less permissive"
     Test = {
-        $test = stat -Lc "%n %a" "$(dirname $( awk -F"=" '/^\s*log_file\s*=\s*/ {print $2}' /etc/audit/auditd.conf | xargs))"/* | grep -v '[0,2,4,6][0,4]0'
-        if ($test -eq $null) {
+        $command = @'
+dir=$(awk -F= '/^log_file/ {print $2}' /etc/audit/auditd.conf | xargs dirname) && [ $(stat -c "%a" "$dir") -le 640 ] && echo "PASS: Directory permissions are 0640 or less permissive" || echo "FAIL: Directory permissions are more permissive"
+'@
+        $result = bash -c $command
+        if ($result -match " PASS ") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -3167,9 +3181,10 @@
     Id   = "4.1.4.5"
     Task = "Ensure audit configuration files are 640 or more restrictive"
     Test = {
-        $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath + "/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.4.5.sh"
-        $test1 = bash $path
+        $command = @'
+        find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) -exec stat -Lc "%n %a" {} + | grep -Pv -- '^\h*\H+\h*([0,2,4,6][0,4]0)\h*$'
+'@
+        $test1 = bash -c $command
         if ($test1 -eq $null) { 
             return @{
                 Message = "Compliant"
@@ -3186,9 +3201,10 @@
     Id   = "4.1.4.6"
     Task = "Ensure audit configuration files are owned by root"
     Test = {
-        $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath + "/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.4.6.sh"
-        $test1 = bash $path
+        $command = @'
+find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -user root
+'@
+        $test1 = bash -c $command
         if ($test1 -eq $null) { 
             return @{
                 Message = "Compliant"
@@ -3205,9 +3221,10 @@
     Id   = "4.1.4.7"
     Task = "Ensure audit configuration files belong to group root"
     Test = {
-        $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath + "/Helpers/ShellScripts/Debian_11/CIS-Debian-4.1.4.7.sh"
-        $test1 = bash $path
+        $command = @'
+find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
+'@
+        $test1 = bash -c $command
         if ($test1 -eq $null) { 
             return @{
                 Message = "Compliant"
@@ -3529,8 +3546,8 @@
     Id   = "4.2.2.7"
     Task = "Ensure rsyslog is not configured to receive logs from a remote client"
     Test = {
-        $test1 = grep '$ModLoad imtcp' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
-        $test2 = grep '$InputTCPServerRun' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        $test1 = grep -s '$ModLoad imtcp' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        $test2 = grep -s '$InputTCPServerRun' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
         if ($test1 -eq $null -and $test2 -eq $null) { 
             return @{
                 Message = "Compliant"
@@ -4226,7 +4243,10 @@
     Id   = "5.3.1"
     Task = "Ensure sudo is installed"
     Test = {
-        $test1 = dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' sudo sudo-ldap | awk '($4=="installed" && $NF=="installed") {print "\n""PASS:""\n""Package ""\""$1"\""" is installed""\n"}' || echo -e "\nFAIL:\nneither \"sudo\" or \"sudo-ldap\" package is installed\n"
+        $command = @'
+dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' sudo sudo-ldap | awk '($4=="installed" && $NF=="installed") {print "\n""PASS:""\n""Package ""\""$1"\""" is installed""\n"}' || echo -e "\nFAIL:\nneither \"sudo\" or \"sudo-ldap\" package is installed\n"
+'@
+        $test1 = bash -c $command
         if ($test1 -match "PASS:") {
             return @{
                 Message = "Compliant"
@@ -4260,21 +4280,23 @@
     Id   = "5.3.3"
     Task = "Ensure sudo log file exists"
     Test = {
-        $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath + "/Helpers/ShellScripts/Debian_11/CIS-Debian-5.3.3.sh"
-        $result = bash $path
-        foreach ($line in $result) {
-            if (!($line -match "PASS")) {
-                return @{
-                    Message = "Compliant"
-                    Status  = "True"
-                }
+        $command = @'
+        grep -rPsi "^\h*Defaults\h+([^#]+,\h*)?logfile\h*=\h*(\"|\')?\H+(\"|\')?(,\h*\H+\h*)*\h* (#.*)?$" /etc/sudoers*
+'@
+        $test1 = bash -c $command
+
+        if ($test1 -eq $null) { 
+            return @{
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "Compliant"
+            Status  = "True"
         }
+
+       
     }
 }
 [AuditTest] @{
@@ -4441,7 +4463,7 @@
     Id   = "5.5.1.3"
     Task = "Ensure password expiration warning days is 7 or more"
     Test = {
-        $test1 = grep PASS_WARN_AGE /etc/login.defs | cut -d ' ' -f 2
+        $test1 = grep PASS_WARN_AGE /etc/login.defs | cut -d ' ' -f2
         if ($test1 -ge 7) {
             return @{
                 Message = "Compliant"
@@ -4458,7 +4480,7 @@
     Id   = "5.5.1.4"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d '=' -2
+        $test1 = useradd -D | grep INACTIVE | cut -d '=' -f2
         if ($test1 -le 30) {
             return @{
                 Message = "Compliant"
@@ -4495,7 +4517,7 @@
     Task = "Ensure system accounts are secured"
     Test = {
         $test1 = awk -F: '$1!~/(root|sync|shutdown|halt|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!~/((\/usr)?\/sbin\/nologin)/ && $7!~/(\/bin)?\/false/ {print}' /etc/passwd
-        $test2 = awk -F: '($1!~/(root|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}'/etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!~/LK?/) {print $1}'
+        $test2 = awk -F: '($1!~/(root|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!~/LK?/) {print $1}'
         if ($test1 -eq $null -and $test2 -eq $null) {
             return @{
                 Message = "Compliant"
@@ -4725,7 +4747,7 @@
     Task = "Ensure no unowned files or directories exist"
     Test = {
         try {
-            $test1 = df --local -P | awk "{if (NR -ne 1) { print `$6 }}" | xargs -I '{}' find '{}' -xdev -nouser
+            $test1 = df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser
             if ($test1 -eq $null) {
                 return @{
                     Message = "Compliant"
