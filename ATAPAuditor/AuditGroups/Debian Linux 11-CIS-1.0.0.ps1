@@ -2157,16 +2157,24 @@
     Id   = "3.5.1.1"
     Task = "Ensure ufw is installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
-        if ($result -match "ufw\s+install ok installeds\+installed") {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "False") {
+            $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
+            if ($result -match "ufw\s+install ok installeds\+installed") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "nftables installed instead "
+            Status  = "None"
         }
     }
 }
@@ -2191,6 +2199,14 @@
     Id   = "3.5.1.3"
     Task = "Ensure ufw service is enabled"
     Test = {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            return @{
+                Message = "nftables installed instead "
+                Status  = "None"
+            }
+        }
         $result1 = systemctl is-enabled ufw.service
         $result2 = systemctl is-active ufw
         $result3 = ufw status
@@ -2211,6 +2227,14 @@
     Id   = "3.5.1.4"
     Task = "Ensure ufw loopback traffic is configured"
     Test = {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            return @{
+                Message = "nftables installed instead "
+                Status  = "None"
+            }
+        }
         $test1 = ufw status verbose
         $result1 = $test1 -match "^Anywhere on lo\s+ALLOW IN\s+Anywhere$"
         $result2 = $test1 -match "^Anywhere\s+DENY IN\s+127.0.0.0/8$"
@@ -2234,6 +2258,14 @@
     Id   = "3.5.1.5"
     Task = "Ensure ufw outbound connections are configured"
     Test = {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            return @{
+                Message = "nftables installed instead "
+                Status  = "None"
+            }
+        }
         return @{
             Message = "Run the following command and verify all rules for new outbound connections match site policy: ufw status numbered"
             Status  = "None"
@@ -2244,6 +2276,14 @@
     Id   = "3.5.1.6"
     Task = "Ensure ufw firewall rules exist for all open ports"
     Test = {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            return @{
+                Message = "nftables installed instead "
+                Status  = "None"
+            }
+        }
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath + "/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.5.1.6.sh"
         $result = bash $path
@@ -2263,6 +2303,16 @@
     Id   = "3.5.1.7"
     Task = "Ensure ufw default deny firewall policy"
     Test = {
+
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            return @{
+                Message = "nftables installed instead "
+                Status  = "None"
+            }
+        }
+
         $result = ufw status verbose | grep Default:
 
         if ($result -match "Default: (deny|reject|disabled) (incoming), (deny|reject|disabled) (outgoing), (deny|reject|disabled) (routed)") {
@@ -2298,11 +2348,8 @@
     Id   = "3.5.2.2"
     Task = "Ensure ufw is uninstalled or disabled with nftables"
     Test = {
-        
         $testnft = dpkg-query -s nftables 
         $statusnft = $?
-
-
         if ($statusnft -match "True") {
             $testufw = dpkg-query -s ufw | grep 'Status: install ok installed'
             $statusufw = $?
@@ -2514,36 +2561,72 @@
     Id   = "3.5.3.1.2"
     Task = "Ensure nftables is not installed with iptables"
     Test = {
-        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' nftables
-        if ($test1 -match "nftables\s+unknown ok not-installed\s+not-installed") {
-            return @{
+
+        $testipt = dpkg-query -s iptables | grep 'Status: install ok installed'
+        $statusipt = $?
+        $testnft = dpkg-query -s nftables | grep 'Status: install ok installed'
+        $statusnft = $?
+
+        if ($statusipt -match "True") {
+            if ($statusnft -match "True") {
+                $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' nftables
+                if ($test1 -match "nftables\s+unknown ok not-installed\s+not-installed") {
+                    return @{
+                        Message = "Compliant"
+                        Status  = "True"
+                    }
+                }
+                return @{
+                    Message = "Not-Compliant"
+                    Status  = "False"
+                }
+            } return @{
                 Message = "Compliant"
                 Status  = "True"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "iptables not installed "
+            Status  = "None"
         }
     }
 }
 [AuditTest] @{
     Id   = "3.5.3.1.3"
+
     Task = "Ensure ufw is uninstalled or disabled with iptables"
     Test = {
-        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
-        $test2 = ufw status
-        $test3 = systemctl is-enabled ufw
-        if ($test1 -match "ufw\s+unknown ok not-installed\s+not-installed" -and $test2 -match "Status: inactive" -and $test3 -match "masked") {
-            return @{
+
+        $testipt = dpkg-query -s iptables | grep 'Status: install ok installed'
+        $statusipt = $?
+        $testufw = dpkg-query -s ufw | grep 'Status: install ok installed'
+        $statusufw = $?
+
+        if ($statusipt -match "True") {
+            if ($statusufw -match "True") {
+                $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
+                $test2 = ufw status
+                $test3 = systemctl is-enabled ufw
+                if ($test1 -match "ufw\s+unknown ok not-installed\s+not-installed" -and $test2 -match "Status: inactive" -and $test3 -match "masked") {
+                    return @{
+                        Message = "Compliant"
+                        Status  = "True"
+                    }
+                }
+                return @{
+                    Message = "Not-Compliant"
+                    Status  = "False"
+                }
+            } return @{
                 Message = "Compliant"
                 Status  = "True"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "iptables not installed "
+            Status  = "None"
         }
+
     }
 }
 [AuditTest] @{
@@ -4323,7 +4406,7 @@
     Id   = "5.5.1.1"
     Task = "Ensure minimum days between password changes is configured"
     Test = {
-        $test1 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
+        $test1 = grep -E '^[[:space:]]*PASS_MIN_DAYS[[:space:]]+' /etc/login.defs | grep -v '^#'
         if ($test1 -ge 1) {
             return @{
                 Message = "Compliant"
