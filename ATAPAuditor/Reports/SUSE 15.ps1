@@ -11,7 +11,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'CIS SUSE Linux 15'
-					AuditInfos = Test-AuditGroup "SUSE Linux 15-CIS-1.1.1"
+					AuditInfos = Test-AuditGroup "SUSE Linux Enterprise 15-CIS-1.1.1"
 				}
 			)
 		}
