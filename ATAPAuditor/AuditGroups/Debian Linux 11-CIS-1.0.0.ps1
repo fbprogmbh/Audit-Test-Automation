@@ -4445,9 +4445,9 @@ dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Pack
     Id   = "5.5.1.2"
     Task = "Ensure password expiration is 365 days or less"
     Test = {
-        $test1 = grep PASS_MAX_DAYS /etc/login.defs
+        $test1 = awk '/^PASS_MAX_DAYS/ && $2 <= 365 {print "true"; exit}' /etc/login.defs
         $test2 = awk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
-        if ($test1 -match 'PASS_MAX_DAYS 365' -and $test2 -match "No .* should be returned") { 
+        if ($test1 -match 'true' -and $test2 -eq $null) { 
             return @{
                 Message = "Compliant"
                 Status  = "True"
