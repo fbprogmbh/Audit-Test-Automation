@@ -17,8 +17,8 @@ ATAPAuditor:\
 			<td>
 
 
-AuditTAP Release 5.6:\
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/archive/refs/tags/v5.6.zip)
+AuditTAP Release 5.6.3:\
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.6.3)
 			</td>
 		</tr>
 	</table>
@@ -125,6 +125,7 @@ Debian 10 | - | - | - | - | - | Base
 Fedora 35 | - | - | - | - | - | Base
 Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
 Ubuntu 20.04 | - | 1.1.0 | - | - | - | Base
+Ubuntu 22.04 | - | 1.0.0 | - | - | - | Base
 
 
 
@@ -191,6 +192,10 @@ Import-Module -Name ATAPAuditor
 ```
 
 By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark. Append `-Path` to specify output folder.
+
+:exclamation: 
+ATAP is only compatible with PowerShell 5. When run in a different PowerShell version, the user will be prompted to open a PowerShell 5 console or stop the script.
+:exclamation: 
 
 **Examples:**
 ```PowerShell
