@@ -126,6 +126,7 @@ Fedora 35 | - | - | - | - | - | Base
 Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
 Ubuntu 20.04 | - | 1.1.0 | - | - | - | Base
 Ubuntu 22.04 | - | 1.0.0 | - | - | - | Base
+Debian 11 | - | 1.0.0 | - | - | - | Base
 
 
 
