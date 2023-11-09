@@ -12,6 +12,8 @@ $retNonCompliant = @{
     Status = $rcFalse
 }
 
+### Chapter 1 - Initial Setup
+
 [AuditTest] @{
     Id = "1.1.1.1"
     Task = "Ensure mounting of squashfs filesystems is disabled"
@@ -697,3 +699,349 @@ $retNonCompliant = @{
         }
     }
 }
+
+### Chapter 2 - Services
+
+[AuditTest] @{
+    Id = "2.1.1"
+    Task = "Ensure xinetd is not installed"
+    Test = {
+        $result = rpm -q xinetd
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.1.1"
+    Task = "Ensure time synchronization is in use"
+    Test = {
+        $result = rpm -q chrony
+        if($result -match "chrony-"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.1.2"
+    Task = "Ensure systemd-timesyncd is configured"
+    Test = {
+        $result = systemctl is-enabled systemd-timesyncd.service
+        if($result -match "enabled"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.1.3"
+    Task = "Ensure chrony is configured"
+    Test = {
+        $result1 = grep -E "^(server|pool)" /etc/chrony.conf
+        $result2 = grep ^OPTIONS /etc/sysconfig/chronyd
+        if($result1 -match "server " && $result2 -match "-u chrony"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.2"
+    Task = "Ensure X11 Server components are not installed"
+    Test = {
+        $result = rpm -qa xorg-x11-server*
+        if($result -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.4"
+    Task = "Ensure CUPS is not installed"
+    Test = {
+        $result = rpm -q cups
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.5"
+    Task = "Ensure DHCP Server is not installed"
+    Test = {
+        $result = rpm -q dhcp
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.6"
+    Task = "Ensure LDAP server is not installed"
+    Test = {
+        $result = rpm -q openldap2
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.7"
+    Task = "Ensure nfs-utils is not installed or the nfs-server service is masked"
+    Test = {
+        $result1 = rpm -q nfs-utils
+        $result2 = rpm -q nfs-kernel-server
+        if($result1 -match "not installed" && $result2 -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.8"
+    Task = "Ensure rpcbind is not installed or the rpcbind services are masked"
+    Test = {
+        $result = rpm -q rpcbind
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.9"
+    Task = "Ensure DNS Server is not installed"
+    Test = {
+        $result = rpm -q bind
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.10"
+    Task = "Ensure FTP Server is not installed"
+    Test = {
+        $result = rpm -q vsftpd
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.11"
+    Task = "Ensure HTTP Server is not installed"
+    Test = {
+        $result = rpm -q apache2
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.12"
+    Task = "Ensure HTTP Server is not installed"
+    Test = {
+        $result = rpm -q dovecot
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.13"
+    Task = "Ensure Samba is not installed"
+    Test = {
+        $result = rpm -q samba
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.14"
+    Task = "Ensure HTTP Proxy Server is not installed"
+    Test = {
+        $result = rpm -q squid
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.15"
+    Task = "Ensure net-snmp is not installed"
+    Test = {
+        $result = rpm -q net-snmp
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.16"
+    Task = "Ensure mail transfer agent is configured for local-only mode"
+    Test = {
+        $result = ss -lntu | grep -E ':25\s' | grep -E -v '\s(127.0.0.1|\[?::1\]?):25\s'
+        if($result -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.17"
+    Task = "Ensure rsync is not installed or the rsyncd service is masked"
+    Test = {
+        $result = rpm -q rsync
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.18"
+    Task = "Ensure NIS server is not installed"
+    Test = {
+        $result = rpm -q ypserv
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.19"
+    Task = "Ensure telnet-server is not installed"
+    Test = {
+        $result = rpm -q telnet-server
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.1"
+    Task = "Ensure NIS Client is not installed"
+    Test = {
+        $result = rpm -q ypbind
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.2"
+    Task = "Ensure rsh client is not installed"
+    Test = {
+        $result = rpm -q rsh
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.3"
+    Task = "Ensure talk client is not installed"
+    Test = {
+        $result = rpm -q talk
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.4"
+    Task = "Ensure telnet client is not installed"
+    Test = {
+        $result = rpm -q telnet
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.5"
+    Task = "Ensure LDAP client is not installed"
+    Test = {
+        $result = rpm -q openldap2-clients
+        if($result -match "not installed"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+# 2.4 nicht umsetzbar, manuell zu reviewen
+
+## Chapter 3 Network Configuration
