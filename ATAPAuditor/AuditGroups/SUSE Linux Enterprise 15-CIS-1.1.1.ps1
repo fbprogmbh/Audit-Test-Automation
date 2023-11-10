@@ -1042,6 +1042,550 @@ $retNonCompliant = @{
     }
 }
 
-# 2.4 nicht umsetzbar, manuell zu reviewen
+# 2.4 nicht umsetzbar, manuell zu reviewen 
+[AuditTest] @{
+    Id = "2.4"
+    Task = "Ensure nonessential services are removed or masked"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
 
 ## Chapter 3 Network Configuration
+
+# sysctl wird ignoriert
+[AuditTest] @{
+    Id = "3.1.1"
+    Task = "Disable IPv6"
+    Test = {
+        $result = grep "^\s*linux" /boot/grub2/grub.cfg | grep -v ipv6.disable=1
+        if($result -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.1.2"
+    Task = "Ensure wireless interfaces are disabled"
+    Test = {
+        $result = ip link show up
+        if($result -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+# Pruefung nur fuer IPv4
+[AuditTest] @{
+    Id = "3.1.2"
+    Task = "Ensure IP forwarding is disabled"
+    Test = {
+        $result1 = sysctl net.ipv4.ip_forward
+        $result2 = grep -E -s "^\s*net\.ipv4\.ip_forward\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
+        if($result1 -match "net.ipv4.ip_forward = 0" && $result2 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.2.2"
+    Task = "Ensure packet redirect sending is disabled"
+    Test = {
+        $result1 = sysctl net.ipv4.conf.all.send_redirects
+        $result2 = sysctl net.ipv4.conf.default.send_redirects
+        $result3 = grep "net\.ipv4\.conf\.all\.send_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv4\.conf\.default\.send_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.conf.all.send_redirects = 0" && $result2 -match "net.ipv4.conf.default.send_redirects = 0" && $result3 -match "net.ipv4.conf.all.send_redirects = 0" && $result4 -match "net.ipv4.conf.default.send_redirects= 0"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+# vorest nur IPv4
+[AuditTest] @{
+    Id = "3.3.1"
+    Task = "Ensure source routed packets are not accepted"
+    Test = {
+        $result1 = sysctl net.ipv4.conf.all.accept_source_route
+        $result2 = sysctl net.ipv4.conf.default.accept_source_route
+        $result3 = grep "net\.ipv4\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv4\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.conf.all.accept_source_route = 0" && $result2 -match "net.ipv4.conf.default.accept_source_route = 0" && $result3 -match "net.ipv4.conf.all.accept_source_route= 0" && $result4 -match "net.ipv4.conf.default.accept_source_route= 0"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.2"
+    Task = "Ensure ICMP redirects are not accepted"
+    Test = {
+        $result1 = sysctl net.ipv4.conf.all.accept_redirects
+        $result2 = sysctl net.ipv4.conf.default.accept_redirects
+        $result3 = grep "net\.ipv4\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv4\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.conf.all.accept_redirects = 0" && $result2 -match "net.ipv4.conf.default.accept_redirects = 0" && $result3 -match "net.ipv4.conf.all.accept_redirects= 0" && $result4 -match "net.ipv4.conf.default.accept_redirects= 0"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.3"
+    Task = "Ensure secure ICMP redirects are not accepted"
+    Test = {
+        $result1 = sysctl net.ipv4.conf.all.secure_redirects
+        $result2 = sysctl net.ipv4.conf.default.accept_redirects
+        $result3 = grep "net\.ipv4\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv4\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.conf.all.accept_redirects = 0" && $result2 -match "net.ipv4.conf.default.accept_redirects = 0" && $result3 -match "net.ipv4.conf.all.accept_redirects= 0" && $result4 -match "net.ipv4.conf.default.accept_redirects= 0"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.4"
+    Task = "Ensure suspicious packets are logged"
+    Test = {
+        $result1 = sysctl net.ipv4.conf.all.log_martians
+        $result2 = sysctl net.ipv4.conf.default.log_martians
+        $result3 = grep "net\.ipv4\.conf\.all\.log_martians" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv4\.conf\.default\.log_martians" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.conf.all.log_martians = 1" && $result2 -match "net.ipv4.conf.default.log_martians = 1" && $result3 -match "net.ipv4.conf.all.log_martians = 1" && $result4 -match "net.ipv4.conf.default.log_martians = 1"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.5"
+    Task = "Ensure broadcast ICMP requests are ignored"
+    Test = {
+        $result1 = sysctl net.ipv4.icmp_echo_ignore_broadcasts
+        $result2 = grep "net\.ipv4\.icmp_echo_ignore_broadcasts" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.icmp_echo_ignore_broadcasts = 1" && $result2 -match "net.ipv4.icmp_echo_ignore_broadcasts = 1"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.6"
+    Task = "Ensure bogus ICMP responses are ignored"
+    Test = {
+        $result1 = sysctl net.ipv4.icmp_ignore_bogus_error_responses
+        $result2 = grep "net.ipv4.icmp_ignore_bogus_error_responses" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.icmp_ignore_bogus_error_responses = 1" && $result2 -match "net.ipv4.icmp_ignore_bogus_error_responses = 1"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.7"
+    Task = "Ensure Reverse Path Filtering is enabled"
+    Test = {
+        $result1 = sysctl net.ipv4.conf.all.rp_filter
+        $result2 = sysctl net.ipv4.conf.default.rp_filter
+        $result3 = grep "net\.ipv4\.conf\.all\.rp_filter" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv4\.conf\.default\.rp_filter" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.conf.all.rp_filter = 1" && $result2 -match "net.ipv4.conf.default.rp_filter = 1" && $result3 -match "net.ipv4.conf.all.rp_filter = 1" && $result4 -match "net.ipv4.conf.default.rp_filter = 1"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.8"
+    Task = "Ensure TCP SYN Cookies is enabled"
+    Test = {
+        $result1 = sysctl net.ipv4.tcp_syncookies
+        $result2 = grep "net\.ipv4\.tcp_syncookies" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv4.tcp_syncookies = 1" && $result2 -match "net.ipv4.tcp_syncookies = 1"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.9"
+    Task = "Ensure IPv6 router advertisements are not accepted"
+    Test = {
+        $result1 = sysctl net.ipv6.conf.all.accept_ra
+        $result2 = sysctl net.ipv6.conf.default.accept_ra
+        $result3 = grep "net\.ipv6\.conf\.all\.accept_ra" /etc/sysctl.conf /etc/sysctl.d/*
+        $result4 = grep "net\.ipv6\.conf\.default\.accept_ra" /etc/sysctl.conf /etc/sysctl.d/*
+        if($result1 -match "net.ipv6.conf.all.accept_ra = 0" && $result2 -match "net.ipv6.conf.default.accept_ra = 0" && $result3 -match "net.ipv6.conf.all.accept_ra = 0" && $result4 -match "net.ipv6.conf.default.accept_ra = 0"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.1"
+    Task = "Ensure TCP SYN Cookies is enabled"
+    Test = {
+        $result1 = modprobe -n -v dccp
+        $result2 = lsmod | grep dccp
+        if($result1 -match "install /bin/true" && $result2 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2"
+    Task = "Ensure SCTP is disabled"
+    Test = {
+        $result1 = modprobe -n -v sctp
+        $result2 = lsmod | grep sctp
+        if($result1 -match "install /bin/true" && $result2 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.1.1"
+    Task = "Ensure FirewallD is installed"
+    Test = {
+        $result = rpm -q firewalld iptables
+        if($result -match "firewalld-" && $result -match "iptables-"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.1.2"
+    Task = "Ensure nftables is not installed or stopped and masked"
+    Test = {
+        $result1 = rpm -q nftables
+        $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running) "
+        $result22 = systemctl is-enabled nftables
+        if($result1 -match "not installed" || ($result21 -eq $null && $result22 -match "masked")){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.1.3"
+    Task = "Ensure firewalld service is enabled and running"
+    Test = {
+        $result1 = systemctl is-enabled firewalld
+        $result2 = firewall-cmd --state
+        if($result1 -match "enabled" && $result2 -match "running"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.1.4"
+    Task = "Ensure default zone is set"
+    Test = {
+        $result = firewall-cmd --get-default-zone
+        if($result -ne $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.1.5"
+    Task = "Ensure network interfaces are assigned to appropriate zone"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.1.6"
+    Task = "Ensure unnecessary services and ports are not accepted"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.1"
+    Task = "Ensure nftables is installed"
+    Test = {
+        $result = rpm -q nftables
+        if($result -match "nftables-"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.2"
+    Task = "Ensure firewalld is not installed or stopped and masked"
+    Test = {
+        $result1 = rpm -q firewalld
+        $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
+        $result22 = systemctl is-enabled firewalld
+        if($result1 -match "not installed" || ($result21 -eq $null && $result22 -match "masked")){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.3"
+    Task = "Ensure iptables are flushed"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.4"
+    Task = "Ensure a table exists"
+    Test = {
+        $result = nft list tables
+        if($result -match "table inet filter") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.5"
+    Task = "Ensure base chain exist"
+    Test = {
+        $result1 = nft list ruleset | grep 'hook input'
+        $result2 = nft list ruleset | grep 'hook forward'
+        $result3 = nft list ruleset | grep 'hook output'
+        if($result1 -match "type filter hook input priority 0;" && $result2 -match "type filter hook forward priority 0;" && $result3 -match "type filter hook output priority 0;") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.6"
+    Task = "Ensure loopback traffic is configured"
+    Test = {
+        $result1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
+        $result2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
+        if($result1 -match "iif ""lo"" accept" && $result2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.7"
+    Task = "Ensure outbound and established connections are configured"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.8"
+    Task = "Ensure default deny firewall policy"
+    Test = {
+        $result1 = nft list ruleset | grep 'hook input'
+        $result2 = nft list ruleset | grep 'hook forward'
+        $result3 = nft list ruleset | grep 'hook output'
+        if($result1 -match "type filter hook input priority 0; policy drop;" && $result2 -match "type filter hook forward priority 0; policy drop;" && $result3 -match "type filter hook output priority 0; policy drop;") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.9"
+    Task = "Ensure nftables service is enabled"
+    Test = {
+        $result = systemctl is-enabled nftables
+        if($result -match "enabled") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.2.10"
+    Task = "Ensure nftables rules are permanent"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.1.1"
+    Task = "Ensure iptables package is installed"
+    Test = {
+        $result = rpm -q iptables
+        if($result -match "iptables-") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.1.2"
+    Task = "Ensure nftables is not installed"
+    Test = {
+        $result = rpm -q nftables
+        if($result -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.1.3"
+    Task = "Ensure firewalld is not installed or stopped and masked"
+    Test = {
+        $result1 = rpm -q firewalld
+        $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
+        $result22 = systemctl is-enabled firewalld
+        if($result1 -match "not installed" || ($result21 -eq $null && $result22 -match "masked")){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.2.1"
+    Task = "Ensure default deny firewall policy"
+    Test = {
+        $output = iptables -L
+        $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
+        $result11 = $?
+        $test12 = $output -match "REJECT" | grep "Chain INPUT (policy REJECT)"
+        $result12 = $?
+        $test21 = $output -match "DROP" | grep "Chain FORWARD (policy DROP)"
+        $result21 = $?
+        $test22 = $output -match "REJECT" | grep "Chain FORWARD (policy REJECT)"
+        $result22 = $?
+        $test31 = $output -match "DROP" | grep "Chain OUTPUT (policy DROP)"
+        $result31 = $?
+        $test32 = $output -match "REJECT" | grep "Chain OUTPUT (policy REJECT)"
+        $result32 = $?
+        if(($result11 -match "True" || $result12 -match "True") && ($result21 -match "True" || $result22 -match "True") && ($result31 -match "True" || $result32 -match "True")){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.2.2"
+    Task = "Ensure iptables loopback traffic is configured"
+    Test = {
+        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        if($test1 -ne $null -and $test2 -ne $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.2.3"
+    Task = "Ensure outbound and established connections are configured"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.5.3.2.4"
+    Task = "Ensure firewall rules exist for all open ports"
+    Test = {
+        return @{
+            Message = "Manual review required"
+            Status = $rcFalse
+        }
+    }
+}
