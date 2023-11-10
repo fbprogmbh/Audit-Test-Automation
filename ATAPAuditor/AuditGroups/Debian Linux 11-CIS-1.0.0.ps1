@@ -576,8 +576,16 @@
     Task = "Disable Automounting"
     Test = {
         $result1 = systemctl is-enabled autofs
-        $result2 = systemctl is-enabled autofs
-        if ($result1 -match "Failed" -and ($result2 -match "Failed" -or $result2 -match "disabled")) {
+        $status = $?
+        # error occurs when autofs is not installed, that is compliant, too
+        if ($status -match "False") {
+            return @{
+                Message = "Compliant"
+                Status  = "True"
+            }
+        }
+
+        if ($result1 -match "Failed" -and ($result1 -match "Failed" -or $result1 -match "disabled")) {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -4747,7 +4755,7 @@ dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Pack
     Task = "Ensure no unowned files or directories exist"
     Test = {
         try {
-            $test1 = df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser
+            $test1 = df --local -P | awk { 'if (NR!=1) print $6' } | xargs -I '{}' find '{}' -xdev -nouser
             if ($test1 -eq $null) {
                 return @{
                     Message = "Compliant"
