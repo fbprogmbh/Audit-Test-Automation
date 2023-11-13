@@ -2400,9 +2400,9 @@ $windefrunning = CheckWindefRunning
                 -Name "ConsentPromptBehaviorAdmin" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
         
-            if (($regValue -ne 2) -and ($regValue -ne 3)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2 or 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }

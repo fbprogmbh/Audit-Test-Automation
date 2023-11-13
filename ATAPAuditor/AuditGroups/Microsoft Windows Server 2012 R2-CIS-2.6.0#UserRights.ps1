@@ -1150,7 +1150,7 @@ else {
         }
     }
 }
-if (Get-Module -Name ADFS -eq $null) {
+if ($null -eq (Get-Module -Name ADFS)) {
     [AuditTest] @{
         Id   = "2.2.30 A"
         Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE' [ADFS-ROLE NOT installed]"

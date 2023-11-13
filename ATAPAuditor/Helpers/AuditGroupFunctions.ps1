@@ -187,7 +187,7 @@ function CheckForActiveAV {
 # only works for desktop workstations, not servers (except Windows XP and older)
 function Get-AntiVirusStatus {
     try {
-        $AntiVirusProducts = Get-CimInstance -Namespace "root\SecurityCenter2" -Class AntiVirusProduct -ComputerName $env:computername -ErrorAction Stop
+        $AntiVirusProducts = Get-WmiObject -Namespace "root\SecurityCenter2" -Class AntiVirusProduct -ComputerName $env:computername -ErrorAction Stop
     }
     catch [System.Management.ManagementException] {
         <#Do this if a terminating exception happens#>
