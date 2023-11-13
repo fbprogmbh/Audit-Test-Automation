@@ -45,6 +45,7 @@ AuditTAP Release 5.6.3:\
   - [Good to know](#good-to-know)
   - [Sample reports](#sample-reports)
   - [Customization](#customization)
+  - [Converting reports to Xml instead of HTML](#converting-reports-to-xml-instead-of-html)
   - [Related links](#related-links)
     - [AuditTAP information](#audittap-information)
     - [Hardening recommendations in general](#hardening-recommendations-in-general)
@@ -284,6 +285,17 @@ Permanent scope: CurrentUser
 Permanent scope: Machine
 ```PowerShell
 [System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::Machine)
+```
+
+## Converting reports to Xml instead of HTML
+
+For this functionality, it is handy to know the Invoke-ATAPReport command can be used:
+Just use the following code snippet, and exchange the variables "Reportname" and "FilePath".
+
+```ps
+$Reportname = "Microsoft Windows 11"
+$FilePath = "C://YourPath/YourFileName.xml"
+ConvertTo-Xml -InputObject (Invoke-ATAPReport -ReportName $ReportName) -As "String" -Depth 10 | Out-File -FilePath $FilePath
 ```
 
 ## Related links

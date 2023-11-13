@@ -610,15 +610,24 @@ $RootPath = Split-Path $RootPath -Parent
 			if ($bool.Status -eq "True") {
 				$countEnabled++;
 			}
+			$Rule10 = @{
+				Path1 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Path2 ="Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+				Value = "56a863a9-875e-4185-98a7-b882c64b5ce5"
+			};
+			$bool = $($Rule10.Path1), $($Rule10.Path2) | Test-MultiplePaths -Key $($Rule10.Value) -ExpectedValue 1 
+			if ($bool.Status -eq "True") {
+				$countEnabled++;
+			}
 
 			$status = switch ($countEnabled) {
-				{$PSItem -ge 9}{
+				{$PSItem -ge 10}{
 					@{
 						Message = "Compliant ($($countEnabled) rules enabled). For more information on ASR rules, check corresponding benchmarks."
 						Status = "True"
 					}
 				}
-				{($PSItem -ge 1) -and ($PSItem -lt 9)}{
+				{($PSItem -ge 1) -and ($PSItem -lt 10)}{
 					@{
 						Message = "$($countEnabled) ASR rules are activated. For more information on ASR rules, check corresponding benchmarks."
 						Status = "Warning"

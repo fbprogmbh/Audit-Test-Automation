@@ -1093,11 +1093,11 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DataCollection" `
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
-            if ($regValue -ne 0) {
+            if (($regValue -ne 0) -and ($regValue -ne 1)) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
