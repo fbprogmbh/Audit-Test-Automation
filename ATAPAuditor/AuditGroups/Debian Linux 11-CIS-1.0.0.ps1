@@ -2875,8 +2875,16 @@
     Id   = "4.1.3.2"
     Task = "Ensure actions as another user are always logged"
     Test = {
-        $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules 
+        try {
+            $test2 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        }
+        catch {
+            return @{
+                Message = "Not-Compliant"
+                Status  = "False"
+            }
+        }
         if ($test1 -match "-a always,exit -F arch=b64 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $test1 -match "-a always,exit -F arch=b32 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $test2 -match "-a always,exit -F arch=b64 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation" -and $test2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation") {
             return @{
                 Message = "Compliant"
@@ -2937,8 +2945,15 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
     Test = {
         $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
         $test2 = awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $test3 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
-        $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        try {
+            $test3 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+            $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'        }
+        catch {
+            return @{
+                Message = "Not-Compliant"
+                Status  = "False"
+            }
+        }
         if ($test1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday clock_settime -k time-change" -and $test1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $test1 -match "-w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $test2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday clock_settime -F key=time-change" -and $test3 -match "-w /etc/localtime -p wa -k time-change") {
             return @{
                 Message = "Compliant"
@@ -2977,6 +2992,17 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
     Id   = "4.1.3.8"
     Task = "Ensure events that modify user/group information are collected"
     Test = {
+
+        try {
+            $dummy = auditctl -l 
+        }
+        catch {
+            return @{
+                Message = "Not-Compliant"
+                Status  = "False"
+            }
+        }
+
         $output1 = awk '/^ *-w/ \
         &&(/\/etc\/group/ \
          ||/\/etc\/passwd/ \
