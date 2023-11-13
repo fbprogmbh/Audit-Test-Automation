@@ -63,7 +63,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS Logging'
+			Title = 'BSI Benchmarks SiSyPHuS Logging'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
@@ -91,7 +91,7 @@
 		# if system is Member Workstation	
 		if ($domainRole -eq 1) {
 			[ReportSection] @{
-				Title = 'BSI Benchmarks SySiPHuS HD'
+				Title = 'BSI Benchmarks SiSyPHuS HD'
 				Description = 'This section contains the BSI Benchmark results.'
 				SubSections = @(
 					[ReportSection] @{
