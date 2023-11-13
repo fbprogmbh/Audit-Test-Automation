@@ -11,7 +11,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Security Base Data'
-					AuditInfos = Test-AuditGroup "Linux Security Base Data"
+					AuditInfos = Test-AuditGroup "SBD - Linux Base Security"
 				}
 			)
 		}
