@@ -7958,10 +7958,15 @@ $windefrunning = CheckWindefRunning
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Camera" `
                 -Name "AllowCamera" `
                 | Select-Object -ExpandProperty "AllowCamera"
+            
+            $regValue2 = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" `
+                -Name "Value" `
+                | Select-Object -ExpandProperty "Value"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 0 -and $regValue2 -notmatch "Deny") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Camera is not deactivated."
                     Status = "False"
                 }
             }
