@@ -173,23 +173,23 @@ function Get-FoundationReport {
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Platform Security'
-					AuditInfos = Test-AuditGroup "Platform Security"
+					AuditInfos = Test-AuditGroup "SBD - Platform Security"
 				}
 				[ReportSection] @{
 					Title = 'Windows Base Security'
-					AuditInfos = Test-AuditGroup "Windows Base Security"
+					AuditInfos = Test-AuditGroup "SBD - Windows Base Security"
 				}
 				[ReportSection] @{
 					Title = 'PowerShell Security'
-					AuditInfos = Test-AuditGroup "PowerShell Security"
+					AuditInfos = Test-AuditGroup "SBD - PowerShell Security"
 				}
 				[ReportSection] @{
 					Title = 'Connectivity Security'
-					AuditInfos = Test-AuditGroup "Connectivity Security"
+					AuditInfos = Test-AuditGroup "SBD - Connectivity Security"
 				}
 				[ReportSection] @{
 					Title = 'Application Control'
-					AuditInfos = Test-AuditGroup "Application Control"
+					AuditInfos = Test-AuditGroup "SBD - Application Control"
 				}
 			)
 		}
