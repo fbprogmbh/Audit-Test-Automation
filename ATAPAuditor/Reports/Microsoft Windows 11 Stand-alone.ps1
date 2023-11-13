@@ -2,7 +2,7 @@
 	Title = "Windows 11 Stand-alone Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 1.0.1, Date: 2022-11-15"
+		"CIS Microsoft Windows 11 Stand-alone Benchmark, Version: 2.0.0, Date: 2023-05-04"
         "Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
@@ -15,23 +15,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-2.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-1.0.1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Stand-alone-CIS-2.0.0#UserRights"
 				}
 			)
 		}
