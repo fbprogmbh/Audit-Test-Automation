@@ -1039,7 +1039,6 @@ function Get-ATAPHostInformation {
 			"System SKU"				= (Get-WmiObject -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
 			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
 			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
-			"License Status"			= $LicenseStatus
 		} 
 	}
 }
