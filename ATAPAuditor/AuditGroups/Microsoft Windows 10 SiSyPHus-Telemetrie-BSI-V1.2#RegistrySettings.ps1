@@ -3,8 +3,8 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
-if((Get-CimInstance -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise Evaluation" -or 
-(Get-CimInstance -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise"){
+if((Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise Evaluation" -or 
+(Get-WmiObject -class Win32_OperatingSystem).Caption -eq "Microsoft Windows 10 Enterprise"){
     [AuditTest] @{
         Id = "3.1.1"
         Task = "Configuration of the lowest possible telemetry-level (Enterprise Windows 10)"
@@ -53,9 +53,18 @@ else{
                     -Name "AllowTelemetry" `
                     | Select-Object -ExpandProperty "AllowTelemetry"
             
-                if ($regValue -ne 1) {
+                $saferClients = @("*Server*","*Education*","*Enterprise*")
+                $productname = Get-ComputerInfo | select -ExpandProperty OsName
+                if (($productname -notcontains $saferClients) -and ($regValue -eq 1)){
                     return @{
-                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                        Status = "Warning"
+                    }
+                }
+    
+                if ($regValue -ne 0) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 0"
                         Status = "False"
                     }
                 }

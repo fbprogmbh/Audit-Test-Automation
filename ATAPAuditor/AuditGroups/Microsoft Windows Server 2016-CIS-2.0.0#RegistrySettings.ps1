@@ -2400,9 +2400,9 @@ $windefrunning = CheckWindefRunning
                 -Name "ConsentPromptBehaviorAdmin" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
         
-            if (($regValue -ne 2) -and ($regValue -ne 3)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2 or 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -4224,7 +4224,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.4.1"
-    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'"
+    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution' or 'Enabled: Disable NetBIOS name resolution on public networks'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4232,9 +4232,9 @@ $windefrunning = CheckWindefRunning
                 -Name "EnableNetbios" `
                 | Select-Object -ExpandProperty "EnableNetbios"
         
-            if ($regValue -ne 2) {
+            if (-not( ($regValue -eq 0) -or ($regValue -eq 2) )) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 2"
                     Status = "False"
                 }
             }

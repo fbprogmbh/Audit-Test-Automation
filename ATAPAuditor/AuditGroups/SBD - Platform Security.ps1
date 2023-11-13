@@ -224,7 +224,7 @@ $RootPath = Split-Path $RootPath -Parent
 		}
 		if (isWindows8OrNewer) {
 			
-			$state =  Get-CimInstance -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
+			$state =  Get-WmiObject -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
 			if ($state.IsEnabled_InitialValue -eq $true) {
 				return @{
 					Message = "Compliant"
@@ -270,7 +270,7 @@ $RootPath = Split-Path $RootPath -Parent
 			}
 		}
 		if (isWindows8OrNewer) {
-			$state =  Get-CimInstance -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
+			$state =  Get-WmiObject -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
 			if ($state.IsActivated_InitialValue -eq $true) {
 				return @{
 					Message = "Compliant"
@@ -316,7 +316,7 @@ $RootPath = Split-Path $RootPath -Parent
 			}
 		}
 		if (isWindows8OrNewer) {
-			$state =  Get-CimInstance -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
+			$state =  Get-WmiObject -class Win32_Tpm -namespace root\CIMV2\Security\MicrosoftTpm
 			if ($state.IsOwned_InitialValue -eq $true) {
 				return @{
 					Message = "Compliant"

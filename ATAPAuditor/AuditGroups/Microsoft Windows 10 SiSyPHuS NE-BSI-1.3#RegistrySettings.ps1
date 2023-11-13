@@ -2558,7 +2558,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "120"
-    Task = "(ND, NE) Ensure 'Allow Telemetry' is set to 'Enabled: 0 – Security [Enterprise Only]'."
+    Task = "(ND, NE) Ensure 'Allow Telemetry' is set to 'Enabled: 0 - Security [Enterprise Only] or Enabled: 1 - Basic'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2566,9 +2566,18 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
-            if (($regValue -ne 0) -and ($regValue -ne 1)) {
+            $saferClients = @("*Server*","*Education*","*Enterprise*")
+            $productname = Get-ComputerInfo | select -ExpandProperty OsName
+            if (($productname -notcontains $saferClients) -and ($regValue -eq 1)){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0 or x == 1"
+                    Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                    Status = "Warning"
+                }
+            }
+
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
                 }
             }

@@ -117,7 +117,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS Logging'
+			Title = 'BSI Benchmarks SiSyPHuS Logging'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
@@ -145,7 +145,7 @@
 		# if system is Member Workstation	
 		if ($domainRole -eq 1) {
 			[ReportSection] @{
-				Title = 'BSI Benchmarks SySiPHuS HD'
+				Title = 'BSI Benchmarks SiSyPHuS HD'
 				Description = 'This section contains the BSI Benchmark results.'
 				SubSections = @(
 					[ReportSection] @{
@@ -163,28 +163,6 @@
 					[ReportSection] @{
 						Title = 'Security Options'
 						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
-					}
-				)
-			}
-			[ReportSection] @{
-				Title = 'BSI Benchmarks SySiPHuS ND'
-				Description = 'This section contains the BSI Benchmark results.'
-				SubSections = @(
-					[ReportSection] @{
-						Title = 'Registry Settings/Group Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
-					}
-					[ReportSection] @{
-						Title = 'User Rights Assignment'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
-					}
-					[ReportSection] @{
-						Title = 'Account Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
-					}
-					[ReportSection] @{
-						Title = 'Security Options'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
 					}
 				)
 			}

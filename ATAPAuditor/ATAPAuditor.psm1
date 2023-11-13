@@ -377,23 +377,23 @@ function Get-FoundationReport {
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Platform Security'
-					AuditInfos = Test-AuditGroup "Platform Security"
+					AuditInfos = Test-AuditGroup "SBD - Platform Security"
 				}
 				[ReportSection] @{
 					Title = 'Windows Base Security'
-					AuditInfos = Test-AuditGroup "Windows Base Security"
+					AuditInfos = Test-AuditGroup "SBD - Windows Base Security"
 				}
 				[ReportSection] @{
 					Title = 'PowerShell Security'
-					AuditInfos = Test-AuditGroup "PowerShell Security"
+					AuditInfos = Test-AuditGroup "SBD - PowerShell Security"
 				}
 				[ReportSection] @{
 					Title = 'Connectivity Security'
-					AuditInfos = Test-AuditGroup "Connectivity Security"
+					AuditInfos = Test-AuditGroup "SBD - Connectivity Security"
 				}
 				[ReportSection] @{
 					Title = 'Application Control'
-					AuditInfos = Test-AuditGroup "Application Control"
+					AuditInfos = Test-AuditGroup "SBD - Application Control"
 				}
 			)
 		}
@@ -553,7 +553,7 @@ function Test-AuditGroup {
 
 			#Windows OS
 			if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-				$role = Get-CimInstance -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
+				$role = Get-Wmiobject -Class 'Win32_computersystem' -ComputerName $env:computername | Select-Object domainrole
 				if($test.Task -match "(DC only)"){
 					if($role.domainRole -ne 4 -and $role.domainRole -ne 5){
 						$message = 'Not applicable. This audit does not apply to Member Server systems.'
@@ -771,6 +771,22 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
+	Write-Verbose "OS-Check"
+	if(-not([System.Environment]::OSVersion.Platform -eq 'Unix')){
+		#check Powershellversion and handle it
+		$psVersion = $PSVersionTable.PSVersion
+		Write-Verbose "PS-Check"
+		if ($psVersion.Major -ne 5) {
+			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
+			$in = Read-Host
+			switch ($in) {
+				Y {Start Powershell; return}
+				N {Write-Warning "Stopping Script..."; return}
+				default {Write-Warning "You did not choose Y nor N. Stopping Script..."; return}
+			}
+		}	
+	}
+
 	$parent = $path
 	if ($Path -match ".html") {
 		$parent = Split-Path -Path $Path
@@ -790,7 +806,10 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-	
+
+	Write-Host "Checking License status. This will take a while..."
+	$LicenseStatus = Get-LicenseStatus
+
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	
 	#hashes for each recommendation
