@@ -999,7 +999,7 @@ function Get-ATAPHostInformation {
 			"Free physical memory" = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space"      = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
 			"System Uptime"				= uptime -p
-			"OS Architecture"				= dpkg --print-architecture
+			"OS Architecture"			= dpkg --print-architecture
 			"System Manufacturer"		= (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
 			"System SKU"				= (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
 			"System Serialnumber"		= (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
@@ -1035,7 +1035,7 @@ function Get-ATAPHostInformation {
 			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
 			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
 			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
-			"System Type"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
+			"OS Architecture"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
 			"System SKU"				= (Get-WmiObject -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
 			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
 			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version

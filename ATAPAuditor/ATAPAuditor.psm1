@@ -201,7 +201,8 @@ function checkReportNameWithOSSystem {
 			Write-Host "You chose the Reportname $ReportName but the operating system is $OsName. Be aware that a different report type could affect the result."
 		}
 		Write-Host ""
-		Write-Host "Choose one of the following options to continue: 1: Continue, 2: Exit Script"
+		Write-Host "Choose one of the following options:"
+		Write-Host "[1] Continue     [2] Exit Script" -ForegroundColor Yellow
 		$in = Read-Host
 		switch ($in) {
 			1 { 
@@ -807,15 +808,15 @@ function Save-ATAPHtmlReport {
 		}
 	}
 
+	
+	$report = Invoke-ATAPReport -ReportName $ReportName 
+
 	Write-Host "Checking License status. This will take a while..."
 	$LicenseStatus = Get-LicenseStatus
-
-	$report = Invoke-ATAPReport -ReportName $ReportName 
 	
 	#hashes for each recommendation
 	$hashtable_sha256 = GenerateHashTable $report
 	
-	$LicenseStatus = Get-LicenseStatus
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus
 }
 
