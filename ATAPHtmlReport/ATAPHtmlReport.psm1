@@ -1579,13 +1579,15 @@ function Get-ATAPHtmlReport {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("BIOS Version")) }
 									}
+									#Free disk space
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
+										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
 									}
+									#Free physican memory
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
+										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
 									}
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "" }
@@ -1654,16 +1656,6 @@ function Get-ATAPHtmlReport {
 											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
 											htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
 										}
-									}
-									#Free disk space
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
-									}
-									#Free physican memory
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
 									}
 								}
 							}
