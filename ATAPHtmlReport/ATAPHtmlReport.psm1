@@ -1573,7 +1573,6 @@ function Get-ATAPHtmlReport {
 										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Serialnumber")) }
 									}
-									
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
@@ -1626,6 +1625,13 @@ function Get-ATAPHtmlReport {
 										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("Operating System")) }
 									}
+									#Build Number
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
+											htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+										}
+									}
 									#OS Architecture
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "OS Architecture" }
@@ -1636,13 +1642,6 @@ function Get-ATAPHtmlReport {
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "License Status" }
 											htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
-										}
-									}
-									#Build Number
-									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-											htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
 										}
 									}
 									#Installation Language
