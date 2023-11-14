@@ -6775,12 +6775,30 @@ $windefrunning = CheckWindefRunning
     Task = "Set registry value 'iexplore.exe' to 1. (FEATURE_MIME_SNIFFING)"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_MIME_SNIFFING" `
-                -Name "iexplore.exe" `
-                | Select-Object -ExpandProperty "iexplore.exe"
-        
-            if ($regValue -ne "1") {
+            if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
+                return @{
+                    Message = "RequireSecuritySignature is not set to True"
+                    Status = "False"
+                }
+            }
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        catch {
+                try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Name "RequireSecuritySignature" `
+                | Select-Object -ExpandProperty "RequireSecuritySignature"
+                
+                return @{
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Status = "Warning"
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
