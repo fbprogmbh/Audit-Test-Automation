@@ -6804,17 +6804,11 @@ $windefrunning = CheckWindefRunning
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
             }
         }
         
