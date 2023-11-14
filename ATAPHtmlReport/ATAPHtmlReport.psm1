@@ -1573,19 +1573,20 @@ function Get-ATAPHtmlReport {
 										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Serialnumber")) }
 									}
-									
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("BIOS Version")) }
 									}
+									#Free disk space
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
+										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
 									}
+									#Free physican memory
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
+										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
+										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
 									}
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "" }
@@ -1624,6 +1625,13 @@ function Get-ATAPHtmlReport {
 										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
 										htmlElement 'td' @{} { $($hostInformation.Get_Item("Operating System")) }
 									}
+									#Build Number
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
+											htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+										}
+									}
 									#OS Architecture
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "OS Architecture" }
@@ -1634,13 +1642,6 @@ function Get-ATAPHtmlReport {
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "License Status" }
 											htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
-										}
-									}
-									#Build Number
-									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-											htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
 										}
 									}
 									#Installation Language
@@ -1654,16 +1655,6 @@ function Get-ATAPHtmlReport {
 											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
 											htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
 										}
-									}
-									#Free disk space
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
-									}
-									#Free physican memory
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
 									}
 								}
 							}
