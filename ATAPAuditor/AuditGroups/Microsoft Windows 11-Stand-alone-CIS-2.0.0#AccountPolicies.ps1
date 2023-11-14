@@ -184,9 +184,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 15)) {
+        if (($setPolicy -lt 15 -or $setPolicy -gt 99999)) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15 minutes and x <= 99999 minutes"
                 Status = "False"
             }
         }
@@ -226,7 +226,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.2.3"
+    Id = "1.2.4"
     Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -240,9 +240,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 15)) {
+        if (($setPolicy -gt 99999 -or $setPolicy -lt 15)) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x <= 99999 minutes and x >= 15 minutes"
                 Status = "False"
             }
         }
