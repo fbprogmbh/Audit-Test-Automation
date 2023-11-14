@@ -1,5 +1,5 @@
 ﻿[AuditTest] @{
-    Id = "AccountPolicy-001"
+    Id = "AccountPolicy-361"
     Task = "Ensure 'MinimumPasswordLength' is set to '14' character(s)."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -27,8 +27,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-002"
-    Task = "Ensure 'PasswordComplexity' is set to '1' (Enabled)."
+    Id = "AccountPolicy-362"
+    Task = "The built-in Windows password complexity policy must be enabled."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordComplexity"]
@@ -55,8 +55,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-003"
-    Task = "Ensure 'PasswordHistorySize' is set to '24' password(s)."
+    Id = "AccountPolicy-363"
+    Task = "The password history must be configured to 24 passwords remembered"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordHistorySize"]
@@ -83,8 +83,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-004"
-    Task = "Ensure 'LockoutBadCount' is set to '10' invalid logon attempt(s)."
+    Id = "AccountPolicy-364"
+    Task = "Ensure 'LockoutBadCount' is set to '10' invalid logon attempt(s)"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
@@ -111,8 +111,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-005"
-    Task = "Ensure 'ResetLockoutCount' is set to '15' minute(s)."
+    Id = "AccountPolicy-365"
+    Task = "Ensure 'Reset account lockout counter after' is set to '10 minutes'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ResetLockoutCount"]
@@ -125,9 +125,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 15) {
+        if ($setPolicy -ne 10) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: 15"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: 10 minutes"
                 Status = "False"
             }
         }
@@ -139,8 +139,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-006"
-    Task = "Ensure 'LockoutDuration' is set to '15' minute(s)."
+    Id = "AccountPolicy-366"
+    Task = "Ensure 'LockoutDuration' is set to '10 minutes'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutDuration"]
@@ -153,9 +153,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -ne 15) {
+        if ($setPolicy -ne 10) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: 15"
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: 10 minutes"
                 Status = "False"
             }
         }
@@ -167,8 +167,8 @@
     }
 }
 [AuditTest] @{
-    Id = "AccountPolicy-007"
-    Task = "Ensure 'ClearTextPassword' is set to 'Disabled' (Disabled)."
+    Id = "AccountPolicy-367"
+    Task = "Reversible password encryption must be disabled."
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]

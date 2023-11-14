@@ -1,6 +1,6 @@
 ﻿[AuditTest] @{
-    Id = "SecurityOption-175"
-    Task = "Ensure 'LSAAnonymousNameLookup' is set to 'Disabled'"
+    Id = "SecurityOption-142"
+    Task = "Anonymous SID/Name translation must not be allowed."
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["LSAAnonymousNameLookup"]

@@ -76,7 +76,7 @@ function Get-AuditPolicySubcategoryGUID {
 
 # Tests
 [AuditTest] @{
-    Id = "AuditPolicy-199"
+    Id = "AuditPolicy-166"
     Task = "Ensure 'Credential Validation' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Credential Validation
@@ -133,7 +133,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-200"
+    Id = "AuditPolicy-167"
     Task = "Ensure 'Security Group Management' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Security Group Management
@@ -190,7 +190,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-201"
+    Id = "AuditPolicy-168"
     Task = "Ensure 'User Account Management' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory User Account Management
@@ -247,7 +247,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-202"
+    Id = "AuditPolicy-169"
     Task = "Ensure 'Plug and Play Events' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Plug and Play Events
@@ -304,7 +304,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-203"
+    Id = "AuditPolicy-170"
     Task = "Ensure 'Process Creation' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Process Creation
@@ -361,7 +361,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-204"
+    Id = "AuditPolicy-171"
     Task = "Ensure 'Account Lockout' is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Account Lockout
@@ -418,7 +418,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-205"
+    Id = "AuditPolicy-172"
     Task = "Ensure 'Group Membership' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Group Membership
@@ -475,7 +475,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-206"
+    Id = "AuditPolicy-173"
     Task = "Ensure 'Logon' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Logon
@@ -532,7 +532,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-207"
+    Id = "AuditPolicy-174"
     Task = "Ensure 'Other Logon/Logoff Events' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Other Logon/Logoff Events
@@ -589,7 +589,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-208"
+    Id = "AuditPolicy-175"
     Task = "Ensure 'Special Logon' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Special Logon
@@ -646,7 +646,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-209"
+    Id = "AuditPolicy-176"
     Task = "Ensure 'Detailed File Share' is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Detailed File Share
@@ -703,7 +703,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-210"
+    Id = "AuditPolicy-177"
     Task = "Ensure 'File Share' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory File Share
@@ -760,7 +760,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-211"
+    Id = "AuditPolicy-178"
     Task = "Ensure 'Other Object Access Events' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Other Object Access Events
@@ -817,7 +817,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-212"
+    Id = "AuditPolicy-179"
     Task = "Ensure 'Removable Storage' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Removable Storage
@@ -874,7 +874,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-213"
+    Id = "AuditPolicy-180"
     Task = "Ensure 'Audit Policy Change' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Audit Policy Change
@@ -931,7 +931,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-214"
+    Id = "AuditPolicy-181"
     Task = "Ensure 'Authentication Policy Change' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Authentication Policy Change
@@ -988,7 +988,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-215"
+    Id = "AuditPolicy-182"
     Task = "Ensure 'MPSSVC Rule-Level Policy Change' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory MPSSVC Rule-Level Policy Change
@@ -1045,7 +1045,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-216"
+    Id = "AuditPolicy-183"
     Task = "Ensure 'Other Policy Change Events' is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Other Policy Change Events
@@ -1102,7 +1102,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-217"
+    Id = "AuditPolicy-184"
     Task = "Ensure 'Sensitive Privilege Use' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Sensitive Privilege Use
@@ -1159,7 +1159,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-218"
+    Id = "AuditPolicy-185"
     Task = "Ensure 'Other System Events' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory Other System Events
@@ -1216,7 +1216,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-219"
+    Id = "AuditPolicy-186"
     Task = "Ensure 'Security State Change' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Security State Change
@@ -1273,7 +1273,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-220"
+    Id = "AuditPolicy-187"
     Task = "Ensure 'Security System Extension' is set to 'Success'."
     Test = {
         # Get the audit policy for the subcategory Security System Extension
@@ -1330,7 +1330,7 @@ function Get-AuditPolicySubcategoryGUID {
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-221"
+    Id = "AuditPolicy-188"
     Task = "Ensure 'System Integrity' is set to 'Success' and is set to 'Failure'."
     Test = {
         # Get the audit policy for the subcategory System Integrity
