@@ -11162,10 +11162,36 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowCamera" `
                 | Select-Object -ExpandProperty "AllowCamera"
         
-            if ($regValue -ne 0) {
+            if ($regValue -eq 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" `
+                -Name "Value" `
+                | Select-Object -ExpandProperty "Value"
+        
+            if ($regValue -match "Deny") {
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
                 }
             }
         }
@@ -11183,8 +11209,8 @@ $windefrunning = CheckWindefRunning
         }
         
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = "Camera is not deactivated."
+            Status = "False"
         }
     }
 }
