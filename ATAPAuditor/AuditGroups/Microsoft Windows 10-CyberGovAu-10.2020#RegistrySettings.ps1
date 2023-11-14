@@ -12367,7 +12367,7 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'"
     Test = {
         try {
-            if((Get-SmbServerConfiguration).EnableSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).EnableSecuritySignature -ne $True){
                 return @{
                     Message = "EnableSecuritySignature is not set to True"
                     Status = "False"

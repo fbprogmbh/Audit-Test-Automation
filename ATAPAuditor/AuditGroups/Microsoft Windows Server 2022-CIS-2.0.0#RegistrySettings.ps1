@@ -1165,7 +1165,7 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'"
     Test = {
         try {
-            if((Get-SmbServerConfiguration).RequireSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
                 return @{
                     Message = "RequireSecuritySignature is not set to True"
                     Status = "False"
@@ -1214,7 +1214,7 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'"
     Test = {
         try {
-            if((Get-SmbServerConfiguration).EnableSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).EnableSecuritySignature -ne $True){
                 return @{
                     Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
@@ -2417,9 +2417,9 @@ $windefrunning = CheckWindefRunning
                 -Name "ConsentPromptBehaviorAdmin" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
         
-            if (($regValue -ne 2) -and ($regValue -ne 3)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -8049,10 +8049,36 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowCamera" `
                 | Select-Object -ExpandProperty "AllowCamera"
         
-            if ($regValue -ne 0) {
+            if ($regValue -eq 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" `
+                -Name "Value" `
+                | Select-Object -ExpandProperty "Value"
+        
+            if ($regValue -match "Deny") {
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
                 }
             }
         }
@@ -8070,8 +8096,8 @@ $windefrunning = CheckWindefRunning
         }
         
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = "Camera is not deactivated."
+            Status = "False"
         }
     }
 }

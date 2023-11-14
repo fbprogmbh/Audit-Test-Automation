@@ -7542,42 +7542,6 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "Registry-209"
-    Task = "Set registry value 'PolicyVersion' to 538."
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall" `
-                -Name "PolicyVersion" `
-                | Select-Object -ExpandProperty "PolicyVersion"
-        
-            if ($regValue -ne 538) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 538"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "Registry-210"
     Task = "Set registry value 'DefaultOutboundAction' to 0. (DomainProfile)"
     Constraints = @(
@@ -8828,7 +8792,7 @@ $windefrunning = CheckWindefRunning
     Task = "Set registry value 'requiresecuritysignature' to 1."
     Test = {
         try {
-            if((Get-SmbServerConfiguration).RequireSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
                 return @{
                     Message = "RequireSecuritySignature is not set to True"
                     Status = "False"

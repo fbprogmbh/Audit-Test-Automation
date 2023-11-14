@@ -1033,13 +1033,12 @@ function Get-ATAPHostInformation {
 			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
 			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
 			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
-			"System Manufacturer"		= (Get-CimInstance -class Win32_ComputerSystem).Manufacturer
-			"System Model"				= (Get-CimInstance -class Win32_ComputerSystem).Model
-			"OS Architecture"				= (Get-CimInstance win32_operatingsystem | select osarchitecture).osarchitecture
-			"System SKU"				= (Get-CimInstance -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
-			"System Serialnumber"		= (Get-CimInstance win32_bios).Serialnumber
-			"BIOS Version"				= (Get-CimInstance -Class Win32_BIOS).Version
-			
+			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
+			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
+			"System Type"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
+			"System SKU"				= (Get-WmiObject -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
+			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
+			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
 		} 
 	}
 }

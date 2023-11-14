@@ -36,7 +36,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS Logging'
+			Title = 'BSI Benchmarks SiSyPHuS Logging'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
@@ -60,7 +60,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS NE'
+			Title = 'BSI Benchmarks SiSyPHuS NE'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{

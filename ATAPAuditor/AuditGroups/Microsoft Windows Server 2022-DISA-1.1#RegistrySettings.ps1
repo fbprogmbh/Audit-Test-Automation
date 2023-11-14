@@ -2556,7 +2556,7 @@
     Task = "Windows Server 2022 setting Microsoft network server: Digitally sign communications (always) must be configured to Enabled."
     Test = {
         try {
-            if((Get-SmbServerConfiguration).RequireSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
                 return @{
                     Message = "RequireSecuritySignature is not set to True"
                     Status = "False"
@@ -2605,7 +2605,7 @@
     Task = "Windows Server 2022 setting Microsoft network server: Digitally sign communications (if client agrees) must be configured to Enabled."
     Test = {
         try {
-            if((Get-SmbServerConfiguration).EnableSecuritySignature -ne $True){
+            if((Get-SmbServerConfiguration -ErrorAction Stop).EnableSecuritySignature -ne $True){
                 return @{
                     Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
