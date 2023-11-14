@@ -8668,9 +8668,9 @@ $windefrunning = CheckWindefRunning
                 -Name "NoDriveTypeAutoRun" `
                 | Select-Object -ExpandProperty "NoDriveTypeAutoRun"
         
-            if (($regValue -ne 255)) {
+            if ($regValue -ne 255) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 255"
+                    Message = "Registry value is '$regValue'. Expected: 255"
                     Status = "False"
                 }
             }
@@ -10571,7 +10571,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.10.15.1"
-    Task = "(L1) Ensure 'Allow Diagnostic Data' is set to 'Enabled: Diagnostic data off (not recommended)' or 'Enabled: Send required diagnostic data'"
+    Task = "(L1) Ensure 'Allow Diagnostic Data' is set to '0 - Enabled: Diagnostic data off (not recommended)' or '1 - Enabled: Send required diagnostic data'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -13940,9 +13940,9 @@ $windefrunning = CheckWindefRunning
                 -Name "MaxDisconnectionTime" `
                 | Select-Object -ExpandProperty "MaxDisconnectionTime"
         
-            if (($regValue -ne 60000)) {
+            if ($regValue -ne 60000) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 60000"
+                    Message = "Registry value is '$regValue'. Expected: 60000"
                     Status = "False"
                 }
             }
