@@ -1080,7 +1080,7 @@ if ($IPv6Status -ne "enabled") {
     }
 }
 
-## Chapter 3 Network Configuration
+## Chapter 3 - Network Configuration
 
 # sysctl wird ignoriert
 [AuditTest] @{
@@ -2184,5 +2184,613 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure logrotate is configured"
     Test = {
         return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.1"
+    Task = "Ensure cron daemon is enabled and running"
+    Test = {
+        $test1 = systemctl is-enabled cron
+        $test2 = systemctl status cron | grep 'Active: active (running) '
+        if($test1 -eq $null && $test2 -match "active (running)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.2"
+    Task = "Ensure permissions on /etc/crontab are configured"
+    Test = {
+        $test = stat /etc/crontab
+        if($test -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.3"
+    Task = "Ensure permissions on /etc/cron.hourly are configured"
+    Test = {
+        $test = stat /etc/cron.hourly/
+        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.4"
+    Task = "Ensure permissions on /etc/cron.daily are configured"
+    Test = {
+        $test = stat /etc/cron.daily
+        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.5"
+    Task = "Ensure permissions on /etc/cron.weekly are configured"
+    Test = {
+        $test = stat /etc/cron.weekly
+        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.6"
+    Task = "Ensure permissions on /etc/cron.monthly are configured"
+    Test = {
+        $test = stat /etc/cron.weekly
+        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.7"
+    Task = "Ensure permissions on /etc/cron.d are configured"
+    Test = {
+        $test = stat /etc/cron.weekly
+        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.8"
+    Task = "Ensure cron is restricted to authorized users"
+    Test = {
+        $test = stat /etc/cron.deny
+        if($test -match "cannot stat"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.9"
+    Task = "Ensure cron is restricted to authorized users"
+    Test = {
+        $test1 = stat /etc/at.deny
+        $test2 = stat /etc/at.allow
+        if($test1 -match "cannot stat" && $test2 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.1"
+    Task = "Ensure permissions on /etc/ssh/sshd_config are configured"
+    Test = {
+        $test1 = stat /etc/ssh/sshd_config
+        if($test1 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+### TODO ...
+[AuditTest] @{
+    Id = "5.2.2"
+    Task = "Ensure permissions on SSH private host key files are configured"
+    Test = {
+        return $retCompliant
+    }
+}
+
+### TODO...
+[AuditTest] @{
+    Id = "5.2.3"
+    Task = "Ensure permissions on SSH public host key files are configured"
+    Test = {
+        return $retCompliant
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.4"
+    Task = "Ensure SSH access is limited"
+    Test = {
+        $test = sshd -T | grep -E '^\s*(allow|deny)(users|groups)\s+\S+'
+        if($test -match "allowusers " || $test -match "allowgroups " || $test -match "denyusers " || $test -match "denygroups "){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.5"
+    Task = "Ensure SSH LogLevel is appropriate"
+    Test = {
+        $test = sshd -T | grep loglevel
+        if($test -match "loglevel\s+VERBOSE" || $test -match "loglevel\s+INFO"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.6"
+    Task = "Ensure SSH X11 forwarding is disabled"
+    Test = {
+        $test = sshd -T | grep -i x11forwarding
+        if($test -match "x11forwarding no"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+### TODO
+[AuditTest] @{
+    Id = "5.2.7"
+    Task = "Ensure SSH MaxAuthTries is set to 4 or less"
+    Test = {
+        $test = sshd -T | grep maxauthtries | grep maxauthtries | cut -d ' ' -f 2
+        if($test -le 4){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.8"
+    Task = "Ensure SSH IgnoreRhosts is enabled"
+    Test = {
+        $test = sshd -T | grep ignorerhosts
+        if($test -match "ignorehosts yes"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.9"
+    Task = "Ensure SSH HostbasedAuthentication is disabled"
+    Test = {
+        $test = sshd -T | grep hostbasedauthentication
+        if($test -match "hostbasedauthentication no"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.10"
+    Task = "Ensure SSH root login is disabled"
+    Test = {
+        $test = sshd -T | grep permitrootlogin
+        if($test -match "permitrootlogin no"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.11"
+    Task = "Ensure SSH PermitEmptyPasswords is disabled"
+    Test = {
+        $test = sshd -T | grep permitemptypasswords
+        if($test -match "permitemptypasswords no"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.12"
+    Task = "Ensure SSH PermitUserEnvironment is disabled"
+    Test = {
+        $test = sshd -T | grep permituserenvironment
+        if($test -match "permituserenvironment no"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.13"
+    Task = "Ensure only strong Ciphers are used"
+    Test = {
+        $test = sshd -T | grep ciphers
+        if($test -match "3des-cbc" || $test -match "aes128-cbc" || $test -match "aes192-cbc" || $test -match "aes256-cbc"){
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.14"
+    Task = "Ensure only strong MAC algorithms are used"
+    Test = {
+        $test = sshd -T | grep -i "MACs"
+        if($test -match "hmac-md5" ||
+        $test -match "hmac-md5-96" ||
+        $test -match "hmac-ripemd160" ||
+        $test -match "hmac-sha1" ||
+        $test -match "hmac-sha1-96" ||
+        $test -match "umac-64@openssh.com" ||
+        $test -match "umac-128@openssh.com" ||
+        $test -match "hmac-md5-etm@openssh.com" ||
+        $test -match "hmac-md5-96-etm@openssh.com" ||
+        $test -match "hmac-ripemd160-etm@openssh.com" ||
+        $test -match "hmac-sha1-etm@openssh.com" ||
+        $test -match "hmac-sha1-96-etm@openssh.com" ||
+        $test -match "umac-64-etm@openssh.com" ||
+        $test -match "umac-128-etm@openssh.com"){
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.15"
+    Task = "Ensure only strong Key Exchange algorithms are used"
+    Test = {
+        $test = sshd -T | grep kexalgorithms
+        if($test -match "diffie-hellman-group1-sha1" ||
+        $test -match "diffie-hellman-group14-sha1" ||
+        $test -match "diffie-hellman-group-exchange-sha1"){
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.16"
+    Task = "Ensure SSH Idle Timeout Interval is configured"
+    Test = {
+        $test1 = sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
+        $test2 = sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
+        if($test1 -ge 1 && $test1 -le 300 && $test2 -ge 1 && $test2 -le 3){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.17"
+    Task = "Ensure SSH LoginGraceTime is set to one minute or less"
+    Test = {
+        $test = sshd -T | grep logingracetime | cut -d ' ' -f 2
+        if($test -ge 1 && $test1 -le 60){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.18"
+    Task = "Ensure SSH warning banner is configured"
+    Test = {
+        $test = sshd -T | grep banner
+        if($test -match "banner /etc/issue.net"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.19"
+    Task = "Ensure SSH PAM is enabled"
+    Test = {
+        $test = sshd -T | grep -i usepam
+        if($test -match "usepam yes"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.20"
+    Task = "Ensure SSH AllowTcpForwarding is disabled"
+    Test = {
+        $test = sshd -T | grep -i allowtcpforwarding
+        if($test -match "allowtcpforwarding no"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.21"
+    Task = "Ensure SSH MaxStartups is configured"
+    Test = {
+        $test = sshd -T | grep -i maxstartups
+        if($test -match "maxstartups 10:30:60"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.22"
+    Task = "Ensure SSH MaxSessions is limited"
+    Test = {
+        $test = sshd -T | grep -i maxsessions | cut -d ' ' -f 2
+        if($test -le 10){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+# TODO
+[AuditTest] @{
+    Id = "5.3.1"
+    Task = "Ensure password creation requirements are configured"
+    Test = {
+        return $retCompliant
+    }
+}
+
+# TODO
+[AuditTest] @{
+    Id = "5.3.2"
+    Task = "Ensure lockout for failed password attempts is configured"
+    Test = {
+        return $retCompliant
+    }
+}
+
+# TODO
+[AuditTest] @{
+    Id = "5.3.3"
+    Task = "Ensure password reuse is limited"
+    Test = {
+        return $retCompliant
+    }
+}
+
+[AuditTest] @{
+    Id = "5.4.1.1"
+    Task = "Ensure password hashing algorithm is SHA-512"
+    Test = {
+        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
+        if($test -match "SHA512"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+## TODO
+[AuditTest] @{
+    Id = "5.4.1.2"
+    Task = "Ensure password expiration is 365 days or less"
+    Test = {
+        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
+        if($test -match "SHA512"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+## TODO
+[AuditTest] @{
+    Id = "5.4.1.3"
+    Task = "Ensure minimum days between password changes is configured"
+    Test = {
+        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
+        if($test -match "SHA512"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+## TODO
+[AuditTest] @{
+    Id = "5.4.1.4"
+    Task = "Ensure password expiration warning days is 7 or more"
+    Test = {
+        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
+        if($test -match "SHA512"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+## TODO
+[AuditTest] @{
+    Id = "5.4.1.5"
+    Task = "Ensure inactive password lock is 30 days or less"
+    Test = {
+        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
+        if($test -match "SHA512"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+# TODO
+[AuditTest] @{
+    Id = "5.4.1.6"
+    Task = "Ensure all users last password change date is in the past"
+    Test = {
+        $test = @'
+        #!/bin/bash
+        for usr in $(cut -d: -f1 /etc/shadow); do
+        [[ $(chage --list $usr | grep '^Last password change' | cut -d: -f2) > $(date) ]] && echo "$usr :$(chage --list $usr | grep '^Last password change' | cut -d: -f2)"; done
+'@
+        if($test -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.4.1.6"
+    Task = "Ensure all users last password change date is in the past"
+    Test = {
+        $test1 = awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!="'"$(which nologin)"'" && $7!="/bin/false") {print}' /etc/passwd
+        $test2 = awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
+        if($test1 -eq $null && $test2 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.4.3"
+    Task = "Ensure default group for the root account is GID 0"
+    Test = {
+        $test = grep "^root:" /etc/passwd | cut -f4
+        if($test -eq 0){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.4.4"
+    Task = "Ensure default user shell timeout is configured"
+    Test = {
+        $test1 = @'
+for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^$#;]+\s*)*)?\s*TMOUT=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9])\b' $f && grep -Eq '(^|^[^#]*;)\s*readonly\s+TMOUT\b' $f && grep -Eq '(^|^[^#]*;)\s*export\s+([^$#;]+\s+)*TMOUT\b' $f && echo "TMOUT correctly configured in file: $f"; done
+'@
+        $test2 = grep -PR '^\s*([^$#;]+\s+)*TMOUT=(9[0-9][1-9]|0+|[1-9]\d{3,})\b\s*(\S+\s*)*(\s+#.*)?$' /etc/profile* /etc/bashrc.bashrc*
+        if($test1 -match "configured in file: /etc/profile.d/" && $test2 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.4.5"
+    Task = "Ensure default user umask is configured"
+    Test = {
+        $test1 = grep -RPi '(^|^[^#]*)\s*umask\s+([0-7][0-7][01][0-7]\b|[0-7][0-7][0-7][0-6]\b|[0-7][01][0-7]\b|[0-7][0-7][0-6]\b|(u=[rwx]{0,3},)?(g=[rwx]{0,3},)?o=[rwx]+\b|(u=[rwx]{1,3},)?g=[^rx]{1,3}(,o=[rwx]{0,3})?\b)' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
+        $test2 = grep -REi '^\s*UMASK\s+\s*(0[0-7][2-7]7|[0-7][2-7]7|u=(r?|w?|x?)(r?|w?|x?)(r?|w?|x?),g=(r?x?|x?r?),o=)\b' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
+        if(($test1 -eq $null || $test1 -match "No such file or directory") && $test2 -match "UMASK\s*027"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.5"
+    Task = "Ensure root login is restricted to system console"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+#TODO
+[AuditTest] @{
+    Id = "5.6"
+    Task = "Ensure access to the su command is restricted"
+    Test = {
+        $test1 = grep -RPi '(^|^[^#]*)\s*umask\s+([0-7][0-7][01][0-7]\b|[0-7][0-7][0-7][0-6]\b|[0-7][01][0-7]\b|[0-7][0-7][0-6]\b|(u=[rwx]{0,3},)?(g=[rwx]{0,3},)?o=[rwx]+\b|(u=[rwx]{1,3},)?g=[^rx]{1,3}(,o=[rwx]{0,3})?\b)' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
+        $test2 = grep -REi '^\s*UMASK\s+\s*(0[0-7][2-7]7|[0-7][2-7]7|u=(r?|w?|x?)(r?|w?|x?)(r?|w?|x?),g=(r?x?|x?r?),o=)\b' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
+        if(($test1 -eq $null || $test1 -match "No such file or directory") && $test2 -match "UMASK\s*027"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
     }
 }
