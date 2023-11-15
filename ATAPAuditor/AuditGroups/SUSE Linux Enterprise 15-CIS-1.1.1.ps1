@@ -2794,3 +2794,440 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
         }
     }
 }
+
+
+### Chapter 6 - System Maintenance
+
+[AuditTest] @{
+    Id = "6.1.1"
+    Task = "Audit system file permissions"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.1"
+    Task = "Ensure permissions on /etc/passwd are configured"
+    Test = {
+        $test1 = stat /etc/passwd
+        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.3"
+    Task = "Ensure permissions on /etc/shadow are configured"
+    Test = {
+        $test1 = stat /etc/shadow
+        if($test1 -match "Access:\s+(0640/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.4"
+    Task = "Ensure permissions on /etc/group are configured"
+    Test = {
+        $test1 = stat /etc/group
+        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.5"
+    Task = "Ensure permissions on /etc/passwd- are configured"
+    Test = {
+        $test1 = stat /etc/passwd-
+        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.6"
+    Task = "Ensure permissions on /etc/shadow- are configured"
+    Test = {
+        $test1 = stat /etc/shadow-
+        if($test1 -match "Access:\s+(0640/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.7"
+    Task = "Ensure permissions on /etc/group- are configured"
+    Test = {
+        $test1 = stat /etc/group-
+        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.8"
+    Task = "Ensure no world writable files exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.9"
+    Task = "Ensure no unowned files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.10"
+    Task = "Ensure no ungrouped files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -nogroup
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.11"
+    Task = "Audit SUID executables"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.12"
+    Task = "Audit SGID executables"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.1"
+    Task = "Ensure accounts in /etc/passwd use shadowed passwords"
+    Test = {
+        $test1 = awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.2"
+    Task = "Ensure /etc/shadow password fields are not empty"
+    Test = {
+        $test1 = awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.3"
+    Task = "Ensure root is the only UID 0 accoun"
+    Test = {
+        $test1 = awk -F: '($3 == 0) { print $1 }' /etc/passwd
+        if($test1 -match "root"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.4"
+    Task = "Ensure root PATH Integrity"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+if echo "$PATH" | grep -q "::" ; then
+    echo "Empty Directory in PATH (::)"
+fi
+if echo "$PATH" | grep -q ":$" ; then
+    echo "Trailing : in PATH"
+fi
+for x in $(echo "$PATH" | tr ":" " ") ; do
+    if [ -d "$x" ] ; then
+        ls -ldH "$x" | awk '
+        $9 == "." {print "PATH contains current working directory (.)"}
+        $3 != "root" {print $9, "is not owned by root"}
+        substr($1,6,1) != "-" {print $9, "is group writable"}
+        substr($1,9,1) != "-" {print $9, "is world writable"}'
+    else
+        echo "$x is not a directory"
+    fi
+done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.5"
+    Task = "Ensure all users' home directories exist"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read -r user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.6"
+    Task = "Ensure users' home directories permissions are 750 or more restrictive"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else dirperm=$(ls -ld $dir | cut -f1 -d" ") if [ $(echo $dirperm | cut -c6) != "-" ]; then echo "Group Write permission set on the home directory ($dir) of user $user" fi if [ $(echo $dirperm | cut -c8) != "-" ]; then echo "Other Read permission set on the home directory ($dir) of user $user" fi if [ $(echo $dirperm | cut -c9) != "-" ]; then echo "Other Write permission set on the home directory ($dir) of user $user" fi if [ $(echo $dirperm | cut -c10) != "-" ]; then echo "Other Execute permission set on the home directory ($dir) of user $user" fi fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.7"
+    Task = "Ensure users own their home directories"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else owner=$(stat -L -c "%U" "$dir") if [ "$owner" != "$user" ]; then echo "The home directory ($dir) of user $user is owned by $owner." fi fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.8"
+    Task = "Ensure users' dot files are not group or world writable"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else for file in $dir/.[A-Za-z0-9]*; do if [ ! -h "$file" -a -f "$file" ]; then fileperm=$(ls -ld $file | cut -f1 -d" ") if [ $(echo $fileperm | cut -c6) != "-" ]; then echo "Group Write permission set on file $file" fi if [ $(echo $fileperm | cut -c9) != "-" ]; then echo "Other Write permission set on file $file" fi fi done fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.9"
+    Task = "Ensure no users have .forward files"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ] ; then echo "The home directory ($dir) of user $user does not exist." else if [ ! -h "$dir/.forward" -a -f "$dir/.forward" ] ; then echo ".forward file $dir/.forward exists" fi fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.10"
+    Task = "Ensure no users have .netrc files"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else if [ ! -h "$dir/.netrc" -a -f "$dir/.netrc" ]; then echo ".netrc file $dir/.netrc exists" fi fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.11"
+    Task = "Ensure users' .netrc Files are not group or world accessible"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else for file in $dir/.netrc; do if [ ! -h "$file" -a -f "$file" ]; then fileperm=$(ls -ld $file | cut -f1 -d" ") if [ $(echo $fileperm | cut -c5) != "-" ]; then echo "Group Read set on $file" fi if [ $(echo $fileperm | cut -c6) != "-" ]; then echo "Group Write set on $file" fi if [ $(echo $fileperm | cut -c7) != "-" ]; then echo "Group Execute set on $file" fi if [ $(echo $fileperm | cut -c8) != "-" ]; then echo "Other Read set on $file" fi if [ $(echo $fileperm | cut -c9) != "-" ]; then echo "Other Write set on $file" fi if [ $(echo $fileperm | cut -c10) != "-" ]; then echo "Other Execute set on $file" fi fi done fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.12"
+    Task = "Ensure no users have .rhosts files"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else for file in $dir/.rhosts; do if [ ! -h "$file" -a -e "$file" ]; then echo ".rhosts file in $dir" fi done fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.13"
+    Task = "Ensure all groups in /etc/passwd exist in /etc/group"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+for i in $(cut -s -d: -f4 /etc/passwd | sort -u ); do grep -q -P "^.*?:[^:]*:$i:" /etc/group if [ $? -ne 0 ]; then echo "Group $i is referenced by /etc/passwd but does not exist in /etc/group" fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.14"
+    Task = "Ensure no duplicate UIDs exist"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read x ; do [ -z "$x" ] && break set - $x if [ $1 -gt 1 ]; then users=$(awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | xargs) echo "Duplicate UID ($2): $users" fi done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.15"
+    Task = "Ensure no duplicate GIDs exist"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+cut -d: -f3 /etc/group | sort | uniq -d | while read x ; do echo "Duplicate GID ($x) in /etc/group" done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.16"
+    Task = "Ensure no duplicate user names exist"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+cut -d: -f1 /etc/passwd | sort | uniq -d | while read x do echo "Duplicate login name ${x} in /etc/passwd" done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.17"
+    Task = "Ensure no duplicate group names exist"
+    Test = {
+        $test1 = @'
+#!/bin/bash
+cut -d: -f1 /etc/group | sort | uniq -d | while read x do echo "Duplicate group name ${x} in /etc/group" done
+'@
+        if($test1 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.18"
+    Task = "Ensure shadow group is empty"
+    Test = {
+        $test1 = grep ^shadow:[^:]*:[^:]*:[^:]+ /etc/group
+        $test2 = awk -F: '($4 == "<shadow-gid>") { print }' /etc/passwd
+        if($test1 -eq $null && $test2 -eq $null){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
