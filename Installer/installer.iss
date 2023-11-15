@@ -4,7 +4,7 @@
 #define AppPublisher "FB Pro GmbH"
 #define AppURL "https://www.fb-pro.com/"
 #define AppIcon "AT.ico"
-#define AppVersion "5.6"
+#define AppVersion "5.7.0"
 //#define BaseFolder "Audit-Test-Automation"
 #define BaseFolder ".."
 #define AskVersionText "Please select the version to be installed"
@@ -26,7 +26,7 @@ OutputBaseFilename={#AppShortName}-{#AppVersion}
 LicenseFile={#BaseFolder}\{#LicenseFile}
 DefaultGroupName={#AppShortName}
 UninstallDisplayIcon={app}\{#AppIcon}
-
+VersionInfoVersion={#AppVersion}
 
 [Tasks]
 Name: Stable; Description: "Stable (recommended)"; Flags: exclusive; GroupDescription: "{#AskVersionText}"
