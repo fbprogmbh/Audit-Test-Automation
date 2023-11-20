@@ -4128,42 +4128,6 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "Registry-110"
-    Task = "Set registry value 'PolicyVersion' to 538."
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall" `
-                -Name "PolicyVersion" `
-                | Select-Object -ExpandProperty "PolicyVersion"
-        
-            if ($regValue -ne 538) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 538"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "Registry-111"
     Task = "Set registry value 'DefaultOutboundAction' to 'Disabled'."
     Constraints = @(
