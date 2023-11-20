@@ -17,8 +17,8 @@ ATAPAuditor:\
 			<td>
 
 
-AuditTAP Release 5.6.3:\
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.6.3)
+AuditTAP Release 5.7.0:\
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.7.0)
 			</td>
 		</tr>
 	</table>
@@ -106,8 +106,8 @@ Microsoft Windows 10 | V1R23 | 2.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
 Microsoft Windows 10 Stand-alone | - | Stand-alone 1.0.1 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 Stand-alone | - | Stand-alone 1.0.1 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 | - | 2.0.0 | 20H2 | SiSyPHuS 1.3 | -
+Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 11 | - | 2.0.0 | 22H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 2.0.0 | FINAL | - | -
@@ -127,6 +127,7 @@ Fedora 35 | - | - | - | - | - | Base
 Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
 Ubuntu 20.04 | - | 1.1.0 | - | - | - | Base
 Ubuntu 22.04 | - | 1.0.0 | - | - | - | Base
+Debian 11 | - | 1.0.0 | - | - | - | Base
 
 
 
