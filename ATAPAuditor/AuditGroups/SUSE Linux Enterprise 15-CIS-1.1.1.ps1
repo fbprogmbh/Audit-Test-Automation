@@ -360,7 +360,10 @@ if ($IPv6Status -match "enabled") {
     Id = "1.1.22"
     Task = "Ensure sticky bit is set on all world-writable directories"
     Test = {
-        $result = df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+        $result = @'
+#!/bin/bash
+df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+'@
         if ($result -eq $null) {
             return $retCompliant
         } else {
@@ -2718,9 +2721,9 @@ if ($IPv6Status -match "enabled") {
     Task = "Ensure all users last password change date is in the past"
     Test = {
         $test = @'
-        #!/bin/bash
-        for usr in $(cut -d: -f1 /etc/shadow); do
-        [[ $(chage --list $usr | grep '^Last password change' | cut -d: -f2) > $(date) ]] && echo "$usr :$(chage --list $usr | grep '^Last password change' | cut -d: -f2)"; done
+#!/bin/bash
+for usr in $(cut -d: -f1 /etc/shadow); do
+    [[ $(chage --list $usr | grep '^Last password change' | cut -d: -f2) > $(date) ]] && echo "$usr :$(chage --list $usr | grep '^Last password change' | cut -d: -f2)"; done
 '@
         if($test -eq $null){
             return $retCompliant
