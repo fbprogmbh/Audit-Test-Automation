@@ -1305,6 +1305,9 @@ if ($IPv6Status -match "enabled") {
     Id = "3.3.9"
     Task = "Ensure IPv6 router advertisements are not accepted"
     Test = {
+        if ($IPv6Status -match "disabled") {
+            return $retCompliantIPv6Disabled
+        }
         $result1 = sysctl net.ipv6.conf.all.accept_ra
         $result2 = sysctl net.ipv6.conf.default.accept_ra
         $result3 = grep "net\.ipv6\.conf\.all\.accept_ra" /etc/sysctl.conf /etc/sysctl.d/*
