@@ -27,18 +27,17 @@ $IPv6Status_script = @'
 #!/bin/bash
 [ -n "$passing" ] && passing=""
 [ -z "$(grep "^\s*linux" /boot/grub2/grub.cfg | grep -v ipv6.disabled=1)" ] && passing="true"
-grep -Eq "^\s*net\.ipv6\.conf\.all\.disable_ipv6\s*=\s*1\b(\s+#.*)?$"
-/etc/sysctl.conf /etc/sysctl.d/*.conf && grep -Eq
-"^\s*net\.ipv6\.conf\.default\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" /etc/sysctl.conf /etc/sysctl.d/*.conf && sysctl
-net.ipv6.conf.all.disable_ipv6 | grep -Eq "^\s*net\.ipv6\.conf\.all\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" && sysctl net.ipv6.conf.default.disable_ipv6 | grep -Eq "^\s*net\.ipv6\.conf\.default\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" && passing="true"
+grep -Eq "^\s*net\.ipv6\.conf\.all\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" /etc/sysctl.conf /etc/sysctl.d/*.conf && grep -Eq "^\s*net\.ipv6\.conf\.default\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" /etc/sysctl.conf /etc/sysctl.d/*.conf && sysctl net.ipv6.conf.all.disable_ipv6 | grep -Eq "^\s*net\.ipv6\.conf\.all\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" && sysctl net.ipv6.conf.default.disable_ipv6 | grep -Eq "^\s*net\.ipv6\.conf\.default\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" && passing="true"
 if [ "$passing" = true ] ; then
     echo "IPv6 is disabled on the system"
 else
     echo "IPv6 is enabled on the system"
 fi
 '@
-$IPv6Status = bash -c $IPv6Status_script | grep "enabled"
-if ($IPv6Status -ne "enabled") {
+$IPv6Status = bash -c $IPv6Status_script
+if ($IPv6Status -match "enabled") {
+    $IPv6Status = "enabled"
+} else {
     $IPv6Status = "disabled"
 }
 
@@ -50,7 +49,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = modprobe -n -v squashfs | grep -E '(suqashfs|install)'
         $result2 = lsmod | grep squashfs
-        if ($result1 -match "install /bin/true" && $result2 -eq $null) {
+        if ($result1 -match "install /bin/true" -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -64,7 +63,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = modprobe -n -v udf | grep -E '(udf|install)'
         $result2 = lsmod | grep udf
-        if ($result1 -match "install /bin/true" && $result2 -eq $null) {
+        if ($result1 -match "install /bin/true" -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -82,7 +81,7 @@ if ($IPv6Status -ne "enabled") {
         $result4 = lsmod | grep udf
         $result5 = modprobe -n -v msdos | grep -E '(msdos|install)'
         $result6 = lsmod | grep udf
-        if ($result1 -match "install /bin/true" && $result2 -eq $null && $result3 -match "install /bin/true" && $result4 -eq $null && $result5 -match "install /bin/true" && $result6 -eq $null) {
+        if ($result1 -match "install /bin/true" -and $result2 -eq $null -and $result3 -match "install /bin/true" -and $result4 -eq $null -and $result5 -match "install /bin/true" -and $result6 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -148,7 +147,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = mount | grep -E '\s/dev/shm\s'
         $result2 = grep -E '\s/dev/shm\s' /etc/fstab
-        if ($result1 -ne $null && $result2 -ne $null) {
+        if ($result1 -ne $null -and $result2 -ne $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -383,8 +382,21 @@ if ($IPv6Status -ne "enabled") {
     }
 }
 
-# 1.2.1 TODO - brauche suse15 zur implementierung
-# 1.2.2 TODO - s.o.
+[AuditTest] @{
+    Id = "1.2.1"
+    Task = "Ensure GPG keys are configured"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "1.2.2"
+    Task = "Ensure package manager repositories are configured"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
 
 [AuditTest] @{
     Id = "1.2.3"
@@ -414,7 +426,7 @@ if ($IPv6Status -ne "enabled") {
 
 [AuditTest] @{
     Id = "1.3.2"
-    Task = "Ensure sudo is installed"
+    Task = "Ensure sudo commands use pty"
     Test = {
         $result = grep -Ei '^\s*Defaults\s+([^#]\S+,\s*)?use_pty\b' /etc/sudoers /etc/sudoers.d/*
         if ($result -match "Defaults user_pty") {
@@ -457,7 +469,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = crontab -u root -l | grep aide
         $result2 = grep -r aide /etc/cron.* /etc/crontab
-        if ($result1 -ne $null || $result2 -ne $null) {
+        if ($result1 -ne $null -or $result2 -ne $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -471,7 +483,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = grep "^\s*set superusers" /boot/grub2/grub.cfg
         $result2 = grep "^\s*password" /boot/grub2/grub.cfg
-        if ($result1 -match "set superusers=" && $result2 -match "password_pbkdf2 ") {
+        if ($result1 -match "set superusers=" -and $result2 -match "password_pbkdf2 ") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -777,7 +789,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = grep -E "^(server|pool)" /etc/chrony.conf
         $result2 = grep ^OPTIONS /etc/sysconfig/chronyd
-        if($result1 -match "server " && $result2 -match "-u chrony"){
+        if($result1 -match "server " -and $result2 -match "-u chrony") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -843,7 +855,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = rpm -q nfs-utils
         $result2 = rpm -q nfs-kernel-server
-        if($result1 -match "not installed" && $result2 -match "not installed"){
+        if($result1 -match "not installed" -and $result2 -match "not installed"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1087,7 +1099,7 @@ if ($IPv6Status -ne "enabled") {
     Id = "3.1.1"
     Task = "Disable IPv6"
     Test = {
-        if ($rcIPv6Status -match "disable") {
+        if ($IPv6Status -match "disable") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1112,10 +1124,10 @@ if ($IPv6Status -ne "enabled") {
     Id = "3.2.1"
     Task = "Ensure IP forwarding is disabled"
     Test = {
-        if ($rcIPv6Status -match "disable") {
+        if ($IPv6Status -match "disable") {
             $result1 = sysctl net.ipv4.ip_forward
             $result2 = grep -E -s "^\s*net\.ipv4\.ip_forward\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
-            if($result1 -match "net.ipv4.ip_forward = 0" && $result2 -eq $null){
+            if($result1 -match "net.ipv4.ip_forward = 0" -and $result2 -eq $null){
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -1125,7 +1137,7 @@ if ($IPv6Status -ne "enabled") {
             $result2 = grep -E -s "^\s*net\.ipv4\.ip_forward\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
             $result3 = sysctl net.ipv6.conf.all.forwarding
             $result4 = grep -E -s "^\s*net\.ipv6\.conf\.all\.forwarding\s*=\s*1" /etc/sysctl.conf /etc/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /run/sysctl.d/*.conf
-            if($result1 -match "net.ipv4.ip_forward = 0" && $result2 -eq $null && $result3 -match "net.ipv6.conf.all.forwarding = 0" && $result4 -eq $null){
+            if($result1 -match "net.ipv4.ip_forward = 0" -and $result2 -eq $null -and $result3 -match "net.ipv6.conf.all.forwarding = 0" -and $result4 -eq $null){
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -1143,7 +1155,7 @@ if ($IPv6Status -ne "enabled") {
         $result2 = sysctl net.ipv4.conf.default.send_redirects
         $result3 = grep "net\.ipv4\.conf\.all\.send_redirects" /etc/sysctl.conf /etc/sysctl.d/*
         $result4 = grep "net\.ipv4\.conf\.default\.send_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.conf.all.send_redirects = 0" && $result2 -match "net.ipv4.conf.default.send_redirects = 0" && $result3 -match "net.ipv4.conf.all.send_redirects = 0" && $result4 -match "net.ipv4.conf.default.send_redirects= 0"){
+        if($result1 -match "net.ipv4.conf.all.send_redirects = 0" -and $result2 -match "net.ipv4.conf.default.send_redirects = 0" -and $result3 -match "net.ipv4.conf.all.send_redirects = 0" -and $result4 -match "net.ipv4.conf.default.send_redirects= 0"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1155,12 +1167,12 @@ if ($IPv6Status -ne "enabled") {
     Id = "3.3.1"
     Task = "Ensure source routed packets are not accepted"
     Test = {
-        if ($rcIPv6Status -match "disable") {
+        if ($IPv6Status -match "disable") {
             $result1 = sysctl net.ipv4.conf.all.accept_source_route
             $result2 = sysctl net.ipv4.conf.default.accept_source_route
             $result3 = grep "net\.ipv4\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
             $result4 = grep "net\.ipv4\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
-            if($result1 -match "net.ipv4.conf.all.accept_source_route = 0" && $result2 -match "net.ipv4.conf.default.accept_source_route = 0" && $result3 -match "net.ipv4.conf.all.accept_source_route= 0" && $result4 -match "net.ipv4.conf.default.accept_source_route= 0"){
+            if($result1 -match "net.ipv4.conf.all.accept_source_route = 0" -and $result2 -match "net.ipv4.conf.default.accept_source_route = 0" -and $result3 -match "net.ipv4.conf.all.accept_source_route= 0" -and $result4 -match "net.ipv4.conf.default.accept_source_route= 0"){
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -1174,7 +1186,7 @@ if ($IPv6Status -ne "enabled") {
             $result6 = sysctl net.ipv6.conf.default.accept_source_route
             $result7 = grep "net\.ipv6\.conf\.all\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
             $result8 = grep "net\.ipv6\.conf\.default\.accept_source_route" /etc/sysctl.conf /etc/sysctl.d/*
-            if($result1 -match "net.ipv4.conf.all.accept_source_route = 0" && $result2 -match "net.ipv4.conf.default.accept_source_route = 0" && $result3 -match "net.ipv4.conf.all.accept_source_route= 0" && $result4 -match "net.ipv4.conf.default.accept_source_route= 0" && $result5 -match "net.ipv6.conf.all.accept_source_route = 0" && $result6 -match "net.ipv6.conf.default.accept_source_route = 0" && $result7 -match "net.ipv4.conf.all.accept_source_route= 0" && $result8 -match "net.ipv6.conf.default.accept_source_route= 0"){
+            if($result1 -match "net.ipv4.conf.all.accept_source_route = 0" -and $result2 -match "net.ipv4.conf.default.accept_source_route = 0" -and $result3 -match "net.ipv4.conf.all.accept_source_route= 0" -and $result4 -match "net.ipv4.conf.default.accept_source_route= 0" -and $result5 -match "net.ipv6.conf.all.accept_source_route = 0" -and $result6 -match "net.ipv6.conf.default.accept_source_route = 0" -and $result7 -match "net.ipv4.conf.all.accept_source_route= 0" -and $result8 -match "net.ipv6.conf.default.accept_source_route= 0"){
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -1191,7 +1203,7 @@ if ($IPv6Status -ne "enabled") {
         $result2 = sysctl net.ipv4.conf.default.accept_redirects
         $result3 = grep "net\.ipv4\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
         $result4 = grep "net\.ipv4\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.conf.all.accept_redirects = 0" && $result2 -match "net.ipv4.conf.default.accept_redirects = 0" && $result3 -match "net.ipv4.conf.all.accept_redirects= 0" && $result4 -match "net.ipv4.conf.default.accept_redirects= 0"){
+        if($result1 -match "net.ipv4.conf.all.accept_redirects = 0" -and $result2 -match "net.ipv4.conf.default.accept_redirects = 0" -and $result3 -match "net.ipv4.conf.all.accept_redirects= 0" -and $result4 -match "net.ipv4.conf.default.accept_redirects= 0"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1207,7 +1219,7 @@ if ($IPv6Status -ne "enabled") {
         $result2 = sysctl net.ipv4.conf.default.accept_redirects
         $result3 = grep "net\.ipv4\.conf\.all\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
         $result4 = grep "net\.ipv4\.conf\.default\.accept_redirects" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.conf.all.accept_redirects = 0" && $result2 -match "net.ipv4.conf.default.accept_redirects = 0" && $result3 -match "net.ipv4.conf.all.accept_redirects= 0" && $result4 -match "net.ipv4.conf.default.accept_redirects= 0"){
+        if($result1 -match "net.ipv4.conf.all.accept_redirects = 0" -and $result2 -match "net.ipv4.conf.default.accept_redirects = 0" -and $result3 -match "net.ipv4.conf.all.accept_redirects= 0" -and $result4 -match "net.ipv4.conf.default.accept_redirects= 0"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1223,7 +1235,7 @@ if ($IPv6Status -ne "enabled") {
         $result2 = sysctl net.ipv4.conf.default.log_martians
         $result3 = grep "net\.ipv4\.conf\.all\.log_martians" /etc/sysctl.conf /etc/sysctl.d/*
         $result4 = grep "net\.ipv4\.conf\.default\.log_martians" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.conf.all.log_martians = 1" && $result2 -match "net.ipv4.conf.default.log_martians = 1" && $result3 -match "net.ipv4.conf.all.log_martians = 1" && $result4 -match "net.ipv4.conf.default.log_martians = 1"){
+        if($result1 -match "net.ipv4.conf.all.log_martians = 1" -and $result2 -match "net.ipv4.conf.default.log_martians = 1" -and $result3 -match "net.ipv4.conf.all.log_martians = 1" -and $result4 -match "net.ipv4.conf.default.log_martians = 1"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1237,7 +1249,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = sysctl net.ipv4.icmp_echo_ignore_broadcasts
         $result2 = grep "net\.ipv4\.icmp_echo_ignore_broadcasts" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.icmp_echo_ignore_broadcasts = 1" && $result2 -match "net.ipv4.icmp_echo_ignore_broadcasts = 1"){
+        if($result1 -match "net.ipv4.icmp_echo_ignore_broadcasts = 1" -and $result2 -match "net.ipv4.icmp_echo_ignore_broadcasts = 1"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1251,7 +1263,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = sysctl net.ipv4.icmp_ignore_bogus_error_responses
         $result2 = grep "net.ipv4.icmp_ignore_bogus_error_responses" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.icmp_ignore_bogus_error_responses = 1" && $result2 -match "net.ipv4.icmp_ignore_bogus_error_responses = 1"){
+        if($result1 -match "net.ipv4.icmp_ignore_bogus_error_responses = 1" -and $result2 -match "net.ipv4.icmp_ignore_bogus_error_responses = 1"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1267,7 +1279,7 @@ if ($IPv6Status -ne "enabled") {
         $result2 = sysctl net.ipv4.conf.default.rp_filter
         $result3 = grep "net\.ipv4\.conf\.all\.rp_filter" /etc/sysctl.conf /etc/sysctl.d/*
         $result4 = grep "net\.ipv4\.conf\.default\.rp_filter" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.conf.all.rp_filter = 1" && $result2 -match "net.ipv4.conf.default.rp_filter = 1" && $result3 -match "net.ipv4.conf.all.rp_filter = 1" && $result4 -match "net.ipv4.conf.default.rp_filter = 1"){
+        if($result1 -match "net.ipv4.conf.all.rp_filter = 1" -and $result2 -match "net.ipv4.conf.default.rp_filter = 1" -and $result3 -match "net.ipv4.conf.all.rp_filter = 1" -and $result4 -match "net.ipv4.conf.default.rp_filter = 1"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1281,7 +1293,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = sysctl net.ipv4.tcp_syncookies
         $result2 = grep "net\.ipv4\.tcp_syncookies" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv4.tcp_syncookies = 1" && $result2 -match "net.ipv4.tcp_syncookies = 1"){
+        if($result1 -match "net.ipv4.tcp_syncookies = 1" -and $result2 -match "net.ipv4.tcp_syncookies = 1"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1297,7 +1309,7 @@ if ($IPv6Status -ne "enabled") {
         $result2 = sysctl net.ipv6.conf.default.accept_ra
         $result3 = grep "net\.ipv6\.conf\.all\.accept_ra" /etc/sysctl.conf /etc/sysctl.d/*
         $result4 = grep "net\.ipv6\.conf\.default\.accept_ra" /etc/sysctl.conf /etc/sysctl.d/*
-        if($result1 -match "net.ipv6.conf.all.accept_ra = 0" && $result2 -match "net.ipv6.conf.default.accept_ra = 0" && $result3 -match "net.ipv6.conf.all.accept_ra = 0" && $result4 -match "net.ipv6.conf.default.accept_ra = 0"){
+        if($result1 -match "net.ipv6.conf.all.accept_ra = 0" -and $result2 -match "net.ipv6.conf.default.accept_ra = 0" -and $result3 -match "net.ipv6.conf.all.accept_ra = 0" -and $result4 -match "net.ipv6.conf.default.accept_ra = 0"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1311,7 +1323,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = modprobe -n -v dccp
         $result2 = lsmod | grep dccp
-        if($result1 -match "install /bin/true" && $result2 -eq $null){
+        if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1325,7 +1337,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = modprobe -n -v sctp
         $result2 = lsmod | grep sctp
-        if($result1 -match "install /bin/true" && $result2 -eq $null){
+        if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1338,7 +1350,7 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure FirewallD is installed"
     Test = {
         $result = rpm -q firewalld iptables
-        if($result -match "firewalld-" && $result -match "iptables-"){
+        if($result -match "firewalld-" -and $result -match "iptables-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1353,7 +1365,7 @@ if ($IPv6Status -ne "enabled") {
         $result1 = rpm -q nftables
         $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled nftables
-        if($result1 -match "not installed" || ($result21 -eq $null && $result22 -match "masked")){
+        if($result1 -match "not installed" -or ($result21 -eq $null -and $result22 -match "masked")){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1367,7 +1379,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = systemctl is-enabled firewalld
         $result2 = firewall-cmd --state
-        if($result1 -match "enabled" && $result2 -match "running"){
+        if($result1 -match "enabled" -and $result2 -match "running"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1424,7 +1436,7 @@ if ($IPv6Status -ne "enabled") {
         $result1 = rpm -q firewalld
         $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled firewalld
-        if($result1 -match "not installed" || ($result21 -eq $null && $result22 -match "masked")){
+        if($result1 -match "not installed" -or ($result21 -eq $null -and $result22 -match "masked")){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1460,7 +1472,7 @@ if ($IPv6Status -ne "enabled") {
         $result1 = nft list ruleset | grep 'hook input'
         $result2 = nft list ruleset | grep 'hook forward'
         $result3 = nft list ruleset | grep 'hook output'
-        if($result1 -match "type filter hook input priority 0;" && $result2 -match "type filter hook forward priority 0;" && $result3 -match "type filter hook output priority 0;") {
+        if($result1 -match "type filter hook input priority 0;" -and $result2 -match "type filter hook forward priority 0;" -and $result3 -match "type filter hook output priority 0;") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1474,7 +1486,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $result1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
         $result2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
-        if($result1 -match "iif ""lo"" accept" && $result2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop") {
+        if($result1 -match "iif ""lo"" accept" -and $result2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1497,7 +1509,7 @@ if ($IPv6Status -ne "enabled") {
         $result1 = nft list ruleset | grep 'hook input'
         $result2 = nft list ruleset | grep 'hook forward'
         $result3 = nft list ruleset | grep 'hook output'
-        if($result1 -match "type filter hook input priority 0; policy drop;" && $result2 -match "type filter hook forward priority 0; policy drop;" && $result3 -match "type filter hook output priority 0; policy drop;") {
+        if($result1 -match "type filter hook input priority 0; policy drop;" -and $result2 -match "type filter hook forward priority 0; policy drop;" -and $result3 -match "type filter hook output priority 0; policy drop;") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1559,7 +1571,7 @@ if ($IPv6Status -ne "enabled") {
         $result1 = rpm -q firewalld
         $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled firewalld
-        if($result1 -match "not installed" || ($result21 -eq $null && $result22 -match "masked")){
+        if($result1 -match "not installed" -or ($result21 -eq $null -and $result22 -match "masked")){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1584,7 +1596,7 @@ if ($IPv6Status -ne "enabled") {
         $result31 = $?
         $test32 = $output -match "REJECT" | grep "Chain OUTPUT (policy REJECT)"
         $result32 = $?
-        if(($result11 -match "True" || $result12 -match "True") && ($result21 -match "True" || $result22 -match "True") && ($result31 -match "True" || $result32 -match "True")){
+        if(($result11 -match "True" -or $result12 -match "True") -and ($result21 -match "True" -or $result22 -match "True") -and ($result31 -match "True" -or $result32 -match "True")){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1641,7 +1653,7 @@ if ($IPv6Status -ne "enabled") {
         $result31 = $?
         $test32 = $output -match "REJECT" | grep "Chain OUTPUT (policy REJECT)"
         $result32 = $?
-        if(($result11 -match "True" || $result12 -match "True") && ($result21 -match "True" || $result22 -match "True") && ($result31 -match "True" || $result32 -match "True")){
+        if(($result11 -match "True" -or $result12 -match "True") -and ($result21 -match "True" -or $result22 -match "True") -and ($result31 -match "True" -or $result32 -match "True")){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1661,7 +1673,7 @@ if ($IPv6Status -ne "enabled") {
         $test2 = $output1 | grep "DROP\s*all\s**\s**\s*::1\s*::/0"
         $output2 = ip6tables -L OUTPUT -v -n
         $test3 = $output2 | grep "ACCEPT\s*all\s*lo\s**\s*::/0\s*::/0"
-        if($test1 -ne $null && $test2 -ne $null && $test3 -ne $null){
+        if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1712,7 +1724,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = systemctl is-enabled auditd
         $test2 = systemctl status auditd | grep 'Active: active (running) '
-        if($test1 -match "enabled" && $test2 -ne $null){
+        if($test1 -match "enabled" -and $test2 -ne $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1761,7 +1773,7 @@ if ($IPv6Status -ne "enabled") {
         $test1 = grep space_left_action /etc/audit/auditd.conf
         $test2 = grep action_mail_acct /etc/audit/auditd.conf
         $test3 = grep admin_space_left_action /etc/audit/auditd.conf
-        if($test1 -match "space_left_action = email" && $test2 -match "action_mail_acct = root" && $test3 -match "admin_space_left_action = halt"){
+        if($test1 -match "space_left_action = email" -and $test2 -match "action_mail_acct = root" -and $test3 -match "admin_space_left_action = halt"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1783,15 +1795,15 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep time-change /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep time-change
-        if($test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change" &&
-        $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change" &&
-        $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b64 -S clock_settime -k time-change" &&
-        $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b32 -S clock_settime -k time-change" &&
-        $test1 -match "/etc/audit/rules.d/time_change.rules:-w /etc/localtime -p wa -k time-change" &&
-        $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change" &&
-        $test2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change" &&
-        $test2 -match "-a always,exit -F arch=b64 -S clock_settime -F key=time-change" &&
-        $test2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change" &&
+        if($test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change" -and
+        $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change" -and
+        $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b64 -S clock_settime -k time-change" -and
+        $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b32 -S clock_settime -k time-change" -and
+        $test1 -match "/etc/audit/rules.d/time_change.rules:-w /etc/localtime -p wa -k time-change" -and
+        $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change" -and
+        $test2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change" -and
+        $test2 -match "-a always,exit -F arch=b64 -S clock_settime -F key=time-change" -and
+        $test2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change" -and
         $test2 -match "-w /etc/localtime -p wa -k time-change"){
             return $retCompliant
         } else {
@@ -1806,13 +1818,13 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep identity /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep identity
-        if($test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/group -p wa -k identity" &&
-        $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/passwd -p wa -k identity" &&
-        $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/shadow -p wa -k identity" &&
-        $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/security/opasswd -p wa -k identity" &&
-        $test2 -match "-w /etc/group -p wa -k identity" &&
-        $test2 -match "-w /etc/passwd -p wa -k identity" &&
-        $test2 -match "-w /etc/shadow -p wa -k identity" &&
+        if($test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/group -p wa -k identity" -and
+        $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/passwd -p wa -k identity" -and
+        $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/shadow -p wa -k identity" -and
+        $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/security/opasswd -p wa -k identity" -and
+        $test2 -match "-w /etc/group -p wa -k identity" -and
+        $test2 -match "-w /etc/passwd -p wa -k identity" -and
+        $test2 -match "-w /etc/shadow -p wa -k identity" -and
         $test2 -match "-w /etc/security/opasswd -p wa -k identity"){
             return $retCompliant
         } else {
@@ -1827,17 +1839,17 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep system-locale /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep system-locale
-        if($test1 -match "/etc/audit/rules.d/system-locale.rules:-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale" &&
-        $test1 -match "/etc/audit/rules.d/system-locale.rules:-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale" &&
-        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/issue -p wa -k system-locale" &&
-        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/issue.net -p wa -k system-locale" &&
-        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/hosts -p wa -k system-locale" &&
-        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/sysconfig/network -p wa -k system-locale" &&
-        $test2 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale" &&
-        $test2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale" &&
-        $test2 -match "-w /etc/issue -p wa -k system-locale" &&
-        $test2 -match "-w /etc/issue.net -p wa -k system-locale" &&
-        $test2 -match "-w /etc/hosts -p wa -k system-locale" &&
+        if($test1 -match "/etc/audit/rules.d/system-locale.rules:-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale" -and
+        $test1 -match "/etc/audit/rules.d/system-locale.rules:-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale" -and
+        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/issue -p wa -k system-locale" -and
+        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/issue.net -p wa -k system-locale" -and
+        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/hosts -p wa -k system-locale" -and
+        $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/sysconfig/network -p wa -k system-locale" -and
+        $test2 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale" -and
+        $test2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale" -and
+        $test2 -match "-w /etc/issue -p wa -k system-locale" -and
+        $test2 -match "-w /etc/issue.net -p wa -k system-locale" -and
+        $test2 -match "-w /etc/hosts -p wa -k system-locale" -and
         $test2 -match "-w /etc/sysconfig/network -p wa -k system-locale"){
             return $retCompliant
         } else {
@@ -1852,7 +1864,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep MAC-policy /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep MAC-policy
-        if($test1 -match "/etc/audit/rules.d/MAC_policy.rules:-w /etc/selinux/ -p wa -k MAC-policy" && $test1 -match "/etc/audit/rules.d/MAC_policy.rules:-w /usr/share/selinux/ -p wa -k MAC-policy" && $test2 -match "-w /etc/selinux/ -p wa -k MAC-policy" && $test2 -match "-w /usr/share/selinux/ -p wa -k MAC-policy"){
+        if($test1 -match "/etc/audit/rules.d/MAC_policy.rules:-w /etc/selinux/ -p wa -k MAC-policy" -and $test1 -match "/etc/audit/rules.d/MAC_policy.rules:-w /usr/share/selinux/ -p wa -k MAC-policy" -and $test2 -match "-w /etc/selinux/ -p wa -k MAC-policy" -and $test2 -match "-w /usr/share/selinux/ -p wa -k MAC-policy"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1866,11 +1878,11 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep logins /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep logins
-        if($test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/faillog -p wa -k logins" &&
-        $test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/lastlog -p wa -k logins" &&
-        $test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/tallylog -p wa -k logins" &&
-        $test2 -match "-w /var/log/faillog -p wa -k logins" &&
-        $test2 -match "-w /var/log/lastlog -p wa -k logins" &&
+        if($test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/faillog -p wa -k logins" -and
+        $test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/lastlog -p wa -k logins" -and
+        $test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/tallylog -p wa -k logins" -and
+        $test2 -match "-w /var/log/faillog -p wa -k logins" -and
+        $test2 -match "-w /var/log/lastlog -p wa -k logins" -and
         $test2 -match "-w /var/log/tallylog -p wa -k logins"){
             return $retCompliant
         } else {
@@ -1885,11 +1897,11 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep -E '(session|logins)' /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep -E '(session|logins)'
-        if($test1 -match "/etc/audit/rules.d/session.rules:-w /var/run/utmp -p wa -k session" &&
-        $test1 -match "/etc/audit/rules.d/session.rules:-w /var/log/wtmp -p wa -k logins" &&
-        $test1 -match "/etc/audit/rules.d/session.rules:-w /var/log/btmp -p wa -k logins" &&
-        $test2 -match "-w /var/run/utmp -p wa -k session" &&
-        $test2 -match "-w /var/log/wtmp -p wa -k logins" &&
+        if($test1 -match "/etc/audit/rules.d/session.rules:-w /var/run/utmp -p wa -k session" -and
+        $test1 -match "/etc/audit/rules.d/session.rules:-w /var/log/wtmp -p wa -k logins" -and
+        $test1 -match "/etc/audit/rules.d/session.rules:-w /var/log/btmp -p wa -k logins" -and
+        $test2 -match "-w /var/run/utmp -p wa -k session" -and
+        $test2 -match "-w /var/log/wtmp -p wa -k logins" -and
         $test2 -match "-w /var/log/btmp -p wa -k logins"){
             return $retCompliant
         } else {
@@ -1904,17 +1916,17 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep perm_mod /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep perm_mod
-        if($test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod" &&
-        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod" &&
-        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod" &&
-        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod" &&
-        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod" &&
-        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod" &&
-        $test2 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod" &&
-        $test2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod" &&
-        $test2 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod" &&
-        $test2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod" &&
-        $test2 -match "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod" &&
+        if($test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
+        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
+        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
+        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
+        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
+        $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
+        $test2 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and
+        $test2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and
+        $test2 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and
+        $test2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and
+        $test2 -match "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and
         $test2 -match "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod"){
             return $retCompliant
         } else {
@@ -1929,13 +1941,13 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep access /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep access
-        if($test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access" &&
-        $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access" &&
-        $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" &&
-        $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" &&
-        $test2 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" &&
-        $test2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access" &&
-        $test2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access" &&
+        if($test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access" -and
+        $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access" -and
+        $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and
+        $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and
+        $test2 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and
+        $test2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access" -and
+        $test2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access" -and
         $test2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"){
             return $retCompliant
         } else {
@@ -1958,9 +1970,9 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep mounts /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep mounts
-        if($test1 -match "/etc/audit/rules.d/mounts.rules:-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" &&
-        $test1 -match "/etc/audit/rules.d/mounts.rules:-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" &&
-        $test2 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts" &&
+        if($test1 -match "/etc/audit/rules.d/mounts.rules:-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and
+        $test1 -match "/etc/audit/rules.d/mounts.rules:-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and
+        $test2 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts" -and
         $test2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"){
             return $retCompliant
         } else {
@@ -1975,9 +1987,9 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep delete /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep delete
-        if($test1 -match "/etc/audit/rules.d/deletion.rules:-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" &&
-        $test1 -match "/etc/audit/rules.d/deletion.rules:-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" &&
-        $test2 -match "-a always,exit -F arch=b64 -S rename,unlink,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete" &&
+        if($test1 -match "/etc/audit/rules.d/deletion.rules:-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and
+        $test1 -match "/etc/audit/rules.d/deletion.rules:-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and
+        $test2 -match "-a always,exit -F arch=b64 -S rename,unlink,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete" -and
         $test2 -match "-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"){
             return $retCompliant
         } else {
@@ -1992,9 +2004,9 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep scope /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep scope
-        if($test1 -match "/etc/audit/rules.d/scope.rules:-w /etc/sudoers -p wa -k scope" &&
-        $test1 -match "/etc/audit/rules.d/scope.rules:-w /etc/sudoers.d/ -p wa -k scope" &&
-        $test2 -match "-w /etc/sudoers -p wa -k scope" &&
+        if($test1 -match "/etc/audit/rules.d/scope.rules:-w /etc/sudoers -p wa -k scope" -and
+        $test1 -match "/etc/audit/rules.d/scope.rules:-w /etc/sudoers.d/ -p wa -k scope" -and
+        $test2 -match "-w /etc/sudoers -p wa -k scope" -and
         $test2 -match "-w /etc/sudoers.d -p wa -k scope"){
             return $retCompliant
         } else {
@@ -2010,7 +2022,7 @@ if ($IPv6Status -ne "enabled") {
         $test1 = grep -E "^\s*-w\s+$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//')\s+-p\s+wa\s+-k\s+actions" /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep actions
         $test3 = echo "-w $(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//') -p wa -k actions"
-        if($test1 -match $test3 && $test2 -match $test3){
+        if($test1 -match $test3 -and $test2 -match $test3){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2024,13 +2036,13 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep modules /etc/audit/rules.d/*.rules
         $test2 = auditctl -l | grep modules
-        if($test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/insmod -p x -k modules" &&
-        $test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/rmmod -p x -k modules" &&
-        $test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/modprobe -p x -k modules" &&
-        $test1 -match "/etc/audit/rules.d/modules.rules:-a always,exit -F arch=b64 -S init_module -S delete_module -k modules" &&
-        $test2 -match "-w /sbin/insmod -p x -k modules" &&
-        $test2 -match "-w /sbin/rmmod -p x -k modules" &&
-        $test2 -match "-w /sbin/modprobe -p x -k modules" &&
+        if($test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/insmod -p x -k modules" -and
+        $test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/rmmod -p x -k modules" -and
+        $test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/modprobe -p x -k modules" -and
+        $test1 -match "/etc/audit/rules.d/modules.rules:-a always,exit -F arch=b64 -S init_module -S delete_module -k modules" -and
+        $test2 -match "-w /sbin/insmod -p x -k modules" -and
+        $test2 -match "-w /sbin/rmmod -p x -k modules" -and
+        $test2 -match "-w /sbin/modprobe -p x -k modules" -and
         $test2 -match "-a always,exit -F arch=b64 -S init_module,delete_module -F key=modules"){
             return $retCompliant
         } else {
@@ -2071,7 +2083,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = systemctl is-enabled rsyslog
         $test2 = systemctl status rsyslog | grep 'active (running) '
-        if($test1 -match "enabled" && $test2 -ne $null){
+        if($test1 -match "enabled" -and $test2 -ne $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2119,7 +2131,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = grep '$ModLoad imtcp' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
         $test2 = grep '$InputTCPServerRun' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
-        if($test1 -match "ModLoad imtcp" && $test2 -match "InputTCPServerRun 514"){
+        if($test1 -match "ModLoad imtcp" -and $test2 -match "InputTCPServerRun 514"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2193,7 +2205,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = systemctl is-enabled cron
         $test2 = systemctl status cron | grep 'Active: active (running) '
-        if($test1 -eq $null && $test2 -match "active (running)"){
+        if($test1 -eq $null -and $test2 -match "active (running)"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2298,7 +2310,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = stat /etc/at.deny
         $test2 = stat /etc/at.allow
-        if($test1 -match "cannot stat" && $test2 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "cannot stat" -and $test2 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2342,7 +2354,7 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure SSH access is limited"
     Test = {
         $test = sshd -T | grep -E '^\s*(allow|deny)(users|groups)\s+\S+'
-        if($test -match "allowusers " || $test -match "allowgroups " || $test -match "denyusers " || $test -match "denygroups "){
+        if($test -match "allowusers " -or $test -match "allowgroups " -or $test -match "denyusers " -or $test -match "denygroups "){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2355,7 +2367,7 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
         $test = sshd -T | grep loglevel
-        if($test -match "loglevel\s+VERBOSE" || $test -match "loglevel\s+INFO"){
+        if($test -match "loglevel\s+VERBOSE" -or $test -match "loglevel\s+INFO"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2460,7 +2472,7 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure only strong Ciphers are used"
     Test = {
         $test = sshd -T | grep ciphers
-        if($test -match "3des-cbc" || $test -match "aes128-cbc" || $test -match "aes192-cbc" || $test -match "aes256-cbc"){
+        if($test -match "3des-cbc" -or $test -match "aes128-cbc" -or $test -match "aes192-cbc" -or $test -match "aes256-cbc"){
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -2473,19 +2485,19 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure only strong MAC algorithms are used"
     Test = {
         $test = sshd -T | grep -i "MACs"
-        if($test -match "hmac-md5" ||
-        $test -match "hmac-md5-96" ||
-        $test -match "hmac-ripemd160" ||
-        $test -match "hmac-sha1" ||
-        $test -match "hmac-sha1-96" ||
-        $test -match "umac-64@openssh.com" ||
-        $test -match "umac-128@openssh.com" ||
-        $test -match "hmac-md5-etm@openssh.com" ||
-        $test -match "hmac-md5-96-etm@openssh.com" ||
-        $test -match "hmac-ripemd160-etm@openssh.com" ||
-        $test -match "hmac-sha1-etm@openssh.com" ||
-        $test -match "hmac-sha1-96-etm@openssh.com" ||
-        $test -match "umac-64-etm@openssh.com" ||
+        if($test -match "hmac-md5" -or
+        $test -match "hmac-md5-96" -or
+        $test -match "hmac-ripemd160" -or
+        $test -match "hmac-sha1" -or
+        $test -match "hmac-sha1-96" -or
+        $test -match "umac-64@openssh.com" -or
+        $test -match "umac-128@openssh.com" -or
+        $test -match "hmac-md5-etm@openssh.com" -or
+        $test -match "hmac-md5-96-etm@openssh.com" -or
+        $test -match "hmac-ripemd160-etm@openssh.com" -or
+        $test -match "hmac-sha1-etm@openssh.com" -or
+        $test -match "hmac-sha1-96-etm@openssh.com" -or
+        $test -match "umac-64-etm@openssh.com" -or
         $test -match "umac-128-etm@openssh.com"){
             return $retNonCompliant
         } else {
@@ -2499,8 +2511,8 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure only strong Key Exchange algorithms are used"
     Test = {
         $test = sshd -T | grep kexalgorithms
-        if($test -match "diffie-hellman-group1-sha1" ||
-        $test -match "diffie-hellman-group14-sha1" ||
+        if($test -match "diffie-hellman-group1-sha1" -or
+        $test -match "diffie-hellman-group14-sha1" -or
         $test -match "diffie-hellman-group-exchange-sha1"){
             return $retNonCompliant
         } else {
@@ -2515,7 +2527,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
         $test2 = sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
-        if($test1 -ge 1 && $test1 -le 300 && $test2 -ge 1 && $test2 -le 3){
+        if($test1 -ge 1 -and $test1 -le 300 -and $test2 -ge 1 -and $test2 -le 3){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2528,7 +2540,7 @@ if ($IPv6Status -ne "enabled") {
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
         $test = sshd -T | grep logingracetime | cut -d ' ' -f 2
-        if($test -ge 1 && $test1 -le 60){
+        if($test -ge 1 -and $test1 -le 60){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2721,7 +2733,7 @@ if ($IPv6Status -ne "enabled") {
     Test = {
         $test1 = awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!="'"$(which nologin)"'" && $7!="/bin/false") {print}' /etc/passwd
         $test2 = awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
-        if($test1 -eq $null && $test2 -eq $null){
+        if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2750,7 +2762,7 @@ if ($IPv6Status -ne "enabled") {
 for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^$#;]+\s*)*)?\s*TMOUT=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9])\b' $f && grep -Eq '(^|^[^#]*;)\s*readonly\s+TMOUT\b' $f && grep -Eq '(^|^[^#]*;)\s*export\s+([^$#;]+\s+)*TMOUT\b' $f && echo "TMOUT correctly configured in file: $f"; done
 '@
         $test2 = grep -PR '^\s*([^$#;]+\s+)*TMOUT=(9[0-9][1-9]|0+|[1-9]\d{3,})\b\s*(\S+\s*)*(\s+#.*)?$' /etc/profile* /etc/bashrc.bashrc*
-        if($test1 -match "configured in file: /etc/profile.d/" && $test2 -eq $null){
+        if($test1 -match "configured in file: /etc/profile.d/" -and $test2 -eq $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2764,7 +2776,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Test = {
         $test1 = grep -RPi '(^|^[^#]*)\s*umask\s+([0-7][0-7][01][0-7]\b|[0-7][0-7][0-7][0-6]\b|[0-7][01][0-7]\b|[0-7][0-7][0-6]\b|(u=[rwx]{0,3},)?(g=[rwx]{0,3},)?o=[rwx]+\b|(u=[rwx]{1,3},)?g=[^rx]{1,3}(,o=[rwx]{0,3})?\b)' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
         $test2 = grep -REi '^\s*UMASK\s+\s*(0[0-7][2-7]7|[0-7][2-7]7|u=(r?|w?|x?)(r?|w?|x?)(r?|w?|x?),g=(r?x?|x?r?),o=)\b' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
-        if(($test1 -eq $null || $test1 -match "No such file or directory") && $test2 -match "UMASK\s*027"){
+        if(($test1 -eq $null -or $test1 -match "No such file or directory") -and $test2 -match "UMASK\s*027"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2787,7 +2799,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Test = {
         $test1 = grep -RPi '(^|^[^#]*)\s*umask\s+([0-7][0-7][01][0-7]\b|[0-7][0-7][0-7][0-6]\b|[0-7][01][0-7]\b|[0-7][0-7][0-6]\b|(u=[rwx]{0,3},)?(g=[rwx]{0,3},)?o=[rwx]+\b|(u=[rwx]{1,3},)?g=[^rx]{1,3}(,o=[rwx]{0,3})?\b)' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
         $test2 = grep -REi '^\s*UMASK\s+\s*(0[0-7][2-7]7|[0-7][2-7]7|u=(r?|w?|x?)(r?|w?|x?)(r?|w?|x?),g=(r?x?|x?r?),o=)\b' /etc/login.defs /etc/default/login /etc/profile* /etc/bash.bashrc*
-        if(($test1 -eq $null || $test1 -match "No such file or directory") && $test2 -match "UMASK\s*027"){
+        if(($test1 -eq $null -or $test1 -match "No such file or directory") -and $test2 -match "UMASK\s*027"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3224,7 +3236,7 @@ cut -d: -f1 /etc/group | sort | uniq -d | while read x do echo "Duplicate group 
     Test = {
         $test1 = grep ^shadow:[^:]*:[^:]*:[^:]+ /etc/group
         $test2 = awk -F: '($4 == "<shadow-gid>") { print }' /etc/passwd
-        if($test1 -eq $null && $test2 -eq $null){
+        if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
             return $retNonCompliant
