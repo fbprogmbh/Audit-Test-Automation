@@ -386,7 +386,7 @@ if ($IPv6Status -match "enabled") {
     Id = "1.2.1"
     Task = "Ensure GPG keys are configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -394,7 +394,7 @@ if ($IPv6Status -match "enabled") {
     Id = "1.2.2"
     Task = "Ensure package manager repositories are configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1749,7 +1749,7 @@ if ($IPv6Status -match "enabled") {
     Id = "4.1.2.1"
     Task = "Ensure audit log storage size is configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1785,7 +1785,7 @@ if ($IPv6Status -match "enabled") {
     Id = "4.1.2.4"
     Task = "Ensure system is disabled when audit logs are full"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1960,7 +1960,7 @@ if ($IPv6Status -match "enabled") {
     Id = "4.1.11"
     Task = "Ensure use of privileged commands is collected"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2108,7 +2108,7 @@ if ($IPv6Status -match "enabled") {
     Id = "4.2.1.4"
     Task = "Ensure logging is configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2195,7 +2195,7 @@ if ($IPv6Status -match "enabled") {
     Id = "4.2.4"
     Task = "Ensure logrotate is configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2788,7 +2788,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "5.5"
     Task = "Ensure root login is restricted to system console"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2814,7 +2814,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.1.1"
     Task = "Audit system file permissions"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2939,7 +2939,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.1.11"
     Task = "Audit SUID executables"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2947,7 +2947,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.1.12"
     Task = "Audit SGID executables"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
