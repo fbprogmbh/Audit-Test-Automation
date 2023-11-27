@@ -1,5 +1,5 @@
-[SystemInformationUnix]@{
-    SoftwareInformation = [SoftwareInformationUnix]@{
+[SystemInformation]@{
+    SoftwareInformation = [SoftwareInformation]@{
         Hostname = hostname
         OperatingSystem = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
         LicenseStatus = $lcStatus

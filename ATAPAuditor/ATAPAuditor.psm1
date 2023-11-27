@@ -54,14 +54,14 @@ class Report {
 
 
 ###################################################
-###########    UNIX Classes    #################
+#######    SYSTEM INFORMATION Classes    ##########
 ###################################################
-class SystemInformationUnix {
-	[SoftwareInformationUnix] $SoftwareInformationUnix
-	[HardwareInformationUnix] $HardwareInformationUnix
+class SystemInformation {
+	[SoftwareInformation] $SoftwareInformation
+	[HardwareInformation] $HardwareInformation
 }
 
-class SoftwareInformationUnix {
+class SoftwareInformation {
 	[string] $Hostname
 	[string] $SystemUptime
 	[string] $OperatingSystem
@@ -72,38 +72,7 @@ class SoftwareInformationUnix {
 	[string] $DomainRole
 }
 
-class HardwareInformationUnix {
-	[string] $SystemManufacturer
-	[string] $SystemSKU
-	[string] $SystemModel
-	[string] $SystemSerialnumber
-	[string] $BiosVersion
-	[string] $FreeDiskSpace
-	[string] $FreePhysicalMemory
-}
-
-
-
-###################################################
-###########    Windows Classes    #################
-###################################################
-class SystemInformationWindows {
-	[SoftwareInformationWindows] $SoftwareInformationWindows
-	[HardwareInformationWindows] $HardwareInformationWindows
-}
-
-class SoftwareInformationWindows {
-	[string] $Hostname
-	[string] $SystemUptime
-	[string] $OperatingSystem
-	[string] $BuildNumber
-	[string] $OSArchitecture
-	[string] $LicenseStatus
-	[string] $InstallationLanguage
-	[string] $DomainRole
-}
-
-class HardwareInformationWindows {
+class HardwareInformation {
 	[string] $SystemManufacturer
 	[string] $SystemSKU
 	[string] $SystemModel
@@ -855,30 +824,30 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-
+	Write-Verbose "PS-Check"
+	$psVersion = $PSVersionTable.PSVersion
+	if ($psVersion.Major -ne 5) {
+		Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
+		$in = Read-Host
+		switch ($in) {
+			Y { Start Powershell; return }
+			N { Write-Warning "Stopping Script..."; return }
+			default { Write-Warning "You did not choose Y nor N. Stopping Script..."; return }
+		}
+	}	
+	$report = Invoke-ATAPReport -ReportName $ReportName 
+	#hashes for each recommendation
+	$hashtable_sha256 = GenerateHashTable $report
 
 	Write-Verbose "OS-Check"
 	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
-		$test = & $PSScriptRoot\Helpers\ReportUnixOS.ps1
+		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
 	}
 	else {
-		[SystemInformationWindows] $OSInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
-		$psVersion = $PSVersionTable.PSVersion
-		Write-Verbose "PS-Check"
-		if ($psVersion.Major -ne 5) {
-			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
-			$in = Read-Host
-			switch ($in) {
-				Y { Start Powershell; return }
-				N { Write-Warning "Stopping Script..."; return }
-				default { Write-Warning "You did not choose Y nor N. Stopping Script..."; return }
-			}
-		}	
-		$report = Invoke-ATAPReport -ReportName $ReportName 
-		#hashes for each recommendation
-		$hashtable_sha256 = GenerateHashTable $report
-		$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -OSInformation:$OSInformation
+		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
 	}
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
+
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
