@@ -3,6 +3,7 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $windefrunning = CheckWindefRunning
 . "$RootPath\Helpers\Firewall.ps1"
+$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 [AuditTest] @{
     Id   = "1.1.7"
     Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
@@ -31,80 +32,84 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
-[AuditTest] @{
-    Id   = "2.2.38"
-    Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
-        $identityAccounts = @(
-            "S-1-5-32-544"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeSecurityPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+if($domainRole -eq 1){
+    [AuditTest] @{
+        Id   = "2.2.38"
+        Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
+            $identityAccounts = @(
+                "S-1-5-32-544"
+            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+            
+            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+            
+            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+                $messages = @()
+                if ($unexpectedUsers.Count -gt 0) {
+                    $messages += "The user right 'SeSecurityPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+                }
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeSecurityPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status  = "False"
+                    Message = $message
+                }
             }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeSecurityPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status  = "False"
-                Message = $message
+                Status  = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status  = "True"
-            Message = "Compliant"
         }
     }
 }
-[AuditTest] @{
-    Id   = "2.3.5.2"
-    Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
-    )
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NTDS\Parameters" `
-                -Name "LDAPServerIntegrity" `
-            | Select-Object -ExpandProperty "LDAPServerIntegrity"
-        
-            if ($regValue -ne 2) {
+if($domainRole -ge 4){
+    [AuditTest] @{
+        Id   = "2.3.5.2"
+        Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+        )
+        Test = {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NTDS\Parameters" `
+                    -Name "LDAPServerIntegrity" `
+                | Select-Object -ExpandProperty "LDAPServerIntegrity"
+            
+                if ($regValue -ne 2) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 2"
+                        Status  = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value not found."
                     Status  = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status  = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+            
             return @{
-                Message = "Registry key not found."
-                Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
         }
     }
 }
