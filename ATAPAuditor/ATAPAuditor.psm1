@@ -824,13 +824,11 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-	$report = Invoke-ATAPReport -ReportName $ReportName 
-	#hashes for each recommendation
-	$hashtable_sha256 = GenerateHashTable $report
-	
 	Write-Verbose "OS-Check"
 	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
+		$SystemInformation.HardwareInformation
+		$SystemInformation.SoftwareInformation
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
@@ -846,6 +844,10 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
+	$report = Invoke-ATAPReport -ReportName $ReportName 
+	#hashes for each recommendation
+	$hashtable_sha256 = GenerateHashTable $report
+	
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
 
 }
