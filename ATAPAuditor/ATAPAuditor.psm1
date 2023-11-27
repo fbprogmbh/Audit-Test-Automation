@@ -824,27 +824,27 @@ function Save-ATAPHtmlReport {
 			}
 		}
 	}
-	Write-Verbose "PS-Check"
-	$psVersion = $PSVersionTable.PSVersion
-	if ($psVersion.Major -ne 5) {
-		Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
-		$in = Read-Host
-		switch ($in) {
-			Y { Start Powershell; return }
-			N { Write-Warning "Stopping Script..."; return }
-			default { Write-Warning "You did not choose Y nor N. Stopping Script..."; return }
-		}
-	}	
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
 	$hashtable_sha256 = GenerateHashTable $report
-
+	
 	Write-Verbose "OS-Check"
 	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
+		Write-Verbose "PS-Check"
+		$psVersion = $PSVersionTable.PSVersion
+		if ($psVersion.Major -ne 5) {
+			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
+			$in = Read-Host
+			switch ($in) {
+				Y { Start Powershell; return }
+				N { Write-Warning "Stopping Script..."; return }
+				default { Write-Warning "You did not choose Y nor N. Stopping Script..."; return }
+			}
+		}
 	}
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
 
