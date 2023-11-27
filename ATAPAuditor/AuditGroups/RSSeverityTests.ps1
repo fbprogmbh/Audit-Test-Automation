@@ -32,7 +32,7 @@ $domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
         }
     }
 }
-if($domainRole -eq 1){
+if($domainRole -eq 3){
     [AuditTest] @{
         Id   = "2.2.38"
         Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
