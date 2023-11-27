@@ -13,7 +13,7 @@
         SystemSKU = (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
         SystemSerialnumber = (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
         SystemManufacturer = (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
-        SystemModel = $null#(Get-WMIObject -class Win32_ComputerSystem).Model
+        SystemModel = dmidecode -s system-product-name
         FreeDiskSpace = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
         FreePhysicalMemory = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
     }
