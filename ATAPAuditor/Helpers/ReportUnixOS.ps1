@@ -9,7 +9,7 @@
         OSArchitecture = dpkg --print-architecture
         KernelVersion = uname -r
     }
-    HardwareInformation = [HardwareInformationUnix]@{
+    HardwareInformation = [HardwareInformation]@{
         BIOSVersion = dmidecode -s bios-version
         SystemSKU = (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
         SystemSerialnumber = (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
