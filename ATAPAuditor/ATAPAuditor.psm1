@@ -828,8 +828,6 @@ function Save-ATAPHtmlReport {
 	Write-Verbose "OS-Check"
 	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
-		$SystemInformation.HardwareInformation
-		$SystemInformation.SoftwareInformation
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
