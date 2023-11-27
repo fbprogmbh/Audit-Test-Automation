@@ -70,6 +70,7 @@ class SoftwareInformation {
 	[string] $LicenseStatus
 	[string] $InstallationLanguage
 	[string] $DomainRole
+	[string] $KernelVersion
 }
 
 class HardwareInformation {
