@@ -2189,7 +2189,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "4.2.3"
     Task = "Ensure permissions on all logfiles are configured"
     Test = {
-        $test = find /var/log -type f -perm /g+wx,o+rwx -exec ls -l {} \;
+        $test = find /var/log -type f -perm /g+wx,o+rwx -exec ls -l '{}' \;
         if($test -eq $null){
             return $retCompliant
         } else {
@@ -2620,30 +2620,45 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
-# TODO
+# unfertig; nochmal drüber gehen TODO
 [AuditTest] @{
     Id = "5.3.1"
     Task = "Ensure password creation requirements are configured"
     Test = {
-        return $retCompliant
+        $test1 = grep -P '^\s*password\s+(requisite|required)\s+pam_cracklib.so\s+([^#]+\s+)*minlen=(1[4-9]|[1-9][0-9]+)\b' /etc/pam.d/common-password
+        $test2 = grep -P '^\s*password\s+(?:requisite|required)\s+pam_cracklib\.so\s+(?:[^#]+\s+)*(?:(?!\2|\3|\4))(dcredit=-[1-9]|ucredit=-[1-9]|ocredit=-[1-9]|lcredit=-[1-9])\s+(?:[^#]+\s+)*(?:(?!\1|\3|\4))(dcredit=-[1-9]|ucredit=-[1-9]|ocredit=-[1-9]|lcredit=-[1-9])\s+(?:[^#]+\s+)*(?:(?!\1|\2|\4))(dcredit=-[1-9]|ucredit=-[1-9]|ocredit=-[1-9]|lcredit=-[1-9])\s+(?:[^#]+\s+)*(?!\1|\2|\3)(dcredit=-[1-9]|ucredit=-[1-9]|ocredit=-[1-9]|lcredit=-[1-9])' /etc/pam.d/common-password
+        if($test2 -match "dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1" -and $test1 -match "minlen=14"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
     }
 }
 
-# TODO
+# unfertig; nochmal drüber gehen TODO
 [AuditTest] @{
     Id = "5.3.2"
     Task = "Ensure lockout for failed password attempts is configured"
     Test = {
-        return $retCompliant
+        $test = grep -E '^\s*auth\s+\S+\s+pam_(tally2|unix)\.so' /etc/pam.d/login
+        if($test -match "deny=5"){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
     }
 }
 
-# TODO
 [AuditTest] @{
     Id = "5.3.3"
     Task = "Ensure password reuse is limited"
     Test = {
-        return $retCompliant
+        $test = grep -P '^\s*password\s+(requisite|required)\s+pam_pwhistory\.so\s+([^#]+\s+)*remember=([5-9]|[1-9][0-9]+)\b' /etc/pam.d/common-password | cut -d= -f2
+        if($test -ge 5){
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
     }
 }
 
@@ -2660,63 +2675,102 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
-## TODO
 [AuditTest] @{
     Id = "5.4.1.2"
     Task = "Ensure password expiration is 365 days or less"
     Test = {
-        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
-        if($test -match "SHA512"){
-            return $retCompliant
-        } else {
+        $test1 = grep ^\s*PASS_MAX_DAYS /etc/login.defs | cut -f2
+        $test2_script = @'
+#!/bin/bash
+for line in $(grep -E ^[^:]+:[^\*] /etc/shadow | cut -d: -f5)
+do
+        if [ $line -gt 365 ]
+        then
+            echo "FAIL"
+        fi
+done
+'@
+        $test2 = bash -c $test2_script
+        if($test1 -gt 365 -or $test2 -match "FAIL"){
             return $retNonCompliant
+        } else {
+            return $retCompliant
         }
     }
 }
 
-## TODO
 [AuditTest] @{
     Id = "5.4.1.3"
     Task = "Ensure minimum days between password changes is configured"
     Test = {
-        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
-        if($test -match "SHA512"){
-            return $retCompliant
-        } else {
+        $test1 = grep ^\s*PASS_MIN_DAYS /etc/login.defs | cut -f2
+        $test2_script = @'
+#!/bin/bash
+for line in $(grep -E ^[^:]+:[^\*] /etc/shadow | cut -d: -f4)
+do
+        if [ $line -lt 1 ]
+        then
+            echo "FAIL"
+        fi
+done
+'@
+        $test2 = bash -c $test2_script
+        if($test1 -lt 1 -or $test2 -match "FAIL"){
             return $retNonCompliant
+        } else {
+            return $retCompliant
         }
     }
 }
 
-## TODO
 [AuditTest] @{
     Id = "5.4.1.4"
     Task = "Ensure password expiration warning days is 7 or more"
     Test = {
-        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
-        if($test -match "SHA512"){
-            return $retCompliant
-        } else {
+        $test1 = grep ^\s*PASS_WARN_AGE /etc/login.defs | cut -f2
+        $test2_script = @'
+#!/bin/bash
+for line in $(grep -E ^[^:]+:[^\*] /etc/shadow | cut -d: -f6)
+do
+        if [ $line -lt 7 ]
+        then
+            echo "FAIL"
+        fi
+done
+'@
+        $test2 = bash -c $test2_script
+        if($test1 -lt 7 -or $test2 -match "FAIL"){
             return $retNonCompliant
+        } else {
+            return $retCompliant
         }
     }
 }
 
-## TODO
 [AuditTest] @{
     Id = "5.4.1.5"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test = grep -Ei '^\s*^\s*ENCRYPT_METHOD\s+SHA512' /etc/login.defs
-        if($test -match "SHA512"){
-            return $retCompliant
-        } else {
+        $test1 = useradd -D | grep INACTIVE | cut -d= -f2
+        $test2_script = @'
+#!/bin/bash
+for line in $(grep -E ^[^:]+:[^\*] /etc/shadow | cut -d: -f7)
+do
+        if [ $line -ge 30 ]
+        then
+            echo "FAIL"
+        fi
+done
+'@
+        $test2 = bash -c $test2_script
+        if($test1 -gt 30 -or $test1 -eq -1 -or $test2 -match "FAIL"){
             return $retNonCompliant
+        } else {
+            return $retCompliant
         }
     }
 }
 
-# TODO
 [AuditTest] @{
     Id = "5.4.1.6"
     Task = "Ensure all users last password change date is in the past"
@@ -2736,11 +2790,19 @@ for usr in $(cut -d: -f1 /etc/shadow); do
 }
 
 [AuditTest] @{
-    Id = "5.4.1.6"
-    Task = "Ensure all users last password change date is in the past"
+    Id = "5.4.2"
+    Task = "Ensure system accounts are secured"
     Test = {
-        $test1 = awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!="'"$(which nologin)"'" && $7!="/bin/false") {print}' /etc/passwd
-        $test2 = awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
+        $test1_script = @'
+#!/bin/bash
+awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!="'"$(which nologin)"'" && $7!="/bin/false") {print}' /etc/passwd
+'@
+        $test1 = bash -c $test1_script
+        $test2_script = @'
+#!/bin/bash
+awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
+'@
+        $test2 = bash -c $test2_script
         if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
@@ -2829,7 +2891,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
 }
 
 [AuditTest] @{
-    Id = "6.2.1"
+    Id = "6.1.2"
     Task = "Ensure permissions on /etc/passwd are configured"
     Test = {
         $test1 = stat /etc/passwd
@@ -2965,7 +3027,11 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.2.1"
     Task = "Ensure accounts in /etc/passwd use shadowed passwords"
     Test = {
-        $test1 = awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
+        $test1_script = @'
+#!/bin/bash
+awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
+'@
+        $test1 = bash -c $test1_script
         if($test1 -eq $null){
             return $retCompliant
         } else {
@@ -2978,7 +3044,11 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.2.2"
     Task = "Ensure /etc/shadow password fields are not empty"
     Test = {
-        $test1 = awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
+        $test1_script = @'
+#!/bin/bash
+awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
+'@
+        $test1 = bash -c $test1_script
         if($test1 -eq $null){
             return $retCompliant
         } else {
@@ -2989,9 +3059,13 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
 
 [AuditTest] @{
     Id = "6.2.3"
-    Task = "Ensure root is the only UID 0 accoun"
+    Task = "Ensure root is the only UID 0 account"
     Test = {
-        $test1 = awk -F: '($3 == 0) { print $1 }' /etc/passwd
+        $test1_script = @'
+#!/bin/bash
+awk -F: '($3 == 0) { print $1 }' /etc/passwd
+'@
+        $test1 = bash -c $test1_script
         if($test1 -match "root"){
             return $retCompliant
         } else {
@@ -3039,10 +3113,14 @@ done
     Test = {
         $test_script = @'
 #!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read -r user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." fi done
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read -r user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    fi
+done
 '@
         $test = bash -c $test_script
-        if($test -ne $null){
+        if($test -match "does not exist"){
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3056,7 +3134,25 @@ grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nolo
     Test = {
         $test_script = @'
 #!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else dirperm=$(ls -ld $dir | cut -f1 -d" ") if [ $(echo $dirperm | cut -c6) != "-" ]; then echo "Group Write permission set on the home directory ($dir) of user $user" fi if [ $(echo $dirperm | cut -c8) != "-" ]; then echo "Other Read permission set on the home directory ($dir) of user $user" fi if [ $(echo $dirperm | cut -c9) != "-" ]; then echo "Other Write permission set on the home directory ($dir) of user $user" fi if [ $(echo $dirperm | cut -c10) != "-" ]; then echo "Other Execute permission set on the home directory ($dir) of user $user" fi fi done
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        dirperm=$(ls -ld $dir | cut -f1 -d" ")
+        if [ $(echo $dirperm | cut -c6) != "-" ]; then
+            echo "Group Write permission set on the home directory ($dir) of user $user"
+        fi
+        if [ $(echo $dirperm | cut -c8) != "-" ]; then
+            echo "Other Read permission set on the home directory ($dir) of user $user"
+        fi
+        if [ $(echo $dirperm | cut -c9) != "-" ]; then
+            echo "Other Write permission set on the home directory ($dir) of user $user"
+        fi
+        if [ $(echo $dirperm | cut -c10) != "-" ]; then
+            echo "Other Execute permission set on the home directory ($dir) of user $user"
+        fi
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3073,7 +3169,16 @@ grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nolo
     Test = {
         $test1 = @'
 #!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else owner=$(stat -L -c "%U" "$dir") if [ "$owner" != "$user" ]; then echo "The home directory ($dir) of user $user is owned by $owner." fi fi done
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        owner=$(stat -L -c "%U" "$dir")
+        if [ "$owner" != "$user" ]; then
+            echo "The home directory ($dir) of user $user is owned by $owner."
+        fi
+    fi
+done
 '@
         if($test1 -eq $null){
             return $retCompliant
@@ -3089,7 +3194,23 @@ grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nolo
     Test = {
         $test_script = @'
 #!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else for file in $dir/.[A-Za-z0-9]*; do if [ ! -h "$file" -a -f "$file" ]; then fileperm=$(ls -ld $file | cut -f1 -d" ") if [ $(echo $fileperm | cut -c6) != "-" ]; then echo "Group Write permission set on file $file" fi if [ $(echo $fileperm | cut -c9) != "-" ]; then echo "Other Write permission set on file $file" fi fi done fi done
+grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        for file in $dir/.[A-Za-z0-9]*; do
+            if [ ! -h "$file" -a -f "$file" ]; then
+                fileperm=$(ls -ld $file | cut -f1 -d" ")
+                if [ $(echo $fileperm | cut -c6) != "-" ]; then
+                    echo "Group Write permission set on file $file"
+                fi
+                if [ $(echo $fileperm | cut -c9) != "-" ]; then
+                    echo "Other Write permission set on file $file"
+                fi
+            fi
+        done
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3106,7 +3227,15 @@ grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nolo
     Test = {
         $test_script = @'
 #!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ] ; then echo "The home directory ($dir) of user $user does not exist." else if [ ! -h "$dir/.forward" -a -f "$dir/.forward" ] ; then echo ".forward file $dir/.forward exists" fi fi done
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
+    if [ ! -d "$dir" ] ; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        if [ ! -h "$dir/.forward" -a -f "$dir/.forward" ]; then
+            echo ".forward file $dir/.forward exists"
+        fi
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3123,7 +3252,15 @@ awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" &&
     Test = {
         $test_script = @'
 #!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else if [ ! -h "$dir/.netrc" -a -f "$dir/.netrc" ]; then echo ".netrc file $dir/.netrc exists" fi fi done
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        if [ ! -h "$dir/.netrc" -a -f "$dir/.netrc" ]; then
+            echo ".netrc file $dir/.netrc exists"
+        fi
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3140,7 +3277,35 @@ awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" &&
     Test = {
         $test_script = @'
 #!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else for file in $dir/.netrc; do if [ ! -h "$file" -a -f "$file" ]; then fileperm=$(ls -ld $file | cut -f1 -d" ") if [ $(echo $fileperm | cut -c5) != "-" ]; then echo "Group Read set on $file" fi if [ $(echo $fileperm | cut -c6) != "-" ]; then echo "Group Write set on $file" fi if [ $(echo $fileperm | cut -c7) != "-" ]; then echo "Group Execute set on $file" fi if [ $(echo $fileperm | cut -c8) != "-" ]; then echo "Other Read set on $file" fi if [ $(echo $fileperm | cut -c9) != "-" ]; then echo "Other Write set on $file" fi if [ $(echo $fileperm | cut -c10) != "-" ]; then echo "Other Execute set on $file" fi fi done fi done
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        for file in $dir/.netrc; do
+            if [ ! -h "$file" -a -f "$file" ]; then
+                fileperm=$(ls -ld $file | cut -f1 -d" ")
+                if [ $(echo $fileperm | cut -c5) != "-" ]; then
+                    echo "Group Read set on $file"
+                fi
+                if [ $(echo $fileperm | cut -c6) != "-" ]; then
+                    echo "Group Write set on $file"
+                fi
+                if [ $(echo $fileperm | cut -c7) != "-" ]; then
+                    echo "Group Execute set on $file"
+                fi
+                if [ $(echo $fileperm | cut -c8) != "-" ]; then
+                    echo "Other Read set on $file"
+                fi
+                if [ $(echo $fileperm | cut -c9) != "-" ]; then
+                    echo "Other Write set on $file"
+                fi
+                if [ $(echo $fileperm | cut -c10) != "-" ]; then
+                    echo "Other Execute set on $file"
+                fi
+            fi
+        done
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3157,7 +3322,17 @@ awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" &&
     Test = {
         $test_script = @'
 #!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do if [ ! -d "$dir" ]; then echo "The home directory ($dir) of user $user does not exist." else for file in $dir/.rhosts; do if [ ! -h "$file" -a -e "$file" ]; then echo ".rhosts file in $dir" fi done fi done
+awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
+    if [ ! -d "$dir" ]; then
+        echo "The home directory ($dir) of user $user does not exist."
+    else
+        for file in $dir/.rhosts; do
+            if [ ! -h "$file" -a -e "$file" ]; then
+                echo ".rhosts file in $dir"
+            fi
+        done
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3174,7 +3349,12 @@ awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" &&
     Test = {
         $test_script = @'
 #!/bin/bash
-for i in $(cut -s -d: -f4 /etc/passwd | sort -u ); do grep -q -P "^.*?:[^:]*:$i:" /etc/group if [ $? -ne 0 ]; then echo "Group $i is referenced by /etc/passwd but does not exist in /etc/group" fi done
+for i in $(cut -s -d: -f4 /etc/passwd | sort -u ); do
+    grep -q -P "^.*?:[^:]*:$i:" /etc/group
+    if [ $? -ne 0 ]; then
+        echo "Group $i is referenced by /etc/passwd but does not exist in /etc/group"
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3191,7 +3371,12 @@ for i in $(cut -s -d: -f4 /etc/passwd | sort -u ); do grep -q -P "^.*?:[^:]*:$i:
     Test = {
         $test_script = @'
 #!/bin/bash
-cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read x ; do [ -z "$x" ] && break set - $x if [ $1 -gt 1 ]; then users=$(awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | xargs) echo "Duplicate UID ($2): $users" fi done
+cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read x ; do
+    [ -z "$x" ] && break set - $x
+    if [ $1 -gt 1 ]; then
+        users=$(awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | xargs) echo "Duplicate UID ($2): $users"
+    fi
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3208,7 +3393,9 @@ cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read x ; do [ -z "$x" ] &&
     Test = {
         $test_script = @'
 #!/bin/bash
-cut -d: -f3 /etc/group | sort | uniq -d | while read x ; do echo "Duplicate GID ($x) in /etc/group" done
+cut -d: -f3 /etc/group | sort | uniq -d | while read x ; do
+    echo "Duplicate GID ($x) in /etc/group"
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3225,7 +3412,9 @@ cut -d: -f3 /etc/group | sort | uniq -d | while read x ; do echo "Duplicate GID 
     Test = {
         $test_script = @'
 #!/bin/bash
-cut -d: -f1 /etc/passwd | sort | uniq -d | while read x do echo "Duplicate login name ${x} in /etc/passwd" done
+cut -d: -f1 /etc/passwd | sort | uniq -d | while read x ; do
+    echo "Duplicate login name ${x} in /etc/passwd"
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
@@ -3242,7 +3431,9 @@ cut -d: -f1 /etc/passwd | sort | uniq -d | while read x do echo "Duplicate login
     Test = {
         $test_script = @'
 #!/bin/bash
-cut -d: -f1 /etc/group | sort | uniq -d | while read x do echo "Duplicate group name ${x} in /etc/group" done
+cut -d: -f1 /etc/group | sort | uniq -d | while read x ; do
+    echo "Duplicate group name ${x} in /etc/group"
+done
 '@
         $test = bash -c $test_script
         if($test -ne $null){
