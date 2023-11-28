@@ -804,9 +804,6 @@ function ConvertTo-HtmlCISA {
 						for ($i = 0; $i -lt $mitigationsList.Length; $i++) {
 							htmlElement 'a' @{href = $(get-MitreLink -type techniques -id $mitigationsList[$i]); target="_blank"} {
 								$mitigationsList[$i]
-								# if($i -lt $mitigationsList.Length - 1){
-								# 	" | "
-								# }
 							}
 						}
 					}
@@ -1006,41 +1003,6 @@ function Get-ATAPHostInformation {
 			"BIOS Version"				= dmidecode -s bios-version
 		}
 	}
- else {
-		$infos = Get-CimInstance Win32_OperatingSystem
-		$disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
-		$role = Switch ((Get-CimInstance -Class Win32_ComputerSystem).DomainRole) {
-			"0"	{ "Standalone Workstation" }
-			"1"	{ "Member Workstation" }
-			"2"	{ "Standalone Server" }
-			"3"	{ "Member Server" }
-			"4"	{ "Backup Domain Controller" }
-			"5"	{ "Primary Domain Controller" }
-		}
-		$freeMemory = ($infos.FreePhysicalMemory /1024) / 1024;
-		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
-		$uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime
-		$v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
-
-		return @{
-			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
-			"Domain role"               = $role
-			"Operating System"          = $infos.Caption
-			# format output
-			"License Status"			= $LicenseStatus
-			"Build Number"              = 'Version {0} (Build {1}.{2})' -f $v.DisplayVersion, $v.CurrentBuildNumber, $v.UBR
-			"Installation Language"     = ((Get-UICulture).DisplayName)
-			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
-			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
-			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
-			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
-			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
-			"OS Architecture"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
-			"System SKU"				= (Get-WmiObject -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
-			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
-			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
-		} 
-	}
 }
 
 function Get-CompletionStatus {
@@ -1208,7 +1170,11 @@ function Get-ATAPHtmlReport {
 		[hashtable]
 		$hashtable_sha256,
 
-		[switch] $ComplianceStatus
+		[switch] $ComplianceStatus,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[SystemInformation]
+		$SystemInformation
 	)
 
 	process {
@@ -1217,6 +1183,7 @@ function Get-ATAPHtmlReport {
 		$completionStatus, $sectionTotalCountHash, $sectionCountHash = Get-CompletionStatus -Statuses $allConfigResults -sections $Sections
 
 		# HTML <head> markup
+
 		$head = htmlElement 'head' @{} {
 			htmlElement 'meta' @{ charset = 'UTF-8' } { }
 			htmlElement 'meta' @{ name = 'viewport'; content = 'width=device-width, initial-scale=1.0' } { }
@@ -1542,7 +1509,6 @@ function Get-ATAPHtmlReport {
 						}
 						htmlElement 'div' @{style="$floating"; id="systemData"} {
 							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
-							$hostInformation = Get-ATAPHostInformation;
 							htmlElement 'table' @{id='hardwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
@@ -1554,39 +1520,39 @@ function Get-ATAPHtmlReport {
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Manufacturer" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Manufacturer")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemManufacturer) }
 									}
 									#Domain Role
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System SKU" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System SKU")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSKU) }
 									}
 									#Operating System
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "System Model" }
-											htmlElement 'td' @{} { $($hostInformation.Get_Item("System Model")) }
+											htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemModel) }
 										}
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Serialnumber")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("BIOS Version")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.BIOSVersion) }
 									}
 									#Free disk space
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
 									}
 									#Free physican memory
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
 									}
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "" }
@@ -1613,47 +1579,47 @@ function Get-ATAPHtmlReport {
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Hostname" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Hostname")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.Hostname) }
 									}
 									#System Uptime
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Uptime" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Uptime")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.SystemUptime) }
 									}
 									#Operating System
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Operating System")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OperatingSystem) }
 									}
 									#Build Number
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-											htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.BuildNumber) }
 										}
 									}
 									#OS Architecture
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "OS Architecture" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("OS Architecture")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OSArchitecture) }
 									}
 									#licence activation status
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "License Status" }
-											htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
+											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.LicenseStatus) }
 										}
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Installation Language" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Installation Language")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
 									}
 									#Domain role
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
-											htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
+											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.DomainRole) }
 										}
 									}
 								}
