@@ -264,7 +264,7 @@ function checkReportNameWithOSSystem {
 		# get whether domaincontroller info for later use
 		function IsDomainController {	
 			$domainrole = Get-DomainRole
-			if ($domainrole -eq 5 -or $domainrole -eq 4){
+			if ($domainrole -eq "Backup Domain Controller" -or $domainrole -eq "Primary Domain Controller"){
 				return $true
 			}
 			return $false
@@ -274,7 +274,7 @@ function checkReportNameWithOSSystem {
 		if ($ShouldBeDomainController -eq $True) {
 			if (-not($isDomainController -eq $True)) {
 				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
-			}
+			} 
 		# should not be DC
 		} else {
 			if ($isDomainController -eq $True) {
