@@ -4785,8 +4785,8 @@ $windefrunning = CheckWindefRunning
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" `
-                -Name "EnableNetbios" `
-                | Select-Object -ExpandProperty "EnableNetbios"
+                -Name "EnableNetBIOS" `
+                | Select-Object -ExpandProperty "EnableNetBIOS"
         
             if (($regValue -ne 2) -and ($regValue -ne 0)) {
                 return @{
