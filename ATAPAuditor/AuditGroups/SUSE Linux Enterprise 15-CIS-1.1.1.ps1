@@ -315,8 +315,15 @@ if ($IPv6Status -match "enabled") {
     Id = "1.1.19"
     Task = "Ensure noexec option set on removable media partitions"
     Test = {
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-SUSE15-1.1.19_through_1.1.21.sh"
-        $result = bash $path
+        $result_script = @'
+#!/bin/bash
+while read -r name; do
+    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
+        mount | grep "$name"
+    fi
+done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
+'@
+        $result = bash -c $result_script
         foreach($line in $result){
             if(!($line -match "noexec")){
                 return $retNonCompliant
@@ -330,8 +337,15 @@ if ($IPv6Status -match "enabled") {
     Id = "1.1.20"
     Task = "Ensure nodev option set on removable media partitions"
     Test = {
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-SUSE15-1.1.19_through_1.1.21.sh"
-        $result = bash $path
+        $result_script = @'
+#!/bin/bash
+while read -r name; do
+    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
+        mount | grep "$name"
+    fi
+done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
+'@
+        $result = bash -c $result_script
         foreach($line in $result){
             if(!($line -match "nodev")){
                 return $retNonCompliant
@@ -345,8 +359,15 @@ if ($IPv6Status -match "enabled") {
     Id = "1.1.21"
     Task = "Ensure nosuid option set on removable media partitions"
     Test = {
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-SUSE15-1.1.19_through_1.1.21.sh"
-        $result = bash $path
+        $result_script = @'
+#!/bin/bash
+while read -r name; do
+    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
+        mount | grep "$name"
+    fi
+done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
+'@
+        $result = bash -c $result_script
         foreach($line in $result){
             if(!($line -match "nosuid")){
                 return $retNonCompliant
