@@ -68,7 +68,7 @@
 }
 [AuditTest] @{
     Id = "SBD-039"
-    Task = "Ensure NetBIOS is set to 'Disabled'."
+    Task = "Ensure NetBIOS is set to 'Disabled' for all active Network cards."
     Test = {
         try{
             $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetBIOSOptions
