@@ -67,21 +67,50 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-039"
-	Task = "Ensure NetBios is set to 'Disabled'."
-	Test = {
-		$value = (Get-WmiObject -Class Win32_NetWorkAdapterConfiguration -Filter "IPEnabled=$true").TcpipNetbiosOptions
-        if($value -eq 2){
+    Id = "SBD-039"
+    Task = "Ensure NetBIOS is set to 'Disabled' for all active Network cards."
+    Test = {
+        try{
+            $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetBIOSOptions
+            $nonCompliantCards = @()
+            
+            for($i = 0; $i -lt $networkCards.Count; $i++){
+                 if($networkCards[$i].TcpipNetBIOSOptions -ne 0){
+                        $nonCompliantCards += $networkCards[$i]
+                 }
+            }
+            
+            if($nonCompliantCards.Count -eq 0){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            if($nonCompliantCards.Count -eq $networkCards.Count){
+                return @{
+                    Message = "All network cards have NETBIOS enabled."
+                    Status = "False"
+                }
+            }
+            $message = "Following network cards have NETBIOS enabled: " + $nonCompliantCards.Description
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = $message
+                Status = "Warning"
             }
         }
-        return @{
-            Message = "NetBios is 'Enabled'."
-            Status = "False"
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Value not found."
+                Status = "Error"
+            }
         }
-	}
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Value not found."
+                Status = "Error"
+            }
+        }
+    }
 }
 [AuditTest] @{
 	Id = "SBD-040"
@@ -1188,52 +1217,6 @@
         return @{
             Message = "Compliant"
             Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "SBD-071"
-    Task = "Check NETBIOS-Status for all active NICs"
-    Test = {
-        try{
-            $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetbiosOptions
-            $nonCompliantCards = @()
-            
-            for($i = 0; $i -lt $networkCards.Count; $i++){
-                 if($networkCards[$i].TcpipNetbiosOptions -ne 0){
-                        $nonCompliantCards += $networkCards[$i]
-                 }
-            }
-            
-            if($nonCompliantCards.Count -eq 0){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            if($nonCompliantCards.Count -eq $networkCards.Count){
-                return @{
-                    Message = "All network cards have NETBIOS enabled."
-                    Status = "False"
-                }
-            }
-            $message = "Following network cards have NETBIOS enabled: " + $nonCompliantCards.Description
-            return @{
-                Message = $message
-                Status = "Warning"
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Value not found."
-                Status = "Error"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Value not found."
-                Status = "Error"
-            }
         }
     }
 }

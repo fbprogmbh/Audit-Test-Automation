@@ -1912,13 +1912,13 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-054"
-    Task = "Set registry value 'EnableNetbios' to 2."
+    Task = "Set registry value 'EnableNetBIOS' to 2."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\DNSClient" `
-                -Name "EnableNetbios" `
-                | Select-Object -ExpandProperty "EnableNetbios"
+                -Name "EnableNetBIOS" `
+                | Select-Object -ExpandProperty "EnableNetBIOS"
         
             if ($regValue -ne 2) {
                 return @{
