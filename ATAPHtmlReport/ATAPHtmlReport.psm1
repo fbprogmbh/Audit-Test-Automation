@@ -996,7 +996,7 @@ function Get-ATAPHostInformation {
 			"Free physical memory" = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space"      = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
 			"System Uptime"				= uptime -p
-			"OS Architecture"			= dpkg --print-architecture
+			"OS Architecture"			= lscpu | awk '/Architecture/ {print $2}'
 			"System Manufacturer"		= (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
 			"System SKU"				= (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
 			"System Serialnumber"		= (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
