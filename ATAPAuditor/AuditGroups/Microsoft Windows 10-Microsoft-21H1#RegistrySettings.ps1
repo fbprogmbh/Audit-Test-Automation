@@ -1352,6 +1352,13 @@ $hyperVStatus = CheckHyperVStatus
                 -Name "RequirePlatformSecurityFeatures" `
                 | Select-Object -ExpandProperty "RequirePlatformSecurityFeatures"
         
+            if ($regValue -eq 3) {
+                return @{
+                    Message = "Set to 'Secure Boot and DMA Protection' which is more secure."
+                    Status = "True"
+                }
+            }
+            
             if ($regValue -ne 1 -and $regValue -ne 3) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or (better) 3"
