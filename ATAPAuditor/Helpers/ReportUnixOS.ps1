@@ -5,7 +5,7 @@
         BuildNumber = 'Version {0} (Build {1}.{2})' -f $v.DisplayVersion, $v.CurrentBuildNumber, $v.UBR
         InstallationLanguage = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
         SystemUptime = uptime -p
-        OSArchitecture = dpkg --print-architecture
+        OSArchitecture = lscpu | awk '/Architecture/ {print $2}'
         KernelVersion = uname -r
     }
     HardwareInformation = [HardwareInformation]@{
