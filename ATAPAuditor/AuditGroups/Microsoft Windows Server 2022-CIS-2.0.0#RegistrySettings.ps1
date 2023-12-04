@@ -995,34 +995,47 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
-                -Name "RequireSecuritySignature" `
-                | Select-Object -ExpandProperty "RequireSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbClientConfiguration).RequireSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "RequireSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+            try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Name "RequireSecuritySignature" `
+                | Select-Object -ExpandProperty "RequireSecuritySignature"
+                
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Status = "False"
+                    }
+                }
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
@@ -1031,34 +1044,47 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
-                -Name "EnableSecuritySignature" `
-                | Select-Object -ExpandProperty "EnableSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbClientConfiguration).EnableSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+            try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Name "EnableSecuritySignature" `
+                | Select-Object -ExpandProperty "EnableSecuritySignature"
+                
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Status = "False"
+                    }
+                }
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
@@ -1139,34 +1165,41 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
-                -Name "RequireSecuritySignature" `
-                | Select-Object -ExpandProperty "RequireSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "RequireSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+                       try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Name "RequireSecuritySignature" `
+                | Select-Object -ExpandProperty "RequireSecuritySignature"
+                
+                return @{
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Status = "Warning"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
@@ -1175,34 +1208,41 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
-                -Name "EnableSecuritySignature" `
-                | Select-Object -ExpandProperty "EnableSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbServerConfiguration -ErrorAction Stop).EnableSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+            try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Name "EnableSecuritySignature" `
+                | Select-Object -ExpandProperty "EnableSecuritySignature"
+                
+                return @{
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Status = "Warning"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
@@ -1591,11 +1631,19 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
+$CARoleStatus = (Get-WindowsFeature -Name ADCS-Cert-Authority).Installed
+$WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "2.3.10.9 A"
     Task = "(L1) Configure 'Network access: Remotely accessible registry paths and sub-paths' [WINS Role Feature and CA Role Service NOT installed]"
     Test = {
         try {
+            if (($CARoleStatus -or $WINSStatus) -eq $true){
+                return @{
+                    Message = "WINS Role Feature or CA Role Service are installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -1645,6 +1693,12 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [CA Role Service installed]"
     Test = {
         try {
+            if ($CARoleStatus -eq $false){
+                return @{
+                    Message = "CA Role Service NOT installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -1695,6 +1749,12 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature installed]"
     Test = {
         try {
+            if ($WINSStatus -eq $false){
+                return @{
+                    Message = "WINS Role Feature NOT installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -2365,9 +2425,9 @@ $windefrunning = CheckWindefRunning
                 -Name "ConsentPromptBehaviorAdmin" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
         
-            if (($regValue -ne 2) -and ($regValue -ne 3)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -4189,17 +4249,17 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.4.2"
-    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'"
+    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution' or 'Enabled: Disable NetBIOS name resolution on public networks'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" `
-                -Name "EnableNetbios" `
-                | Select-Object -ExpandProperty "EnableNetbios"
+                -Name "EnableNetBIOS" `
+                | Select-Object -ExpandProperty "EnableNetBIOS"
         
-            if ($regValue -ne 2) {
+            if (-not( ($regValue -eq 0) -or ($regValue -eq 2) )) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 2"
                     Status = "False"
                 }
             }
@@ -4773,9 +4833,25 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
+            if($regValue -eq $null){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
+            $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+
+            $missingElements = @()
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            foreach ($element in $elementsToCheck) {
+                if ($array -notcontains $element) {
+                    $missingElements += $element
+                }
+            }
+
+            if ($missingElements.Length -gt 0) {
+                return @{
+                    Message = ($missingElements -join " and ") + " not configured."
                     Status = "False"
                 }
             }
@@ -4809,9 +4885,25 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
+            if($regValue -eq $null){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
+            $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+
+            $missingElements = @()
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            foreach ($element in $elementsToCheck) {
+                if ($array -notcontains $element) {
+                    $missingElements += $element
+                }
+            }
+
+            if ($missingElements.Length -gt 0) {
+                return @{
+                    Message = ($missingElements -join " and ") + " not configured."
                     Status = "False"
                 }
             }
@@ -6159,14 +6251,14 @@ $windefrunning = CheckWindefRunning
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant. Registry value not found."
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant. Registry key not found."
+                Status = "True"
             }
         }
         
@@ -7965,10 +8057,36 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowCamera" `
                 | Select-Object -ExpandProperty "AllowCamera"
         
-            if ($regValue -ne 0) {
+            if ($regValue -eq 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" `
+                -Name "Value" `
+                | Select-Object -ExpandProperty "Value"
+        
+            if ($regValue -match "Deny") {
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
                 }
             }
         }
@@ -7986,8 +8104,8 @@ $windefrunning = CheckWindefRunning
         }
         
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = "Camera is not deactivated."
+            Status = "False"
         }
     }
 }

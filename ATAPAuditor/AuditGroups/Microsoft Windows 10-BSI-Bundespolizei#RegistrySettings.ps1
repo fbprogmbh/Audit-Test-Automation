@@ -482,6 +482,15 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
+            $saferClients = @("*Server*","*Education*","*Enterprise*")
+            $productname = Get-ComputerInfo | select -ExpandProperty OsName
+            if (($productname -notcontains $saferClients) -and ($regValue -eq 1)){
+                return @{
+                    Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                    Status = "Warning"
+                }
+            }
+
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
@@ -5297,8 +5306,11 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
+                if($regValue -eq "<none>"){
+                    $regValue = "&lt;none&gt;"
+                }
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ''"
+                    Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"
                 }
             }
@@ -6584,7 +6596,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "0364"
-    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered' set to 'Require 48-digit recovery password '."
+    Task = "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Password' is set to 'Enabled: Require 48-digit recovery password'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

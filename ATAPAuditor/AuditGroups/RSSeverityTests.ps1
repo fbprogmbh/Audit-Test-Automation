@@ -3,6 +3,7 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $windefrunning = CheckWindefRunning
 . "$RootPath\Helpers\Firewall.ps1"
+$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 [AuditTest] @{
     Id   = "1.1.7"
     Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
@@ -31,80 +32,84 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
-[AuditTest] @{
-    Id   = "2.2.38"
-    Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
-        $identityAccounts = @(
-            "S-1-5-32-544"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeSecurityPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+if($domainRole -eq 3){
+    [AuditTest] @{
+        Id   = "2.2.38"
+        Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
+            $identityAccounts = @(
+                "S-1-5-32-544"
+            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+            
+            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+            
+            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+                $messages = @()
+                if ($unexpectedUsers.Count -gt 0) {
+                    $messages += "The user right 'SeSecurityPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+                }
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeSecurityPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status  = "False"
+                    Message = $message
+                }
             }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeSecurityPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status  = "False"
-                Message = $message
+                Status  = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status  = "True"
-            Message = "Compliant"
         }
     }
 }
-[AuditTest] @{
-    Id   = "2.3.5.2"
-    Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
-    )
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NTDS\Parameters" `
-                -Name "LDAPServerIntegrity" `
-            | Select-Object -ExpandProperty "LDAPServerIntegrity"
-        
-            if ($regValue -ne 2) {
+if($domainRole -ge 4){
+    [AuditTest] @{
+        Id   = "2.3.5.2"
+        Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+        )
+        Test = {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NTDS\Parameters" `
+                    -Name "LDAPServerIntegrity" `
+                | Select-Object -ExpandProperty "LDAPServerIntegrity"
+            
+                if ($regValue -ne 2) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 2"
+                        Status  = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value not found."
                     Status  = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status  = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+            
             return @{
-                Message = "Registry key not found."
-                Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
         }
     }
 }
@@ -157,150 +162,6 @@ $windefrunning = CheckWindefRunning
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 A"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 40/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 B"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 56/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 C"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 64/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 D"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 128/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1288,6 +1149,70 @@ $windefrunning = CheckWindefRunning
 
             $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
             $Value2 = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.43.6.1.2 M"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block abuse of exploited vulnerable signed drivers)"
+    Test = {
+        try {
+            if($avstatus){
+
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }
+            }                  
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "56a863a9-875e-4185-98a7-b882c64b5ce5"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "56a863a9-875e-4185-98a7-b882c64b5ce5"
 
             $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
             if($asrTest2){

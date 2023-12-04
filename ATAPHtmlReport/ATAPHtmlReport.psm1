@@ -364,7 +364,7 @@ function CreateToc{
 function CreateHashTable{
 	htmlElement 'div'@{id="hashTableDiv"}{
 		htmlElement 'h2' @{style="margin-top: 0;"}{"Overall integrity"}
-		htmlElement 'p' @{} {"This table outlines integrity checksums for each hardening recommendation. This leads to the possibility of an easy comparison between reports created regularly due to regulatory/internal reasons.<br>So just compare the hash values of overall report or for specific hardening recommendations. In case the values of checksums / hashes are equal settings are the same."}
+		htmlElement 'p' @{} {"This table outlines integrity checksums for each hardening recommendation. This allows for a quick comparison between reports by simply comparing provided hash values."}
 		htmlElement 'table'@{ id="hashTable"}{
 			htmlElement 'thead' @{}{
 				htmlElement 'tr' @{}{
@@ -804,9 +804,6 @@ function ConvertTo-HtmlCISA {
 						for ($i = 0; $i -lt $mitigationsList.Length; $i++) {
 							htmlElement 'a' @{href = $(get-MitreLink -type techniques -id $mitigationsList[$i]); target="_blank"} {
 								$mitigationsList[$i]
-								# if($i -lt $mitigationsList.Length - 1){
-								# 	" | "
-								# }
 							}
 						}
 					}
@@ -999,42 +996,12 @@ function Get-ATAPHostInformation {
 			"Free physical memory" = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
 			"Free disk space"      = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
 			"System Uptime"				= uptime -p
+			"OS Architecture"			= dpkg --print-architecture
+			"System Manufacturer"		= (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
+			"System SKU"				= (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
+			"System Serialnumber"		= (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
+			"BIOS Version"				= dmidecode -s bios-version
 		}
-	}
- else {
-		$infos = Get-CimInstance Win32_OperatingSystem
-		$disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
-		$role = Switch ((Get-CimInstance -Class Win32_ComputerSystem).DomainRole) {
-			"0"	{ "Standalone Workstation" }
-			"1"	{ "Member Workstation" }
-			"2"	{ "Standalone Server" }
-			"3"	{ "Member Server" }
-			"4"	{ "Backup Domain Controller" }
-			"5"	{ "Primary Domain Controller" }
-		}
-		$freeMemory = ($infos.FreePhysicalMemory /1024) / 1024;
-		$totalMemory = ($infos.TotalVirtualMemorySize /1024) /1024;
-		$uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime
-		$v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
-
-		return @{
-			"Hostname"                  = [System.Net.Dns]::GetHostByName(($env:computerName)).HostName
-			"Domain role"               = $role
-			"Operating System"          = $infos.Caption
-			# format output
-			"Build Number"              = 'Version {0} (Build {1}.{2})' -f $v.DisplayVersion, $v.CurrentBuildNumber, $v.UBR
-			"Installation Language"     = ((Get-UICulture).DisplayName)
-			"Free disk space"      = "{0:N1} GB" -f ($disk.FreeSpace / 1GB)
-			"Free physical memory" = "{0:N3}" -f "$([math]::Round(($freeMemory/$totalMemory)*100,1))%  ($([math]::Round($freeMemory,1)) GB / $([math]::Round($totalMemory,1)) GB)" 
-			"System Uptime"				= '{0:d1}:{1:d2}:{2:d2}:{3:d2}' -f $uptime.Days, $uptime.Hours, $uptime.Minutes, $uptime.Seconds
-			"System Manufacturer"		= (Get-WMIObject -class Win32_ComputerSystem).Manufacturer
-			"System Model"				= (Get-WMIObject -class Win32_ComputerSystem).Model
-			"System Type"				= (Get-WmiObject win32_operatingsystem | select osarchitecture).osarchitecture
-			"System SKU"				= (GWMI -Namespace root\wmi -Class MS_SystemInformation).SystemSKU
-			"System Serialnumber"		= (Get-WmiObject win32_bios).Serialnumber
-			"BIOS Version"				= (Get-WmiObject -Class Win32_BIOS).Version
-			"License Status"			= $LicenseStatus
-		} 
 	}
 }
 
@@ -1203,7 +1170,11 @@ function Get-ATAPHtmlReport {
 		[hashtable]
 		$hashtable_sha256,
 
-		[switch] $ComplianceStatus
+		[switch] $ComplianceStatus,
+
+		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		[SystemInformation]
+		$SystemInformation
 	)
 
 	process {
@@ -1212,6 +1183,7 @@ function Get-ATAPHtmlReport {
 		$completionStatus, $sectionTotalCountHash, $sectionCountHash = Get-CompletionStatus -Statuses $allConfigResults -sections $Sections
 
 		# HTML <head> markup
+
 		$head = htmlElement 'head' @{} {
 			htmlElement 'meta' @{ charset = 'UTF-8' } { }
 			htmlElement 'meta' @{ name = 'viewport'; content = 'width=device-width, initial-scale=1.0' } { }
@@ -1227,42 +1199,24 @@ function Get-ATAPHtmlReport {
 				Get-Content $jsPath
 			}
 		}
-		
+		#Handles Release Date from Releases; Compares Release with this ATAP Version
 		Write-Progress -Activity "Creating HTML report body" -Status "Progress:" -PercentComplete 13
 		$body = htmlElement 'body' @{onload = "startConditions()" } {
 			# Header
 			htmlElement 'div' @{ class = 'header content' } {
-				$Settings.LogoSvg
-				htmlElement 'h1' @{} { $Title }
-				# htmlElement 'p' @{} {
-				# 	"Generated by the <i>$ModuleName</i> Module Version <i>$AuditorVersion</i> by FB Pro GmbH. Get it in the <a href=`"$($Settings.PackageLink)`">Audit Test Automation Package</a>. Are you seeing a lot of red sections? Check out our <a href=`"$($Settings.SolutionsLink)`">hardening solutions</a>."
-				# }
-				# htmlElement 'p' @{} {
-				# 	"Based on:"
-				# 	htmlElement 'ul' @{} {
-				# 		foreach ($item in $BasedOn) {
-				# 			htmlElement 'li' @{} { $item }
-				# 		}
-				# 	}
-				# 	htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
-				# }
+				htmlElement 'div' @{ id = "logo"} {
+					htmlElement 'h1' @{id ="companyName"} {"FB PRO GMBH"}
+					htmlElement 'p' @{} {"System Hardening & Data Protection"}
+				}
+				htmlElement 'div' @{ id = "reportInformation"} {
+					htmlElement 'h1' @{} { $Title }
+					$datum = "{0:d}. {1} {2} {3:D2}:{4:D2}" -f (Get-Date).Day, (Get-Date).ToString("MMMM"), (Get-Date).Year, (Get-Date).Hour, (Get-Date).Minute					
+					htmlElement 'div' @{} {"Generated on $($datum)"}
+				}
 			}
 			# Main section
 			htmlElement 'div' @{ class = 'main content' } {
 				htmlElement 'div' @{ class = 'host-information' } {
-					# htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
-					# # Host information
-					# htmlElement 'table' @{} {
-					# 	htmlElement 'tbody' @{} {
-					# 		foreach ($hostDatum in $HostInformation.GetEnumerator()) {
-					# 			htmlElement 'tr' @{} {
-					# 				htmlElement 'th' @{ scope = 'row' } { $hostDatum.Name }
-					# 				htmlElement 'td' @{} { $hostDatum.Value }
-					# 			}
-					# 		}
-
-					# 	}
-					# }
 					# Show compliance status
 					if ($ComplianceStatus) {
 						$sliceColorClass = Get-HtmlClassFromStatus 'True'
@@ -1356,30 +1310,31 @@ function Get-ATAPHtmlReport {
 					Write-Progress -Activity "Creating summary page" -Status "Progress:" -PercentComplete 38
 					#This div hides/reveals the whole summary section
 					htmlElement 'div' @{class = 'tabContent'; id = 'summary' } {
-						# htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
 						# Host information
 						htmlElement 'h1' @{} { 'Benchmark Compliance' }
 						htmlElement 'div' @{style="float: left;"} {
 							htmlElement 'p' @{} {
-								"Generated by the <i>$ModuleName</i> Module Version <i>$AuditorVersion</i> by FB Pro GmbH. Get it in the <a href=`"$($Settings.PackageLink)`">Audit Test Automation Package</a>."
-							}
-							htmlElement 'p' @{}{
-								"Does your system show low benchmark compliance? Check out our <a href=`"$($Settings.SolutionsLink)`">hardening solutions</a>."
+								"Modules:"
+								htmlElement 'ul' @{} {
+									htmlElement 'div' @{} {"ATAPAuditor version $AuditorVersion"}
+									htmlElement 'div' @{} {"ATAPHtmlReport version $ModuleVersion"}
+								}
 							}
 							htmlElement 'p' @{} {
-								"Based on:"
+								"Test baseline:"
 								htmlElement 'ul' @{} {
 									foreach ($item in $BasedOn) {
 										htmlElement 'li' @{} { $item }
 									}
 								}
-								htmlElement 'p' @{} { "This report was generated on $((Get-Date)) on $($HostInformation.Hostname) with ATAPHtmlReport version $ModuleVersion." }
+								htmlElement 'div' @{} {
+									"Does your system show low benchmark compliance? Check out our <a href=`"$($Settings.SolutionsLink)`">hardening solutions</a>."
+								}
 							}
 						}
-						
 						htmlElement 'div' @{id='riskMatrixSummaryArea'}{
 							if($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")){
-								htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System: "}
+								htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score of tested System: "}
 								htmlElement 'h3' @{} {'For further information, please head to the tab "Risk Score".'}
 								htmlElement 'div' @{id ='riskMatrixSummary'}{
 									htmlElement 'div' @{id='dotSummaryTab'}{}
@@ -1423,7 +1378,7 @@ function Get-ATAPHtmlReport {
 							}
 							else{
 								if($RiskScore){
-									htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score on tested System:"}
+									htmlElement 'h2' @{id = 'CurrentRiskScore'} {"Current Risk Score of tested System:"}
 									htmlElement 'h2' @{id = 'invalidOS'} {"N/A"}
 									htmlElement 'h3' @{} {'Risk Score calculation implemented for Microsoft Windows OS for now.'}
 									htmlElement 'div' @{id ='riskMatrixSummary'}{
@@ -1467,6 +1422,7 @@ function Get-ATAPHtmlReport {
 								}
 							}
 						}
+
 						# Benchmark compliance
 						htmlElement 'h1' @{ style = 'clear:both;' } {}
 						htmlElement 'p' @{} {
@@ -1544,17 +1500,19 @@ function Get-ATAPHtmlReport {
 					Write-Progress -Activity "Creating foundation data page" -Status "Progress:" -PercentComplete 50
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						#Tab: Foundation Data (Only works for Windows OS!)
-						if([System.Environment]::OSVersion.Platform -ne 'Unix'){			
-							$FoundationSections = $FoundationReport.Sections
-						}
 						htmlElement 'h1' @{} {"Security Base Data"}
-						htmlElement 'div' @{id="systemData"} {
+						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+							$floating = "float:right"
+						}
+						else{
+							$floating = "float:none"
+						}
+						htmlElement 'div' @{style="$floating"; id="systemData"} {
 							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
-							$hostInformation = Get-ATAPHostInformation;
 							htmlElement 'table' @{id='hardwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold;"}{"Hardware Information"}
+										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold; border-bottom: 1px solid black;padding: 0;vertical-align: middle;"}{"Hardware Information"}
 										htmlElement 'td' @{}{} 
 									}
 								}
@@ -1562,35 +1520,39 @@ function Get-ATAPHtmlReport {
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Manufacturer" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Manufacturer")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemManufacturer) }
 									}
 									#Domain Role
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System SKU" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System SKU")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSKU) }
 									}
 									#Operating System
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System Model" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Model")) }
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "System Model" }
+											htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemModel) }
+										}
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Serialnumber")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("BIOS Version")) }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.BIOSVersion) }
 									}
+									#Free disk space
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
+										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
 									}
+									#Free physican memory
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
+										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
+										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
 									}
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "" }
@@ -1609,7 +1571,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'table' @{id='softwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'td' @{style="font-weight:bold;"}{"Software Information"}
+										htmlElement 'td' @{style="font-weight:bold;border-bottom: 1px solid black;"}{"Software Information"}
 										htmlElement 'td' @{}{} 
 									}
 								}
@@ -1617,72 +1579,70 @@ function Get-ATAPHtmlReport {
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Hostname" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Hostname")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.Hostname) }
 									}
 									#System Uptime
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Uptime" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Uptime")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.SystemUptime) }
 									}
 									#Operating System
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Operating System")) }
-									}
-									#System Type
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System Type" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("System Type")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OperatingSystem) }
 									}
 									#Build Number
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
+											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.BuildNumber) }
+										}
+									}
+									#OS Architecture
 									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Build Number")) }
+										htmlElement 'th' @{ scope = 'row' } { "OS Architecture" }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OSArchitecture) }
+									}
+									#licence activation status
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "License Status" }
+											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.LicenseStatus) }
+										}
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Installation Language" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Installation Language")) }
+										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
 									}
 									#Domain role
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Domain role" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Domain role")) }
-									}
-									#Free disk space
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free disk space")) }
-									}
-									#Free physican memory
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("Free physical memory")) }
-									}
-									#licence activation status
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "License Status" }
-										htmlElement 'td' @{} { $($hostInformation.Get_Item("License Status")) }
+									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+										htmlElement 'tr' @{} {
+											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
+											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.DomainRole) }
+										}
 									}
 								}
 							}
 						}
-						htmlElement 'h2' @{} {"Table Of Contents"}
-						htmlElement 'p' @{} { 'Click the link(s) below for quick access to a report section.' }
-						htmlElement 'ul' @{} {
-							foreach ($section in $FoundationSections) { $section | Get-HtmlToc }
+						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
+							htmlElement 'h2' @{} {"Table Of Contents"}
+							htmlElement 'p' @{} { 'Use below links to jump to a specific report section.' }
+							htmlElement 'ul' @{} {
+								foreach ($section in $FoundationReport.Sections) { $section | Get-HtmlToc }
+							}
+							htmlElement 'h2' @{} {"Details"}
+							# Report Sections
+							foreach ($section in $FoundationReport.Sections) { $section | Get-HtmlReportSection }
 						}
-						htmlElement 'h2' @{} {"Security Base Data Details"}
-						# Report Sections for base data
-						foreach ($section in $FoundationSections) { $section | Get-HtmlReportSection }
 					}
 					
 					if($RiskScore){
 						Write-Progress -Activity "Creating risk score  page" -Status "Progress:" -PercentComplete 63
 						htmlElement 'div' @{class = 'tabContent'; id = 'riskScore' } {
 							htmlElement 'h1'@{} {"Risk Score"}
-							htmlElement 'p'@{} {'To get a quick overview of how risky the tested system is, the Risk Score is used. This is made up of the areas "Severity" and "Quantity". The higher risk is used as the overall risk.'}
-							htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk Score on tested System: "}
+							htmlElement 'p'@{} {"The risk score provides a quick overview of how secure the system is configured. This is made up of the areas `"Severity`" and `"Quantity`". The higher risk is used as the overall risk."}
+							htmlElement 'h2' @{id = 'CurrentRiskScoreRS'} {"Current Risk Score of tested System: "}
 	
 							htmlElement 'div' @{id ='riskMatrixContainer'}{
 								htmlElement 'div' @{id='dotRiskScoreTab'}{}
@@ -1726,8 +1686,8 @@ function Get-ATAPHtmlReport {
 	
 							htmlElement 'div' @{id='calculationTables'} {
 								htmlElement 'h3' @{class = 'calculationTablesText'} {"Risk Score Calculation"}
-								htmlElement 'p' @{class = 'calculationTablesText'} {"The calculation of the Risk Score is based on the set of compliant rules at the quantity level and also at the severity level."}
-								htmlElement 'p' @{class = 'calculationTablesText'} {"Note: The Risk Rcore is calculated by dividing all compliant rules with the total number (minus none-compliant) of rules."}
+								htmlElement 'p' @{class = 'calculationTablesText'} {"Risk Score calculation is based on the quantitative amount of compliant rules and the severity of incompliant checks."}
+								htmlElement 'p' @{class = 'calculationTablesText'} {"Note: Quantity is calculated by dividing all compliant rules with the total number (minus none-compliant) of checks."}
 								htmlElement 'table' @{id='quantityTable'}{
 									htmlElement 'tr' @{}{
 										htmlElement 'th' @{}{'Compliance to Benchmarks (Quantity)'}
@@ -1760,14 +1720,6 @@ function Get-ATAPHtmlReport {
 										htmlElement 'td' @{}{'All critical settings compliant'}
 										htmlElement 'td' @{}{'Low'}
 									}
-									# htmlElement 'tr' @{}{
-									# 	htmlElement 'td' @{}{'70% < X < 85%'}
-									# 	htmlElement 'td' @{}{'Medium'}
-									# }
-									# htmlElement 'tr' @{}{
-									# 	htmlElement 'td' @{}{'55% < X < 70%'}
-									# 	htmlElement 'td' @{}{'High'}
-									# }
 									htmlElement 'tr' @{}{
 										htmlElement 'td' @{}{'1 or more incompliant setting(s)'}
 										htmlElement 'td' @{}{'Critical'}
@@ -1777,6 +1729,7 @@ function Get-ATAPHtmlReport {
 	
 	
 							htmlElement 'div' @{id ="severityCompliance"} {
+								htmlElement 'h2' @{}{'Details'}
 								htmlElement 'p' @{id="complianceStatus"}{'Table Of Severity Rules'}
 								htmlElement 'span' @{class="sectionAction collapseButton"; id="severityComplianceCollapse"} {"-"}
 								htmlElement 'table' @{id = 'severityDetails'}{
@@ -1824,14 +1777,6 @@ function Get-ATAPHtmlReport {
 									}
 								}
 							}
-	
-							
-	
-	
-							# htmlElement 'h2' @{} {'Number of Successes: ' + $RSReport.RSSeverityReport.ResultTable.Success }
-							# htmlElement 'h2' @{} {'Number of Failed: ' + $RSReport.RSSeverityReport.ResultTable.Failed }
-							# htmlElement 'h2' @{} {'Endresult of Quality: ' + $RSReport.RSSeverityReport.Endresult }
-	
 							# 'Test for AuditInfo: ' + $RSReport.RSSeverityReport.TestTable
 						}
 					}
@@ -2042,12 +1987,17 @@ function Get-ATAPHtmlReport {
 			$name = Split-Path -Path $Path -Leaf
 			$Path = Split-Path -Path $Path -Parent
 			New-Item -Path $Path -Name $name -ItemType File -Value $html -Force 
+
 		} else {
 			$Title = $Title -replace " Audit Report",""
 			$auditReport += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
 			New-Item -Path $Path -Name $auditReport -ItemType File -Value $html -Force 
 		}
-
+		if([System.Environment]::OSVersion.Platform -eq 'Unix'){
+			# $shellPath = $Path"/"$name
+			# bash -c "chmod o+r $($shellPath)"
+			# Write-Host $shellPath
+		}
 		#Create Report file
 		#$html | Out-File -FilePath $auditReport -Encoding utf8
 	}

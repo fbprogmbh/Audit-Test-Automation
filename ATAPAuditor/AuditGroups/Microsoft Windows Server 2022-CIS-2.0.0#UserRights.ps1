@@ -702,12 +702,6 @@ if($hyperVStatus -ne "Enabled"){
                 "S-1-5-32-544"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
 
-            if ($null -ne (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-                return @{
-                    Status = "None"
-                    Message = "Hyper-V installed."
-                }
-            }
             
             $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
             $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
@@ -749,13 +743,6 @@ else{
                 "S-1-5-32-544"
                 "S-1-5-83-0"
             ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-
-            if ($null -eq (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V)) {
-                return @{
-                    Status = "None"
-                    Message = "Hyper-V not installed."
-                }
-            }
             
             $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
             $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
@@ -1296,86 +1283,90 @@ else{
         }
     }
 }
-[AuditTest] @{
-    Id = "2.2.32 A"
-    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' (IIS Role NOT installed) (MS only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
-        $identityAccounts = @(
-            "S-1-5-32-544"
-            "S-1-5-19"
-            "S-1-5-20"
-            "S-1-5-6"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+if((Get-WindowsFeature -Name web-server).installed -ne $true){
+    [AuditTest] @{
+        Id = "2.2.32 A"
+        Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' (IIS Role NOT installed) (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
+            $identityAccounts = @(
+                "S-1-5-32-544"
+                "S-1-5-19"
+                "S-1-5-20"
+                "S-1-5-6"
+            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+            
+            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+            
+            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+                $messages = @()
+                if ($unexpectedUsers.Count -gt 0) {
+                    $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+                }
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status = "False"
+                    Message = $message
+                }
             }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status = "False"
-                Message = $message
+                Status = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
         }
     }
 }
-[AuditTest] @{
-    Id = "2.2.32 B"
-    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' (IIS Role installed) (MS only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
-        $identityAccounts = @(
-            "S-1-5-32-544"
-            "S-1-5-19"
-            "S-1-5-20"
-            "S-1-5-6"
-            "S-1-5-32-568"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+else{
+    [AuditTest] @{
+        Id = "2.2.32 B"
+        Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' (IIS Role installed) (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
+            $identityAccounts = @(
+                "S-1-5-32-544"
+                "S-1-5-19"
+                "S-1-5-20"
+                "S-1-5-6"
+                "S-1-5-32-568"
+            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+            
+            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+            
+            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+                $messages = @()
+                if ($unexpectedUsers.Count -gt 0) {
+                    $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+                }
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status = "False"
+                    Message = $message
+                }
             }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status = "False"
-                Message = $message
+                Status = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status = "True"
-            Message = "Compliant"
         }
     }
 }
