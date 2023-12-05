@@ -1,4 +1,4 @@
-Write-Host "Checking License status. This will take a while..."
+Write-Host "Checking operating system activation status. This may take a while..."
 $licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 switch ($licenseStatus) {
     "0" { $lcStatus = "Unlicensed" }
