@@ -67,21 +67,50 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-039"
-	Task = "Ensure NetBios is set to 'Disabled'."
-	Test = {
-		$value = (Get-WmiObject -Class Win32_NetWorkAdapterConfiguration -Filter "IPEnabled=$true").TcpipNetbiosOptions
-        if($value -eq 2){
+    Id = "SBD-039"
+    Task = "Ensure NetBIOS is set to 'Disabled' for all active Network cards."
+    Test = {
+        try{
+            $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetBIOSOptions
+            $nonCompliantCards = @()
+            
+            for($i = 0; $i -lt $networkCards.Count; $i++){
+                 if($networkCards[$i].TcpipNetBIOSOptions -ne 0){
+                        $nonCompliantCards += $networkCards[$i]
+                 }
+            }
+            
+            if($nonCompliantCards.Count -eq 0){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            if($nonCompliantCards.Count -eq $networkCards.Count){
+                return @{
+                    Message = "All network cards have NETBIOS enabled."
+                    Status = "False"
+                }
+            }
+            $message = "Following network cards have NETBIOS enabled: " + $nonCompliantCards.Description
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = $message
+                Status = "Warning"
             }
         }
-        return @{
-            Message = "NetBios is 'Enabled'."
-            Status = "False"
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Value not found."
+                Status = "Error"
+            }
         }
-	}
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Value not found."
+                Status = "Error"
+            }
+        }
+    }
 }
 [AuditTest] @{
 	Id = "SBD-040"
@@ -751,6 +780,91 @@
 }
 [AuditTest] @{
     Id = "SBD-059"
+    Task = "Enable TLS1.2 Protocol (Client)"
+    Test = {
+        $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "SBD-060"
+    Task = "Enable TLS1.2 Protocol (Client DisabledByDefault)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client" `
+                -Name "DisabledByDefault" `
+                | Select-Object -ExpandProperty "DisabledByDefault"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "SBD-061"
     Task = "Disable NULL Cipher"
     Test = {
         try {
@@ -786,7 +900,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-060"
+    Id = "SBD-062"
     Task = "Disable DES Cipher Suite"
     Test = {
         try {
@@ -822,7 +936,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-061"
+    Id = "SBD-063"
     Task = "Disable RC4 Cipher Suite - 40/128"
     Test = {
         try {
@@ -858,7 +972,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-062"
+    Id = "SBD-064"
     Task = "Disable RC4 Cipher Suite - 56/128"
     Test = {
         try {
@@ -894,7 +1008,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-063"
+    Id = "SBD-065"
     Task = "Disable RC4 Cipher Suite - 64/128"
     Test = {
         try {
@@ -930,7 +1044,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-064"
+    Id = "SBD-066"
     Task = "Disable RC4 Cipher Suite - 128/128"
     Test = {
         try {
@@ -966,7 +1080,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-065"
+    Id = "SBD-067"
     Task = "Disable AES 128/128 Cipher Suite"
     Test = {
         try {
@@ -1002,7 +1116,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-066"
+    Id = "SBD-068"
     Task = "Enable AES 256/256 Cipher Suite"
     Test = {
         try {
@@ -1038,7 +1152,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-067"
+    Id = "SBD-069"
     Task = "Disable Triple DES Cipher Suite"
     Test = {
         try {
@@ -1074,7 +1188,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-068"
+    Id = "SBD-070"
     Task = "Disable SHA-1 hash"
     Test = {
         try {
@@ -1110,7 +1224,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-069"
+    Id = "SBD-071"
     Task = "Disable MD5 hash"
     Test = {
         try {
@@ -1146,7 +1260,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-070"
+    Id = "SBD-072"
     Task = "Configure Cipher Suite Ordering"
     Test = {
         try {
@@ -1188,52 +1302,6 @@
         return @{
             Message = "Compliant"
             Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "SBD-071"
-    Task = "Check NETBIOS-Status for all active NICs"
-    Test = {
-        try{
-            $networkCards = Get-WmiObject win32_networkadapterconfiguration -filter 'IPEnabled=true' | select Description, TcpipNetbiosOptions
-            $nonCompliantCards = @()
-            
-            for($i = 0; $i -lt $networkCards.Count; $i++){
-                 if($networkCards[$i].TcpipNetbiosOptions -ne 0){
-                        $nonCompliantCards += $networkCards[$i]
-                 }
-            }
-            
-            if($nonCompliantCards.Count -eq 0){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            if($nonCompliantCards.Count -eq $networkCards.Count){
-                return @{
-                    Message = "All network cards have NETBIOS enabled."
-                    Status = "False"
-                }
-            }
-            $message = "Following network cards have NETBIOS enabled: " + $nonCompliantCards.Description
-            return @{
-                Message = $message
-                Status = "Warning"
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Value not found."
-                Status = "Error"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Value not found."
-                Status = "Error"
-            }
         }
     }
 }

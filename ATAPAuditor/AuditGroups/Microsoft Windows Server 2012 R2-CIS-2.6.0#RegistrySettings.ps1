@@ -1595,11 +1595,25 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
+$CARoleStatus = $null
+$WINSStatus = $null
+try {
+    $CARoleStatus = (Get-WindowsFeature -Name ADCS-Cert-Authority -ErrorAction Stop).Installed
+    $WINSStatus = (Get-WindowsFeature -Name WINS -ErrorAction Stop).Installed
+} catch {
+    Write-Verbose "Get-WindowsFeature is not installed."
+}
 [AuditTest] @{
     Id = "2.3.10.9 A"
     Task = "(L1) Configure 'Network access: Remotely accessible registry paths and sub-paths'"
     Test = {
         try {
+            if (($CARoleStatus -or $WINSStatus) -eq $true){
+                return @{
+                    Message = "WINS Role Feature or CA Role Service are installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -1649,6 +1663,12 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [CA Role Service installed]"
     Test = {
         try {
+            if ($CARoleStatus -eq $false){
+                return @{
+                    Message = "CA Role Service NOT installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -1699,6 +1719,12 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature installed]"
     Test = {
         try {
+            if ($WINSStatus -eq $false){
+                return @{
+                    Message = "WINS Role Feature NOT installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `

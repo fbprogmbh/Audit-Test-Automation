@@ -1613,11 +1613,19 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
+$CARoleStatus = (Get-WindowsFeature -Name ADCS-Cert-Authority).Installed
+$WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "2.3.10.9 A"
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature and CA Role Service NOT installed]"
     Test = {
         try {
+            if (($CARoleStatus -or $WINSStatus) -eq $true){
+                return @{
+                    Message = "WINS Role Feature or CA Role Service are installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -1667,6 +1675,12 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [CA Role Service installed]"
     Test = {
         try {
+            if ($CARoleStatus -eq $false){
+                return @{
+                    Message = "CA Role Service NOT installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -1717,6 +1731,12 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured [WINS Role Feature installed]"
     Test = {
         try {
+            if ($WINSStatus -eq $false){
+                return @{
+                    Message = "WINS Role Feature NOT installed"
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths" `
                 -Name "Machine" `
@@ -4180,8 +4200,8 @@ $windefrunning = CheckWindefRunning
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" `
-                -Name "EnableNetbios" `
-                | Select-Object -ExpandProperty "EnableNetbios"
+                -Name "EnableNetBIOS" `
+                | Select-Object -ExpandProperty "EnableNetBIOS"
         
             if (-not( ($regValue -eq 0) -or ($regValue -eq 2) )) {
                 return @{

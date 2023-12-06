@@ -1912,13 +1912,13 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-054"
-    Task = "Set registry value 'EnableNetbios' to 2."
+    Task = "Set registry value 'EnableNetBIOS' to 2."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\DNSClient" `
-                -Name "EnableNetbios" `
-                | Select-Object -ExpandProperty "EnableNetbios"
+                -Name "EnableNetBIOS" `
+                | Select-Object -ExpandProperty "EnableNetBIOS"
         
             if ($regValue -ne 2) {
                 return @{
@@ -2635,42 +2635,6 @@ $windefrunning = CheckWindefRunning
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "Registry-075"
-    Task = "Set registry value 'PolicyVersion' to 538."
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall" `
-                -Name "PolicyVersion" `
-                | Select-Object -ExpandProperty "PolicyVersion"
-        
-            if ($regValue -ne 538) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 538"
                     Status = "False"
                 }
             }
@@ -11508,6 +11472,13 @@ $windefrunning = CheckWindefRunning
                 -Name "RequirePlatformSecurityFeatures" `
                 | Select-Object -ExpandProperty "RequirePlatformSecurityFeatures"
         
+            if ($regValue -eq 3) {
+                return @{
+                    Message = "Set to 'Secure Boot and DMA Protection' which is more secure."
+                    Status = "True"
+                }
+            }
+                
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"

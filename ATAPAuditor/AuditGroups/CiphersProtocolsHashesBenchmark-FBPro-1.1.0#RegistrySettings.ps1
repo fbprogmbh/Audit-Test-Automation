@@ -612,11 +612,96 @@
 }
 [AuditTest] @{
     Id = "1.5.2"
-    Task = "Enable TLS1.2 Protocol (Server Default)"
+    Task = "Enable TLS1.2 Protocol (Server DisabledByDefault)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server" `
+                -Name "DisabledByDefault" `
+                | Select-Object -ExpandProperty "DisabledByDefault"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.5.3"
+    Task = "Enable TLS1.2 Protocol (Client)"
+    Test = {
+        $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.5.4"
+    Task = "Enable TLS1.2 Protocol (Client DisabledByDefault)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client" `
                 -Name "DisabledByDefault" `
                 | Select-Object -ExpandProperty "DisabledByDefault"
         
