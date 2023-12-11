@@ -2,8 +2,7 @@
 	Title = "Ubuntu 22.04 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Ubuntu Linux 22.04"
-		"Security baseline for Ubuntu"	
+		"CIS Ubuntu Linux 22.04 version 1.0.0"
     )
 	Sections = @(
 		[ReportSection] @{
@@ -11,18 +10,8 @@
 			Description = "This section contains the general benchmark results"
 			SubSections = @(
 				[ReportSection] @{
-					Title = 'CIS Test'
+					Title = 'CIS Ubuntu Linux 22.04'
 					AuditInfos = Test-AuditGroup "Ubuntu Linux 22.04-CIS-1.0.0"
-				}
-			)
-		}
-		[ReportSection] @{
-			Title = "General Benchmarks"
-			Description = "This section contains the general benchmark results"
-			SubSections = @(
-				[ReportSection] @{
-					Title = 'Security Base Data'
-					AuditInfos = Test-AuditGroup "SBD - Linux Base Security"
 				}
 			)
 		}
