@@ -6,7 +6,7 @@ $windefrunning = CheckWindefRunning
 $domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 [AuditTest] @{
     Id   = "1.1.7"
-    Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
+    Task = "Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]
@@ -35,7 +35,7 @@ $domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 if($domainRole -eq 3){
     [AuditTest] @{
         Id   = "2.2.38"
-        Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+        Task = "Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
         Constraints = @(
             @{ "Property" = "DomainRole"; "Values" = "Member Server" }
         )
@@ -75,7 +75,7 @@ if($domainRole -eq 3){
 if($domainRole -ge 4){
     [AuditTest] @{
         Id   = "2.3.5.2"
-        Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+        Task = "Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
         Constraints = @(
             @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
         )
@@ -115,7 +115,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "2.3.11.4"
-    Task = "(L1) Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'"
+    Task = "Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -151,7 +151,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "2.3.11.5"
-    Task = "(L1) Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
+    Task = "Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -187,7 +187,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "9.1.7"
-    Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
@@ -206,7 +206,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "9.1.8"
-    Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
@@ -228,7 +228,7 @@ if($domainRole -ge 4){
 
 [AuditTest] @{
     Id   = "18.3.3"
-    Task = "(L1) Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver'"
+    Task = "Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -264,7 +264,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "18.3.3"
-    Task = "(L1) Ensure 'Configure SMB v1 server' is set to 'Disabled'"
+    Task = "Ensure 'Configure SMB v1 server' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -303,7 +303,7 @@ if($domainRole -ge 4){
 
 [AuditTest] @{
     Id   = "18.3.6"
-    Task = "(L1) Ensure 'WDigest Authentication' is set to 'Disabled'"
+    Task = "Ensure 'WDigest Authentication' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -340,7 +340,7 @@ if($domainRole -ge 4){
 
 [AuditTest] @{
     Id   = "18.6.2"
-    Task = "(L1) Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'"
+    Task = "Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -376,7 +376,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "18.6.3"
-    Task = "(L1) Ensure 'Point and Print Restrictions: When updating drivers for an existing connection' is set to 'Enabled: Show warning and elevation prompt'"
+    Task = "Ensure 'Point and Print Restrictions: When updating drivers for an existing connection' is set to 'Enabled: Show warning and elevation prompt'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -412,7 +412,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "18.9.47.9.2"
-    Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
+    Task = "Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -454,7 +454,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 A"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -515,7 +515,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 B"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -576,7 +576,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 C"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -637,7 +637,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 D"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes' is configured"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes' is configured"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -698,7 +698,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 E"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -759,7 +759,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 F"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -820,7 +820,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 G"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -881,7 +881,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 H"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -942,7 +942,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 I"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1003,7 +1003,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 J"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
        try {
             if ((-not $windefrunning)) {
@@ -1064,7 +1064,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 K"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1125,7 +1125,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 L"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1186,7 +1186,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id = "18.10.43.6.1.2 M"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block abuse of exploited vulnerable signed drivers)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block abuse of exploited vulnerable signed drivers)"
     Test = {
         try {
             if($avstatus){
@@ -1250,7 +1250,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "18.9.58.3.10.1"
-    Task = "(L2) Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"
+    Task = "Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1286,7 +1286,7 @@ if($domainRole -ge 4){
 }
 [AuditTest] @{
     Id   = "18.9.58.3.10.2"
-    Task = "(L2) Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
+    Task = "Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

@@ -5756,7 +5756,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-284"
-    Task = "(NG) Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'"
+    Task = "Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5960,7 +5960,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-289"
-    Task = "(L1) Ensure 'Turn on script scanning' is set to 'Enabled'"
+    Task = "Ensure 'Turn on script scanning' is set to 'Enabled'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -6170,7 +6170,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-294"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -8250,7 +8250,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-368"
-    Task = "(L1) Ensure 'Limits print driver installation to Administrators' is set to 'Enabled' (Automated)"
+    Task = "Ensure 'Limits print driver installation to Administrators' is set to 'Enabled' (Automated)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

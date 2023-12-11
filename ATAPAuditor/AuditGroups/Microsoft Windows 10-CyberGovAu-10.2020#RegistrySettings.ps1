@@ -10826,7 +10826,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "1909.224"
-    Task = "(L1) Ensure 'User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode' is set to 'Prompt for consent on the secure desktop'"
+    Task = "Ensure 'User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode' is set to 'Prompt for consent on the secure desktop'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10862,7 +10862,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "1909.225"
-    Task = "(L1) Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'"
+    Task = "Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10898,7 +10898,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "1909.226"
-    Task = "(L1) Ensure 'User Account Control: Detect application installations and prompt for elevation' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Detect application installations and prompt for elevation' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
