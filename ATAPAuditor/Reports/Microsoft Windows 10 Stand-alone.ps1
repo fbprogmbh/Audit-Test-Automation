@@ -15,23 +15,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-1.0.1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#UserRights"
 				}
 			)
 		}
