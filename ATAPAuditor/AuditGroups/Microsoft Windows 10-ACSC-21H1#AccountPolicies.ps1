@@ -28,7 +28,7 @@
 }
 [AuditTest] @{
     Id = "Medium-002"
-    Task = "(L1) Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0'"
+    Task = "Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["LockoutBadCount"]
@@ -84,7 +84,7 @@
 }
 [AuditTest] @{
     Id = "Medium-146"
-    Task = "(L1) Ensure 'Maximum password age' is set to '365 or fewer days, but not 0'"
+    Task = "Ensure 'Maximum password age' is set to '365 or fewer days, but not 0'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MaximumPasswordAge"]
@@ -115,7 +115,7 @@
 }
 [AuditTest] @{
     Id = "Medium-147"
-    Task = "(L1) Ensure 'Minimum password length' is set to '14 or more character(s)'"
+    Task = "Ensure 'Minimum password length' is set to '14 or more character(s)'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["MinimumPasswordLength"]
@@ -143,7 +143,7 @@
 }
 [AuditTest] @{
     Id = "Medium-148"
-    Task = "(L1) Ensure 'Password must meet complexity requirements' is set to 'Enabled'"
+    Task = "Ensure 'Password must meet complexity requirements' is set to 'Enabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["PasswordComplexity"]
@@ -171,7 +171,7 @@
 }
 [AuditTest] @{
     Id = "Medium-149"
-    Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
+    Task = "Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]

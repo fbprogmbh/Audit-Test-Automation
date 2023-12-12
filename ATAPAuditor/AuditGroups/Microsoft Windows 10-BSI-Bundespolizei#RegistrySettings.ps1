@@ -6596,7 +6596,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "0364"
-    Task = "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Password' is set to 'Enabled: Require 48-digit recovery password'"
+    Task = "Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Password' is set to 'Enabled: Require 48-digit recovery password'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

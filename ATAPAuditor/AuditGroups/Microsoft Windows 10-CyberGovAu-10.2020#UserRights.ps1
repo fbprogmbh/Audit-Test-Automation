@@ -204,7 +204,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "1909.273"
-    Task = "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Remote Desktop Users'"
+    Task = "Ensure 'Allow log on through Remote Desktop Services' is set to 'Remote Desktop Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteInteractiveLogonRight"]
