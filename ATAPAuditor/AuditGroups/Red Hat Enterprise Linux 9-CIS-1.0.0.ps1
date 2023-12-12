@@ -23,19 +23,9 @@ $retNonCompliantManualReviewRequired = @{
     Status = $rcFalse
 }
 
-$IPv6Status_script = @'
-#!/bin/bash
-[ -n "$passing" ] && passing=""
-[ -z "$(grep "^\s*linux" /boot/grub2/grub.cfg | grep -v ipv6.disabled=1)" ] && passing="true"
-grep -Eq "^\s*net\.ipv6\.conf\.all\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" /etc/sysctl.conf /etc/sysctl.d/*.conf && grep -Eq "^\s*net\.ipv6\.conf\.default\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" /etc/sysctl.conf /etc/sysctl.d/*.conf && sysctl net.ipv6.conf.all.disable_ipv6 | grep -Eq "^\s*net\.ipv6\.conf\.all\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" && sysctl net.ipv6.conf.default.disable_ipv6 | grep -Eq "^\s*net\.ipv6\.conf\.default\.disable_ipv6\s*=\s*1\b(\s+#.*)?$" && passing="true"
-if [ "$passing" = true ] ; then
-    echo "IPv6 is disabled on the system"
-else
-    echo "IPv6 is enabled on the system"
-fi
-'@
+$IPv6Status_script = grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable && echo -e "\n - IPv6 is enabled\n" || echo -e "\n - IPv6 is not enabled\n"
 $IPv6Status = bash -c $IPv6Status_script
-if ($IPv6Status -match "enabled") {
+if ($IPv6Status -match "is enabled") {
     $IPv6Status = "enabled"
 } else {
     $IPv6Status = "disabled"
@@ -1151,6 +1141,721 @@ if ($IPv6Status -match "enabled") {
 '@
         $script = bash -c $script_string
         if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "1.8.6"
+    Task = "Ensure GDM automatic mounting of removable media is disabled"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_pkgoutput="" l_output="" l_output2=""
+    if command -v dpkg-query > /dev/null 2>&1; then
+        l_pq="dpkg-query -W"
+    elif command -v rpm > /dev/null 2>&1; then
+            l_pq="rpm -q"
+    fi
+    l_pcl="gdm gdm3"
+    for l_pn in $l_pcl; do
+        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
+    done
+    if [ -n "$l_pkgoutput" ]; then
+        echo -e "$l_pkgoutput"
+        l_kfile="$(grep -Prils -- '^\h*automount\b' /etc/dconf/db/*.d)"
+        l_kfile2="$(grep -Prils -- '^\h*automount-open\b' /etc/dconf/db/*.d)"
+        if [ -f "$l_kfile" ]; then
+            l_gpname="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile")"
+        elif [ -f "$l_kfile2" ]; then
+            l_gpname="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile2")"
+        fi
+        if [ -n "$l_gpname" ]; then
+            l_gpdir="/etc/dconf/db/$l_gpname.d"
+            if grep -Pq -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*; then
+                l_output="$l_output\n - dconf database profile file \"$(grep -Pl -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*)\" exists"
+            else
+                l_output2="$l_output2\n - dconf database profile isn't set"
+            fi
+            if [ -f "/etc/dconf/db/$l_gpname" ]; then
+                l_output="$l_output\n - The dconf database \"$l_gpname\" exists"
+            else
+                l_output2="$l_output2\n - The dconf database \"$l_gpname\" doesn't exist"
+            fi
+            if [ -d "$l_gpdir" ]; then
+                l_output="$l_output\n - The dconf directory \"$l_gpdir\" exitst"
+            else
+                l_output2="$l_output2\n - The dconf directory \"$l_gpdir\" doesn't exist"
+            fi
+            if grep -Pqrs -- '^\h*automount\h*=\h*false\b' "$l_kfile"; then
+                l_output="$l_output\n - \"automount\" is set to false in: \"$l_kfile\""
+            else
+                l_output2="$l_output2\n - \"automount\" is not set correctly"
+            fi
+            if grep -Pqs -- '^\h*automount-open\h*=\h*false\b' "$l_kfile2"; then
+                l_output="$l_output\n - \"automount-open\" is set to false in: \"$l_kfile2\""
+            else
+                l_output2="$l_output2\n - \"automount-open\" is not set correctly"
+            fi
+        else
+            l_output2="$l_output2\n - neither \"automount\" or \"automount-open\" is set"
+        fi
+    else
+        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
+    fi
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+    else
+        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "1.8.7"
+    Task = "Ensure GDM disabling automatic mounting of removable media is not overridden"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_pkgoutput=""
+    if command -v dpkg-query > /dev/null 2>&1; then
+        l_pq="dpkg-query -W"
+    elif command -v rpm > /dev/null 2>&1; then
+        l_pq="rpm -q"
+    fi
+    l_pcl="gdm gdm3"
+    for l_pn in $l_pcl; do
+        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
+    done
+    if [ -n "$l_pkgoutput" ]; then
+        l_output="" l_output2=""
+        l_kfd="/etc/dconf/db/$(grep -Psril '^\h*automount\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
+        l_kfd2="/etc/dconf/db/$(grep -Psril '^\h*automount-open\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
+        if [ -d "$l_kfd" ]; then
+            if grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount\b' "$l_kfd"; then
+                l_output="$l_output\n - \"automount\" is locked in \"$(grep -Pil '^\h*\/org/gnome\/desktop\/media-handling\/automount\b' "$l_kfd")\""
+            else
+                l_output2="$l_output2\n - \"automount\" is not locked"
+            fi
+        else
+            l_output2="$l_output2\n - \"automount\" is not set so it can not be locked"
+        fi
+        if [ -d "$l_kfd2" ]; then
+            if grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount-open\b' "$l_kfd2"; then
+                l_output="$l_output\n - \"lautomount-open\" is locked in \"$(grep -Pril '^\h*\/org/gnome\/desktop\/media-handling\/automount-open\b' "$l_kfd2")\""
+            else
+                l_output2="$l_output2\n - \"automount-open\" is not locked"
+            fi
+        else
+            l_output2="$l_output2\n - \"automount-open\" is not set so it can not be locked"
+        fi
+    else
+        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
+    fi
+    [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+    else
+        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "1.8.8"
+    Task = "Ensure GDM autorun-never is enabled"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_pkgoutput="" l_output="" l_output2=""
+    if command -v dpkg-query > /dev/null 2>&1; then
+        l_pq="dpkg-query -W"
+    elif command -v rpm > /dev/null 2>&1; then
+        l_pq="rpm -q"
+    fi
+    l_pcl="gdm gdm3"
+    for l_pn in $l_pcl; do
+        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration" echo -e "$l_pkgoutput"
+    done
+    if [ -n "$l_pkgoutput" ]; then
+        echo -e "$l_pkgoutput"
+        l_kfile="$(grep -Prils -- '^\h*autorun-never\b' /etc/dconf/db/*.d)"
+        if [ -f "$l_kfile" ]; then
+            l_gpname="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile")"
+        fi
+        if [ -n "$l_gpname" ]; then
+            l_gpdir="/etc/dconf/db/$l_gpname.d"
+            if grep -Pq -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*; then
+                l_output="$l_output\n - dconf database profile file \"$(grep -Pl -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*)\" exists"
+            else
+                l_output2="$l_output2\n - dconf database profile isn't set"
+            fi
+            if [ -f "/etc/dconf/db/$l_gpname" ]; then
+                l_output="$l_output\n - The dconf database \"$l_gpname\" exists"
+            else
+                l_output2="$l_output2\n - The dconf database \"$l_gpname\" doesn't exist"
+            fi
+            if [ -d "$l_gpdir" ]; then
+                l_output="$l_output\n - The dconf directory \"$l_gpdir\" exitst"
+            else
+                l_output2="$l_output2\n - The dconf directory \"$l_gpdir\" doesn't exist"
+            fi
+            if grep -Pqrs -- '^\h*autorun-never\h*=\h*true\b' "$l_kfile"; then
+                l_output="$l_output\n - \"autorun-never\" is set to true in: \"$l_kfile\""
+            else
+                l_output2="$l_output2\n - \"autorun-never\" is not set correctly"
+            fi
+        else
+            l_output2="$l_output2\n - \"autorun-never\" is not set"
+        fi
+    else
+        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
+    fi
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+    else
+        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "1.8.10"
+    Task = "Ensure XDCMP is not enabled"
+    Test = {
+        $test = grep -Eis '^\s*Enable\s*=\s*true' /etc/gdm/custom.conf
+        if ($test -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "1.9"
+    Task = "Ensure updates, patches, and additional security software are installed"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "1.10"
+    Task = "Ensure system-wide crypto policy is not legacy"
+    Test = {
+        $test = grep -E -i '^\s*LEGACY\s*(\s+#.*)?$' /etc/crypto-policies/config
+        if ($test -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+
+### Chapter 2 - Services
+
+
+[AuditTest] @{
+    Id = "2.1.1"
+    Task = "Ensure time synchronization is in use"
+    Test = {
+        $test = rpm -q chrony
+        if ($test -match "chrony-") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.1.2"
+    Task = "Ensure time synchronization is in use"
+    Test = {
+        $test = grep -E "^(server|pool)" /etc/chrony.conf | grep OPTIONS\s*-u\s*chrony
+        if ($test -match "OPTIONS") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.1"
+    Task = "Ensure xorg-x11-server-common is not installed"
+    Test = {
+        $test = rpm -q xorg-x11-server-common
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.2"
+    Task = "Ensure Avahi Server is not installed"
+    Test = {
+        $test = rpm -q avahi
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.3"
+    Task = "Ensure CUPS is not installed"
+    Test = {
+        $test = rpm -q cups
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.4"
+    Task = "Ensure DHCP Server is not installed"
+    Test = {
+        $test = rpm -q dhcp-server
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.5"
+    Task = "Ensure DNS Server is not installed"
+    Test = {
+        $test = rpm -q bind
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.6"
+    Task = "Ensure VSFTP Server is not installed"
+    Test = {
+        $test = rpm -q vsftpd
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.7"
+    Task = "Ensure VSFTP Server is not installed"
+    Test = {
+        $test = rpm -q vsftpd
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.8"
+    Task = "Ensure a web server is not installed"
+    Test = {
+        $test = rpm -q httpd nginx
+        if ($test -match "httpd is not installed" -and $test -match "nginx is not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.9"
+    Task = "Ensure IMAP and POP3 server is not installed"
+    Test = {
+        $test = rpm -q dovecot cyrus-imapd
+        if ($test -match "dovecot is not installed" -and $test -match "cyrus-imapd is not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.10"
+    Task = "Ensure Samba is not installed"
+    Test = {
+        $test = rpm -q samba
+        if ($test -match "samba is not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.11"
+    Task = "Ensure HTTP Proxy Server is not installed"
+    Test = {
+        $test = rpm -q squid
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.12"
+    Task = "Ensure net-snmp is not installed"
+    Test = {
+        $test = rpm -q net-snmp
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.13"
+    Task = "Ensure telnet-server is not installed"
+    Test = {
+        $test = rpm -q telnet-server
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.14"
+    Task = "Ensure dnsmasq is not installed"
+    Test = {
+        $test = rpm -q dnsmasq
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.15"
+    Task = "Ensure mail transfer agent is configured for local-only mode"
+    Test = {
+        $test = ss -lntu | grep -E ':25\s' | grep -E -v '\s(127.0.0.1|\[?::1\]?):25\s'
+        if ($test -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.16"
+    Task = "Ensure nfs-utils is not installed or the nfs-server service is masked"
+    Test = {
+        $test = rpm -q nfs-utils
+        if ($test -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.17"
+    Task = "Ensure rpcbind is not installed or the rpcbind services are masked"
+    Test = {
+        $test1 = rpm -q rpcbind
+        $test21 = systemctl is-enabled rpcbind
+        $test22 = systemctl is-enabled rpcbind.socket
+        if ($test1 -match "not installed" -or ($test21 -match "masked" -and $test22 -match "masked")) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.2.18"
+    Task = "Ensure rsync-daemon is not installed or the rsyncd service is masked"
+    Test = {
+        $test1 = rpm -q rsync-daemon
+        $test2 = systemctl is-enabled rsync-daemon
+        if ($test1 -match "not installed" -or $test2 -match "masked") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.1"
+    Task = "Ensure telnet client is not installed"
+    Test = {
+        $test = rpm -q telnet
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.2"
+    Task = "Ensure LDAP client is not installed"
+    Test = {
+        $test = rpm -q openldap-clients
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.3"
+    Task = "Ensure TFTP client is not installed"
+    Test = {
+        $test = rpm -q tftp
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.3.4"
+    Task = "Ensure FTP client is not installed"
+    Test = {
+        $test = rpm -q ftp
+        if ($test -match "not installed") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "2.4"
+    Task = "Ensure nonessential services listening on the system are removed or masked"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+
+### Chapter 3 - Network Configuration
+
+
+[AuditTest] @{
+    Id = "3.1.1"
+    Task = "Ensure IPv6 status is identified"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "3.1.3"
+    Task = "Ensure TIPC is disabled"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2="" l_mname="tipc"
+    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
+        l_loadable="$(modprobe -n -v "$l_mname")"
+        [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
+        if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
+            l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
+        else
+            l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
+        fi
+        if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
+            l_output="$l_output\n - module: \"$l_mname\" is not loaded" else l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
+        fi
+        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
+            l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
+        else
+            l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"
+        fi
+    else
+        l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
+    fi
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+    else
+        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.2.1"
+    Task = "Ensure IP forwarding is disabled"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+        l_output="" l_output2="" l_kparameters="net.ipv4.ip_forward=0 net.ipv6.conf.all.forwarding=0"
+        searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf $([ -f /etc/default/ufw ] && awk -F= '/^\s*IPT_SYSCTL=/ {print $2}' /etc/default/ufw)"
+        kernel_par_chk()
+        {
+            krp="" pafile="" fafile=""
+            krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+            pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+            fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" [ "$krp" = "$kpvalue" ] && l_output="$l_output\n - \"$kpname\" is set to \"$kpvalue\" in the running configuration"
+            [ -n "$pafile" ] && l_output="$l_output\n - \"$kpname\" is set to \"$kpvalue\" in \"$pafile\""
+            [ -z "$fafile" ] && l_output="$l_output\n - \"$kpname\" is not set incorectly in a kernel parameter configuration file" [ "$krp" != "$kpvalue" ] && l_output2="$l_output2\n - \"$kpname\" is incorrectly set to \"$krp\" in the running configuration"
+            [ -n "$fafile" ] && l_output2="$l_output2\n - \"$kpname\" is set incorrectly in \"$fafile\""
+            [ -z "$pafile" ] && l_output2="$l_output2\n - \"$kpname = $kpvalue\" is not set in a kernel parameter configuration file"
+        }
+        for l_kpar in $l_kparameters; do
+            kpname="$(awk -F"=" '{print $1}' <<< "$l_kpar" | xargs)" kpvalue="$(awk -F"=" '{print $2}' <<< "$l_kpar" | xargs)"
+            if grep -Pq '^\h*net\.ipv6\.' <<< "$l_kpname"; then
+                if grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable; then
+                    kernel_par_chk
+                else
+                    l_output="$l_output\n - IPv6 is not enabled, check for: \"$l_kpar\" is not applicable"
+                fi
+            else
+                kernel_par_chk
+            fi
+        done
+        if [ -z "$l_output2" ]; then
+            echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        else
+            echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.2.2"
+    Task = "Ensure packet redirect sending is disabled"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.all.send_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)" fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\nFAIL: "
+        [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+$script_string2 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile="" kpname="net.ipv4.conf.default.send_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script1 = bash -c $script_string1
+        $script2 = bash -c $script_string2
+        if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
             return $retCompliant
         } else {
             return $retNonCompliant
