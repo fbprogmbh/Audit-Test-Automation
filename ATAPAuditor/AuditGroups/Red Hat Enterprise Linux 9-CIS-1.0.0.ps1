@@ -31,6 +31,7 @@ if ($IPv6Status -match "is enabled") {
     $IPv6Status = "disabled"
 }
 
+
 ### Chapter 1 - Initial Setup
 
 
@@ -1716,10 +1717,62 @@ if ($IPv6Status -match "is enabled") {
 
 
 [AuditTest] @{
-    Id = "3.1.1"
+    Id = "3.1.2"
     Task = "Ensure IPv6 status is identified"
     Test = {
         return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "3.1.2"
+    Task = "Ensure wireless interfaces are disabled"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2=""
+    module_chk() {
+        l_loadable="$(modprobe -n -v "$l_mname")"
+        if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
+            l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
+        else
+            l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
+        fi
+        if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
+            l_output="$l_output\n - module: \"$l_mname\" is not loaded" else l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
+        fi
+        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
+            l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
+        else
+            l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"
+        fi
+    }
+    if [ -n "$(find /sys/class/net/*/ -type d -name wireless)" ]; then
+        l_dname=$(for driverdir in $(find /sys/class/net/*/ -type d -name wireless | xargs -0 dirname); do
+            basename "$(readlink -f "$driverdir"/device/driver/module)";done | sort -u)
+        for l_mname in $l_dname; do
+            module_chk
+        done
+    fi
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n ** PASS **"
+        if [ -z "$l_output" ]; then
+            echo -e "\n - System has no wireless NICs installed"
+        else
+            echo -e "\n$l_output\n"
+        fi
+    else
+        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
     }
 }
 
@@ -1801,7 +1854,8 @@ if ($IPv6Status -match "is enabled") {
         if [ -z "$l_output2" ]; then
             echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
         else
-            echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+            echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n"
+            [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
         fi
 }
 '@
@@ -1827,19 +1881,287 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)" fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\n** PASS **\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\nFAIL: "
+        echo -e "\n** FAIL ** "
         [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
 }
 '@
-$script_string2 = @'
+        $script_string2 = @'
 #!/usr/bin/env bash
 {
     krp="" pafile="" fafile="" kpname="net.ipv4.conf.default.send_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script1 = bash -c $script_string1
+        $script2 = bash -c $script_string2
+        if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.1"
+    Task = "Ensure packet redirect sending is disabled"
+    Test = {
+        $script_string11 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.all.accept_source_route" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string12 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.default.accept_source_route" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string21 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv6.conf.all.accept_source_route"
+    kpvalue="0" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string22 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.default.accept_source_route" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script11 = bash -c $script_string11
+        $script12 = bash -c $script_string12
+        $script21 = bash -c $script_string21
+        $script22 = bash -c $script_string22
+        if ($IPv6Status -eq "enabled") {
+            if ($script21 -match "** PASS **" -and $script22 -match "** PASS **") {
+                return $retCompliant
+            } else {
+                return $retNonCompliant
+            }
+        } else {
+            if ($script11 -match "** PASS **" -and $script12 -match "** PASS **") {
+                return $retCompliant
+            } else {
+                return $retNonCompliant
+            }
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.2"
+    Task = "Ensure ICMP redirects are not accepted"
+    Test = {
+        $script_string11 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.all.accept_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string12 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.default.accept_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n" [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string21 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile="" kpname="net.ipv6.conf.all.accept_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string22 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv6.conf.default.accept_redirects"
+    kpvalue="0" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script11 = bash -c $script_string11
+        $script12 = bash -c $script_string12
+        $script21 = bash -c $script_string21
+        $script22 = bash -c $script_string22
+        if ($IPv6Status -eq "enabled") {
+            if ($script21 -match "** PASS **" -and $script22 -match "** PASS **") {
+                return $retCompliant
+            } else {
+                return $retNonCompliant
+            }
+        } else {
+            if ($script11 -match "** PASS **" -and $script12 -match "** PASS **") {
+                return $retCompliant
+            } else {
+                return $retNonCompliant
+            }
+        }
+    }
+}
+
+# 3.3.3 ist identisch mit 3.3.2 ... warum auch immer - wird hier weg gelassen
+
+[AuditTest] @{
+    Id = "3.3.4"
+    Task = "Ensure suspicious packets are logged"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.all.log_martians" kpvalue="1"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.default.accept_redirects" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+
+        $script1 = bash -c $script_string1
+        $script2 = bash -c $script_string2
+        if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.5"
+    Task = "Ensure broadcast ICMP requests are ignored"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.icmp_echo_ignore_broadcasts"
+    kpvalue="1"
     searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
@@ -1853,6 +2175,83 @@ $script_string2 = @'
     fi
 }
 '@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.6"
+    Task = "Ensure bogus ICMP responses are ignored"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.icmp_ignore_bogus_error_responses" kpvalue="1"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.7"
+    Task = "Ensure Reverse Path Filtering is enabled"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile="" kpname="net.ipv4.conf.all.rp_filter" kpvalue="1"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv4.conf.default.rp_filter"
+    kpvalue="1" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
         $script1 = bash -c $script_string1
         $script2 = bash -c $script_string2
         if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
@@ -1860,5 +2259,183 @@ $script_string2 = @'
         } else {
             return $retNonCompliant
         }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.8"
+    Task = "Ensure TCP SYN Cookies is enabled"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile="" kpname="net.ipv4.tcp_syncookies" kpvalue="1"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.3.9"
+    Task = "Ensure IPv6 router advertisements are not accepted"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile="" kpname="net.ipv6.conf.all.accept_ra" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    krp="" pafile="" fafile=""
+    kpname="net.ipv6.conf.default.accept_ra" kpvalue="0"
+    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
+    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
+    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
+    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
+        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+    else
+        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
+    fi
+}
+'@
+        if ($IPv6Status -match "disabled") {
+            return $retCompliantIPv6Disabled
+        } else {
+            $script1 = bash -c $script_string1
+            $script2 = bash -c $script_string2
+            if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+                return $retCompliant
+            } else {
+                return $retNonCompliant
+            }
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.1.1"
+    Task = "Ensure nftables is installed"
+    Test = {
+        $result = rpm -q nftables
+        if ($result -match "nftables-") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.1.2"
+    Task = "Ensure a single firewall configuration utility is in use"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2="" l_fwd_status="" l_nft_status="" l_fwutil_status=""
+    rpm -q firewalld > /dev/null 2>&1 && l_fwd_status="$(systemctl is-enabled firewalld.service):$(systemctl is-active firewalld.service)"
+    rpm -q nftables > /dev/null 2>&1 && l_nft_status="$(systemctl is-enabled nftables.service):$(systemctl is-active nftables.service)"
+    l_fwutil_status="$l_fwd_status:$l_nft_status"
+    case $l_fwutil_status in
+        enabled:active:masked:inactive|enabled:active:disabled:inactive)
+        l_output="\n - FirewallD utility is in use, enabled and active\n - NFTables utility is correctly disabled or masked and inactive" ;;
+        masked:inactive:enabled:active|disabled:inactive:enabled:active)
+        l_output="\n - NFTables utility is in use, enabled and active\n - FirewallD utility is correctly disabled or masked and inactive" ;;
+        enabled:active:enabled:active)
+        l_output2="\n - Both FirewallD and NFTables utilities are enabled and active" ;;
+        enabled:*:enabled:*) l_output2="\n - Both FirewallD and NFTables utilities are enabled" ;;
+        *:active:*:active) l_output2="\n - Both FirewallD and NFTables utilities are enabled" ;;
+        :enabled:active) l_output="\n - NFTables utility is in use, enabled, and active\n - FirewallD package is not installed" ;;
+        :) l_output2="\n - Neither FirewallD or NFTables is installed." ;;
+        *:*:) l_output2="\n - NFTables package is not installed on the system" ;;
+        *) l_output2="\n - Unable to determine firewall state" ;;
+    esac
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Results:\n ** PASS **\n$l_output\n"
+    else
+        echo -e "\n- Audit Results:\n ** FAIL **\n$l_output2\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2.1"
+    Task = "Ensure firewalld default zone is set"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2="" l_zone=""
+    if systemctl is-enabled firewalld.service | grep -q 'enabled'; then
+        l_zone="$(firewall-cmd --get-default-zone)" if [ -n "$l_zone" ]; then
+            l_output=" - The default zone is set to: \"$l_zone\""
+        else
+            l_output2=" - The default zone is not set"
+        fi
+    else
+        l_output=" - FirewallD is not in use on the system"
+    fi
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Results:\n ** PASS **\n$l_output\n"
+    else
+        echo -e "\n- Audit Results:\n ** FAIL **\n$l_output2\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2.2"
+    Task = "Ensure at least one nftables table exists"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
     }
 }
