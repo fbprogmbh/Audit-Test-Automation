@@ -2230,9 +2230,9 @@ if($domainRole -ge 4){
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne 1 -and $regValue -ne 4294967295) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 4294967295"
                     Status = "False"
                 }
             }
