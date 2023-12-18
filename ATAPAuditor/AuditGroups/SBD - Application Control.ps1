@@ -5,14 +5,22 @@ $RootPath = Split-Path $RootPath -Parent
     Id = "SBD-072"
 	Task = "Ensure Windows Defender Application Control (WDAC) is available."
 	Test = {
-        if(isWindows10Enterprise -eq $true){
+        $os = Get-ComputerInfo OsName
+        $isHomeVersion = $os -match "Home"
+        $windowsServerVersions = @(
+            "Windows Server 2016",
+            "Windows Server 2019",
+            "Windows Server 2022"
+        )
+        $isServer2016newer = $windowsServerVersions -contains $os
+        if(!($isHomeVersion -eq $true) -and !($isServer2016newer -eq $true)){
             return @{
                 Message = "Compliant"
                 Status = "True"
             }
         }
         return @{
-            Message = "Only supported on Windows 10 Enterprise."
+            Message = "Only supported on Windows 10 and newer (except Home Editions), as well as Windows Server 2016 and newer."
             Status = "None"
         }
 	}
