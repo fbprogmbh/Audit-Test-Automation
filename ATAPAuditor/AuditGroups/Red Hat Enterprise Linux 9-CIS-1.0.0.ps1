@@ -2439,3 +2439,601 @@ if ($IPv6Status -match "is enabled") {
         return $rcNonCompliantManualReviewRequired
     }
 }
+
+[AuditTest] @{
+    Id = "3.4.2.3"
+    Task = "Ensure nftables base chains exist"
+    Test = {
+        try{
+            $test1 = nft list ruleset | grep 'hook input'
+            $test2 = nft list ruleset | grep 'hook forward'
+            $test3 = nft list ruleset | grep 'hook output'
+            if($test1 -match "type filter hook input" -and $test2 -match "type filter hook forward" -and $test3 -match "type filter hook output"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Not-Compliant"
+                Status = "False"
+            }
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2.4"
+    Task = "Ensure host based firewall loopback traffic is configured"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2=""
+    if nft list ruleset | awk '/hook\s+input\s+/,/\}\s*(#.*)?$/' | grep -Pq -- '\H+\h+"lo"\h+accept'; then
+        l_output="$l_output\n - Network traffic to the loopback address is correctly set to accept"
+    else
+        l_output2="$l_output2\n - Network traffic to the loopback address is not set to accept"
+    fi
+    l_ipsaddr="$(nft list ruleset | awk '/filter_IN_public_deny|hook\s+input\s+/,/\}\s*(#.*)?$/' | grep -P -- 'ip\h+saddr')"
+    if grep -Pq -- 'ip\h+saddr\h+127\.0\.0\.0\/8\h+(counter\h+packets\h+\d+\h+bytes\h+\d+\h+)?drop' <<< "$l_ipsaddr" || grep -Pq -- 'ip\h+daddr\h+\!\=\h+127\.0\.0\.1\h+ip\h+saddr\h+127\.0\.0\.1\h+drop' <<< "$l_ipsaddr"; then
+        l_output="$l_output\n - IPv4 network traffic from loopback address correctly set to drop"
+    else
+        l_output2="$l_output2\n - IPv4 network traffic from loopback address not set to drop"
+    fi
+    if grep -Pq -- '^\h*0\h*$' /sys/module/ipv6/parameters/disable; then
+        l_ip6saddr="$(nft list ruleset | awk '/filter_IN_public_deny|hook input/,/}/' | grep 'ip6 saddr')"
+        if grep -Pq 'ip6\h+saddr\h+::1\h+(counter\h+packets\h+\d+\h+bytes\h+\d+\h+)?drop' <<< "$l_ip6saddr" || grep -Pq -- 'ip6\h+daddr\h+\!=\h+::1\h+ip6\h+saddr\h+::1\h+drop' <<< "$l_ip6saddr"; then
+            l_output="$l_output\n - IPv6 network traffic from loopback address correctly set to drop"
+        else
+            l_output2="$l_output2\n - IPv6 network traffic from loopback address not set to drop"
+        fi
+    fi
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n *** PASS ***\n$l_output"
+    else
+        echo -e "\n- Audit Result:\n *** FAIL ***\n$l_output2\n\n - Correctly set:\n$l_output"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2.5"
+    Task = "Ensure firewalld drops unnecessary services and ports"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2.6"
+    Task = "Ensure nftables established connections are configured"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "3.4.2.7"
+    Task = "Ensure nftables default deny firewall policy"
+    Test = {
+        $result1 = systemctl --quiet is-enabled nftables.service && nft list ruleset | grep 'hook input' | grep -v 'policy drop'
+        $result2 = systemctl --quiet is-enabled nftables.service && nft list ruleset | grep 'hook forward' | grep -v 'policy drop'
+        if ($result1 -eq $null -and $result2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+
+### Chapter 4 - Logging and Auditing
+
+
+[AuditTest] @{
+    Id = "4.1.1.1"
+    Task = "Ensure auditd is installed"
+    Test = {
+        $result1 = rpm -q audit
+        if ($result1 -match "audit-") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.1.2"
+    Task = "Ensure auditing for processes that start prior to auditd is enabled"
+    Test = {
+        $result1 = grubby --info=ALL | grep -Po '\baudit=1\b'
+        if ($result1 -match "audit=1") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.1.3"
+    Task = "Ensure audit_backlog_limit is sufficient"
+    Test = {
+        $result1 = grubby --info=ALL | grep -Po "\baudit_backlog_limit=\d+\b"
+        if ($result1 -match "audit_backlog_limit=") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.1.4"
+    Task = "Ensure auditd service is enabled"
+    Test = {
+        $result1 = systemctl is-enabled auditd
+        if ($result1 -match "enabled") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.2.1"
+    Task = "Ensure audit log storage size is configured"
+    Test = {
+        return $rcNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.2.2"
+    Task = "Ensure audit logs are not automatically deleted"
+    Test = {
+        $result1 = grep max_log_file_action /etc/audit/auditd.conf | grep max_log_file_action
+        if ($result1 -match "max_log_file_action = keep_logs") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.2.3"
+    Task = "Ensure system is disabled when audit logs are full"
+    Test = {
+        $result1 = grep space_left_action /etc/audit/auditd.conf
+        $result2 = grep action_mail_acct /etc/audit/auditd.conf
+        $result3 = grep -E 'admin_space_left_action\s*=\s*(halt|single)' /etc/audit/auditd.conf
+        if ($result1 -match "space_left_action = email" -and $result2 -match "action_mail_acct = root" -and ($result3 -match "admin_space_left_action = halt" -or $result3 -match "admin_space_left_action = single")) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.1"
+    Task = "Ensure changes to system administration scope (sudoers) is collected"
+    Test = {
+        $result1 = awk '/^ *-w/ \ &&/\/etc\/sudoers/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $result2 = auditctl -l | awk '/^ *-w/ \ &&/\/etc\/sudoers/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        if ($result1 -match "-w /etc/sudoers -p wa -k scope" -and $result1 -match "-w /etc/sudoers.d -p wa -k scope" -and $result2 -match "-w /etc/sudoers -p wa -k scope" -and $result2 -match "-w /etc/sudoers.d -p wa -k scope") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.2"
+    Task = "Ensure actions as another user are always logged"
+    Test = {
+        $result1 = awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&(/ -C *euid!=uid/||/ -C *uid!=euid/) &&/ -S *execve/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $result2 = auditctl -l | awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&(/ -C *euid!=uid/||/ -C *uid!=euid/) &&/ -S *execve/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        if ($result1 -match "-a always,exit -F arch=b64 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $result1 -match "-a always,exit -F arch=b32 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $result2 -match "-a always,exit -F arch=b64 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation" -and $result2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.3"
+    Task = "Ensure events that modify the sudo log file are collected"
+    Test = {
+            $script_string1 = @'
+    #!/usr/bin/env bash
+    {
+        SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g')
+        [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
+    }
+'@
+            $script_string2 = @'
+#!/usr/bin/env bash
+{
+        SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g')
+        [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && auditctl -l | awk "/^ *-w/ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-w /var/log/sudo.log -p wa -k sudo_log_file" -and $result2 -match "-w /var/log/sudo.log -p wa -k sudo_log_file") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.4"
+    Task = "Ensure events that modify date and time information are collected"
+    Test = {
+        $script_string1 = @'
+    #!/usr/bin/env bash
+    {
+        awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&/ -S/ &&(/adjtimex/ ||/settimeofday/ ||/clock_settime/ ) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        awk '/^ *-w/ &&/\/etc\/localtime/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+    }
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&/ -S/ &&(/adjtimex/ ||/settimeofday/ ||/clock_settime/ ) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+    auditctl -l | awk '/^ *-w/ &&/\/etc\/localtime/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $result1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $result1 -match "-w /etc/localtime -p wa -k time-change" -and
+            $result2 -match "-w /var/log/sudo.log -p wa -k sudo_log_file" -and $result2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $result2 -match "-w /etc/localtime -p wa -k time-change") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.5"
+    Task = "Ensure events that modify the system's network environment are collected"
+    Test = {
+        $script_string1 = @'
+    #!/usr/bin/env bash
+    {
+        awk '/^ *-a *always,exit/ &&/ -F *arch=b(32|64)/ &&/ -S/ &&(/sethostname/ ||/setdomainname/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/sysconfig\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+    }
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-a *always,exit/ &&/ -F *arch=b(32|64)/ &&/ -S/ &&(/sethostname/ ||/setdomainname/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+    auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/sysconfig\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -k system-locale" -and $result1 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -k system-locale" -and $result1 -match "-w /etc/issue -p wa -k system-locale" -and $result1 -match "-w /etc/issue.net -p wa -k system-locale" -and $result1 -match "-w /etc/hosts -p wa -k system-locale" -and $result1 -match "-w /etc/sysconfig/network -p wa -k system-locale" -and $result1 -match "-w /etc/sysconfig/network-scripts/ -p wa -k system-locale" -and 
+            $result2 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale" -and $result2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale" -and $result2 -match "-w /etc/issue -p wa -k system-locale" -and $result2 -match "-w /etc/issue.net -p wa -k system-locale" -and $result2 -match "-w /etc/hosts -p wa -k system-locale" -and $result2 -match "-w /etc/sysconfig/network -p wa -k system-locale" -and $result2 -match "-w /etc/sysconfig/network-scripts -p wa -k system-locale") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.6"
+    Task = "Ensure use of privileged commands are collected"
+    Test = {
+        $script_string1 = @'
+    #!/usr/bin/env bash
+    {
+        for PARTITION in $(findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid" | awk '{print $1}'); do
+            for PRIVILEGED in $(find "${PARTITION}" -xdev -perm /6000 -type f); do
+                grep -qr "${PRIVILEGED}" /etc/audit/rules.d && printf "OK: '${PRIVILEGED}' found in auditing rules.\n" || printf "Warning: '${PRIVILEGED}' not found in on disk configuration.\n"
+            done
+        done
+    }
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    RUNNING=$(auditctl -l)
+    [ -n "${RUNNING}" ] && for PARTITION in $(findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid" | awk '{print $1}'); do
+        for PRIVILEGED in $(find "${PARTITION}" -xdev -perm /6000 -type f); do
+            printf -- "${RUNNING}" | grep -q "${PRIVILEGED}" && printf "OK: '${PRIVILEGED}' found in auditing rules.\n" || printf "Warning: '${PRIVILEGED}' not found in running configuration.\n"
+        done
+    done || printf "ERROR: Variable 'RUNNING' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "Warning" -or $result2 -match "Warning") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.7"
+    Task = "Ensure unsuccessful file access attempts are collected"
+    Test = {
+        $script_string1 = @'
+    #!/usr/bin/env bash
+    {
+        UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+        [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&(/ -F *exit=-EACCES/||/ -F *exit=-EPERM/) &&/ -S/ &&/creat/ &&/open/ &&/truncate/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+    }
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+        UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+        [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&(/ -F *exit=-EACCES/||/ -F *exit=-EPERM/) &&/ -S/ &&/creat/ &&/open/ &&/truncate/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access" -and $result1 -match "-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access" -and $result1 -match "-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access" -and $result1 -match "-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access" -and
+            $result2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access" -and $result2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access" -and $result2 -match "-a always,exit -F arch=b32 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access" -and $result2 -match "-a always,exit -F arch=b32 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.8"
+    Task = "Ensure events that modify user/group information are collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    awk '/^ *-w/ &&(/\/etc\/group/ ||/\/etc\/passwd/ ||/\/etc\/gshadow/ ||/\/etc\/shadow/ ||/\/etc\/security\/opasswd/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-w/ &&(/\/etc\/group/ ||/\/etc\/passwd/ ||/\/etc\/gshadow/ ||/\/etc\/shadow/ ||/\/etc\/security\/opasswd/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-w /etc/group -p wa -k identity" -and $result1 -match "-w /etc/passwd -p wa -k identity" -and $result1 -match "-w /etc/gshadow -p wa -k identity" -and $result1 -match "-w /etc/shadow -p wa -k identity" -and $result1 -match "-w /etc/security/opasswd -p wa -k identity" -and
+            $result2 -match "-w /etc/group -p wa -k identity" -and $result2 -match "-w /etc/passwd -p wa -k identity" -and $result2 -match "-w /etc/gshadow -p wa -k identity" -and $result2 -match "-w /etc/shadow -p wa -k identity" -and $restul2 -match "-w /etc/security/opasswd -p wa -k identity") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.9"
+    Task = "Ensure discretionary access control permission modification events are collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -S/ &&/ -F *auid>=${UID_MIN}/ &&(/chmod/||/fchmod/||/fchmodat/ ||/chown/||/fchown/||/fchownat/||/lchown/ ||/setxattr/||/lsetxattr/||/fsetxattr/ ||/removexattr/||/lremovexattr/||/fremovexattr/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -S/ &&/ -F *auid>=${UID_MIN}/ &&(/chmod/||/fchmod/||/fchmodat/ ||/chown/||/fchown/||/fchownat/||/lchown/ ||/setxattr/||/lsetxattr/||/fsetxattr/ ||/removexattr/||/lremovexattr/||/fremovexattr/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod" -and $result1 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod" -and $result1 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod" -and
+            $result1 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod" -and $result1 -match "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod" -and $result1 -match "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod" -and
+            $result2 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and $result2 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and $result2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and
+            $result2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and $result2 -match "-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod" -and $result2 -match "-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.10"
+    Task = "Ensure successful file system mounts are collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -S/ &&/mount/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -S/ &&/mount/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k mounts" -and $result1 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=unset -k mounts" -and
+            $result2 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts" -and $result2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.11"
+    Task = "Ensure session initiation information is collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    awk '/^ *-w/ &&(/\/var\/run\/utmp/ ||/\/var\/log\/wtmp/ ||/\/var\/log\/btmp/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-w/ &&(/\/var\/run\/utmp/ ||/\/var\/log\/wtmp/ ||/\/var\/log\/btmp/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-w /var/run/utmp -p wa -k session" -and $result1 -match "-w /var/log/wtmp -p wa -k session" -and $result1 -match "-w /var/log/btmp -p wa -k session" -and
+            $result2 -match "-w /var/run/utmp -p wa -k session" -and $result2 -match "-w /var/log/wtmp -p wa -k session" -and $result2 -match "-w /var/log/btmp -p wa -k session") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+
+[AuditTest] @{
+    Id = "4.1.3.12"
+    Task = "Ensure login and logout events are collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    awk '/^ *-w/ &&(/\/var\/log\/lastlog/ ||/\/var\/run\/faillock/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-w/ &&(/\/var\/log\/lastlog/ ||/\/var\/run\/faillock/) &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-w /var/log/lastlog -p wa -k logins" -and $result1 -match "-w /var/run/faillock -p wa -k logins" -and
+            $result2 -match "-w /var/log/lastlog -p wa -k logins" -and $result2 -match "-w /var/run/faillock -p wa -k logins") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.13"
+    Task = "Ensure file deletion events by users are collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -S/ &&(/unlink/||/rename/||/unlinkat/||/renameat/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -S/ &&(/unlink/||/rename/||/unlinkat/||/renameat/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete" -and $result1 -match "-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete" -and
+            $result2 -match "-a always,exit -F arch=b64 -S rename,unlink,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete" -and $result2 -match "-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.14"
+    Task = "Ensure events that modify the system's Mandatory Access Controls are collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    awk '/^ *-w/ &&(/\/etc\/selinux/ ||/\/usr\/share\/selinux/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-w/ &&(/\/etc\/selinux/ ||/\/usr\/share\/selinux/) &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-w /etc/selinux -p wa -k MAC-policy" -and $result1 -match "-w /usr/share/selinux -p wa -k MAC-policy" -and
+            $result2 -match "-w /etc/selinux -p wa -k MAC-policy" -and $result2 -match "-w /usr/share/selinux -p wa -k MAC-policy") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.15"
+    Task = "Ensure successful and unsuccessful attempts to use the chcon command are recorded"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/chcon/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/chcon/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng" -and
+            $result2 -match "-a always,exit -S all -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
