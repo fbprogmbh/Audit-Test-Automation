@@ -3037,3 +3037,583 @@ if ($IPv6Status -match "is enabled") {
         }
     }
 }
+
+[AuditTest] @{
+    Id = "4.1.3.16"
+    Task = "Ensure successful and unsuccessful attempts to use the setfacl command are recorded"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/setfacl/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/setfacl/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng" -and
+            $result2 -match "-a always,exit -S all -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.17"
+    Task = "Ensure successful and unsuccessful attempts to use the chacl command are recorded"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/chacl/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/chacl/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_chng" -and
+            $result2 -match "-a always,exit -S all -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=-1 -F key=perm_chng") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.18"
+    Task = "Ensure successful and unsuccessful attempts to use the usermod command are recorded"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/sbin\/usermod/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/sbin\/usermod/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k usermod" -and
+            $result2 -match "-a always,exit -S all -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=-1 -F key=usermod") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.19"
+    Task = "Ensure kernel module loading unloading and modification is collected"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F auid!=unset/||/ -F auid!=-1/||/ -F auid!=4294967295/) &&/ -S/ &&(/init_module/ ||/finit_module/ ||/delete_module/ ||/create_module/ ||/query_module/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/kmod/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $script_string2 = @'
+#!/usr/bin/env bash
+{
+    auditctl -l | awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F auid!=unset/||/ -F auid!=-1/||/ -F auid!=4294967295/) &&/ -S/ &&(/init_module/ ||/finit_module/ ||/delete_module/ ||/create_module/ ||/query_module/) &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    [ -n "${UID_MIN}" ] && auditctl -l | awk "/^ *-a *always,exit/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&/ -F *auid>=${UID_MIN}/ &&/ -F *perm=x/ &&/ -F *path=\/usr\/bin\/kmod/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" || printf "ERROR: Variable 'UID_MIN' is unset.\n"
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = bash -c $script_string2
+        if ($result1 -match "-a always,exit -F arch=b64 -S init_module,finit_module,delete_module,create_module,query_module -F auid>=1000 -F auid!=unset -k kernel_modules" -and $result1 -match "-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k kernel_modules" -and
+            $result2 -match "-a always,exit -F arch=b64 -S create_module,init_module,delete_module,query_module,finit_module -F auid>=1000 -F auid!=-1 -F key=kernel_modules" -and $result2 -match "-a always,exit -S all -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=-1 -F key=kernel_modules" -and $result3 -match "OK") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.20"
+    Task = "Ensure the audit configuration is immutable"
+    Test = {
+        $result1 = grep -Ph -- '^\h*-e\h+2\b' /etc/audit/rules.d/*.rules | tail -1
+        if ($result1 -match "-e 2") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.3.21"
+    Task = "Ensure the running and on disk configuration is the same"
+    Test = {
+        $result1 = augenrules --check
+        if ($result1 -match "/usr/sbin/augenrules: No change") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.1"
+    Task = "Ensure audit log files are mode 0640 or less permissive"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    [ -f /etc/audit/auditd.conf ] && find "$(dirname $(awk -F "=" '/^\s*log_file/ {print $2}' /etc/audit/auditd.conf | xargs))" -type f \( ! -perm 600 -a ! -perm 0400 -a ! -perm 0200 -a ! -perm 0000 -a ! -perm 0640 -a ! -perm 0440 -a ! -perm 0040 \) -exec stat -Lc "%n %#a" {} +
+}
+'@
+        $result1 = bash -c $script_string1
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.2"
+    Task = "Ensure only authorized users own audit log files"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    [ -f /etc/audit/auditd.conf ] && find "$(dirname $(awk -F "=" '/^\s*log_file/ {print $2}' /etc/audit/auditd.conf | xargs))" -type f ! -user root -exec stat -Lc "%n %U" {} +
+}
+'@
+        $result1 = bash -c $script_string1
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.3"
+    Task = "Ensure only authorized groups are assigned ownership of audit log files"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    stat -c "%n %G" "$(dirname $(awk -F"=" '/^\s*log_file\s*=\s*/ {print $2}' /etc/audit/auditd.conf | xargs))"/* | grep -Pv '^\h*\H+\h+(adm|root)\b'
+}
+'@
+        $result1 = bash -c $script_string1
+        $result2 = grep -Piw -- '^\h*log_group\h*=\h*(adm|root)\b' /etc/audit/auditd.conf
+        if (($result1 -match "log_group = adm" -or $result1 -match "log_group = root") -and $result2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.4"
+    Task = "Ensure the audit log directory is 0750 or more restrictive"
+    Test = {
+        $result1 = stat -Lc "%n %a" "$(dirname $( awk -F"=" '/^\s*log_file\s*=\s*/ {print $2}' /etc/audit/auditd.conf))" | grep -Pv -- '^\h*\H+\h+([0,5,7][0,5]0)'
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.5"
+    Task = "Ensure audit configuration files are 640 or more restrictive"
+    Test = {
+        $result1 = find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) -exec stat -Lc "%n %a" {} + | grep -Pv -- '^\h*\H+\h*([0,2,4,6][0,4]0)\h*$'
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.6"
+    Task = "Ensure audit configuration files are owned by root"
+    Test = {
+        $result1 = find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -user root
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.7"
+    Task = "Ensure audit configuration files belong to group root"
+    Test = {
+        $result1 = find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.8"
+    Task = "Ensure audit tools are 755 or more restrictive"
+    Test = {
+        $result1 = stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules | grep -Pv -- '^\h*\H+\h+([0-7][0,1,4,5][0,1,4,5])\h*$'
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.9"
+    Task = "Ensure audit tools are owned by root"
+    Test = {
+        $result1 = stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules | grep -Pv -- '^\h*\H+\h+root\h*$'
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.1.4.10"
+    Task = "Ensure audit tools belong to group root"
+    Test = {
+        $result1 = stat -c "%n %a %U %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules | grep -Pv -- '^\h*\H+\h+([0-7][0,1,4,5][0,1,4,5])\h+root\h+root\h*$'
+        if ($result1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.1"
+    Task = "Ensure rsyslog is installed"
+    Test = {
+        $result1 = rpm -q rsyslog
+        if ($result1 -match "rsyslog-") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.2"
+    Task = "Ensure rsyslog service is enabled"
+    Test = {
+        $result1 = systemctl is-enabled rsyslog
+        if ($result1 -match "enabled") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.3"
+    Task = "Ensure journald is configured to send logs to rsyslog"
+    Test = {
+        $result1 = grep ^\s*ForwardToSyslog /etc/systemd/journald.conf
+        if ($result1 -match "ForwardToSyslog=yes") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.4"
+    Task = "Ensure journald is configured to send logs to rsyslog"
+    Test = {
+        $result1 = grep -Ps '^\h*\$FileCreateMode\h+0[0,2,4,6][0,2,4]0\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        if ($result1 -match "FileCreateMode 0640") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.5"
+    Task = "Ensure logging is configured"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.6"
+    Task = "Ensure rsyslog is configured to send logs to a remote log host"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.1.7"
+    Task = "Ensure journald is configured to send logs to rsyslog"
+    Test = {
+        $result1 = grep -Ps -- '^\h*module\(load="imtcp"\)' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        $result2 = grep -Ps -- '^\h*input\(type="imtcp" port="514"\)' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+        if ($result1 -eq $null -and $result2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.1.1"
+    Task = "Ensure journald is configured to send logs to rsyslog"
+    Test = {
+        $result1 = rpm -q systemd-journal-remote
+        if ($result1 -eq "systemd-journal-remote-") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.1.2"
+    Task = "Ensure systemd-journal-remote is configured"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.1.3"
+    Task = "Ensure systemd-journal-remote is enabled"
+    Test = {
+        $result1 = systemctl is-enabled systemd-journal-upload.service
+        if ($result1 -match "enabled") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.1.4"
+    Task = "Ensure journald is not configured to receive logs from a remote client"
+    Test = {
+        $result1 = systemctl is-enabled systemd-journal-remote.socket
+        if ($result1 -match "masked") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.2"
+    Task = "Ensure journald service is enabled"
+    Test = {
+        $result1 = systemctl is-enabled systemd-journald.service
+        if ($result1 -match "static") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.3"
+    Task = "Ensure journald is configured to compress large log files"
+    Test = {
+        $result1 = grep ^\s*Compress /etc/systemd/journald.conf
+        if ($result1 -match "Compress=yes") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.4"
+    Task = "Ensure journald is configured to write logfiles to persistent disk"
+    Test = {
+        $result1 = grep ^\s*Storage /etc/systemd/journald.conf
+        if ($result1 -match "Storage=persistent") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.5"
+    Task = "Ensure journald is not configured to send logs to rsyslog"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.6"
+    Task = "Ensure journald log rotation is configured per site policy"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.2.7"
+    Task = "Ensure journald default file permissions configured"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "4.2.3"
+    Task = "Ensure all logfiles have appropriate permissions and ownership"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    echo -e "\n- Start check - logfiles have appropriate permissions and ownership"
+    output=""
+    UID_MIN=$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)
+    find /var/log -type f | (while read -r fname; do
+        bname="$(basename "$fname")"
+        fugname="$(stat -Lc "%U %G" "$fname")"
+        funame="$(awk '{print $1}' <<< "$fugname")"
+        fugroup="$(awk '{print $2}' <<< "$fugname")"
+        fuid="$(stat -Lc "%u" "$fname")"
+        fmode="$(stat -Lc "%a" "$fname")"
+        case "$bname" in lastlog | lastlog.* | wtmp | wtmp.* | wtmp-* | btmp | btmp.* | btmp-*)
+            if ! grep -Pq -- '^\h*[0,2,4,6][0,2,4,6][0,4]\h*$' <<< "$fmode"; then
+                output="$output\n- File: \"$fname\" mode: \"$fmode\"\n"
+            fi
+            if ! grep -Pq -- '^\h*root\h+(utmp|root)\h*$' <<< "$fugname"; then
+                output="$output\n- File: \"$fname\" ownership: \"$fugname\"\n"
+            fi
+            ;;
+        secure | auth.log | syslog | messages)
+            if ! grep -Pq -- '^\h*[0,2,4,6][0,4]0\h*$' <<< "$fmode"; then
+                output="$output\n- File: \"$fname\" mode: \"$fmode\"\n"
+            fi
+            if ! grep -Pq -- '^\h*(syslog|root)\h+(adm|root)\h*$' <<< "$fugname"; then
+                output="$output\n- File: \"$fname\" ownership: \"$fugname\"\n"
+            fi
+            ;;
+        SSSD | sssd)
+            if ! grep -Pq -- '^\h*[0,2,4,6][0,2,4,6]0\h*$' <<< "$fmode"; then
+                output="$output\n- File: \"$fname\" mode: \"$fmode\"\n"
+            fi
+            if ! grep -Piq -- '^\h*(SSSD|root)\h+(SSSD|root)\h*$' <<< "$fugname"; then
+                output="$output\n- File: \"$fname\" ownership: \"$fugname\"\n"
+            fi
+            ;;
+        gdm | gdm3)
+            if ! grep -Pq -- '^\h*[0,2,4,6][0,2,4,6]0\h*$' <<< "$fmode"; then
+                output="$output\n- File: \"$fname\" mode: \"$fmode\"\n"
+            fi
+            if ! grep -Pq -- '^\h*(root)\h+(gdm3?|root)\h*$' <<< "$fugname"; then
+                output="$output\n- File: \"$fname\" ownership: \"$fugname\"\n"
+            fi
+            ;;
+        *.journal | *.journal~)
+            if ! grep -Pq -- '^\h*[0,2,4,6][0,4]0\h*$' <<< "$fmode"; then
+                output="$output\n- File: \"$fname\" mode: \"$fmode\"\n"
+            fi
+            if ! grep -Pq -- '^\h*(root)\h+(systemd-journal|root)\h*$' <<< "$fugname"; then
+                output="$output\n- File: \"$fname\" ownership: \"$fugname\"\n"
+            fi
+            ;;
+        *)  if ! grep -Pq -- '^\h*[0,2,4,6][0,4]0\h*$' <<< "$fmode"; then
+                output="$output\n- File: \"$fname\" mode: \"$fmode\"\n"
+            fi
+            if [ "$fuid" -ge "$UID_MIN" ] || ! grep -Pq -- '(adm|root|'"$(id -gn "$funame")"')' <<< "$fugroup"; then
+                if [ -n "$(awk -v grp="$fugroup" -F: '$1==grp {print $4}' /etc/group)" ] || ! grep -Pq '(syslog|root)' <<< "$funame"; then
+                    output="$output\n- File: \"$fname\" ownership: \"$fugname\"\n"
+                fi
+            fi
+            ;;
+        esac
+    done # If all files passed, then we pass
+    if [ -z "$output" ]; then
+        echo -e "\n- Audit Results:\n ** PASS **\n- All files in \"/var/log/\" have appropriate permissions and ownership\n"
+    else # print the reason why we are failing
+        echo -e "\n- Audit Results:\n ** Fail **\n$output"
+    fi
+    echo -e "- End check - logfiles have appropriate permissions and ownership\n"
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "4.3"
+    Task = "Ensure logrotate is configured"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+ 
+    }
+}
