@@ -731,7 +731,9 @@
     Id   = "1.4.3"
     Task = "Ensure authentication required for single user mode"
     Test = {
-        $command = "grep -Eq '^root:\$[0-9]' /etc/shadow || echo 'root is locked'"
+        $command = @'
+grep -Eq '^root:\$(y|[0-9])' /etc/shadow || echo 'root is locked'
+'@
         $result = bash -c $command
         if ($result -eq $null) {
             return @{
@@ -1017,8 +1019,9 @@
     Id   = "1.8.1"
     Task = "Ensure GNOME Display Manager is removed"
     Test = {
-        $test = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' gdm3
-        if ($test -match "gdm3\s+unknown ok not-installed\s*not-installed") {
+        $test = dpkg -l | grep "^ii" | grep -q "gdm3"
+        $output = $?
+        if ($output -match "False") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1276,16 +1279,24 @@
     Id   = "2.1.2.2"
     Task = "Ensure chrony is running as user _chrony"
     Test = {
-        $result = ps -ef | awk '(/[c]hronyd/ && $1!="_chrony") { print $1 }'
-        if ($result -eq $null) {
+        $testchr = dpkg-query -s chrony 
+        $statuschr = $?
+        if ($statuschr -match "True") {
+            $result = ps -ef | awk '(/[c]hronyd/ && $1!="_chrony") { print $1 }'
+            if ($result -eq $null) {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "chrony not installed"
+            Status  = "None"
         }
     }
 }
@@ -1293,17 +1304,25 @@
     Id   = "2.1.2.3"
     Task = "Ensure chrony is enabled and running"
     Test = {
-        $result1 = systemctl is-enabled chrony.service
-        $result2 = systemctl is-active chrony.service
-        if ($result1 -match "enabled" -and $result2 -match "active") {
+        $testchr = dpkg-query -s chrony 
+        $statuschr = $?
+        if ($statuschr -match "True") {
+            $result1 = systemctl is-enabled chrony.service
+            $result2 = systemctl is-active chrony.service
+            if ($result1 -match "enabled" -and $result2 -match "active") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "chrony not installed"
+            Status  = "None"
         }
     }
 }
@@ -1311,17 +1330,30 @@
     Id   = "2.1.3.1"
     Task = "Ensure systemd-timesyncd configured with authorized timeserver"
     Test = {
-        $result1 = systemctl is-enabled chrony.service
-        $result2 = systemctl is-active chrony.service
-        if ($result1 -match "enabled" -and $result2 -match "active") {
+
+        $testtime = dpkg-query -s systemd-timesyncd 
+        $statustime = $?
+        if ($statustime -match "True") {
+            $command = @'
+find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNTP=' {} +
+'@
+            $test = bash -c $command
+            $status = $?
+
+            if ($status -match "True") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "systemd-timesyncd not installed"
+            Status  = "None"
         }
     }
 }
@@ -1347,18 +1379,27 @@
     Id   = "2.1.4.1"
     Task = "Ensure ntp access control is configured"
     Test = {
-        $result = grep -P -- '^\h*restrict\h+((-4\h+)?|-6\h+)default\h+(?:[^#\n\r]+\h+)*(?!(?:\2|\3|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\3|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\3|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\3|\4))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h*(?:\h+\H+\h*)*(?:\h+#.*)?$' /etc/ntp.conf
-        $wordsToCheck = "default", "kod", "nomodify", "notrap", "nopeer", "noquery"
-        $pattern = "\b(" + ($wordsToCheck -join "|") + ")\b"
-        if ($result.Count -eq 2 -and $result[0] -match $pattern -and $result[1] -match $pattern) {
+        $testntp = dpkg-query -s ntp 
+        $statusntp = $?
+
+        if ($statusntp -match "True") {
+            $result = grep -P -- '^\h*restrict\h+((-4\h+)?|-6\h+)default\h+(?:[^#\n\r]+\h+)*(?!(?:\2|\3|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\3|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\4|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\3|\5))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h+(?:[^#\n\r]+\h+)*(?!(?:\1|\2|\3|\4))(\h*\bkod\b\h*|\h*\bnomodify\b\h*|\h*\bnotrap\b\h*|\h*\bnopeer\b\h*|\h*\bnoquery\b\h*)\h*(?:\h+\H+\h*)*(?:\h+#.*)?$' /etc/ntp.conf
+            $wordsToCheck = "default", "kod", "nomodify", "notrap", "nopeer", "noquery"
+            $pattern = "\b(" + ($wordsToCheck -join "|") + ")\b"
+            if ($result.Count -eq 2 -and $result[0] -match $pattern -and $result[1] -match $pattern) {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "ntp not installed"
+            Status  = "None"
         }
     }
 }
@@ -1366,18 +1407,26 @@
     Id   = "2.1.4.2"
     Task = "Ensure ntp is configured with authorized timeserver"
     Test = {
-        $result = grep -P -- '^\h*(server|pool)\h+\H+' /etc/ntp.conf
-        $wordsToCheck = "default", "kod", "nomodify", "notrap", "nopeer", "noquery"
-        $pattern = "\b(" + ($wordsToCheck -join "|") + ")\b"
-        if ($result.Count -eq 2 -and $result[0] -match $pattern -and $result[1] -match $pattern) {
+        $testntp = dpkg-query -s ntp 
+        $statusntp = $?
+        if ($statusntp -match "True") {
+            $result = grep -P -- '^\h*(server|pool)\h+\H+' /etc/ntp.conf
+            $wordsToCheck = "default", "kod", "nomodify", "notrap", "nopeer", "noquery"
+            $pattern = "\b(" + ($wordsToCheck -join "|") + ")\b"
+            if ($result.Count -eq 2 -and $result[0] -match $pattern -and $result[1] -match $pattern) {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "ntp not installed"
+            Status  = "None"
         }
     }
 }
@@ -1385,17 +1434,25 @@
     Id   = "2.1.4.3"
     Task = "Ensure ntp is running as user ntp"
     Test = {
-        $result1 = ps -ef | awk '(/[n]tpd/ && $1!="ntp") { print $1 }'
-        $result2 = grep -P -- '^\h*RUNASUSER=' /etc/init.d/ntp
-        if ($result1 -eq $null -and $result2 -eq "RUNASUSER=ntp") {
+        $testntp = dpkg-query -s ntp 
+        $statusntp = $?
+        if ($statusntp -match "True") {
+            $result1 = ps -ef | awk '(/[n]tpd/ && $1!="ntp") { print $1 }'
+            $result2 = grep -P -- '^\h*RUNASUSER=' /etc/init.d/ntp
+            if ($result1 -eq $null -and $result2 -eq "RUNASUSER=ntp") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "ntp not installed"
+            Status  = "None"
         }
     }
 }
@@ -1403,17 +1460,25 @@
     Id   = "2.1.4.4"
     Task = "Ensure ntp is enabled and running"
     Test = {
-        $result1 = systemctl is-enabled ntp.service
-        $result2 = systemctl is-active ntp.service
-        if ($result1 -match "enabled" -and $result2 -match "active") {
-            return @{
-                Message = "Compliant"
-                Status  = "True"
+        $testntp = dpkg-query -s ntp 
+        $statusntp = $?
+        if ($statusntp -match "True") {
+            $result1 = systemctl is-enabled ntp.service
+            $result2 = systemctl is-active ntp.service
+            if ($result1 -match "enabled" -and $result2 -match "active") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
             }
+            return @{
+                Message = "Not-Compliant"
+                Status  = "False"
+            }  
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "ntp not installed"
+            Status  = "None"
         }
     }
 }
@@ -1438,8 +1503,9 @@
     Id   = "2.2.2"
     Task = "Ensure Avahi Server is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' avahi-daemon
-        if ($result -match "avahi-daemon\s+unknown ok not-installed\s+not-installed") {
+        $test1 = dpkg -l | grep "^ii" | grep -q "avahi-daemon"
+        $test1 = $?
+        if ($test1 -match "False") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1455,8 +1521,9 @@
     Id   = "2.2.3"
     Task = "Ensure CUPS is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' cups
-        if ($result -match "cups\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg-query -s cups 
+        $status = $?
+        if ($status -match "False") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1489,8 +1556,8 @@
     Id   = "2.2.5"
     Task = "Ensure LDAP server is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' slapd
-        if ($result -match "slapd\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg -l | grep -o slapd
+        if ($result -eq $null) {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1506,8 +1573,8 @@
     Id   = "2.2.6"
     Task = "Ensure NFS is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' nfs-kernel-server
-        if ($result -match "nfs-kernel-server\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg -l | grep -o  nfs-kernel-server
+        if ($result -eq $null) {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1557,8 +1624,8 @@
     Id   = "2.2.9"
     Task = "Ensure HTTP server is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' apache2
-        if ($result -match "apache2\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg -l | grep -o apache2
+        if ($result -eq $null) {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1591,8 +1658,9 @@
     Id   = "2.2.11"
     Task = "Ensure Samba is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' samba
-        if ($result -match "samba\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg-query -s samba 
+        $status = $?
+        if ($status -match "False") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1642,8 +1710,9 @@
     Id   = "2.2.14"
     Task = "Ensure NIS Server is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' nis
-        if ($result -match "nis\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg-query -s nis 
+        $status = $?
+        if ($status -match "False") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1710,8 +1779,9 @@
     Id   = "2.3.2"
     Task = "Ensure rsh client is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' rsh-client
-        if ($result -match "rsh-client\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg-query -s rsh-client 
+        $status = $?
+        if ($status -match "False") {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -1727,7 +1797,7 @@
     Id   = "2.3.3"
     Task = "Ensure talk client is not installed"
     Test = {
-        $test1 = dpkg -s talk
+        $test1 = dpkg -l | grep "^ii" | grep -q "talk"
         $test1 = $?
         if ($test1 -match "False") {
             return @{
@@ -2405,16 +2475,24 @@
     Id   = "3.5.2.4"
     Task = "Ensure a nftables table exists"
     Test = {
-        $test = nft list tables
-        if ($test -match "table") {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            $test = nft list tables
+            if ($test -match "table") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "nftables not installed"
+            Status  = "None"
         }
     }
 }
@@ -2439,8 +2517,8 @@
         }
         catch {
             return @{
-                Message = "Command not found!"
-                Status  = "False"
+                Message = "nft not installed!"
+                Status  = "None"
             }
         }
     }
@@ -2476,8 +2554,8 @@
         }
         catch {
             return @{
-                Message = "Command not found!"
-                Status  = "False"
+                Message = "nft not installed!"
+                Status  = "None"
             }
         }
     }
@@ -2502,8 +2580,8 @@
         }
         catch {
             return @{
-                Message = "Command not found!"
-                Status  = "False"
+                Message = "nft not installed!"
+                Status  = "None"
             }
         }
     }
@@ -2529,8 +2607,8 @@
         }
         catch {
             return @{
-                Message = "Command not found!"
-                Status  = "False"
+                Message = "nft not installed!"
+                Status  = "None"
             }
         }
     }
@@ -2539,16 +2617,24 @@
     Id   = "3.5.2.9"
     Task = "Ensure nftables service is enabled"
     Test = {
-        $test1 = systemctl is-enabled nftables
-        if ($test1 -match "enabled") {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "True") {
+            $test1 = systemctl is-enabled nftables
+            if ($test1 -match "enabled") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "nftables not installed"
+            Status  = "None"
         }
     }
 }
@@ -2556,17 +2642,25 @@
     Id   = "3.5.3.1.1"
     Task = "Ensure iptables packages are installed"
     Test = {
-        $test1 = apt list iptables iptables-persistent
-        $test1 = $?
-        if ($test1 -match "True") {
+        $testnft = dpkg-query -s nftables 
+        $statusnft = $?
+        if ($statusnft -match "False") {
+            $test1 = apt list iptables iptables-persistent
+            $test1 = $?
+            if ($test1 -match "True") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "nftables installed instead"
+            Status  = "None"
         }
     }
 }
@@ -2947,7 +3041,8 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
         $test2 = awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
         try {
             $test3 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
-            $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'        }
+            $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'        
+        }
         catch {
             return @{
                 Message = "Not-Compliant"
@@ -4035,7 +4130,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH X11 forwarding is disabled"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i x11forwarding
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
             try {
                 $test2 = grep -Eis '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
             }
@@ -4191,7 +4286,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH MaxSessions is set to 10 or less"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
             
             try {
                 $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
@@ -4226,7 +4321,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
+            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
             try {
                 $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
