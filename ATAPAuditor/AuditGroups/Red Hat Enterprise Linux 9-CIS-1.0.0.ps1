@@ -23,7 +23,7 @@ $retNonCompliantManualReviewRequired = @{
     Status = $rcFalse
 }
 
-$IPv6Status_script = grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable && echo -e "\n - IPv6 is enabled\n" || echo -e "\n - IPv6 is not enabled\n"
+$IPv6Status_script = grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable && echo  "IPv6 is enabled" || echo "IPv6 is not enabled"
 $IPv6Status = bash -c $IPv6Status_script
 if ($IPv6Status -match "is enabled") {
     $IPv6Status = "enabled"
