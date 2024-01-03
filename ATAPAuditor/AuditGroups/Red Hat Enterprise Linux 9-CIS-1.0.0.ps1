@@ -3617,3 +3617,621 @@ if ($IPv6Status -match "is enabled") {
  
     }
 }
+
+
+### Chapter 5 - Access, Authentication and Authorization
+
+
+[AuditTest] @{
+    Id = "5.1.1"
+    Task = "Ensure cron daemon is enabled"
+    Test = {
+        $result1 = systemctl is-enabled crond
+        if ($result1 -match "enabled") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.2"
+    Task = "Ensure permissions on /etc/crontab are configured"
+    Test = {
+        $result1 = stat /etc/crontab
+        if ($result1 -match "Access: (0600/-rw-------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.3"
+    Task = "Ensure permissions on /etc/cron.hourly are configured"
+    Test = {
+        $result1 = stat /etc/cron.hourly
+        if ($result1 -match "Access: (0700/-rw-------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.4"
+    Task = "Ensure permissions on /etc/cron.daily are configured"
+    Test = {
+        $result1 = stat /etc/cron.daily
+        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.5"
+    Task = "Ensure permissions on /etc/cron.weekly are configured"
+    Test = {
+        $result1 = stat /etc/cron.weekly
+        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.6"
+    Task = "Ensure permissions on /etc/cron.monthly are configured"
+    Test = {
+        $result1 = stat /etc/cron.monthly
+        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.7"
+    Task = "Ensure permissions on /etc/cron.d are configured"
+    Test = {
+        $result1 = stat /etc/cron.d
+        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.8"
+    Task = "Ensure cron is restricted to authorized users"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    if rpm -q cronie >/dev/null; then
+        [ -e /etc/cron.deny ] && echo "Fail: cron.deny exists"
+        if [ ! -e /etc/cron.allow ]; then
+            echo "Fail: cron.allow doesn't exist"
+        else
+            ! stat -Lc "%a" /etc/cron.allow | grep -Eq "[0,2,4,6]00" && echo "Fail: cron.allow mode too permissive"
+            ! stat -Lc "%u:%g" /etc/cron.allow | grep -Eq "^0:0$" && echo "Fail: cron.allow owner and/or group not root"
+        fi
+        if [ ! -e /etc/cron.deny ] && [ -e /etc/cron.allow ] && stat -Lc "%a" /etc/cron.allow | grep -Eq "[0,2,4,6]00" \ && stat -Lc "%u:%g" /etc/cron.allow | grep -Eq "^0:0$"; then
+            echo "Pass"
+        fi
+    else
+        echo "** PASS **: cron is not installed on the system"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.1.9"
+    Task = "Ensure at is restricted to authorized users"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    if rpm -q at >/dev/null; then
+        [ -e /etc/at.deny ] && echo "Fail: at.deny exists"
+        if [ ! -e /etc/at.allow ]; then
+            echo "Fail: at.allow doesn't exist"
+        else
+            ! stat -Lc "%a" /etc/at.allow | grep -Eq "[0,2,4,6]00" && echo "Fail: at.allow mode too permissive"
+            ! stat -Lc "%u:%g" /etc/at.allow | grep -Eq "^0:0$" && echo "Fail: at.allow owner and/or group not root"
+        fi
+        if [ ! -e /etc/at.deny ] && [ -e /etc/at.allow ] && stat -Lc "%a" /etc/at.allow | grep -Eq "[0,2,4,6]00" && stat -Lc "%u:%g" /etc/at.allow | grep -Eq "^0:0$"; then
+            echo "** PASS **"
+        fi
+    else
+        echo "** PASS **: at is not installed on the system"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.1"
+    Task = "Ensure permissions on /etc/ssh/sshd_config are configured"
+    Test = {
+        $result1 = stat -Lc "%n %a %u/%U %g/%G" /etc/ssh/sshd_config
+        if ($result1 -match "/etc/ssh/sshd_config 600 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.2"
+    Task = "Ensure permissions on SSH private host key files are configured"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2="" l_skgn="ssh_keys"
+    l_skgid="$(awk -F: '($1 == "'"$l_skgn"'"){print $3}' /etc/group)" [ -n "$l_skgid" ] && l_cga="$l_skgn" || l_cga="root" awk '{print}' <<< "$(find -L /etc/ssh -xdev -type f -exec stat -Lc "%n %#a %U %G %g" {} +)" | (while read -r l_file l_mode l_owner l_group l_gid; do
+        if file "$l_file" | grep -Pq ':\h+OpenSSH\h+private\h+key\b'; then
+            [ "$l_gid" = "$l_skgid" ] && l_pmask="0137" || l_pmask="0177" l_maxperm="$( printf '%o' $(( 0777 & ~$l_pmask )) )"
+                if [ $(( $l_mode & $l_pmask )) -gt 0 ]; then
+                    l_output2="$l_output2\n - File: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
+                else
+                    l_output="$l_output\n - File: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
+                fi
+                if [ "$l_owner" != "root" ]; then
+                    l_output2="$l_output2\n - File: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
+                else
+                    l_output="$l_output\n - File: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
+                fi
+                if [ "$l_group" != "root" ] && [ "$l_gid" != "$l_skgid" ]; then
+                    l_output2="$l_output2\n - File: \"$l_file\" is owned by group \"$l_group\" should belong to group \"$l_cga\""
+                else
+                    l_output="$l_output\n - File: \"$l_file\" is owned by group \"$l_group\" should belong to group \"$l_cga\""
+                fi
+        fi
+    done
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n *** PASS ***\n$l_output"
+    else
+        echo -e "\n- Audit Result:\n *** FAIL ***\n$l_output2\n\n - Correctly set:\n$l_output"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.3"
+    Task = "Ensure permissions on SSH public host key files are configured"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    l_output="" l_output2="" l_pmask="0133"
+    awk '{print}' <<< "$(find -L /etc/ssh -xdev -type f -exec stat -Lc "%n %#a %U %G" {} +)" | (while read -r l_file l_mode l_owner l_group; do
+        if file "$l_file" | grep -Pq ':\h+OpenSSH\h+(\H+\h+)?public\h+key\b'; then
+            l_maxperm="$( printf '%o' $(( 0777 & ~$l_pmask )) )"
+            if [ $(( $l_mode & $l_pmask )) -gt 0 ]; then
+                l_output2="$l_output2\n - Public key file: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
+            else
+                l_output="$l_output\n - Public key file: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
+            fi
+            if [ "$l_owner" != "root" ]; then
+                l_output2="$l_output2\n - Public key file: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
+            else
+                l_output="$l_output\n - Public key file: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
+            fi
+            if [ "$l_group" != "root" ]; then
+                l_output2="$l_output2\n - Public key file: \"$l_file\" is owned by group \"$l_group\" should belong to group \"root\"\n"
+            else
+                l_output="$l_output\n - Public key file: \"$l_file\" is owned by group \"$l_group\" should belong to group \"root\"\n"
+            fi
+        fi
+    done
+    if [ -z "$l_output2" ]; then
+        echo -e "\n- Audit Result:\n *** PASS ***\n$l_output"
+    else
+        echo -e "\n- Audit Result:\n *** FAIL ***\n$l_output2\n\n - Correctly set:\n$l_output"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "** PASS **") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.4"
+    Task = "Ensure SSH access is limited"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
+        $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
+        if ($test1 -match "allowusers " -or $test1 -match "allowgroups " -or $test1 -match "denyusers " -or $test1 -match "denygroups " -or
+            $test2 -match "allowusers " -or $test2 -match "allowgroups " -or $test2 -match "denyusers " -or $test2 -match "denygroups ") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.5"
+    Task = "Ensure SSH LogLevel is appropriate"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
+        $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
+        if (($test1 -match "allowusers " -or $test1 -match "allowgroups " -or $test1 -match "denyusers " -or $test1 -match "denygroups ") -and
+            ($test2 -match "allowusers " -or $test2 -match "allowgroups " -or $test2 -match "denyusers " -or $test2 -match "denygroups ")) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.6"
+    Task = "Ensure SSH PAM is enabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
+        $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
+        if ($test1 -match "usepam yes" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.7"
+    Task = "Ensure SSH root login is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
+        $test2 = grep -Ei '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config
+        if ($test1 -match "permitrootlogin no" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.8"
+    Task = "Ensure SSH HostbasedAuthentication is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep hostbasedauthentication
+        $test2 = grep -Ei '^\s*HostbasedAuthentication\s+yes' /etc/ssh/sshd_config
+        if ($test1 -match "permitrootlogin no" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.9"
+    Task = "Ensure SSH PermitEmptyPasswords is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
+        $test2 = grep -Ei '^\s*PermitEmptyPasswords\s+yes' /etc/ssh/sshd_config
+        if ($test1 -match "permitemptypasswords no" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.10"
+    Task = "Ensure SSH PermitUserEnvironment is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
+        $test2 = grep -Ei '^\s*PermitUserEnvironment\s+yes' /etc/ssh/sshd_config
+        if ($test1 -match "permituserenvironment no" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.11"
+    Task = "Ensure SSH IgnoreRhosts is enabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
+        $test2 = grep -Ei '^\s*ignorerhosts\s+no\b' /etc/ssh/sshd_config
+        if ($test1 -match "ignorerhosts yes" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.12"
+    Task = "Ensure SSH X11 forwarding is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
+        $test2 = grep -Ei '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config
+        if ($test1 -match "x11forwarding no" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.13"
+    Task = "Ensure SSH AllowTcpForwarding is disabled"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
+        $test2 = grep -Ei '^\s*AllowTcpForwarding\s+yes' /etc/ssh/sshd_config
+        if ($test1 -match "allowtcpforwarding no" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.14"
+    Task = "Ensure system-wide crypto policy is not over-ridden"
+    Test = {
+        $test = grep -i '^\s*CRYPTO_POLICY=' /etc/sysconfig/sshd
+        if ($test -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.15"
+    Task = "Ensure SSH warning banner is configured"
+    Test = {
+        $test = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
+        if ($test -match "banner /etc/issue.net") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.16"
+    Task = "Ensure SSH MaxAuthTries is set to 4 or less"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries
+        $test2 = grep -Ei '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config
+        if ($test1 -match "maxauthtries 4" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.17"
+    Task = "Ensure SSH MaxStartups is configured"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups
+        $test2 = grep -Ei '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config
+        if ($test1 -match "maxstartups 10:30:60" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.18"
+    Task = "Ensure SSH MaxSessions is set to 10 or less"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions
+        $test2 = grep -Ei '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)' /etc/ssh/sshd_config
+        if ($test1 -match "maxsessions 10" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.19"
+    Task = "Ensure SSH LoginGraceTime is set to one minute or less"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime
+        $test2 = grep -Ei '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config
+        if ($test1 -match "logingracetime 60" -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.2.20"
+    Task = "Ensure SSH Idle Timeout Interval is configured"
+    Test = {
+        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
+        $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
+        if ($test1 -gt 0 -and $test2 -gt 0) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.1"
+    Task = "Ensure SUDO is installed"
+    Test = {
+        $test = dnf list sudo | grep sudo.x86_64
+        if ($test -match "sudo") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.2"
+    Task = "Ensure sudo commands use pty"
+    Test = {
+        $test = grep -rPi '^\h*Defaults\h+([^#\n\r]+,)?use_pty(,\h*\h+\h*)*\h*(#.*)?$' /etc/sudoers*
+        if ($test -match "/etc/sudoers:Defaults use_pty") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.3"
+    Task = "Ensure sudo log file exists"
+    Test = {
+        $test = grep -Ei '^\s*Defaults\s+logfile=\S+' /etc/sudoers /etc/sudoers.d/*
+        if ($test -match "/etc/sudoers:Defaults use_pty") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.4"
+    Task = "Ensure users must provide password for escalation"
+    Test = {
+        $test = grep -r "^[^#].*NOPASSWD" /etc/sudoers*
+        if ($test -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.5"
+    Task = "Ensure re-authentication for privilege escalation is not disabled globally"
+    Test = {
+        $test = grep -r "^[^#].*\!authenticate" /etc/sudoers*
+        if ($test -match "!authenticate") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.6"
+    Task = "Ensure sudo authentication timeout is configured correctly"
+    Test = {
+        $test = grep -roP "timestamp_timeout=\K[0-9]*" /etc/sudoers* | cut -d ' ' -f 2
+        if ($test -le 15) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.3.7"
+    Task = "Ensure access to the su command is restricted"
+    Test = {
+        $test1 = grep -Pi '^\h*auth\h+(?:required|requisite)\h+pam_wheel\.so\h+(?:[^#\n\r]+\h+)?((?!\2)(use_uid\b|group=\H+\b))\h+(?:[^#\n\r]+\h+)?((?!\1)(use_uid\b|group=\H+\b))(\h+.*)?$' /etc/pam.d/su
+        if ($test1 -match "auth required pam_wheel.so use_uid group=") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.4.1"
+    Task = "Ensure custom authselect profile is used"
+    Test = {
+        $test1 = authselect list | grep '^-\s*custom'
+        if ($test1 -eq $null) {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+# 5.4.2 ist leider schlecht beschrieben, die Pruefung ist mit ihren Parametern bestenfalls mangelhaft
+[AuditTest] @{
+    Id = "5.4.2"
+    Task = "Ensure authselect includes with-faillock"
+    Test = {
+        $test1 = grep pam_faillock.so /etc/pam.d/password-auth /etc/pam.d/system-auth
+        if ($test1 -match "/etc/authselect/password-auth:auth") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
