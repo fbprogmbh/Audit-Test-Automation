@@ -4229,9 +4229,240 @@ if ($IPv6Status -match "is enabled") {
     Test = {
         $test1 = grep pam_faillock.so /etc/pam.d/password-auth /etc/pam.d/system-auth
         if ($test1 -match "/etc/authselect/password-auth:auth") {
-            return $retNonCompliant
-        } else {
             return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.5.1"
+    Task = "Ensure password creation requirements are configured"
+    Test = {
+        $test1 = grep ^minlen /etc/security/pwquality.conf | cut -d '=' -f 2
+        if ($test1 -ge 14) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.5.2"
+    Task = "Ensure lockout for failed password attempts is configured"
+    Test = {
+        $test1 = grep -E '^\s*deny\s*=\s*[1-5]\b' /etc/security/faillock.conf | cut -d '=' -f 2
+        $test2 = grep -E '^\s*unlock_time\s*=\s*(0|9[0-9][0-9]|[1-9][0-9][0-9][0-9]+)\b' /etc/security/faillock.conf | cut -d '=' -f 2
+        if ($test1 -le 5 -and ($test2 -eq 0 -or $test2 -ge 900)) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.5.3"
+    Task = "Ensure password reuse is limited"
+    Test = {
+        $test1 = grep -P '^\h*password\h+(requisite|sufficient)\h+(pam_pwhistory\.so|pam_unix\.so)\h+([^#\n\r]+\h+)?remember=([5-9]|[1-9][0-9]+)\h*(\h+.*)?$' /etc/pam.d/system-auth
+        if ($test1 -match "remember=5") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.5.4"
+    Task = "Ensure password hashing algorithm is SHA-512 or yescrypt"
+    Test = {
+        $test1 = grep -Ei '^\s*crypt_style\s*=\s*(sha512|yescrypt)\b' /etc/libuser.conf
+        $test2 = grep -Ei '^\s*ENCRYPT_METHOD\s+(SHA512|yescrypt)\b' /etc/login.defs
+        if (($test2 -match "ENCRYPT_METHOD SHA512" -or $test2 -match "ENCRYPT_METHOD YESCRYPT") -and ($test1 -match "crypt_style = sha512" -or $test1 -match "crypt_style = yescrypt")) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.1.1"
+    Task = "Ensure password expiration is 365 days or less"
+    Test = {
+        $test1 = grep PASS_MAX_DAYS /etc/login.defs | cut -d ' ' -f 2
+        $test2 = awk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
+        if ($test1 -le 365 -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.1.2"
+    Task = "Ensure minimum days between password changes is configured"
+    Test = {
+        $test1 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
+        $test2 = awk -F : '(/^[^:]+:[^!*]/ && $4 < 1){print $1 " " $4}' /etc/shadow
+        if ($test1 -ge 1 -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.1.3"
+    Task = "Ensure password expiration warning days is 7 or more"
+    Test = {
+        $test1 = grep PASS_WARN_AGE /etc/login.defs | cut -d ' ' -f 2
+        $test2 = awk -F: '(/^[^:]+:[^!*]/ && `$6<7){print `$1 " " `$6}' /etc/shadow
+        if ($test1 -ge 7 -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.1.4"
+    Task = "Ensure inactive password lock is 30 days or less"
+    Test = {
+        $test1 = useradd -D | grep INACTIVE | cut -d '=' -f 2
+        $test2 = awk -F: '/^[^#:]+:[^!\*:]*:[^:]*:[^:]*:[^:]*:[^:]*:(\s*|-1|3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):[^:]*:[^:]*\s*$/ {print $1":"$7}' /etc/shadow
+        if ($test1 -ge 2 -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.1.5"
+    Task = "Ensure all users last password change date is in the past"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    awk -F: '/^[^:]+:[^!*]/{print $1}' /etc/shadow | while read -r usr; do
+        change=$(date -d "$(chage --list $usr | grep '^Last password change' | cut -d: -f2 | grep -v 'never$')" +%s);
+        if [[ "$change" -gt "$(date +%s)" ]]; then 
+            echo "User: \"$usr\" last password change was \"$(chage --list $usr | grep '^Last password change' | cut -d: -f2)\"";
+        fi;
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.2"
+    Task = "Ensure system accounts are secured"
+    Test = {
+        $test1 = awk -F: '($1!~/^(root|halt|sync|shutdown|nfsnobody)$/ && ($3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' || $3 == 65534) && $7!~/^(\/usr)?\/sbin\/nologin$/) { print $1 }' /etc/passwd
+        $test2 = awk -F: '/nologin/ {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
+        if ($test1 -eq $null -and $test2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.3"
+    Task = "Ensure default user shell timeout is 900 seconds or less"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output1="" output2=""
+    [ -f /etc/bashrc ] && BRC="/etc/bashrc"
+    for f in "$BRC" /etc/profile /etc/profile.d/*.sh ; do
+        grep -Pq '^\s*([^#]+\s+)?TMOUT=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9])\b' "$f" && grep -Pq '^\s*([^#]+;\s*)?readonly\s+TMOUT(\s+|\s*;|\s*$|=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9]))\b' "$f" && grep -Pq '^\s*([^#]+;\s*)?export\s+TMOUT(\s+|\s*;|\s*$|=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9]))\b' "$f" && output1="$f"
+    done
+    grep -Pq '^\s*([^#]+\s+)?TMOUT=(9[0-9][1-9]|9[1-9][0-9]|0+|[1-9]\d{3,})\b' /etc/profile /etc/profile.d/*.sh "$BRC" && output2=$(grep -Ps '^\s*([^#]+\s+)?TMOUT=(9[0-9][1-9]|9[1-9][0-9]|0+|[1-9]\d{3,})\b' /etc/profile /etc/profile.d/*.sh $BRC)
+    if [ -n "$output1" ] && [ -z "$output2" ]; then
+        echo -e "\nPASSED\n\nTMOUT is configured in: \"$output1\"\n"
+    else
+        [ -z "$output1" ] && echo -e "\nFAILED\n\nTMOUT is not configured\n" [ -n "$output2" ] && echo -e "\nFAILED\n\nTMOUT is incorrectly configured in: \"$output2\"\n"
+    fi
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.4"
+    Task = "Ensure default group for the root account is GID 0"
+    Test = {
+        $test1 = grep "^root:" /etc/passwd | cut -f4 -d ':'
+        if ($test1 -eq 0) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.5"
+    Task = "Ensure default user shell timeout is 900 seconds or less"
+    Test = {
+        $script_string1 = @'
+#!/usr/bin/env bash
+{
+    passing=""
+    grep -Eiq '^\s*UMASK\s+(0[0-7][2-7]7|[0-7][2-7]7)\b' /etc/login.defs && grep -Eqi '^\s*USERGROUPS_ENAB\s*"?no"?\b' /etc/login.defs && grep -Eq '^\s*session\s+(optional|requisite|required)\s+pam_umask\.so\b' /etc/pam.d/common-session && passing=true grep -REiq '^\s*UMASK\s+\s*(0[0-7][2-7]7|[0-7][2-7]7|u=(r?|w?|x?)(r?|w?|x?)(r?|w?|x?),g=(r?x?|x?r?),o=)\b' /etc/profile* /etc/bashrc* && passing=true
+    [ "$passing" = true ] && echo "Default user umask is set"
+}
+'@
+    $script_string2 = @'
+#!/usr/bin/env bash
+{
+    grep -RPi '(^|^[^#]*)\s*umask\s+([0-7][0-7][01][0-7]\b|[0-7][0-7][0-7][0-6]\b|[0-7][01][0-7]\b|[0-7][0-7][0-6]\b|(u=[rwx]{0,3},)?(g=[rwx]{0,3},)?o=[rwx]+\b|(u=[rwx]{1,3},)?g=[^rx]{1,3}(,o=[rwx]{0,3})?\b)' /etc/login.defs /etc/profile* /etc/bashrc*
+}
+'@
+        $script1 = bash -c $script_string1
+        $script2 = bash -c $script_string2
+        if ($script1 -match "umask is set" -and $script2 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "5.6.6"
+    Task = "Ensure root password is set"
+    Test = {
+        $test1 = passwd -S root
+        if ($test1 -match "Password set") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
         }
     }
 }
