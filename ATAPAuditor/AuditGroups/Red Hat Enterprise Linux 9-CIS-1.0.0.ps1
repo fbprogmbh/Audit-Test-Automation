@@ -4466,3 +4466,602 @@ if ($IPv6Status -match "is enabled") {
         }
     }
 }
+
+
+### Chapter 6 - System Maintenance
+
+
+[AuditTest] @{
+    Id = "6.1.1"
+    Task = "Ensure permissions on /etc/passwd are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/passwd
+        if ($test1 -match "644 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.2"
+    Task = "Ensure permissions on /etc/passwd are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/passwd-
+        if ($test1 -match "644 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.3"
+    Task = "Ensure permissions on /etc/group are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/group
+        if ($test1 -match "644 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.4"
+    Task = "Ensure permissions on /etc/group- are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/group-
+        if ($test1 -match "644 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.5"
+    Task = "Ensure permissions on /etc/shadow are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/shadow
+        if ($test1 -match "0 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.6"
+    Task = "Ensure permissions on /etc/shadow- are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/shadow-
+        if ($test1 -match "0 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.7"
+    Task = "Ensure permissions on /etc/gshadow are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/gshadow
+        if ($test1 -match "0 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.7"
+    Task = "Ensure permissions on /etc/gshadow are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/gshadow
+        if ($test1 -match "0 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.8"
+    Task = "Ensure permissions on /etc/gshadow- are configured"
+    Test = {
+        $test1 = stat -Lc "%n %a %u/%U %g/%G" /etc/gshadow-
+        if ($test1 -match "0 0/root 0/root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.9"
+    Task = "Ensure no world writable files exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        if ($test1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.10"
+    Task = "Ensure no unowned files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser
+        if ($test1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.11"
+    Task = "Ensure no ungrouped files or directories exist"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -nogroup
+        if ($test1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.12"
+    Task = "Ensure sticky bit is set on all world-writable directories"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+        if ($test1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.13"
+    Task = "Audit SUID executables"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.14"
+    Task = "Audit SGID executables"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "6.1.15"
+    Task = "Audit system file permissions"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.1"
+    Task = "Ensure accounts in /etc/passwd use shadowed passwords"
+    Test = {
+        $test1 = awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
+        if ($test1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.2"
+    Task = "Ensure /etc/shadow password fields are not empty"
+    Test = {
+        $test1 = awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
+        if ($test1 -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.3"
+    Task = "Ensure all groups in /etc/passwd exist in /etc/group"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    for i in $(cut -s -d: -f4 /etc/passwd | sort -u ); do
+        grep -q -P "^.*?:[^:]*:$i:" /etc/group
+        if [ $? -ne 0 ]; then
+            echo "Group $i is referenced by /etc/passwd but does not exist in /etc/group"
+        fi
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.4"
+    Task = "Ensure no duplicate UIDs exist"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    cut -f3 -d":" /etc/passwd | sort -n | uniq -c | while read x ; do
+        [ -z "$x" ] && break set - $x
+        if [ $1 -gt 1 ]; then
+            users=$(awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | xargs) echo "Duplicate UID ($2): $users"
+        fi
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.5"
+    Task = "Ensure no duplicate GIDs exist"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    cut -d: -f3 /etc/group | sort | uniq -d | while read x ; do
+        echo "Duplicate GID ($x) in /etc/group"
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.6"
+    Task = "Ensure no duplicate user names exist"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    cut -d: -f1 /etc/passwd | sort | uniq -d | while read -r x; do
+        echo "Duplicate login name $x in /etc/passwd"
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.7"
+    Task = "Ensure no duplicate group names exist"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    cut -d: -f1 /etc/group | sort | uniq -d | while read -r x; do
+        echo "Duplicate group name $x in /etc/group"
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -eq $null) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.8"
+    Task = "Ensure root PATH Integrity"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    RPCV="$(sudo -Hiu root env | grep '^PATH' | cut -d= -f2)"
+    echo "$RPCV" | grep -q "::" && echo "root's path contains a empty directory (::)"
+    echo "$RPCV" | grep -q ":$" && echo "root's path contains a trailing (:)" for x in $(echo "$RPCV" | tr ":" " "); do
+        if [ -d "$x" ]; then
+            ls -ldH "$x" | awk '$9 == "." {print "PATH contains current working directory (.)"}
+            $3 != "root" {print $9, "is not owned by root"}
+            substr($1,6,1) != "-" {print $9, "is group writable"}
+            substr($1,9,1) != "-" {print $9, "is world writable"}'
+        else
+            echo "$x is not a directory"
+        fi
+    done
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "is not a directory") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.9"
+    Task = "Ensure root is the only UID 0 account"
+    Test = {
+        $test1 = awk -F: '($3 == 0) { print $1 }' /etc/passwd
+        if ($test1 -eq "root") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.10"
+    Task = "Ensure local interactive user home directories exist"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output=""
+    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        [ ! -d "$home" ] && output="$output\n - User \"$user\" home directory \"$home\" doesn't exist"
+    done
+    if [ -z "$output" ]; then
+        echo -e "\n-PASSED: - All local interactive users have a home directory\n"
+    else
+        echo -e "\n- FAILED:\n$output\n"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "FAILED") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.11"
+    Task = "Ensure local interactive users own their home directories"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output=""
+    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        owner="$(stat -L -c "%U" "$home")" [ "$owner" != "$user" ] && output="$output\n - User \"$user\" home directory \"$home\" is owned by user \"$owner\""
+    done
+    if [ -z "$output" ]; then
+        echo -e "\n-PASSED: - All local interactive users have a home directory\n"
+    else
+        echo -e "\n- FAILED:\n$output\n"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "FAILED") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.12"
+    Task = "Ensure local interactive user home directories are mode 750 or more restrictive"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output=""
+    perm_mask='0027'
+    maxperm="$( printf '%o' $(( 0777 & ~$perm_mask)) )" valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        mode=$( stat -L -c '%#a' "$home" )
+        [ $(( $mode & $perm_mask )) -gt 0 ] && output="$output\n- User $user home directory: \"$home\" is too permissive: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
+    done
+    if [ -n "$output" ]; then
+        echo -e "\n- Failed:$output"
+    else
+        echo -e "\n- Passed:\n- All user home directories are mode: \"$maxperm\" or more restrictive"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "FAILED") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.13"
+    Task = "Ensure no local interactive user has .netrc files"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output="" output2="" perm_mask='0177'
+    maxperm="$( printf '%o' $(( 0777 & ~$perm_mask)) )"
+    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        if [ -f "$home/.netrc" ]; then mode="$( stat -L -c '%#a' "$home/.netrc" )"
+            if [ $(( $mode & $perm_mask )) -gt 0 ]; then
+                output="$output\n - User \"$user\" file: \"$home/.netrc\" is too permissive: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
+            else
+                output2="$output2\n - User \"$user\" file: \"$home/.netrc\" exists and has file mode: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
+            fi
+        fi
+    done
+    if [ -z "$output" ]; then
+        if [ -z "$output2" ]; then
+            echo -e "\n-PASSED: - No local interactive users have \".netrc\" files in their home directory\n"
+        else
+            echo -e "\n- WARNING:\n$output2\n"
+        fi
+    else
+        echo -e "\n- FAILED:\n$output\n" [ -n "$output2" ] && echo -e "\n- WARNING:\n$output2\n"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "FAILED") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.14"
+    Task = "Ensure no local interactive user has .forward files"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output=""
+    fname=".forward"
+    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        [ -f "$home/$fname" ] && output="$output\n - User \"$user\" file: \"$home/$fname\" exists"
+    done
+    if [ -z "$output" ]; then
+        echo -e "\n-PASSED: - No local interactive users have \"$fname\" files in their home directory\n"
+    else
+        echo -e "\n- FAILED:\n$output\n"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "FAILED") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.15"
+    Task = "Ensure no local interactive user has .rhosts files"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output=""
+    fname=".rhosts"
+    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        [ -f "$home/$fname" ] && output="$output\n - User \"$user\" file: \"$home/$fname\" exists"
+    done
+    if [ -z "$output" ]; then
+        echo -e "\n-PASSED: - No local interactive users have \"$fname\" files in their home directory\n"
+    else
+        echo -e "\n- FAILED:\n$output\n"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "FAILED") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
+
+[AuditTest] @{
+    Id = "6.2.16"
+    Task = "Ensure local interactive user dot files are not group or world writable"
+    Test = {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    output=""
+    perm_mask='0022'
+    maxperm="$( printf '%o' $(( 0777 & ~$perm_mask)) )"
+    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
+    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
+        for dfile in $(find "$home" -type f -name '.*'); do
+            mode=$( stat -L -c '%#a' "$dfile" ) [ $(( $mode & $perm_mask )) -gt 0 ] && output="$output\n- User $user file: \"$dfile\" is too permissive: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
+        done
+    done
+    if [ -n "$output" ]; then
+        echo -e "\n- Failed:$output"
+    else
+        echo -e "\n- Passed:\n- All user home dot files are mode: \"$maxperm\" or more restrictive"
+    fi
+    )
+}
+'@
+        $script = bash -c $script_string
+        if ($script -match "Failed") {
+            return $retNonCompliant
+        } else {
+            return $retCompliant
+        }
+    }
+}
