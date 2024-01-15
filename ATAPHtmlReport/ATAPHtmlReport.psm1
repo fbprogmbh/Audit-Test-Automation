@@ -1512,7 +1512,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'table' @{id='hardwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold; border-bottom: 1px solid black;padding: 0;vertical-align: middle;"}{"Hardware Information"}
+										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold;padding: 0;vertical-align: middle; background-color: lightgray;"}{"Hardware Information"}
 										htmlElement 'td' @{}{} 
 									}
 								}
@@ -1520,39 +1520,39 @@ function Get-ATAPHtmlReport {
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Manufacturer" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemManufacturer) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.SystemManufacturer) }
 									}
 									#Domain Role
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System SKU" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSKU) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.SystemSKU) }
 									}
 									#Operating System
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "System Model" }
-											htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemModel) }
+											htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.SystemModel) }
 										}
 									}
 									#Build Number
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.BIOSVersion) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.BIOSVersion) }
 									}
 									#Free disk space
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
 									}
 									#Free physican memory
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
 									}
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "" }
@@ -1571,7 +1571,7 @@ function Get-ATAPHtmlReport {
 							htmlElement 'table' @{id='softwareInformation'}{
 								htmlElement 'thead' @{} {
 									htmlElement 'tr' @{} {
-										htmlElement 'td' @{style="font-weight:bold;border-bottom: 1px solid black;"}{"Software Information"}
+										htmlElement 'td' @{style="font-weight:bold; background-color: lightgray;"}{"Software Information"}
 										htmlElement 'td' @{}{} 
 									}
 								}
@@ -1579,47 +1579,47 @@ function Get-ATAPHtmlReport {
 									#Hostname
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Hostname" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.Hostname) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.Hostname) }
 									}
 									#System Uptime
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "System Uptime" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.SystemUptime) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.SystemUptime) }
 									}
 									#Operating System
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OperatingSystem) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.OperatingSystem) }
 									}
 									#Build Number
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.BuildNumber) }
+											htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.BuildNumber) }
 										}
 									}
 									#OS Architecture
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "OS Architecture" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OSArchitecture) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.OSArchitecture) }
 									}
 									#licence activation status
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "License Status" }
-											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.LicenseStatus) }
+											htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.LicenseStatus) }
 										}
 									}
 									#Installation Language
 									htmlElement 'tr' @{} {
 										htmlElement 'th' @{ scope = 'row' } { "Installation Language" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
+										htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
 									}
 									#Domain role
 									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 										htmlElement 'tr' @{} {
 											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
-											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.DomainRole) }
+											htmlElement 'td' @{style="border: 1px solid #d2d2d2;"} { $($SystemInformation.SoftwareInformation.DomainRole) }
 										}
 									}
 								}
