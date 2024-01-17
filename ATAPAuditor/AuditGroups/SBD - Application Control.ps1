@@ -7,9 +7,6 @@ $RootPath = Split-Path $RootPath -Parent
 	Test = {
         # check newer than win10
         $osVersion = (Get-CimInstance Win32_OperatingSystem).Version
-        # check whether system is home or not
-        $os = (Get-ComputerInfo OsName).OsName
-        $isHomeVersion = $os -match "Home"
         # check whether system is server version 16 or newer
         $windowsServerVersions = @(
             "Windows Server 2016",
@@ -17,14 +14,14 @@ $RootPath = Split-Path $RootPath -Parent
             "Windows Server 2022"
         )
         $isServer2016newer = $windowsServerVersions -contains $os
-        if( (!($isHomeVersion -eq $true) -and $osVersion -ge '10.0.0.0') -or $isServer2016newer -eq $true){
+        if( $osVersion -ge '10.0.0.0' -or $isServer2016newer -eq $true){
             return @{
                 Message = "Compliant"
                 Status = "True"
             }
         }
         return @{
-            Message = "Only supported on Windows 10 and newer (except Home Editions), as well as Windows Server 2016 and newer."
+            Message = "Only supported on Windows 10 and newer, as well as Windows Server 2016 and newer."
             Status = "None"
         }
 	}
