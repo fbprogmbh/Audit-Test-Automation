@@ -16,7 +16,7 @@ $RootPath = Split-Path $RootPath -Parent
         $isServer2016newer = $windowsServerVersions -contains $os
         if( $osVersion -ge '10.0.0.0' -or $isServer2016newer -eq $true){
             return @{
-                Message = "Compliant"
+                Message = "Your device supports WDAC."
                 Status = "True"
             }
         }
