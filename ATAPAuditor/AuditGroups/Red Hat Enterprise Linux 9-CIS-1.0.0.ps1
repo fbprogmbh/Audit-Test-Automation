@@ -911,9 +911,9 @@ if ($IPv6Status -match "is enabled") {
 {
     l_pkgoutput=""
     if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq='dpkg-query -W'
+        l_pq="dpkg-query -W"
     elif command -v rpm > /dev/null 2>&1; then
-        l_pq='rpm -q'
+        l_pq="rpm -q"
     fi
     l_pcl="gdm gdm3"
     for l_pn in $l_pcl; do
@@ -1368,7 +1368,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "1.9"
     Task = "Ensure updates, patches, and additional security software are installed"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1708,7 +1708,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "2.4"
     Task = "Ensure nonessential services listening on the system are removed or masked"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1720,7 +1720,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "3.1.2"
     Task = "Ensure IPv6 status is identified"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2436,7 +2436,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "3.4.2.2"
     Task = "Ensure at least one nftables table exists"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2515,7 +2515,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "3.4.2.5"
     Task = "Ensure firewalld drops unnecessary services and ports"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2523,7 +2523,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "3.4.2.6"
     Task = "Ensure nftables established connections are configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2601,7 +2601,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "4.1.2.1"
     Task = "Ensure audit log storage size is configured"
     Test = {
-        return $rcNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -2933,13 +2933,21 @@ if ($IPv6Status -match "is enabled") {
         $script_string1 = @'
 #!/usr/bin/env bash
 {
-    awk '/^ *-w/ &&(/\/var\/log\/lastlog/ ||/\/var\/run\/faillock/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+    awk '/^ *-w/ \
+    &&(/\/var\/log\/lastlog/ \
+    ||/\/var\/run\/faillock/) \
+    &&/ +-p *wa/ \
+    &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
 }
 '@
         $script_string2 = @'
 #!/usr/bin/env bash
 {
-    auditctl -l | awk '/^ *-w/ &&(/\/var\/log\/lastlog/ ||/\/var\/run\/faillock/) &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+    auditctl -l | awk '/^ *-w/ \
+    &&(/\/var\/log\/lastlog/ \
+    ||/\/var\/run\/faillock/) \
+    &&/ +-p *wa/ \
+    &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
 }
 '@
         $result1 = bash -c $script_string1
