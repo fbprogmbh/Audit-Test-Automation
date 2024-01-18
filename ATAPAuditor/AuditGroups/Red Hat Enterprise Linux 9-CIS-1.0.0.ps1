@@ -66,14 +66,14 @@ if ($IPv6Status -match "is enabled") {
         l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -112,14 +112,14 @@ if ($IPv6Status -match "is enabled") {
         l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -501,14 +501,14 @@ if ($IPv6Status -match "is enabled") {
     fi
     # Report results. If no failures output in l_output2, we pass
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -646,7 +646,7 @@ if ($IPv6Status -match "is enabled") {
     Id = "1.5.2"
     Task = "Ensure core dump backtraces are disabled"
     Test = {
-        $result = grep -Pi '^\h*ProcessSizeMax\h*=\h*0\b' /etc/systemd/coredump.conf || echo -e "\n- Audit results:\n ** Fail **\n - \"ProcessSizeMax\" is: \"$(grep -i 'ProcessSizeMax' /etc/systemd/coredump.conf)\""
+        $result = grep -Pi '^\h*ProcessSizeMax\h*=\h*0\b' /etc/systemd/coredump.conf || echo -e "\n- Audit results:\n FAIL\n - \"ProcessSizeMax\" is: \"$(grep -i 'ProcessSizeMax' /etc/systemd/coredump.conf)\""
         if ($result -match "ProcessSizeMax=0") {
             return $retCompliant
         } else {
@@ -688,14 +688,14 @@ if ($IPv6Status -match "is enabled") {
         KPC
     done
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -950,17 +950,17 @@ if ($IPv6Status -match "is enabled") {
             l_output2="$l_output2\n - The \"banner-message-enable\" option isn't configured"
         fi
     else
-        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *** PASS ***\n"
+        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *PASS*\n"
     fi # Report results. If no failures output in l_output2, we pass
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1008,12 +1008,12 @@ if ($IPv6Status -match "is enabled") {
                 echo -e "$l_pkgoutput\n- Audit Result:\n *** FAIL: ***\n$output2\n" [ -n "$output" ] && echo -e "$output\n"
             fi
         else
-        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *** PASS ***\n"
+        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *PASS*\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1075,14 +1075,14 @@ if ($IPv6Status -match "is enabled") {
     fi
     [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1134,14 +1134,14 @@ if ($IPv6Status -match "is enabled") {
     fi
     [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1209,14 +1209,14 @@ if ($IPv6Status -match "is enabled") {
         l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1268,15 +1268,15 @@ if ($IPv6Status -match "is enabled") {
     fi
     [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
         [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1336,14 +1336,14 @@ if ($IPv6Status -match "is enabled") {
         l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1756,19 +1756,19 @@ if ($IPv6Status -match "is enabled") {
         done
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **"
+        echo -e "\n- Audit Result:\n PASS"
         if [ -z "$l_output" ]; then
             echo -e "\n - System has no wireless NICs installed"
         else
             echo -e "\n$l_output\n"
         fi
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1804,14 +1804,14 @@ if ($IPv6Status -match "is enabled") {
         l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1852,15 +1852,15 @@ if ($IPv6Status -match "is enabled") {
             fi
         done
         if [ -z "$l_output2" ]; then
-            echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+            echo -e "\n- Audit Result:\n PASS\n$l_output\n"
         else
-            echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n"
+            echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
             [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
         fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1881,9 +1881,9 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)" fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL ** "
+        echo -e "\nFAIL "
         [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
@@ -1899,9 +1899,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -1909,7 +1909,7 @@ if ($IPv6Status -match "is enabled") {
 '@
         $script1 = bash -c $script_string1
         $script2 = bash -c $script_string2
-        if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+        if ($script1 -match "PASS" -and $script2 -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1931,9 +1931,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -1949,9 +1949,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -1965,9 +1965,9 @@ if ($IPv6Status -match "is enabled") {
     kpvalue="0" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -1981,9 +1981,9 @@ if ($IPv6Status -match "is enabled") {
     searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -1994,13 +1994,13 @@ if ($IPv6Status -match "is enabled") {
         $script21 = bash -c $script_string21
         $script22 = bash -c $script_string22
         if ($IPv6Status -eq "enabled") {
-            if ($script21 -match "** PASS **" -and $script22 -match "** PASS **") {
+            if ($script21 -match "PASS" -and $script22 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
             }
         } else {
-            if ($script11 -match "** PASS **" -and $script12 -match "** PASS **") {
+            if ($script11 -match "PASS" -and $script12 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -2022,9 +2022,9 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2040,9 +2040,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n" [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n" [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
 }
@@ -2055,9 +2055,9 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2072,9 +2072,9 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2085,13 +2085,13 @@ if ($IPv6Status -match "is enabled") {
         $script21 = bash -c $script_string21
         $script22 = bash -c $script_string22
         if ($IPv6Status -eq "enabled") {
-            if ($script21 -match "** PASS **" -and $script22 -match "** PASS **") {
+            if ($script21 -match "PASS" -and $script22 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
             }
         } else {
-            if ($script11 -match "** PASS **" -and $script12 -match "** PASS **") {
+            if ($script11 -match "PASS" -and $script12 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -2115,9 +2115,9 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2133,9 +2133,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2144,7 +2144,7 @@ if ($IPv6Status -match "is enabled") {
 
         $script1 = bash -c $script_string1
         $script2 = bash -c $script_string2
-        if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+        if ($script1 -match "PASS" -and $script2 -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2176,7 +2176,7 @@ if ($IPv6Status -match "is enabled") {
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2197,16 +2197,16 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2226,7 +2226,7 @@ if ($IPv6Status -match "is enabled") {
     krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
         echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
@@ -2244,9 +2244,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2254,7 +2254,7 @@ if ($IPv6Status -match "is enabled") {
 '@
         $script1 = bash -c $script_string1
         $script2 = bash -c $script_string2
-        if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+        if ($script1 -match "PASS" -and $script2 -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2275,16 +2275,16 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2305,9 +2305,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2323,9 +2323,9 @@ if ($IPv6Status -match "is enabled") {
     pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
     fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
     if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\n** PASS **:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
+        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
     else
-        echo -e "\n** FAIL **: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
+        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
         [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
         [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
     fi
@@ -2336,7 +2336,7 @@ if ($IPv6Status -match "is enabled") {
         } else {
             $script1 = bash -c $script_string1
             $script2 = bash -c $script_string2
-            if ($script1 -match "** PASS **" -and $script2 -match "** PASS **") {
+            if ($script1 -match "PASS" -and $script2 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -2384,14 +2384,14 @@ if ($IPv6Status -match "is enabled") {
         *) l_output2="\n - Unable to determine firewall state" ;;
     esac
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Results:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Results:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Results:\n ** FAIL **\n$l_output2\n"
+        echo -e "\n- Audit Results:\n FAIL\n$l_output2\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2417,14 +2417,14 @@ if ($IPv6Status -match "is enabled") {
         l_output=" - FirewallD is not in use on the system"
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Results:\n ** PASS **\n$l_output\n"
+        echo -e "\n- Audit Results:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Results:\n ** FAIL **\n$l_output2\n"
+        echo -e "\n- Audit Results:\n FAIL\n$l_output2\n"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2496,14 +2496,14 @@ if ($IPv6Status -match "is enabled") {
         fi
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n *** PASS ***\n$l_output"
+        echo -e "\n- Audit Result:\n *PASS*\n$l_output"
     else
-        echo -e "\n- Audit Result:\n *** FAIL ***\n$l_output2\n\n - Correctly set:\n$l_output"
+        echo -e "\n- Audit Result:\n *FAIL*\n$l_output2\n\n - Correctly set:\n$l_output"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3592,16 +3592,16 @@ if ($IPv6Status -match "is enabled") {
         esac
     done # If all files passed, then we pass
     if [ -z "$output" ]; then
-        echo -e "\n- Audit Results:\n ** PASS **\n- All files in \"/var/log/\" have appropriate permissions and ownership\n"
+        echo -e "\n- Audit Results:\n PASS\n- All files in \"/var/log/\" have appropriate permissions and ownership\n"
     else # print the reason why we are failing
-        echo -e "\n- Audit Results:\n ** Fail **\n$output"
+        echo -e "\n- Audit Results:\n FAIL\n$output"
     fi
     echo -e "- End check - logfiles have appropriate permissions and ownership\n"
     )
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3732,12 +3732,12 @@ if ($IPv6Status -match "is enabled") {
             echo "Pass"
         fi
     else
-        echo "** PASS **: cron is not installed on the system"
+        echo "PASS: cron is not installed on the system"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3761,15 +3761,15 @@ if ($IPv6Status -match "is enabled") {
             ! stat -Lc "%u:%g" /etc/at.allow | grep -Eq "^0:0$" && echo "Fail: at.allow owner and/or group not root"
         fi
         if [ ! -e /etc/at.deny ] && [ -e /etc/at.allow ] && stat -Lc "%a" /etc/at.allow | grep -Eq "[0,2,4,6]00" && stat -Lc "%u:%g" /etc/at.allow | grep -Eq "^0:0$"; then
-            echo "** PASS **"
+            echo "PASS"
         fi
     else
-        echo "** PASS **: at is not installed on the system"
+        echo "PASS: at is not installed on the system"
     fi
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3819,15 +3819,15 @@ if ($IPv6Status -match "is enabled") {
         fi
     done
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n *** PASS ***\n$l_output"
+        echo -e "\n- Audit Result:\n *PASS*\n$l_output"
     else
-        echo -e "\n- Audit Result:\n *** FAIL ***\n$l_output2\n\n - Correctly set:\n$l_output"
+        echo -e "\n- Audit Result:\n *FAIL*\n$l_output2\n\n - Correctly set:\n$l_output"
     fi
     )
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3864,15 +3864,15 @@ if ($IPv6Status -match "is enabled") {
         fi
     done
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n *** PASS ***\n$l_output"
+        echo -e "\n- Audit Result:\n *PASS*\n$l_output"
     else
-        echo -e "\n- Audit Result:\n *** FAIL ***\n$l_output2\n\n - Correctly set:\n$l_output"
+        echo -e "\n- Audit Result:\n *FAIL*\n$l_output2\n\n - Correctly set:\n$l_output"
     fi
     )
 }
 '@
         $script = bash -c $script_string
-        if ($script -match "** PASS **") {
+        if ($script -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
