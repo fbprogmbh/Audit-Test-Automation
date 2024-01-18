@@ -910,11 +910,12 @@ if ($IPv6Status -match "is enabled") {
 #!/usr/bin/env bash
 {
     l_pkgoutput=""
-    l_pq=""
     if command -v dpkg-query > /dev/null 2>&1; then
         l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q"
+    else
+        if command -v rpm > /dev/null 2>&1; then
+            l_pq="rpm -q"
+        fi
     fi
     l_pcl="gdm gdm3"
     for l_pn in $l_pcl; do
