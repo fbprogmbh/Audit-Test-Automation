@@ -911,11 +911,9 @@ if ($IPv6Status -match "is enabled") {
 {
     l_pkgoutput=""
     if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    else
-        if command -v rpm > /dev/null 2>&1; then
-            l_pq="rpm -q"
-        fi
+        l_pq='dpkg-query -W'
+    elif command -v rpm > /dev/null 2>&1; then
+        l_pq='rpm -q'
     fi
     l_pcl="gdm gdm3"
     for l_pn in $l_pcl; do
