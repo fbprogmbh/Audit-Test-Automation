@@ -542,7 +542,6 @@ if ($IPv6Status -match "is enabled") {
     }
 }
 
-# TODO
 [AuditTest] @{
     Id = "1.2.4"
     Task = "Ensure repo_gpgcheck is globally activated"
@@ -638,16 +637,21 @@ if ($IPv6Status -match "is enabled") {
     }
 }
 
-#TODO
 [AuditTest] @{
     Id = "1.5.2"
     Task = "Ensure core dump backtraces are disabled"
     Test = {
-        $result = grep -Pi '^\h*ProcessSizeMax\h*=\h*0\b' /etc/systemd/coredump.conf || echo -e "\n- Audit results:\n FAIL\n - \"ProcessSizeMax\" is: \"$(grep -i 'ProcessSizeMax' /etc/systemd/coredump.conf)\""
-        if ($result -match "ProcessSizeMax=0") {
-            return $retCompliant
-        } else {
+        $script_string = @'
+#!/usr/bin/env bash
+{
+    grep -Pi '^\h*ProcessSizeMax\h*=\h*0\b' /etc/systemd/coredump.conf || echo -e "\n- Audit results:\n FAIL\n - \"ProcessSizeMax\" is: \"$(grep -i 'ProcessSizeMax' /etc/systemd/coredump.conf)\""
+}
+'@
+        $result = bash -c $script_string
+        if ($result -match "FAIL") {
             return $retNonCompliant
+        } else {
+            return $retCompliant
         }
     }
 }
@@ -906,6 +910,7 @@ if ($IPv6Status -match "is enabled") {
 #!/usr/bin/env bash
 {
     l_pkgoutput=""
+    l_pq=""
     if command -v dpkg-query > /dev/null 2>&1; then
         l_pq="dpkg-query -W"
     elif command -v rpm > /dev/null 2>&1; then
@@ -917,11 +922,10 @@ if ($IPv6Status -match "is enabled") {
     done
     if [ -n "$l_pkgoutput" ]; then
         l_output="" l_output2=""
-        echo -e "$l_pkgoutput" # Look for existing settings and set variables if they exist
+        echo -e "$l_pkgoutput"
         l_gdmfile="$(grep -Prils '^\h*banner-message-enable\b' /etc/dconf/db/*.d)"
         if [ -n "$l_gdmfile" ]; then
-            # Set profile name based on dconf db directory ({PROFILE_NAME}.d)
-            l_gdmprofile="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_gdmfile")" # Check if banner message is enabled
+            l_gdmprofile="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_gdmfile")"
             if grep -Pisq '^\h*banner-message-enable=true\b' "$l_gdmfile"; then
                 l_output="$l_output\n - The \"banner-message-enable\" option is enabled in \"$l_gdmfile\""
             else
