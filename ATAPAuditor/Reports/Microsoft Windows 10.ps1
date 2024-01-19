@@ -2,8 +2,8 @@
 	Title = "Windows 10 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Microsoft Windows 10 Enterprise Release 21H1 Benchmark, Version: 1.12.0, Date: 2022-02-15"
-		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R16, Date: 2019-10-25"
+		"CIS Microsoft Windows 10 Enterprise, Version: 2.0.0, Date: 2023-03-07"
+		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R23, Date: 2019-10-25"
 		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
 		"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2020-04-27"
@@ -18,15 +18,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#AccountPolicies"
 				}
 				# [ReportSection] @{
 				# 	Title = 'Windows Firewall with Advanced Security'
@@ -34,11 +34,11 @@
 				# }
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
-					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-1.12.0#SecurityOptions"
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-CIS-2.0.0#SecurityOptions"
 				}
 			)
 		}
@@ -117,7 +117,7 @@
 			)
 		}
 		[ReportSection] @{
-			Title = 'BSI Benchmarks SySiPHuS Logging'
+			Title = 'BSI Benchmarks SiSyPHuS Logging'
 			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
@@ -145,7 +145,7 @@
 		# if system is Member Workstation	
 		if ($domainRole -eq 1) {
 			[ReportSection] @{
-				Title = 'BSI Benchmarks SySiPHuS HD'
+				Title = 'BSI Benchmarks SiSyPHuS HD'
 				Description = 'This section contains the BSI Benchmark results.'
 				SubSections = @(
 					[ReportSection] @{
@@ -163,28 +163,6 @@
 					[ReportSection] @{
 						Title = 'Security Options'
 						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS HD-BSI-1.3#SecurityOptions"
-					}
-				)
-			}
-			[ReportSection] @{
-				Title = 'BSI Benchmarks SySiPHuS ND'
-				Description = 'This section contains the BSI Benchmark results.'
-				SubSections = @(
-					[ReportSection] @{
-						Title = 'Registry Settings/Group Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#RegistrySettings"
-					}
-					[ReportSection] @{
-						Title = 'User Rights Assignment'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#UserRights"
-					}
-					[ReportSection] @{
-						Title = 'Account Policies'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#AccountPolicies"
-					}
-					[ReportSection] @{
-						Title = 'Security Options'
-						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS ND-BSI-1.3#SecurityOptions"
 					}
 				)
 			}

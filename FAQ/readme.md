@@ -3,12 +3,11 @@ This section is dedicated to an ever-growing list of frequently asked questions
 
 ### Table of contents
 
-
-  1. [Can I keep formatting when printing AuditTAP HTML report as PDF?](#when-printing-html-to-pdf-color-scheme-formatting-is-lost)
-  2. [Can we add specific exclusions to be more compliant?](#can-we-add-specific-exclusions-to-be-more-compliant)
-  3. [When downloading my anti virus scanner detects malicious behavior. What does that mean?](#when-downloading-my-anti-virus-scanner-detects-malicious-behavior-what-does-that-mean)
-
-3. [PowerShell console states commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor". What to do now?](https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/FAQ/readme.md#powershell-console-states-commandlet-save-ataphtmlreport-was-not-found-in-the-module-atapauditor-what-to-do-now)
+  - [When printing html to PDF, color-scheme-formatting is lost](#when-printing-html-to-pdf-color-scheme-formatting-is-lost-back-to-toc)
+  - [Can we add specific exclusions to be more compliant?](#can-we-add-specific-exclusions-to-be-more-compliant-back-to-toc)
+  - [When downloading my anti virus scanner detects malicious behavior. What does that mean?](#when-downloading-my-anti-virus-scanner-detects-malicious-behavior-what-does-that-mean)
+  - [Why is PowerShell console stating commandlet "Save-ATAPHtmlReport" was not found in the module "ATAPAuditor"?](#why-is-powershell-console-stating-commandlet-save-ataphtmlreport-was-not-found-in-the-module-atapauditor-back-to-toc)
+  - [How long does it take to create a report from AuditTAP?](#how-long-does-it-take-to-create-a-report-from-audittap)
 
 
 #### When printing html to PDF, color-scheme-formatting is lost [[Back to TOC]](https://github.com/fbprogmbh/Audit-Test-Automation/blob/master/FAQ/readme.md#table-of-contents)
@@ -44,3 +43,9 @@ The following Screenshot shows error and solution:
 ![image](https://user-images.githubusercontent.com/23223285/216938169-b92200d4-645b-442c-8d00-de46328e75a0.png)
 
 
+
+#### How long does it take to create a report from AuditTAP?
+Depending on the size of the report you want to create, the time it takes to create varies. Here are some measurements:
+* ~ 50 seconds (Google Chrome) 
+* ~ 2 minutes 30 seconds (Microsoft Windows 10)
+Each Audit-Test takes some time and depending on the amount of tests, the final report needs some time to finalise.

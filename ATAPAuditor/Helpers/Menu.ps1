@@ -124,8 +124,8 @@ if (!(isAdmin)) {
         }
     }
 
-    [string]$action = Read-Host "Do you want to open the output directory? (y/N)"
-    if ($action -eq 'y') {
+    [string]$action = Read-Host "Do you want to open the output directory? (Y/N)"
+    if ($action -eq 'y' -or $action -eq 'Y') {
         if ($null -eq $env:ATAPReportPath) {
             $outPath = [Environment]::GetFolderPath('MyDocuments') | Join-Path -ChildPath 'ATAPReports'
         } else {

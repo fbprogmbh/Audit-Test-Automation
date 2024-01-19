@@ -3,9 +3,10 @@ $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $windefrunning = CheckWindefRunning
 . "$RootPath\Helpers\Firewall.ps1"
+$domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
 [AuditTest] @{
     Id   = "1.1.7"
-    Task = "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
+    Task = "Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["ClearTextPassword"]
@@ -31,86 +32,90 @@ $windefrunning = CheckWindefRunning
         }
     }
 }
-[AuditTest] @{
-    Id   = "2.2.38"
-    Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
-        $identityAccounts = @(
-            "S-1-5-32-544"
-        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-        
-        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-        
-        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-            $messages = @()
-            if ($unexpectedUsers.Count -gt 0) {
-                $messages += "The user right 'SeSecurityPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+if($domainRole -eq 3){
+    [AuditTest] @{
+        Id   = "2.2.38"
+        Task = "Ensure 'Manage auditing and security log' is set to 'Administrators' (MS only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+        )
+        Test = {
+            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+            $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
+            $identityAccounts = @(
+                "S-1-5-32-544"
+            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+            
+            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+            
+            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+                $messages = @()
+                if ($unexpectedUsers.Count -gt 0) {
+                    $messages += "The user right 'SeSecurityPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
+                }
+                if ($missingUsers.Count -gt 0) {
+                    $messages += "The user 'SeSecurityPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+                }
+                $message = $messages -join [System.Environment]::NewLine
+            
+                return @{
+                    Status  = "False"
+                    Message = $message
+                }
             }
-            if ($missingUsers.Count -gt 0) {
-                $messages += "The user 'SeSecurityPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-            }
-            $message = $messages -join [System.Environment]::NewLine
-        
+            
             return @{
-                Status  = "False"
-                Message = $message
+                Status  = "True"
+                Message = "Compliant"
             }
-        }
-        
-        return @{
-            Status  = "True"
-            Message = "Compliant"
         }
     }
 }
-[AuditTest] @{
-    Id   = "2.3.5.2"
-    Task = "(L1) Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
-    )
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NTDS\Parameters" `
-                -Name "LDAPServerIntegrity" `
-            | Select-Object -ExpandProperty "LDAPServerIntegrity"
-        
-            if ($regValue -ne 2) {
+if($domainRole -ge 4){
+    [AuditTest] @{
+        Id   = "2.3.5.2"
+        Task = "Ensure 'Domain controller: LDAP server signing requirements' is set to 'Require signing' (DC only)"
+        Constraints = @(
+            @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+        )
+        Test = {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\NTDS\Parameters" `
+                    -Name "LDAPServerIntegrity" `
+                | Select-Object -ExpandProperty "LDAPServerIntegrity"
+            
+                if ($regValue -ne 2) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 2"
+                        Status  = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value not found."
                     Status  = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status  = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
+            
             return @{
-                Message = "Registry key not found."
-                Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
         }
     }
 }
 [AuditTest] @{
     Id   = "2.3.11.4"
-    Task = "(L1) Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'"
+    Task = "Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -146,7 +151,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "2.3.11.5"
-    Task = "(L1) Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
+    Task = "Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -181,152 +186,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id   = "7.9 A"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 40/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 B"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 56/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 C"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 64/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id   = "7.9 D"
-    Task = "(L1) Ensure RC4 Cipher Suites is Disabled (RC4 128/128)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128" `
-                -Name "Enabled" `
-            | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status  = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id   = "9.1.7"
-    Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
@@ -345,7 +206,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "9.1.8"
-    Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
     )
@@ -367,7 +228,7 @@ $windefrunning = CheckWindefRunning
 
 [AuditTest] @{
     Id   = "18.3.3"
-    Task = "(L1) Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver'"
+    Task = "Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -403,7 +264,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "18.3.3"
-    Task = "(L1) Ensure 'Configure SMB v1 server' is set to 'Disabled'"
+    Task = "Ensure 'Configure SMB v1 server' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -442,7 +303,7 @@ $windefrunning = CheckWindefRunning
 
 [AuditTest] @{
     Id   = "18.3.6"
-    Task = "(L1) Ensure 'WDigest Authentication' is set to 'Disabled'"
+    Task = "Ensure 'WDigest Authentication' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -479,7 +340,7 @@ $windefrunning = CheckWindefRunning
 
 [AuditTest] @{
     Id   = "18.6.2"
-    Task = "(L1) Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'"
+    Task = "Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -515,7 +376,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "18.6.3"
-    Task = "(L1) Ensure 'Point and Print Restrictions: When updating drivers for an existing connection' is set to 'Enabled: Show warning and elevation prompt'"
+    Task = "Ensure 'Point and Print Restrictions: When updating drivers for an existing connection' is set to 'Enabled: Show warning and elevation prompt'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -551,7 +412,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "18.9.47.9.2"
-    Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
+    Task = "Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -593,7 +454,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 A"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office communication application  from creating child processes)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -654,7 +515,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 B"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Office applications from creating  executable content)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -715,7 +576,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 C"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block execution of potentially obfuscated scripts)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -776,7 +637,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 D"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes' is configured"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes' is configured"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -837,7 +698,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 E"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Adobe Reader from creating child processes)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -898,7 +759,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 F"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block Win32 API calls from Office macro)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -959,7 +820,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 G"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block credential stealing from the Windows local security authority subsystem (lsass.exe))"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1020,7 +881,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 H"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block untrusted and unsigned processes that run from USB)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1081,7 +942,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 I"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured  (Block executable content from email client and webmail)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1142,7 +1003,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 J"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block JavaScript or VBScript from launching downloaded executable content)"
     Test = {
        try {
             if ((-not $windefrunning)) {
@@ -1203,7 +1064,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 K"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block Office applications from creating child processes)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1264,7 +1125,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.47.5.1.2 L"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block persistence through WMI event subscription)"
     Test = {
         try {
             if ((-not $windefrunning)) {
@@ -1324,8 +1185,72 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
+    Id = "18.10.43.6.1.2 M"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block abuse of exploited vulnerable signed drivers)"
+    Test = {
+        try {
+            if($avstatus){
+
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }
+            }                  
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "56a863a9-875e-4185-98a7-b882c64b5ce5"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "56a863a9-875e-4185-98a7-b882c64b5ce5"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id   = "18.9.58.3.10.1"
-    Task = "(L2) Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"
+    Task = "Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1361,7 +1286,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "18.9.58.3.10.2"
-    Task = "(L2) Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
+    Task = "Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2305,9 +2230,9 @@ $windefrunning = CheckWindefRunning
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne 1 -and $regValue -ne 4294967295) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 4294967295"
                     Status = "False"
                 }
             }

@@ -2533,6 +2533,15 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
+            $allowedNames = @("Windows 10 Home", "Windows 11 Home", "Windows 10 Pro", "Windows 11 Pro")
+            $productname = Get-ComputerInfo | select -ExpandProperty OsName
+            if (($allowedNames -contains $productname) -and ($regValue -eq 1)){
+                return @{
+                    Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                    Status = "Warning"
+                }
+            }
+
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"

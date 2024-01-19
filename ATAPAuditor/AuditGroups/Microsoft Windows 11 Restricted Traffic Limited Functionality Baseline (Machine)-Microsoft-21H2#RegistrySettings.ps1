@@ -689,7 +689,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "116"
-    Task = "(L2) Ensure 'Allow Clipboard synchronization across devices' is set to 'Disabled'"
+    Task = "Ensure 'Allow Clipboard synchronization across devices' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -725,7 +725,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "117"
-    Task = "(L2) Ensure 'Enable news and interests on the taskbar' is set to 'Disabled'"
+    Task = "Ensure 'Enable news and interests on the taskbar' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -797,7 +797,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "119"
-    Task = "(L1) Ensure 'Allow widgets' is set to 'Disabled'"
+    Task = "Ensure 'Allow widgets' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2495,6 +2495,15 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
+            $saferClients = @("*Server*","*Education*","*Enterprise*")
+            $productname = Get-ComputerInfo | select -ExpandProperty OsName
+            if (($productname -notcontains $saferClients) -and ($regValue -eq 1)){
+                return @{
+                    Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                    Status = "Warning"
+                }
+            }
+
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
@@ -2595,7 +2604,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "56"
-    Task = "(L1) Prevent Windows from retrieving device metadata from the Internet"
+    Task = "Prevent Windows from retrieving device metadata from the Internet"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3207,7 +3216,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "71"
-    Task = "(L1) Ensure 'Continue experiences on this device' is set to 'Disabled'"
+    Task = "Ensure 'Continue experiences on this device' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4305,7 +4314,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "99"
-    Task = "(L1) Ensure 'Let Windows apps activate with voice while the system is locked' is set to 'Enabled: Force Deny'"
+    Task = "Ensure 'Let Windows apps activate with voice while the system is locked' is set to 'Enabled: Force Deny'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

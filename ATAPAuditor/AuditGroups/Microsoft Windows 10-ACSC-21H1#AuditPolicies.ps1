@@ -77,7 +77,7 @@ function Get-AuditPolicySubcategoryGUID {
 # Tests
 [AuditTest] @{
     Id = "Medium-041"
-    Task = "(L1) Ensure 'Audit Computer Account Management' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Computer Account Management' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Computer Account Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Computer Account Management"
@@ -134,7 +134,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-042"
-    Task = "(L1) Ensure 'Audit Other Account Management Events' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Other Account Management Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Account Management Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Account Management Events"
@@ -191,7 +191,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-043"
-    Task = "(L1) Ensure 'Audit Security Group Management' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Security Group Management' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Security Group Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security Group Management"
@@ -248,7 +248,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-044"
-    Task = "(L1) Ensure 'Audit User Account Management' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit User Account Management' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory User Account Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "User Account Management"
@@ -305,7 +305,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-045"
-    Task = "(L1) Ensure 'Audit Process Creation' is set to include 'Success'"
+    Task = "Ensure 'Audit Process Creation' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Process Creation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Process Creation"
@@ -419,7 +419,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-047"
-    Task = "(L1) Ensure 'Audit Account Lockout' is set to include 'Failure'"
+    Task = "Ensure 'Audit Account Lockout' is set to include 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Account Lockout
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Account Lockout"
@@ -476,7 +476,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-048"
-    Task = "(L1) Ensure 'Audit Group Membership' is set to include 'Success'"
+    Task = "Ensure 'Audit Group Membership' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Group Membership
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Group Membership"
@@ -533,7 +533,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-049"
-    Task = "(L1) Ensure 'Audit Logoff' is set to include 'Success'"
+    Task = "Ensure 'Audit Logoff' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Logoff
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logoff"
@@ -590,7 +590,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-050"
-    Task = "(L1) Ensure 'Audit Logon' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Logon' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logon"
@@ -647,7 +647,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-051"
-    Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Logon/Logoff Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
@@ -761,7 +761,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-053"
-    Task = "(L1) Ensure 'Audit File Share' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit File Share' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory File Share
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "File Share"
@@ -932,7 +932,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-056"
-    Task = "(L1) Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Object Access Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Object Access Events"
@@ -1046,7 +1046,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-058"
-    Task = "(L1) Ensure 'Audit Audit Policy Change' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit Audit Policy Change' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Audit Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
@@ -1160,7 +1160,7 @@ function Get-AuditPolicySubcategoryGUID {
 }
 [AuditTest] @{
     Id = "Medium-060"
-    Task = "(L1) Ensure 'Audit System Integrity' is set to 'Success and Failure'"
+    Task = "Ensure 'Audit System Integrity' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory System Integrity
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "System Integrity"

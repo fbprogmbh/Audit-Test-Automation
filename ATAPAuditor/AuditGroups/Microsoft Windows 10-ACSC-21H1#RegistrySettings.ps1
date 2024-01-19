@@ -5,7 +5,7 @@ $avstatus = CheckForActiveAV
 $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "High-001 A"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -69,7 +69,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 B"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block executable content from email client and webmail'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block executable content from email client and webmail'"
     Test = {
         try {
             if($avstatus){
@@ -133,7 +133,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 C"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating child processes'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating child processes'"
     Test = {
         try {
             if($avstatus){
@@ -197,7 +197,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 D"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
     Test = {
         try {
             if($avstatus){
@@ -261,7 +261,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 E"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes'"
     Test = {
         try {
             if($avstatus){
@@ -325,7 +325,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 F"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block JavaScript or VBScript from launching downloaded executable content'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block JavaScript or VBScript from launching downloaded executable content'"
     Test = {
         try {
             if($avstatus){
@@ -389,7 +389,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 G"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block execution of potentially obfuscated scripts'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block execution of potentially obfuscated scripts'"
     Test = {
         try {
             if($avstatus){
@@ -453,7 +453,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 H"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
     Test = {
         try {
             if($avstatus){
@@ -517,7 +517,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 I"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block executable files from running unless they meet a prevalence, age, or trusted list criterion'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block executable files from running unless they meet a prevalence, age, or trusted list criterion'"
     Test = {
         try {
             if($avstatus){
@@ -581,7 +581,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 J"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Use advanced protection against ransomware'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Use advanced protection against ransomware'"
     Test = {
         try {
             if($avstatus){
@@ -645,7 +645,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 K"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
     Test = {
         try {
             if($avstatus){
@@ -709,7 +709,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 L"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block process creations originating from PSExec and WMI commands)"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block process creations originating from PSExec and WMI commands)"
     Test = {
         try {
             if($avstatus){
@@ -773,7 +773,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 M"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB' is configured"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB' is configured"
     Test = {
         try {
             if($avstatus){
@@ -837,7 +837,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 N"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes'"
     Test = {
         try {
             if($avstatus){
@@ -901,7 +901,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 O"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Adobe Reader from creating child processes'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block Adobe Reader from creating child processes'"
     Test = {
         try {
             if($avstatus){
@@ -965,7 +965,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-001 P"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block persistence through WMI event subscription'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block persistence through WMI event subscription'"
     Test = {
         try {
             if($avstatus){
@@ -1029,7 +1029,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-002"
-    Task = "(L2) Ensure 'Interactive logon' is configured 'Number of previous logons to cache (in case domain controller is not available)'"
+    Task = "Ensure 'Interactive logon' is configured 'Number of previous logons to cache (in case domain controller is not available)'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1065,7 +1065,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-003"
-    Task = "(L1) Ensure 'Network access: Do not allow storage of passwords and credentials for network authentication' is set to 'Enabled'"
+    Task = "Ensure 'Network access: Do not allow storage of passwords and credentials for network authentication' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1101,7 +1101,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-004"
-    Task = "(L1) Ensure 'WDigest Authentication' is set to 'Disabled'"
+    Task = "Ensure 'WDigest Authentication' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1137,7 +1137,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-005 A"
-    Task = "(NG) Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
+    Task = "Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1173,7 +1173,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-005 B"
-    Task = "(NG) Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot and DMA Protection'"
+    Task = "Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot and DMA Protection'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1209,7 +1209,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-005 C"
-    Task = "(NG) Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Enabled with UEFI lock'"
+    Task = "Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Enabled with UEFI lock'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1245,7 +1245,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-006"
-    Task = "(L1) Ensure 'Configure allowed applications' is set to 'Enabled'"
+    Task = "Ensure 'Configure allowed applications' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -1425,7 +1425,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-009"
-    Task = "(L1) Ensure 'Do not display network selection UI' is set to 'Enabled'"
+    Task = "Ensure 'Do not display network selection UI' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1461,7 +1461,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-010"
-    Task = "(L1) Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled'"
+    Task = "Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1497,7 +1497,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-011"
-    Task = "(L1) Ensure 'Do not display the password reveal button' is set to 'Enabled'"
+    Task = "Ensure 'Do not display the password reveal button' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1533,7 +1533,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-012"
-    Task = "(L1) Ensure 'Enumerate administrator accounts on elevation' is set 'Disabled'."
+    Task = "Ensure 'Enumerate administrator accounts on elevation' is set 'Disabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1605,7 +1605,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-014"
-    Task = "(L1) Ensure 'Prevent the use of security questions for local accounts' is set to 'Enabled'"
+    Task = "Ensure 'Prevent the use of security questions for local accounts' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1675,7 +1675,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-016"
-    Task = "(L1) Ensure 'Sign-in and lock last interactive user automatically after a restart' is set to 'Disabled'"
+    Task = "Ensure 'Sign-in and lock last interactive user automatically after a restart' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1711,7 +1711,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-017"
-    Task = "(L1) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'"
+    Task = "Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1783,7 +1783,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-019"
-    Task = "(L1) Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1819,7 +1819,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-020"
-    Task = "(L1) Ensure 'User Account Control: Allow UIAccess applications to prompt for elevation without using the secure desktop' is set to 'Disabled'"
+    Task = "Ensure 'User Account Control: Allow UIAccess applications to prompt for elevation without using the secure desktop' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1855,7 +1855,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-021"
-    Task = "(L1) Ensure 'User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode' is set to 'Prompt for consent on the secure desktop'"
+    Task = "Ensure 'User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode' is set to 'Prompt for consent on the secure desktop'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1891,7 +1891,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-022"
-    Task = "(L1) Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'"
+    Task = "Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1927,7 +1927,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-023"
-    Task = "(L1) Ensure 'User Account Control: Detect application installations and prompt for elevation' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Detect application installations and prompt for elevation' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1963,7 +1963,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-024"
-    Task = "(L1) Ensure 'User Account Control: Only elevate UIAccess applications that are installed in secure locations' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Only elevate UIAccess applications that are installed in secure locations' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1999,7 +1999,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-025"
-    Task = "(L1) Ensure 'User Account Control: Run all administrators in Admin Approval Mode' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Run all administrators in Admin Approval Mode' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2035,7 +2035,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-026"
-    Task = "(L1) Ensure 'User Account Control: Switch to the secure desktop when prompting for elevation' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Switch to the secure desktop when prompting for elevation' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2071,7 +2071,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-027"
-    Task = "(L1) Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'"
+    Task = "Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2179,7 +2179,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-029"
-    Task = "(L1) Ensure 'Prevent users from modifying settings' is set to 'Enabled'"
+    Task = "Ensure 'Prevent users from modifying settings' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2215,7 +2215,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-030"
-    Task = "(L1) Ensure 'Turn off Data Execution Prevention for Explorer' is set to 'Disabled'"
+    Task = "Ensure 'Turn off Data Execution Prevention for Explorer' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2251,7 +2251,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-031"
-    Task = "(L1) Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
+    Task = "Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2287,7 +2287,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-033"
-    Task = "(L1) Ensure 'Apply UAC restrictions to local accounts on network logons' is set to 'Enabled'"
+    Task = "Ensure 'Apply UAC restrictions to local accounts on network logons' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2323,7 +2323,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-034"
-    Task = "(L1) Ensure 'Allow download restrictions' is set to 'Enabled: Block potentially dangerous downloads'"
+    Task = "Ensure 'Allow download restrictions' is set to 'Enabled: Block potentially dangerous downloads'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2575,7 +2575,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-041"
-    Task = "(L1) Ensure 'Configure Microsoft Defender SmartScreen' is set to 'Enabled'"
+    Task = "Ensure 'Configure Microsoft Defender SmartScreen' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2611,7 +2611,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-042"
-    Task = "(L1) Ensure 'Prevent bypassing Microsoft Defender SmartScreen prompts for sites' is set to 'Enabled'"
+    Task = "Ensure 'Prevent bypassing Microsoft Defender SmartScreen prompts for sites' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2683,7 +2683,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-044"
-    Task = "(L1) Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
+    Task = "Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
     Test = {
         try {
             if($avstatus){
@@ -2728,7 +2728,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-045"
-    Task = "(NG) Ensure 'Turn on Windows Defender Application Guard in Enterprise Mode' is set to 'Enabled: 1'"
+    Task = "Ensure 'Turn on Windows Defender Application Guard in Enterprise Mode' is set to 'Enabled: 1'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3103,7 +3103,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-052"
-    Task = "(L1) Ensure 'No auto-restart with logged on users for scheduled automatic updates installations' is set to 'Disabled'"
+    Task = "Ensure 'No auto-restart with logged on users for scheduled automatic updates installations' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3247,7 +3247,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-004"
-    Task = "(L1) Ensure 'Enable insecure guest logons' is set to 'Disabled'"
+    Task = "Ensure 'Enable insecure guest logons' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3283,7 +3283,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-005"
-    Task = "(L1) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled'"
+    Task = "Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3319,7 +3319,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-006"
-    Task = "(L1) Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled'"
+    Task = "Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3355,7 +3355,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-007"
-    Task = "(L1) Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled'"
+    Task = "Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3391,7 +3391,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-008"
-    Task = "(L1) Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled'"
+    Task = "Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3427,7 +3427,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-009"
-    Task = "(L1) Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'"
+    Task = "Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3463,7 +3463,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-010"
-    Task = "(L1) Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow'"
+    Task = "Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3499,7 +3499,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-011"
-    Task = "(L1) Ensure 'Network security: Allow Local System to use computer identity for NTLM' is set to 'Enabled'"
+    Task = "Ensure 'Network security: Allow Local System to use computer identity for NTLM' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3535,7 +3535,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-012"
-    Task = "(L1) Ensure 'Network security: Allow LocalSystem NULL session fallback' is set to 'Disabled'"
+    Task = "Ensure 'Network security: Allow LocalSystem NULL session fallback' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3571,7 +3571,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-015"
-    Task = "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'"
+    Task = "Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3607,7 +3607,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-016"
-    Task = "(L1) Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
+    Task = "Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
             if($avstatus){
@@ -3922,7 +3922,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-023"
-    Task = "(L1) Ensure 'Scan all downloaded files and attachments' is set to 'Enabled'"
+    Task = "Ensure 'Scan all downloaded files and attachments' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -3967,7 +3967,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-024"
-    Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
+    Task = "Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
             if($avstatus){
@@ -4012,7 +4012,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-025"
-    Task = "(L1) Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
+    Task = "Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -4255,7 +4255,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-031"
-    Task = "(L1) Ensure 'Scan removable drives' is set to 'Enabled'"
+    Task = "Ensure 'Scan removable drives' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -4300,7 +4300,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-032"
-    Task = "(L1) Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
+    Task = "Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -4390,7 +4390,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-034"
-    Task = "(L1) Ensure 'Do not preserve zone information in file attachments' is set to 'Disabled'"
+    Task = "Ensure 'Do not preserve zone information in file attachments' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4462,7 +4462,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-036"
-    Task = "(L1) Ensure 'Include command line in process creation events' is set to 'Enabled'"
+    Task = "Ensure 'Include command line in process creation events' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4606,7 +4606,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-061"
-    Task = "(L1) Ensure 'Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings' is set to 'Enabled'"
+    Task = "Ensure 'Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4642,7 +4642,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-062"
-    Task = "(L1) Ensure 'Disallow Autoplay for non-volume devices' is set to 'Enabled'"
+    Task = "Ensure 'Disallow Autoplay for non-volume devices' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4678,7 +4678,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-063"
-    Task = "(L1) Ensure 'Set the default behavior for AutoRun' is set to 'Enabled: Do not execute any autorun commands'"
+    Task = "Ensure 'Set the default behavior for AutoRun' is set to 'Enabled: Do not execute any autorun commands'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4714,7 +4714,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-064"
-    Task = "(L1) Ensure 'Turn off Autoplay' is set to 'Enabled: All drives'"
+    Task = "Ensure 'Turn off Autoplay' is set to 'Enabled: All drives'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4786,7 +4786,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-066"
-    Task = "(L1) Ensure 'Prohibit use of Internet Connection Sharing on your DNS domain network' is set to 'Enabled'"
+    Task = "Ensure 'Prohibit use of Internet Connection Sharing on your DNS domain network' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4858,7 +4858,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-068"
-    Task = "(L1) Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled'"
+    Task = "Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5326,7 +5326,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-075"
-    Task = "(BL) Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'"
+    Task = "Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6910,7 +6910,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-092 G"
-    Task = "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Configure storage of BitLocker recovery information to AD DS:' is set to 'Enabled: Backup recovery passwords and key packages'"
+    Task = "Ensure 'Choose how BitLocker-protected removable drives can be recovered: Configure storage of BitLocker recovery information to AD DS:' is set to 'Enabled: Backup recovery passwords and key packages'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7270,17 +7270,17 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-097"
-    Task = "(BL) Ensure 'Interactive logon: Machine account lockout threshold' is set to '10 or fewer invalid logon attempts, but not 0'"
+    Task = "Ensure 'Interactive logon: Machine account lockout threshold' is set to '10 or fewer invalid logon attempts, but not 0'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "MaxDevicePasswordFailedAttempts" `
                 | Select-Object -ExpandProperty "MaxDevicePasswordFailedAttempts"
         
-            if (($regValue -gt 10 -or $regValue -le 0)) {
+            if (($regValue -gt 10 -or $regValue -le 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x <= 10 and x > 0"
+                    Message = "Registry value is '$regValue'. Expected: x <= 10 and x > 3"
                     Status = "False"
                 }
             }
@@ -7990,7 +7990,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-115"
-    Task = "(L1) Ensure 'Prevent the computer from joining a homegroup' is set to 'Enabled'"
+    Task = "Ensure 'Prevent the computer from joining a homegroup' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8026,7 +8026,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-116"
-    Task = "(L1) Ensure 'Prevent users from sharing files within their profile.' is set to 'Enabled'"
+    Task = "Ensure 'Prevent users from sharing files within their profile.' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8062,7 +8062,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-117 A"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\NETLOGON)"
+    Task = "Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\NETLOGON)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8070,9 +8070,25 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
+            if($regValue -eq $null){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
+            $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+
+            $missingElements = @()
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            foreach ($element in $elementsToCheck) {
+                if ($array -notcontains $element) {
+                    $missingElements += $element
+                }
+            }
+
+            if ($missingElements.Length -gt 0) {
+                return @{
+                    Message = ($missingElements -join " and ") + " not configured."
                     Status = "False"
                 }
             }
@@ -8098,7 +8114,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-117 B"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\SYSVOL)"
+    Task = "Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\SYSVOL)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8106,9 +8122,25 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1") {
+            if($regValue -eq $null){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1"
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
+            $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+
+            $missingElements = @()
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            foreach ($element in $elementsToCheck) {
+                if ($array -notcontains $element) {
+                    $missingElements += $element
+                }
+            }
+
+            if ($missingElements.Length -gt 0) {
+                return @{
+                    Message = ($missingElements -join " and ") + " not configured."
                     Status = "False"
                 }
             }
@@ -8134,7 +8166,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-118"
-    Task = "(L1) Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
+    Task = "Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8170,7 +8202,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-119"
-    Task = "(ND) Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled'."
+    Task = "Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8206,7 +8238,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-120"
-    Task = "(L1) Ensure 'Turn off background refresh of Group Policy' is set to 'Disabled'"
+    Task = "Ensure 'Turn off background refresh of Group Policy' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8223,14 +8255,14 @@ $windefrunning = CheckWindefRunning
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant. Registry value not found."
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant. Registry key not found."
+                Status = "True"
             }
         }
         
@@ -8278,7 +8310,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-122 A"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8314,7 +8346,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-122 B"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
+    Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8350,7 +8382,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-123"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (ShellSmartScreenLevel)"
+    Task = "Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (ShellSmartScreenLevel)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8386,7 +8418,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-124"
-    Task = "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'"
+    Task = "Ensure 'Allow user control over installs' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8422,7 +8454,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-125"
-    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled'"
+    Task = "Ensure 'Always install with elevated privileges' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8458,7 +8490,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-126"
-    Task = "(L2) Ensure 'Devices: Prevent users from installing printer drivers' is set to 'Enabled'"
+    Task = "Ensure 'Devices: Prevent users from installing printer drivers' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8494,7 +8526,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-128"
-    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' (AlwaysInstallElevated)"
+    Task = "Ensure 'Always install with elevated privileges' is set to 'Disabled' (AlwaysInstallElevated)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8638,7 +8670,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-132"
-    Task = "(L1) Ensure 'Block all consumer Microsoft account user authentication' is set to 'Enabled'"
+    Task = "Ensure 'Block all consumer Microsoft account user authentication' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8674,7 +8706,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-133"
-    Task = "(L1) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'"
+    Task = "Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8710,7 +8742,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-134"
-    Task = "(L1) Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'"
+    Task = "Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8746,7 +8778,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-135"
-    Task = "(L1) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'"
+    Task = "Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8782,7 +8814,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-136"
-    Task = "(L1) Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'"
+    Task = "Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8818,7 +8850,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-137"
-    Task = "(L1) Ensure 'MSS: (EnableICMPRedirect) Allow ICMP redirects to override OSPF generated routes' is set to 'Disabled'"
+    Task = "Ensure 'MSS: (EnableICMPRedirect) Allow ICMP redirects to override OSPF generated routes' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8854,7 +8886,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-138"
-    Task = "(L1) Ensure 'MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from WINS servers' is set to 'Enabled'"
+    Task = "Ensure 'MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from WINS servers' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8890,7 +8922,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-139"
-    Task = "(L1) Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'"
+    Task = "Ensure 'Network security: Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8926,7 +8958,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-140"
-    Task = "(L1) Ensure 'Network security: LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM&NTLM'"
+    Task = "Ensure 'Network security: LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM&NTLM'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8962,7 +8994,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-141"
-    Task = "(L1) Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) clients' is set to 'Require NTLMv2 session security, Require 128-bit encryption'"
+    Task = "Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) clients' is set to 'Require NTLMv2 session security, Require 128-bit encryption'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8998,7 +9030,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-142"
-    Task = "(L1) Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) servers' is set to 'Require NTLMv2 session security, Require 128-bit encryption'"
+    Task = "Ensure 'Network security: Minimum session security for NTLM SSP based (including secure RPC) servers' is set to 'Require NTLMv2 session security, Require 128-bit encryption'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9034,7 +9066,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-143"
-    Task = "(L1) Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
+    Task = "Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9070,7 +9102,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-144"
-    Task = "(L1) Ensure 'Turn off picture password sign-in' is set to 'Enabled'"
+    Task = "Ensure 'Turn off picture password sign-in' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9106,7 +9138,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-145"
-    Task = "(L1) Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'"
+    Task = "Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9142,7 +9174,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-150"
-    Task = "(L1) Ensure 'Accounts: Limit local account use of blank passwords to console logon only' is set to 'Enabled'"
+    Task = "Ensure 'Accounts: Limit local account use of blank passwords to console logon only' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9250,7 +9282,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-153"
-    Task = "(L1) Ensure 'Require a password when a computer wakes (on battery)' is set to 'Enabled'"
+    Task = "Ensure 'Require a password when a computer wakes (on battery)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9286,7 +9318,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-154"
-    Task = "(L1) Ensure 'Require a password when a computer wakes (plugged in)' is set to 'Enabled'"
+    Task = "Ensure 'Require a password when a computer wakes (plugged in)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9682,7 +9714,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-165"
-    Task = "(L1) Ensure 'Turn on PowerShell Script Block Logging' is set to 'Enabled'"
+    Task = "Ensure 'Turn on PowerShell Script Block Logging' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9718,7 +9750,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-166 A"
-    Task = "(HD) Ensure 'Turn on Script Execution' is set to 'Enabled: Allow only signed scripts'. "
+    Task = "Ensure 'Turn on Script Execution' is set to 'Enabled: Allow only signed scripts'. "
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9826,7 +9858,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-168"
-    Task = "(L1) Ensure 'Configure Offer Remote Assistance' is set to 'Disabled'"
+    Task = "Ensure 'Configure Offer Remote Assistance' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9862,7 +9894,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-169"
-    Task = "(L1) Ensure 'Configure Solicited Remote Assistance' is set to 'Disabled'"
+    Task = "Ensure 'Configure Solicited Remote Assistance' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9898,7 +9930,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-170"
-    Task = "(L2) Ensure 'Allow users to connect remotely by using Remote Desktop Services' set to 'Disabled'"
+    Task = "Ensure 'Allow users to connect remotely by using Remote Desktop Services' set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9934,7 +9966,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-172"
-    Task = "(L1) Ensure 'Remote host allows delegation of non-exportable credentials' is set to 'Enabled'"
+    Task = "Ensure 'Remote host allows delegation of non-exportable credentials' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10006,7 +10038,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-174"
-    Task = "(L1) Ensure 'Do not allow passwords to be saved' is set to 'Enabled'"
+    Task = "Ensure 'Do not allow passwords to be saved' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10150,7 +10182,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-178"
-    Task = "(L1) Ensure 'Do not allow drive redirection' is set to 'Enabled'"
+    Task = "Ensure 'Do not allow drive redirection' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10186,7 +10218,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-179"
-    Task = "(L1) Ensure 'Always prompt for password upon connection' is set to 'Enabled'"
+    Task = "Ensure 'Always prompt for password upon connection' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10258,7 +10290,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-181"
-    Task = "(L1) Ensure 'Require secure RPC communication' is set to 'Enabled'"
+    Task = "Ensure 'Require secure RPC communication' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10294,7 +10326,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-182"
-    Task = "(L1) Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'"
+    Task = "Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10330,7 +10362,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-183"
-    Task = "(L1) Ensure 'Require user authentication for remote connections by using Network Level Authentication' is set to 'Enabled'"
+    Task = "Ensure 'Require user authentication for remote connections by using Network Level Authentication' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10366,7 +10398,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-184"
-    Task = "(L1) Ensure 'Set client connection encryption level' is set to 'Enabled: High Level'"
+    Task = "Ensure 'Set client connection encryption level' is set to 'Enabled: High Level'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10402,7 +10434,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-187"
-    Task = "(L1) Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'"
+    Task = "Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10438,7 +10470,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-188"
-    Task = "(L2) Ensure 'Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider' is set to 'Disabled'"
+    Task = "Ensure 'Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10477,6 +10509,13 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn off Inventory Collector' is set to 'Enabled'"
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableInventory" `
@@ -10513,6 +10552,13 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn off Steps Recorder' is set to 'Enabled'"
     Test = {
         try {
+            $status = (get-service -name pcasvc).Status
+            if($status -ne "Stopped"){
+                return @{
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\AppCompat" `
                 -Name "DisableUAR" `
@@ -10554,6 +10600,15 @@ $windefrunning = CheckWindefRunning
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
+            $saferClients = @("*Server*","*Education*","*Enterprise*")
+            $productname = Get-ComputerInfo | select -ExpandProperty OsName
+            if (($productname -notcontains $saferClients) -and ($regValue -eq 1)){
+                return @{
+                    Message = "Registry value is '$regValue'. Your OS $productname does not support 'Diagnostic data off'."
+                    Status = "Warning"
+                }
+            }
+
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
@@ -10726,7 +10781,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-194"
-    Task = "(L1) Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
+    Task = "Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10762,7 +10817,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-195"
-    Task = "(L1) Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
+    Task = "Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10798,7 +10853,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-196"
-    Task = "(L1) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
+    Task = "Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10834,7 +10889,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-197"
-    Task = "(L1) Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
+    Task = "Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10870,7 +10925,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-198"
-    Task = "(L1) Ensure 'Turn off multicast name resolution' is set to 'Enabled'"
+    Task = "Ensure 'Turn off multicast name resolution' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10906,7 +10961,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-199"
-    Task = "(L1) Ensure 'Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services' is set to 'Disabled'"
+    Task = "Ensure 'Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10942,7 +10997,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-200"
-    Task = "(L1) Ensure 'Turn off Microsoft consumer experiences' is set to 'Enabled'"
+    Task = "Ensure 'Turn off Microsoft consumer experiences' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10978,7 +11033,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-201"
-    Task = "(L1) Ensure 'Turn off heap termination on corruption' is set to 'Disabled'"
+    Task = "Ensure 'Turn off heap termination on corruption' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11014,7 +11069,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-202"
-    Task = "(L1) Ensure 'Turn off shell protocol protected mode' is set to 'Disabled'"
+    Task = "Ensure 'Turn off shell protocol protected mode' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11050,7 +11105,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-203"
-    Task = "(L1) Ensure 'Prevent downloading of enclosures' is set to 'Enabled'"
+    Task = "Ensure 'Prevent downloading of enclosures' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11086,7 +11141,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-204"
-    Task = "(L1) Ensure 'Allow indexing of encrypted files' is set to 'Disabled'"
+    Task = "Ensure 'Allow indexing of encrypted files' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11122,7 +11177,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-205"
-    Task = "(L1) Ensure 'Enables or disables Windows Game Recording and Broadcasting' is set to 'Disabled'"
+    Task = "Ensure 'Enables or disables Windows Game Recording and Broadcasting' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11158,7 +11213,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-206"
-    Task = "(L1) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
+    Task = "Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11194,7 +11249,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-207"
-    Task = "(L1) Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
+    Task = "Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11230,7 +11285,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-209"
-    Task = "(L1) Ensure 'System objects: Require case insensitivity for non-Windows subsystems' is set to 'Enabled'"
+    Task = "Ensure 'System objects: Require case insensitivity for non-Windows subsystems' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11266,7 +11321,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-210"
-    Task = "(L1) Ensure 'System objects: Strengthen default permissions of internal system objects (e.g. Symbolic Links)' is set to 'Enabled'"
+    Task = "Ensure 'System objects: Strengthen default permissions of internal system objects (e.g. Symbolic Links)' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11302,7 +11357,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-211"
-    Task = "(L1) Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver (recommended)'"
+    Task = "Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver (recommended)'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11338,7 +11393,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-212"
-    Task = "(L1) Ensure 'Configure SMB v1 server' is set to 'Disabled'"
+    Task = "Ensure 'Configure SMB v1 server' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11374,79 +11429,105 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-213"
-    Task = "(L1) Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
+    Task = "Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
-                -Name "RequireSecuritySignature" `
-                | Select-Object -ExpandProperty "RequireSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbClientConfiguration).RequireSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "RequireSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+            try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Name "RequireSecuritySignature" `
+                | Select-Object -ExpandProperty "RequireSecuritySignature"
+                
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Status = "False"
+                    }
+                }
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
 [AuditTest] @{
     Id = "Medium-214"
-    Task = "(L1) Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'"
+    Task = "Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
-                -Name "EnableSecuritySignature" `
-                | Select-Object -ExpandProperty "EnableSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbClientConfiguration).EnableSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+            try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                -Name "EnableSecuritySignature" `
+                | Select-Object -ExpandProperty "EnableSecuritySignature"
+                
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Expected: 1"
+                        Status = "False"
+                    }
+                }
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
 [AuditTest] @{
     Id = "Medium-215"
-    Task = "(L1) Ensure 'Microsoft network client: Send unencrypted password to third-party SMB servers' is set to 'Disabled'"
+    Task = "Ensure 'Microsoft network client: Send unencrypted password to third-party SMB servers' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11482,7 +11563,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-216"
-    Task = "(L1) Ensure 'Microsoft network server: Amount of idle time required before suspending session' is set to '15 or fewer minute(s), but not 0'"
+    Task = "Ensure 'Microsoft network server: Amount of idle time required before suspending session' is set to '15 or fewer minute(s), but not 0'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11518,79 +11599,93 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-217"
-    Task = "(L1) Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'"
+    Task = "Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
-                -Name "RequireSecuritySignature" `
-                | Select-Object -ExpandProperty "RequireSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "RequireSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+                       try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Name "RequireSecuritySignature" `
+                | Select-Object -ExpandProperty "RequireSecuritySignature"
+                
+                return @{
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Status = "Warning"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
 [AuditTest] @{
     Id = "Medium-218"
-    Task = "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'"
+    Task = "Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
-                -Name "EnableSecuritySignature" `
-                | Select-Object -ExpandProperty "EnableSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if((Get-SmbServerConfiguration -ErrorAction Stop).EnableSecuritySignature -ne $True){
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "EnableSecuritySignature is not set to True"
                     Status = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+        catch {
+            try{
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters" `
+                -Name "EnableSecuritySignature" `
+                | Select-Object -ExpandProperty "EnableSecuritySignature"
+                
+                return @{
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Status = "Warning"
+                }
             }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
         }
     }
 }
 [AuditTest] @{
     Id = "Medium-219"
-    Task = "(L1) Ensure 'Prevent enabling lock screen camera' is set to 'Enabled'"
+    Task = "Ensure 'Prevent enabling lock screen camera' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11626,7 +11721,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-220"
-    Task = "(L1) Ensure 'Prevent enabling lock screen slide show' is set to 'Enabled'"
+    Task = "Ensure 'Prevent enabling lock screen slide show' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11698,7 +11793,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-222"
-    Task = "(L1) Ensure 'Turn off app notifications on the lock screen' is set to 'Enabled'"
+    Task = "Ensure 'Turn off app notifications on the lock screen' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11806,7 +11901,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-225"
-    Task = "(L1) Ensure 'Interactive logon: Machine inactivity limit' is set to '900 or fewer second(s), but not 0'"
+    Task = "Ensure 'Interactive logon: Machine inactivity limit' is set to '900 or fewer second(s), but not 0'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11842,7 +11937,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-226"
-    Task = "(L1) Ensure 'Enable screen saver' is set to 'Enabled'"
+    Task = "Ensure 'Enable screen saver' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11878,7 +11973,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-227"
-    Task = "(L1) Ensure 'Password protect the screen saver' is set to 'Enabled'"
+    Task = "Ensure 'Password protect the screen saver' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11914,7 +12009,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-228"
-    Task = "(L1) Ensure 'Screen saver timeout' is set to 'Enabled: 900 seconds or fewer, but not 0'"
+    Task = "Ensure 'Screen saver timeout' is set to 'Enabled: 900 seconds or fewer, but not 0'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11950,7 +12045,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-229"
-    Task = "(L1) Ensure 'Turn off toast notifications on the lock screen' is set to 'Enabled'"
+    Task = "Ensure 'Turn off toast notifications on the lock screen' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11986,7 +12081,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-230"
-    Task = "(L1) Ensure 'Do not suggest third-party content in Windows spotlight' is set to 'Enabled'"
+    Task = "Ensure 'Do not suggest third-party content in Windows spotlight' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12058,7 +12153,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-254"
-    Task = "(L1) Ensure 'Allow Basic authentication' is set to 'Disabled' (Client)"
+    Task = "Ensure 'Allow Basic authentication' is set to 'Disabled' (Client)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12094,7 +12189,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-255"
-    Task = "(L1) Ensure 'Allow unencrypted traffic' is set to 'Disabled' (Client)"
+    Task = "Ensure 'Allow unencrypted traffic' is set to 'Disabled' (Client)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12130,7 +12225,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-256"
-    Task = "(L1) Ensure 'Disallow Digest authentication' is set to 'Enabled'"
+    Task = "Ensure 'Disallow Digest authentication' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12166,7 +12261,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-257"
-    Task = "(L1) Ensure 'Allow Basic authentication' is set to 'Disabled' (Service)"
+    Task = "Ensure 'Allow Basic authentication' is set to 'Disabled' (Service)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12202,7 +12297,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-258"
-    Task = "(L1) Ensure 'Allow unencrypted traffic' is set to 'Disabled' (Service)"
+    Task = "Ensure 'Allow unencrypted traffic' is set to 'Disabled' (Service)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12238,7 +12333,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-259"
-    Task = "(L1) Ensure 'Disallow WinRM from storing RunAs credentials' is set to 'Enabled'"
+    Task = "Ensure 'Disallow WinRM from storing RunAs credentials' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12274,7 +12369,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-260"
-    Task = "(L2) Ensure 'Allow Remote Shell Access' is set to 'Disabled'"
+    Task = "Ensure 'Allow Remote Shell Access' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12310,7 +12405,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Medium-261"
-    Task = "(L1) Ensure 'Allow Cortana' is set to 'Disabled'"
+    Task = "Ensure 'Allow Cortana' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12454,7 +12549,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Low-002"
-    Task = "(L2) Ensure 'Turn off location' is set to 'Enabled'."
+    Task = "Ensure 'Turn off location' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12526,7 +12621,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Low-004"
-    Task = "(L2) Ensure 'Turn off Windows Location Provider' is set to 'Enabled'"
+    Task = "Ensure 'Turn off Windows Location Provider' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12562,7 +12657,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Low-005"
-    Task = "(L2) Ensure 'Turn off access to the Store' is set to 'Enabled'"
+    Task = "Ensure 'Turn off access to the Store' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -12598,7 +12693,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Low-006"
-    Task = "(L2) Ensure 'Turn off the Store application' is set to 'Enabled'"
+    Task = "Ensure 'Turn off the Store application' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
