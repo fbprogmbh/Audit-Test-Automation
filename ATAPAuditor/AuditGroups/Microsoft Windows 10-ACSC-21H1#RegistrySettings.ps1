@@ -2872,7 +2872,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-049 A"
-    Task = "(L1) Ensure 'Configure Automatic Updates' is set to 'Enabled'"
+    Task = "Ensure 'Configure Automatic Updates' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2944,7 +2944,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "High-049 C"
-    Task = "(L1) Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"
+    Task = "Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2983,34 +2983,49 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure Automatic Updates' is configured 'Install updates for other Microsoft products'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
-                -Name "AllowMUUpdateService" `
-                | Select-Object -ExpandProperty "AllowMUUpdateService"
-        
-            if (($regValue -ne 1)) {
+            $regValue1 = Get-ItemProperty -ErrorAction SilentlyContinue `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services" `
+                -Name "DefaultService" `
+                | Select-Object -ExpandProperty "DefaultService"
+            $regValue2 = Get-ItemProperty -ErrorAction SilentlyContinue `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services\7971F918-A847-4430-9279-4A52D1EFE18D" `
+                -Name "RegisteredWithAU" `
+                | Select-Object -ExpandProperty "RegisteredWithAU"
+            if ($regValue1 -eq "7971f918-a847-4430-9279-4a52d1efe18d" -and $regValue2 -eq 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
-                    Status = "False"
+                    Message = "Compliant"
+                    Status = "True"
                 }
             }
         }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
+        catch [System.Management.Automation.PSArgumentException],[System.Management.Automation.ItemNotFoundException] {
+                $regValue3 = Get-ItemProperty -ErrorAction SilentlyContinue `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
+                    -Name "AllowMUUpdateService" `
+                    | Select-Object -ExpandProperty "AllowMUUpdateService"
+                $regValue4 = Get-ItemProperty -ErrorAction SilentlyContinue `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
+                    -Name "NoAutoUpdate" `
+                    | Select-Object -ExpandProperty "NoAutoUpdate"
+                if ($regValue3 -eq 1 -and $regValue4 -eq 0) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            
         }
         
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = "At least one of the following ways aren't configured correctly. <br>
+            Configure these to paths to get compliance: <br>
+            HKEY_LOCAL_MACHINE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services::DefaultService = 7971f918-a847-4430-9279-4a52d1efe18d <br>
+            HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services\7971F918-A847-4430-9279-4A52D1EFE18D::RegisteredWithAU = 1 <br>
+            OR configure these: <br>
+            HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU::AllowMUUpdateService = 1 <br>
+            HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU::NoAutoUpdate = 0
+            "
+            Status = "False"
         }
     }
 }
