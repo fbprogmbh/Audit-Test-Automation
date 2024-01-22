@@ -152,21 +152,23 @@
                 -Name "DefaultJavaScriptJitSetting" `
                 | Select-Object -ExpandProperty "DefaultJavaScriptJitSetting"
         
-            return @{
-                Message = "Registry value found."
-                Status = "False"
+            if (($regValue -ne 2)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Status = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Compliant. Registry value not found."
-                Status = "True"
+                Message = "Registry value not found."
+                Status = "False"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Compliant. Registry key not found."
-                Status = "True"
+                Message = "Registry key not found."
+                Status = "False"
             }
         }
         
