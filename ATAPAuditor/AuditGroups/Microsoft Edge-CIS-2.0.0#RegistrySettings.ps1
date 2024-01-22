@@ -144,7 +144,7 @@
 }
 [AuditTest] @{
     Id = "1.3.4"
-    Task = "(L2) Ensure 'Control use of JavaScript JIT' is set to 'Disabled'"
+    Task = "(L2) Ensure 'Control use of JavaScript JIT' is set to 'Enabled: Do not allow any site to run JavaScript JIT'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -322,6 +322,42 @@
 }
 [AuditTest] @{
     Id = "1.3.9"
+    Task = "(L1) Ensure 'Default automatic downloads setting' is set to 'Enabled: Don´t allow any website to perform automatic downloads'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "DefaultAutomaticDownloadsSetting" `
+                | Select-Object -ExpandProperty "DefaultAutomaticDownloadsSetting"
+        
+            if (($regValue -ne 2)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.3.10"
     Task = "(L1) Ensure 'Default geolocation setting' is set to 'Enabled: Don't allow any site to track users physical location'"
     Test = {
         try {
@@ -537,6 +573,78 @@
     }
 }
 [AuditTest] @{
+    Id = "1.8.1"
+    Task = "(L1) Ensure 'Enable the linked account feature' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "LinkedAccountEnabled" `
+                | Select-Object -ExpandProperty "LinkedAccountEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.8.2"
+    Task = "(L1) Ensure 'Guided Switch Enabled' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "GuidedSwitchEnabled" `
+                | Select-Object -ExpandProperty "GuidedSwitchEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "1.13.1"
     Task = "(L1) Ensure 'Enable saving passwords to the password manager' is set to 'Disabled'"
     Test = {
@@ -610,7 +718,7 @@
 }
 [AuditTest] @{
     Id = "1.17.1"
-    Task = "(L1) Ensure 'Specifies whether to allow insecure websites to make requests to more-private network endpoints' is set to 'Disabled'"
+    Task = "(L1) Ensure 'Specifies whether to allow websites to make requests to more-private network endpoints' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -686,7 +794,7 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge" `
                 -Name "SmartScreenPuaEnabled" `
                 | Select-Object -ExpandProperty "SmartScreenPuaEnabled"
         
@@ -830,7 +938,7 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge" `
                 -Name "PreventSmartScreenPromptOverrideForFiles" `
                 | Select-Object -ExpandProperty "PreventSmartScreenPromptOverrideForFiles"
         
@@ -1006,7 +1114,7 @@
 }
 [AuditTest] @{
     Id = "1.26"
-    Task = "(L2) Ensure 'Allow file selection dialog' is set to 'Disabled'"
+    Task = "(L2) Ensure 'Allow file selection dialogs' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1078,6 +1186,42 @@
 }
 [AuditTest] @{
     Id = "1.28"
+    Task = "(L1) Ensure 'Allow import of data from other browsers on each Microsoft Edge launch' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "ImportOnEachLaunch" `
+                | Select-Object -ExpandProperty "ImportOnEachLaunch"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.29"
     Task = "(L1) Ensure 'Allow importing of autofill form data' is set to 'Disabled'"
     Test = {
         try {
@@ -1113,7 +1257,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.29"
+    Id = "1.30"
     Task = "(L1) Ensure 'Allow importing of browser settings' is set to 'Disabled'"
     Test = {
         try {
@@ -1149,7 +1293,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.30"
+    Id = "1.31"
     Task = "(L1) Ensure 'Allow importing of home page settings' is set to 'Disabled'"
     Test = {
         try {
@@ -1185,7 +1329,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.31"
+    Id = "1.32"
     Task = "(L1) Ensure 'Allow importing of payment info' is set to 'Disabled'"
     Test = {
         try {
@@ -1221,7 +1365,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.32"
+    Id = "1.33"
     Task = "(L1) Ensure 'Allow importing of saved passwords' is set to 'Disabled'"
     Test = {
         try {
@@ -1257,7 +1401,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.33"
+    Id = "1.34"
     Task = "(L1) Ensure 'Allow importing of search engine settings' is set to 'Disabled'"
     Test = {
         try {
@@ -1293,7 +1437,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.34"
+    Id = "1.35"
     Task = "(L1) Ensure 'Allow managed extensions to use the Enterprise Hardware Platform API' is set to 'Disabled'"
     Test = {
         try {
@@ -1329,7 +1473,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.35"
+    Id = "1.36"
     Task = "(L2) Ensure 'Allow or block audio capture' is set to 'Disabled'"
     Test = {
         try {
@@ -1365,7 +1509,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.36"
+    Id = "1.37"
     Task = "(L2) Ensure 'Allow or block video capture' is set to 'Disabled'"
     Test = {
         try {
@@ -1401,7 +1545,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.37"
+    Id = "1.38"
     Task = "(L2) Ensure 'Allow or deny screen capture' is set to 'Disabled'"
     Test = {
         try {
@@ -1437,8 +1581,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.38"
-    Task = "(L1) Ensure 'Allow personalization of ads search and news by sending browsing history to Microsoft' is set to 'Disabled'"
+    Id = "1.39"
+    Task = "(L1) Ensure 'Allow personalization of ads, Microsoft Edge, search, news and other Microsoft services by sending browsing history, favorites and collections, usage and other browsing data to Microsoft' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1473,7 +1617,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.39"
+    Id = "1.40"
     Task = "(L1) Ensure 'Allow queries to a Browser Network Time service' is set to 'Enabled'"
     Test = {
         try {
@@ -1509,7 +1653,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.40"
+    Id = "1.41"
     Task = "(L1) Ensure 'Allow remote debugging' is set to 'Disabled'"
     Test = {
         try {
@@ -1517,42 +1661,6 @@
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
                 -Name "RemoteDebuggingAllowed" `
                 | Select-Object -ExpandProperty "RemoteDebuggingAllowed"
-        
-            if (($regValue -ne 0)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "1.41"
-    Task = "(L2) Ensure 'Allow suggestions from local providers' is set to 'Disabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
-                -Name "LocalProvidersEnabled" `
-                | Select-Object -ExpandProperty "LocalProvidersEnabled"
         
             if (($regValue -ne 0)) {
                 return @{
@@ -2086,6 +2194,78 @@
 }
 [AuditTest] @{
     Id = "1.56"
+    Task = "(L1) Ensure 'Clear history for IE and IE mode every time you exit' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "InternetExplorerModeclearDataOnExitEnabled" `
+                | Select-Object -ExpandProperty "InternetExplorerModeclearDataOnExitEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.57"
+    Task = "(L1) Ensure 'Configure browser process code integrity guard setting' is set to 'Enabled: Enable code integrity guard enforcement in the browser process'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "browserCodeIntegritySetting" `
+                | Select-Object -ExpandProperty "browserCodeIntegritySetting"
+        
+            if (($regValue -ne 2)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.58"
     Task = "(L1) Ensure 'Configure InPrivate mode availability' is set to 'Enabled: InPrivate mode disabled'"
     Test = {
         try {
@@ -2121,7 +2301,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.57"
+    Id = "1.59"
     Task = "(L2) Ensure 'Configure Online Text To Speech' is set to 'Disabled'"
     Test = {
         try {
@@ -2157,8 +2337,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.58"
-    Task = "(L2) Ensure 'Configure Related Matches in Find on Page' is set to 'Disabled'"
+    Id = "1.60"
+    Task = "(L1) Ensure 'Configure Related Matches in Find on Page' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2193,7 +2373,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.59"
+    Id = "1.61"
     Task = "(L2) Ensure 'Configure Speech Recognition' is set to 'Disabled'"
     Test = {
         try {
@@ -2229,7 +2409,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.60"
+    Id = "1.62"
     Task = "(L1) Ensure 'Configure the list of names that will bypass the HSTS policy check' is set to 'Disabled'"
     Test = {
         try {
@@ -2263,7 +2443,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.61 A"
+    Id = "1.63 A"
     Task = "(L1) Ensure 'Configure the list of types that are excluded from synchronization' is set to 'Enabled' (passwords)"
     Test = {
         try {
@@ -2299,7 +2479,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.61 B"
+    Id = "1.63 B"
     Task = "(L2) Ensure 'Configure the list of types that are excluded from synchronization' is set to 'Enabled' (settings)"
     Test = {
         try {
@@ -2335,7 +2515,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.61 C"
+    Id = "1.63 C"
     Task = " (L2) Ensure 'Configure the list of types that are excluded from synchronization' is set to 'Enabled' (favorites)"
     Test = {
         try {
@@ -2371,7 +2551,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.61 D"
+    Id = "1.63 D"
     Task = "(L2) Ensure 'Configure the list of types that are excluded from synchronization' is set to 'Enabled' (addressesAndMore)"
     Test = {
         try {
@@ -2407,7 +2587,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.61 E"
+    Id = "1.63 E"
     Task = "(L2) Ensure 'Configure the list of types that are excluded from synchronization' is set to 'Enabled' (extensions)"
     Test = {
         try {
@@ -2443,7 +2623,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.61 F"
+    Id = "1.63 F"
     Task = "(L2) Ensure 'Configure the list of types that are excluded from synchronization' is set to 'Enabled' (collections)"
     Test = {
         try {
@@ -2479,7 +2659,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.62"
+    Id = "1.64"
     Task = "(L1) Ensure 'Configure the Share experience' is set to 'Enabled: Don't allow using the Share experience'"
     Test = {
         try {
@@ -2515,7 +2695,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.63"
+    Id = "1.65"
     Task = "(L1) Ensure 'Configure whether form data and HTTP headers will be sent when entering or exiting Internet Explorer mode' is set to 'Enabled: Do not send form data or headers'"
     Test = {
         try {
@@ -2551,7 +2731,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.64"
+    Id = "1.66"
     Task = "(L1) Ensure 'Continue running background apps after Microsoft Edge closes' is set to 'Disabled'"
     Test = {
         try {
@@ -2587,7 +2767,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.65"
+    Id = "1.67"
     Task = "(L1) Ensure 'Control communication with the Experimentation and Configuration Service' is set to 'Enabled: Disable communication with the Experimentation and Configuration Service'"
     Test = {
         try {
@@ -2623,7 +2803,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.66"
+    Id = "1.68"
     Task = "(L2) Ensure 'Control use of the Headless Mode' is set to 'Disabled'"
     Test = {
         try {
@@ -2659,7 +2839,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.67"
+    Id = "1.69"
     Task = "(L2) Ensure 'Control use of the Serial API' is set to 'Enable: Do not allow any site to request access to serial ports via the Serial API'"
     Test = {
         try {
@@ -2695,7 +2875,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.68"
+    Id = "1.70"
     Task = "(L2) Ensure 'Control where security restrictions on insecure origins apply' is set to 'Disabled'"
     Test = {
         try {
@@ -2729,7 +2909,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.69"
+    Id = "1.71"
     Task = "(L2) Ensure 'Default sensor setting' is set to 'Enabled: Do not allow any site to access sensors'"
     Test = {
         try {
@@ -2765,7 +2945,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.70"
+    Id = "1.72"
     Task = "(L1) Ensure 'Delete old browser data on migration' is set to 'Disabled'"
     Test = {
         try {
@@ -2801,7 +2981,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.71"
+    Id = "1.73"
     Task = "(L1) Ensure 'Disable saving browser history' is set to 'Disabled'"
     Test = {
         try {
@@ -2837,7 +3017,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.72"
+    Id = "1.74"
     Task = "(L1) Ensure 'Disable synchronization of data using Microsoft sync services' is set to 'Enabled'"
     Test = {
         try {
@@ -2873,7 +3053,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.73"
+    Id = "1.75"
     Task = "(L1) Ensure 'DNS interception checks enabled' is set to 'Enabled'"
     Test = {
         try {
@@ -2909,7 +3089,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.74"
+    Id = "1.76"
     Task = "(L1) Ensure 'Enable AutoFill for addresses' is set to 'Disabled'"
     Test = {
         try {
@@ -2945,7 +3125,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.75"
+    Id = "1.77"
     Task = "(L1) Ensure 'Enable AutoFill for payment instructions' is set to 'Disabled'"
     Test = {
         try {
@@ -2981,12 +3161,12 @@
     }
 }
 [AuditTest] @{
-    Id = "1.76"
+    Id = "1.78"
     Task = "(L1) Ensure 'Enable browser legacy extension point blocking' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge" `
                 -Name "BrowserLegacyExtensionPointsBlockingEnabled" `
                 | Select-Object -ExpandProperty "BrowserLegacyExtensionPointsBlockingEnabled"
         
@@ -3017,7 +3197,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.77"
+    Id = "1.79"
     Task = "(L1) Ensure 'Enable component updates in Microsoft Edge' is set to 'Enabled'"
     Test = {
         try {
@@ -3053,7 +3233,43 @@
     }
 }
 [AuditTest] @{
-    Id = "1.78"
+    Id = "1.80"
+    Task = "(L1) Ensure 'Enable CryptoWallet feature' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "CryptoWalletEnabled" `
+                | Select-Object -ExpandProperty "CryptoWalletEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.81"
     Task = "(L1) Ensure 'Enable deleting browser and download history' is set to 'Disabled'"
     Test = {
         try {
@@ -3089,7 +3305,79 @@
     }
 }
 [AuditTest] @{
-    Id = "1.79"
+    Id = "1.82"
+    Task = "(L1) Ensure 'Enable Discover access to page contents for AAD profiles' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "DiscoverPageContextenabled" `
+                | Select-Object -ExpandProperty "DiscoverPageContextenabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.83"
+    Task = "(L2) Ensure 'Enable Drop feature in Microsoft Edge' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "EdgeEdropenabled" `
+                | Select-Object -ExpandProperty "EdgeEdropenabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.84"
     Task = "(L1) Ensure 'Enable Follow service in Microsoft Edge' is set to 'Disabled'"
     Test = {
         try {
@@ -3125,7 +3413,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.80"
+    Id = "1.85"
     Task = "(L1) Ensure 'Enable globally scoped HTTP auth cache' is set to 'Disabled'"
     Test = {
         try {
@@ -3161,7 +3449,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.81"
+    Id = "1.86"
     Task = "(L2) Ensure 'Enable guest mode' is set to 'Disabled'"
     Test = {
         try {
@@ -3197,7 +3485,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.82"
+    Id = "1.87"
     Task = "(L1) Ensure 'Enable network prediction' is set to 'Enabled: Don't predict network actions on any network connection'"
     Test = {
         try {
@@ -3233,7 +3521,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.83"
+    Id = "1.88"
     Task = "(L1) Ensure 'Enable profile creation from the Identity flyout menu or the Settings page' is set to 'Disabled'"
     Test = {
         try {
@@ -3269,7 +3557,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.84"
+    Id = "1.89"
     Task = "(L1) Ensure 'Enable renderer code integrity' is set to 'Enabled'"
     Test = {
         try {
@@ -3305,7 +3593,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.85"
+    Id = "1.90"
     Task = "(L1) Ensure 'Enable resolution of navigation errors using a web service' is set to 'Disabled'"
     Test = {
         try {
@@ -3341,7 +3629,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.86"
+    Id = "1.91"
     Task = "(L2) Ensure 'Enable Search suggestions' is set to 'Disabled'"
     Test = {
         try {
@@ -3377,7 +3665,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.87"
+    Id = "1.92"
     Task = "(L1) Ensure 'Enable security warnings for command-line flags' is set to 'Enabled'"
     Test = {
         try {
@@ -3413,7 +3701,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.88"
+    Id = "1.93"
     Task = "(L1) Ensure 'Enable site isolation for every site' is set to 'Enabled'"
     Test = {
         try {
@@ -3449,7 +3737,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.89"
+    Id = "1.94"
     Task = "(L2) Ensure 'Enable Translate' is set to 'Disabled'"
     Test = {
         try {
@@ -3485,43 +3773,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.90"
-    Task = "(L1) Ensure 'Enable travel assistance' is set to 'Disabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
-                -Name "TravelAssistanceEnabled" `
-                | Select-Object -ExpandProperty "TravelAssistanceEnabled"
-        
-            if (($regValue -ne 0)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "1.91"
+    Id = "1.95"
     Task = "(L1) Ensure 'Enable use of ephemeral profiles' is set to 'Disabled'"
     Test = {
         try {
@@ -3557,7 +3809,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.92"
+    Id = "1.96"
     Task = "(L1) Ensure 'Enable warnings for insecure forms' is set to 'Enabled'"
     Test = {
         try {
@@ -3593,7 +3845,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.93"
+    Id = "1.97"
     Task = "(L2) Ensure 'Enforce Bing SafeSearch' is set to 'Enabled: Configure moderate search restrictions in Bing'"
     Test = {
         try {
@@ -3629,7 +3881,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.94"
+    Id = "1.98"
     Task = "(L2) Ensure 'Enforce Google SafeSearch' is set to 'Enabled'"
     Test = {
         try {
@@ -3665,7 +3917,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.95"
+    Id = "1.99"
     Task = "(L1) Ensure 'Enhance the security state in Microsoft Edge' is set to 'Enabled: Balanced mode'"
     Test = {
         try {
@@ -3701,7 +3953,43 @@
     }
 }
 [AuditTest] @{
-    Id = "1.96"
+    Id = "1.100"
+    Task = "(L2) Ensure 'Enhanced Security Mode configuration for Intranet zone sites' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "EnhanceSecurityModeBypassIntranet" `
+                | Select-Object -ExpandProperty "EnhanceSecurityModeBypassIntranet"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.101"
     Task = "(L1) Ensure 'Hide the First-run experience and splash screen' is set to 'Enabled'"
     Test = {
         try {
@@ -3737,7 +4025,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.97"
+    Id = "1.102"
     Task = "(L1) Ensure 'In-app support Enabled' is set to 'Disabled'"
     Test = {
         try {
@@ -3773,7 +4061,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.98"
+    Id = "1.103"
     Task = "(L2) Ensure 'Let users snip a Math problem and get the solution with a step-by-step explanation in Microsoft Edge' is set to 'Disabled'"
     Test = {
         try {
@@ -3809,7 +4097,43 @@
     }
 }
 [AuditTest] @{
-    Id = "1.99"
+    Id = "1.104"
+    Task = "(L2) Ensure 'Live captions allowed' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "LiveCaptionsAllowed" `
+                | Select-Object -ExpandProperty "LiveCaptionsAllowed"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.105"
     Task = "(L1) Ensure 'Manage exposure of local IP addresses by WebRTC' is set to 'Disabled'"
     Test = {
         try {
@@ -3843,7 +4167,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.100"
+    Id = "1.106"
     Task = "(L1) Ensure 'Notify a user that a browser restart is recommended or required for pending updates' is set to 'Enabled: Required - Show a recurring prompt to the user indicating that a restart is required'"
     Test = {
         try {
@@ -3879,7 +4203,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.101"
+    Id = "1.107"
     Task = "(L1) Ensure 'Restrict exposure of local IP address by WebRTC' is set to 'Enabled: Allow public interface over http default route. This doesn't expose the local IP address'"
     Test = {
         try {
@@ -3915,7 +4239,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.102"
+    Id = "1.108"
     Task = "(L1) Ensure 'Set disk cache size, in bytes' is set to 'Enabled: 250609664'"
     Test = {
         try {
@@ -3951,7 +4275,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.103"
+    Id = "1.109"
     Task = "(L1) Ensure 'Set the time period for update notifications' is set to 'Enabled: 86400000'"
     Test = {
         try {
@@ -3987,8 +4311,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.104"
-    Task = "(L2) Ensure 'Shopping in Microsoft Edge Enabled' is set to 'Disabled'"
+    Id = "1.110"
+    Task = "(L1) Ensure 'Shopping in Microsoft Edge Enabled' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4023,7 +4347,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.105"
+    Id = "1.111"
     Task = "(L2) Ensure 'Show an `"Always open`" checkbox in external protocol dialog' is set to 'Disabled'"
     Test = {
         try {
@@ -4059,8 +4383,8 @@
     }
 }
 [AuditTest] @{
-    Id = "1.106"
-    Task = "(L2) Ensure 'Show Microsoft Rewards experiences' is set to 'Disabled'"
+    Id = "1.112"
+    Task = "(L1) Ensure 'Show Microsoft Rewards experiences' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4095,12 +4419,12 @@
     }
 }
 [AuditTest] @{
-    Id = "1.107"
+    Id = "1.113"
     Task = "(L1) Ensure 'Show the Reload in Internet Explorer mode button in the toolbar' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge" `
                 -Name "InternetExplorerModeToolbarButtonEnabled" `
                 | Select-Object -ExpandProperty "InternetExplorerModeToolbarButtonEnabled"
         
@@ -4131,12 +4455,12 @@
     }
 }
 [AuditTest] @{
-    Id = "1.108"
+    Id = "1.114"
     Task = "(L1) Ensure 'Specifies whether SharedArrayBuffers can be used in a non cross-origin-isolated context' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge" `
                 -Name "SharedArrayBufferUnrestrictedAccessAllowed" `
                 | Select-Object -ExpandProperty "SharedArrayBufferUnrestrictedAccessAllowed"
         
@@ -4167,7 +4491,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.109"
+    Id = "1.115"
     Task = "(L2) Ensure 'Specify if online OCSP/CRL checks are required for local trust anchors' is set to 'Enabled'"
     Test = {
         try {
@@ -4203,7 +4527,79 @@
     }
 }
 [AuditTest] @{
-    Id = "1.110"
+    Id = "1.116"
+    Task = "(L2) Ensure 'Spell checking provided by Microsoft Editor' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "MicrosoftEditorProofingEnabled" `
+                | Select-Object -ExpandProperty "MicrosoftEditorProofingEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.117"
+    Task = "(L1) Ensure 'Standalone Sidebar Enabled' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "StandaloneHubsSidebarEnabled" `
+                | Select-Object -ExpandProperty "StandaloneHubsSidebarEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.118"
     Task = "(L1) Ensure 'Suggest similar pages when a webpage can’t be found' is set to 'Disabled'"
     Test = {
         try {
@@ -4239,7 +4635,7 @@
     }
 }
 [AuditTest] @{
-    Id = "1.111"
+    Id = "1.119"
     Task = "(L1) Ensure 'Suppress the unsupported OS warning' is set to 'Disabled'"
     Test = {
         try {
@@ -4247,6 +4643,114 @@
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
                 -Name "SuppressUnsupportedOSWarning" `
                 | Select-Object -ExpandProperty "SuppressUnsupportedOSWarning"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.120"
+    Task = "(L2) Ensure 'Tab Services enabled' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "TabservicesEnabled" `
+                | Select-Object -ExpandProperty "TabservicesEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.121"
+    Task = "(L2) Ensure 'Text prediction enabled by default' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "TextPredictionEnabled" `
+                | Select-Object -ExpandProperty "TextPredictionEnabled"
+        
+            if (($regValue -ne 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.122"
+    Task = "(L1) Ensure 'Wait for Internet Explorer mode tabs to completely unload before ending the browser session' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge" `
+                -Name "InternetExplorerIntegrationAlwayswaitForUnload" `
+                | Select-Object -ExpandProperty "InternetExplorerIntegrationAlwayswaitForUnload"
         
             if (($regValue -ne 0)) {
                 return @{
@@ -4287,6 +4791,42 @@
             if (($regValue -ne 1)) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "3.3.1"
+    Task = "(L1) Ensure 'Auto-update check period override' is set to any value except '0'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\EdgeUpdate" `
+                -Name "AutoUpdateCheckPeriodMinutes" `
+                | Select-Object -ExpandProperty "AutoUpdateCheckPeriodMinutes"
+        
+            if (($regValue -eq 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x != 0"
                     Status = "False"
                 }
             }
