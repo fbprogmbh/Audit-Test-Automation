@@ -22,7 +22,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Edge-CIS-1.1.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Edge-CIS-2.0.0#RegistrySettings"
 				}
 			)
 		}
