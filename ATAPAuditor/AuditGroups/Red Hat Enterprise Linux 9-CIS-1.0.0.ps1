@@ -1,4 +1,3 @@
-$parentPath = Split-Path -Parent -Path $PSScriptRoot
 $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
@@ -23,7 +22,7 @@ $retNonCompliantManualReviewRequired = @{
     Status = $rcFalse
 }
 
-$IPv6Status_script = grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable && echo  "IPv6 is enabled" || echo "IPv6 is not enabled"
+$IPv6Status_script = grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable && echo "IPv6 is enabled" || echo "IPv6 is not enabled"
 $IPv6Status = bash -c $IPv6Status_script
 if ($IPv6Status -match "is enabled") {
     $IPv6Status = "enabled"
@@ -44,7 +43,8 @@ if ($IPv6Status -match "is enabled") {
 {
     l_output="" l_output2=""
     l_mname="squashfs"
-    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
+    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | \
+        grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
         l_loadable="$(modprobe -n -v "$l_mname")"
         [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
         if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
@@ -90,7 +90,8 @@ if ($IPv6Status -match "is enabled") {
 {
     l_output="" l_output2=""
     l_mname="udf"
-    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
+    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | \
+        grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
         l_loadable="$(modprobe -n -v "$l_mname")"
         [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
         if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
@@ -2496,9 +2497,9 @@ if ($IPv6Status -match "is enabled") {
         fi
     fi
     if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n *PASS*\n$l_output"
+        echo -e "\n- Audit Result:\n PASS\n$l_output"
     else
-        echo -e "\n- Audit Result:\n *FAIL*\n$l_output2\n\n - Correctly set:\n$l_output"
+        echo -e "\n- Audit Result:\n FAIL\n$l_output2\n\n - Correctly set:\n$l_output"
     fi
 }
 '@
@@ -3265,7 +3266,13 @@ if ($IPv6Status -match "is enabled") {
     Id = "4.1.4.5"
     Task = "Ensure audit configuration files are 640 or more restrictive"
     Test = {
-        $result1 = find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) -exec stat -Lc "%n %a" {} + | grep -Pv -- '^\h*\H+\h*([0,2,4,6][0,4]0)\h*$'
+        $result1_string = @'
+#!/usr/bin/env bash
+{
+    find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) -exec stat -Lc "%n %a" {} + | grep -Pv -- '^\h*\H+\h*([0,2,4,6][0,4]0)\h*$'
+}
+'@
+        $result1 = bash -c $result1_string
         if ($result1 -eq $null) {
             return $retCompliant
         } else {
@@ -3278,7 +3285,13 @@ if ($IPv6Status -match "is enabled") {
     Id = "4.1.4.6"
     Task = "Ensure audit configuration files are owned by root"
     Test = {
-        $result1 = find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -user root
+        $result1_string = @'
+#!/usr/bin/env bash
+{
+    find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -user root
+}
+'@
+        $result1 = bash -c $result1_string
         if ($result1 -eq $null) {
             return $retCompliant
         } else {
@@ -3291,7 +3304,13 @@ if ($IPv6Status -match "is enabled") {
     Id = "4.1.4.7"
     Task = "Ensure audit configuration files belong to group root"
     Test = {
-        $result1 = find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
+        $result1_string = @'
+#!/usr/bin/env bash
+{
+    find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
+}
+'@
+        $result1 = bash -c $result1_string
         if ($result1 -eq $null) {
             return $retCompliant
         } else {
