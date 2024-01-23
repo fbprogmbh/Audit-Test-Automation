@@ -43,8 +43,7 @@ if ($IPv6Status -match "is enabled") {
 {
     l_output="" l_output2=""
     l_mname="squashfs"
-    test1=$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")
-    if [ -z "$test1" ]; then
+    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
         l_loadable="$(modprobe -n -v "$l_mname")"
         [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
         if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
@@ -502,7 +501,8 @@ if ($IPv6Status -match "is enabled") {
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
@@ -957,7 +957,8 @@ if ($IPv6Status -match "is enabled") {
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
@@ -1007,7 +1008,8 @@ if ($IPv6Status -match "is enabled") {
             if [ -z "$output2" ]; then
                 echo -e "$l_pkgoutput\n- Audit result:\n *** PASS: ***\n$output\n"
             else
-                echo -e "$l_pkgoutput\n- Audit Result:\n *** FAIL: ***\n$output2\n" [ -n "$output" ] && echo -e "$output\n"
+                echo -e "$l_pkgoutput\n- Audit Result:\n *** FAIL: ***\n$output2\n"
+                [ -n "$output" ] && echo -e "$output\n"
             fi
         else
         echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *PASS*\n"
@@ -1079,7 +1081,8 @@ if ($IPv6Status -match "is enabled") {
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
@@ -1138,7 +1141,8 @@ if ($IPv6Status -match "is enabled") {
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
@@ -1213,7 +1217,8 @@ if ($IPv6Status -match "is enabled") {
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
@@ -1340,7 +1345,8 @@ if ($IPv6Status -match "is enabled") {
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
 '@
