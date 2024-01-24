@@ -477,7 +477,7 @@ if ($IPv6Status -match "is enabled") {
 {
     l_output="" l_output2=""
     l_mname="usb-storage"
-    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- '\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory')'" ]; then
+    if [ -z \"$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- '\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory')\" ]; then
         l_loadable="$(modprobe -n -v "$l_mname")"
         [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
         if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
