@@ -105,7 +105,7 @@ Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R23 | 2.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
-Microsoft Windows 10 Stand-alone | - | Stand-alone 1.0.1 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 | - | 2.0.0 | 22H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
