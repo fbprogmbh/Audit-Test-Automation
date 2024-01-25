@@ -332,9 +332,9 @@
                 -Name "DefaultAutomaticDownloadsSetting" `
                 | Select-Object -ExpandProperty "DefaultAutomaticDownloadsSetting"
         
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status = "False"
                 }
             }
@@ -584,9 +584,9 @@
                 -Name "LinkedAccountEnabled" `
                 | Select-Object -ExpandProperty "LinkedAccountEnabled"
         
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
                 }
             }
@@ -620,9 +620,9 @@
                 -Name "GuidedSwitchEnabled" `
                 | Select-Object -ExpandProperty "GuidedSwitchEnabled"
         
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
                 }
             }
@@ -4826,9 +4826,9 @@
                 -Name "AutoUpdateCheckPeriodMinutes" `
                 | Select-Object -ExpandProperty "AutoUpdateCheckPeriodMinutes"
         
-            if (($regValue -eq 0)) {
+            if (($regValue -lt 1 -and $regValue -gt 43200)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x != 0"
+                    Message = "Registry value is '$regValue'. Expected: x > 0 and x <= 43200"
                     Status = "False"
                 }
             }
