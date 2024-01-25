@@ -1,6 +1,6 @@
 ﻿[AuditTest] @{
     Id = "High-032"
-    Task = "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled' (MS only)"
+    Task = "Ensure 'Accounts: Administrator account status' is set to 'Disabled' (MS only)"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
@@ -29,7 +29,7 @@
 }
 [AuditTest] @{
     Id = "Medium-069"
-    Task = "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only)"
+    Task = "Ensure 'Accounts: Guest account status' is set to 'Disabled' (MS only)"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
@@ -58,7 +58,7 @@
 }
 [AuditTest] @{
     Id = "Medium-208"
-    Task = "(L1) Ensure 'Network security: Force logoff when logon hours expire' is set to 'Enabled'"
+    Task = "Ensure 'Network security: Force logoff when logon hours expire' is set to 'Enabled'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
         $setOption = $securityOption['System Access']["ForceLogoffWhenHourExpire"]

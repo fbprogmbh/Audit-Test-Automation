@@ -112,7 +112,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.1"
-    Task = "(L1) Ensure 'Enable DCOM Hardening' is set to 'Enabled'."
+    Task = "Ensure 'Enable DCOM Hardening' is set to 'Enabled'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -148,7 +148,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2"
-    Task = "(L1) Ensure 'Raise Authentication Level' is set to 'Raise the authentication level for all non-anonymous activation requests from Windows-based DCOM clients'."
+    Task = "Ensure 'Raise Authentication Level' is set to 'Raise the authentication level for all non-anonymous activation requests from Windows-based DCOM clients'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `

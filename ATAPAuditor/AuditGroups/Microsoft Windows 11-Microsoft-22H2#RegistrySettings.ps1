@@ -1732,7 +1732,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-049"
-    Task = "(L1) Ensure 'Notify Malicious' is set to 'Enabled'"
+    Task = "Ensure 'Notify Malicious' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1768,7 +1768,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-050"
-    Task = "(L1) Ensure 'Notify Password Reuse' is set to 'Enabled'"
+    Task = "Ensure 'Notify Password Reuse' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1804,7 +1804,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-051"
-    Task = "(L1) Ensure 'Notify Unsafe App' is set to 'Enabled'"
+    Task = "Ensure 'Notify Unsafe App' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1840,7 +1840,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-052"
-    Task = "(L1) Ensure 'Service Enabled' is set to 'Enabled'"
+    Task = "Ensure 'Service Enabled' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1984,7 +1984,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-056"
-    Task = "(L1) Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled'"
+    Task = "Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2020,7 +2020,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-057"
-    Task = "(L1) Ensure 'Manage processing of Queue-specific files' is set to 'Enabled: Limit Queue-specific files to Color profiles'"
+    Task = "Ensure 'Manage processing of Queue-specific files' is set to 'Enabled: Limit Queue-specific files to Color profiles'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2128,7 +2128,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-060"
-    Task = "(L1) Ensure 'Configure RPC connection settings: Use authentication for outgoing RPC connections' is set to 'Enabled: Default'"
+    Task = "Ensure 'Configure RPC connection settings: Use authentication for outgoing RPC connections' is set to 'Enabled: Default'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2164,7 +2164,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-061"
-    Task = "(L1) Ensure 'Configure RPC listener settings: Protocols to allow for incoming RPC connections' is set to 'Enabled: RPC over TCP'"
+    Task = "Ensure 'Configure RPC listener settings: Protocols to allow for incoming RPC connections' is set to 'Enabled: RPC over TCP'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2236,7 +2236,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-063"
-    Task = "(L1) Ensure 'Configure RPC over TCP port' is set to 'Enabled: 0'"
+    Task = "Ensure 'Configure RPC over TCP port' is set to 'Enabled: 0'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3416,7 +3416,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-097"
-    Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
+    Task = "Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3452,7 +3452,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-098"
-    Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
+    Task = "Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3560,7 +3560,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-101"
-    Task = "(L1) Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'"
+    Task = "Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -3596,7 +3596,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-102"
-    Task = "(L1) Ensure 'Configure RPC packet level privacy setting for incoming connections' is set to 'Enabled'"
+    Task = "Ensure 'Configure RPC packet level privacy setting for incoming connections' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6140,7 +6140,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-213"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block abuse of exploited vulnerable signed drivers'"
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Block abuse of exploited vulnerable signed drivers'"
     Test = {
         try {
             if($avstatus){
@@ -11356,7 +11356,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-358"
-    Task = "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes: Prevent installation of devices using drivers for these device setup' is set to 'IEEE 1394 device setup classes' [IEEE 1394 devices that support the SBP2 Protocol Class]"
+    Task = "Ensure 'Prevent installation of devices using drivers that match these device setup classes: Prevent installation of devices using drivers for these device setup' is set to 'IEEE 1394 device setup classes' [IEEE 1394 devices that support the SBP2 Protocol Class]"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11651,7 +11651,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "Registry-374"
-    Task = "(L1) Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'"
+    Task = "Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
