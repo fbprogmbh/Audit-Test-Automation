@@ -84,7 +84,7 @@ Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
-Microsoft Edge | - | - | 99 | - | -
+Microsoft Edge | - | 2.0.0 | 99 | - | -
 Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
 Microsoft IIS10 | - | 1.1.1 | - | - | -
 Microsoft Office 2016 Excel | V1R2 | - | - | - | -
