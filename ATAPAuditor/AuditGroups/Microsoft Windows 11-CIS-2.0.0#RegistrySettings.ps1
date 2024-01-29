@@ -6107,14 +6107,158 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.6.20.1"
+    Id = "18.6.20.1 A"
     Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (EnableRegistrars)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
                 -Name "EnableRegistrars" `
                 | Select-Object -ExpandProperty "EnableRegistrars"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 B"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableUPnPRegistrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableUPnPRegistrar" `
+                | Select-Object -ExpandProperty "DisableUPnPRegistrar"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 C"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableInBand802DOT11Registrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableInBand802DOT11Registrar" `
+                | Select-Object -ExpandProperty "DisableInBand802DOT11Registrar"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 D"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableFlashConfigRegistrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableFlashConfigRegistrar" `
+                | Select-Object -ExpandProperty "DisableFlashConfigRegistrar"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 E"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableWPDRegistrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableWPDRegistrar" `
+                | Select-Object -ExpandProperty "DisableWPDRegistrar"
         
             if ($regValue -ne 0) {
                 return @{
