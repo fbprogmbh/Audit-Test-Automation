@@ -2984,7 +2984,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue1 = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services" `
                 -Name "DefaultService" `
             | Select-Object -ExpandProperty "DefaultService"
             $regValue2 = Get-ItemProperty -ErrorAction Stop `
@@ -3019,11 +3019,11 @@ $windefrunning = CheckWindefRunning
                 return @{
                     Message = "At least one of the following ways aren't configured correctly. <br>
                     Configure these to paths to get compliance: <br>
-                    HKEY_LOCAL_MACHINE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services::DefaultService = 7971f918-a847-4430-9279-4a52d1efe18d <br>
-                    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services\7971F918-A847-4430-9279-4A52D1EFE18D::RegisteredWithAU = 1 <br>
+                    HKEY_LOCAL_MACHINE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services:DefaultService = 7971f918-a847-4430-9279-4a52d1efe18d <br>
+                    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services\7971F918-A847-4430-9279-4A52D1EFE18D:RegisteredWithAU = 1 <br>
                     OR configure these: <br>
-                    HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU::AllowMUUpdateService = 1 <br>
-                    HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU::NoAutoUpdate = 0
+                    HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU:AllowMUUpdateService = 1 <br>
+                    HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsUpdate\AU:NoAutoUpdate = 0
                     "
                     Status  = "False"
                 }
