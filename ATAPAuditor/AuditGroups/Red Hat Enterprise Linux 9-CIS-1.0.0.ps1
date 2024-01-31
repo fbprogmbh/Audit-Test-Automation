@@ -41,43 +41,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.1.1.1"
     Task = "Ensure mounting of squashfs filesystems is disabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2=""
-    l_mname="squashfs"
-    test1=$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")
-    if [ -z "$test1" ]; then
-        l_loadable="$(modprobe -n -v "$l_mname")"
-        [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
-        if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
-        fi
-        if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loaded"
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
-        fi
-        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
-            l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"
-        fi
-    else
-        l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_1111.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -89,42 +55,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.1.1.2"
     Task = "Ensure mounting of udf filesystems is disabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2=""
-    l_mname="udf"
-    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
-        l_loadable="$(modprobe -n -v "$l_mname")"
-        [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
-        if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
-        fi
-        if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loaded"
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
-        fi
-        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
-            l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"
-        fi
-    else
-        l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_1112.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -878,62 +811,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.2"
     Task = "Ensure GDM login banner is configured"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q"
-    fi
-    l_pcl="gdm gdm3"
-    for l_pn in $l_pcl; do
-        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
-    done
-    if [ -n "$l_pkgoutput" ]; then
-        l_output="" l_output2=""
-        echo -e "$l_pkgoutput"
-        l_gdmfile="$(grep -Prils '^\h*banner-message-enable\b' /etc/dconf/db/*.d)"
-        if [ -n "$l_gdmfile" ]; then
-            l_gdmprofile="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_gdmfile")"
-            if grep -Pisq '^\h*banner-message-enable=true\b' "$l_gdmfile"; then
-                l_output="$l_output\n - The \"banner-message-enable\" option is enabled in \"$l_gdmfile\""
-            else
-                l_output2="$l_output2\n - The \"banner-message-enable\" option is not enabled"
-            fi
-            l_lsbt="$(grep -Pios '^\h*banner-message-text=.*$' "$l_gdmfile")"
-            if [ -n "$l_lsbt" ]; then
-                l_output="$l_output\n - The \"banner-message-text\" option is set in \"$l_gdmfile\"\n - banner-message-text is set to:\n - \"$l_lsbt\""
-            else
-                l_output2="$l_output2\n - The \"banner-message-text\" option is not set"
-            fi
-            if grep -Pq "^\h*system-db:$l_gdmprofile" /etc/dconf/profile/"$l_gdmprofile"; then
-                l_output="$l_output\n - The \"$l_gdmprofile\" profile exists"
-            else
-                l_output2="$l_output2\n - The \"$l_gdmprofile\" profile doesn't exist"
-            fi
-            if [ -f "/etc/dconf/db/$l_gdmprofile" ]; then
-                l_output="$l_output\n - The \"$l_gdmprofile\" profile exists in the dconf database"
-            else
-                l_output2="$l_output2\n - The \"$l_gdmprofile\" profile doesn't exist in the dconf database"
-            fi
-        else
-            l_output2="$l_output2\n - The \"banner-message-enable\" option isn't configured"
-        fi
-    else
-        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *PASS*\n"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_182.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -945,49 +825,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.3"
     Task = "Ensure GDM disable-user-list option is enabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q" fi l_pcl="gdm gdm3"
-        for l_pn in $l_pcl; do
-            $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
-        done
-        if [ -n "$l_pkgoutput" ]; then
-            output="" output2=""
-            l_gdmfile="$(grep -Pril '^\h*disable-user-list\h*=\h*true\b' /etc/dconf/db)"
-            if [ -n "$l_gdmfile" ]; then
-                output="$output\n - The \"disable-user-list\" option is enabled in \"$l_gdmfile\""
-                l_gdmprofile="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_gdmfile")"
-                if grep -Pq "^\h*system-db:$l_gdmprofile" /etc/dconf/profile/"$l_gdmprofile"; then
-                    output="$output\n - The \"$l_gdmprofile\" exists"
-                else
-                    output2="$output2\n - The \"$l_gdmprofile\" doesn't exist"
-                fi
-                if [ -f "/etc/dconf/db/$l_gdmprofile" ]; then
-                    output="$output\n - The \"$l_gdmprofile\" profile exists in the dconf database"
-                else
-                    output2="$output2\n - The \"$l_gdmprofile\" profile doesn't exist in the dconf database"
-                fi
-            else
-                output2="$output2\n - The \"disable-user-list\" option is not enabled"
-            fi
-            if [ -z "$output2" ]; then
-                echo -e "$l_pkgoutput\n- Audit result:\n *** PASS: ***\n$output\n"
-            else
-                echo -e "$l_pkgoutput\n- Audit Result:\n *** FAIL: ***\n$output2\n"
-                [ -n "$output" ] && echo -e "$output\n"
-            fi
-        else
-        echo -e "\n\n - GNOME Desktop Manager isn't installed\n - Recommendation is Not Applicable\n- Audit result:\n *PASS*\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_183.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -999,65 +839,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.4"
     Task = "Ensure GDM screen locks then the user is idle"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q"
-    fi
-    l_pcl="gdm gdm3"
-    for l_pn in $l_pcl; do
-        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
-    done
-    if [ -n "$l_pkgoutput" ]; then
-        l_output="" l_output2="" l_idmv="900"
-        l_ldmv="5"
-        l_kfile="$(grep -Psril '^\h*idle-delay\h*=\h*uint32\h+\d+\b' /etc/dconf/db/*/)"
-        if [ -n "$l_kfile" ]; then
-            l_profile="$(awk -F'/' '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile")"
-            l_pdbdir="/etc/dconf/db/$l_profile.d"
-            l_idv="$(awk -F 'uint32' '/idle-delay/{print $2}' "$l_kfile" | xargs)"
-            if [ -n "$l_idv" ]; then
-                [ "$l_idv" -gt "0" -a "$l_idv" -le "$l_idmv" ] && l_output="$l_output\n - The \"idle-delay\" option is set to \"$l_idv\" seconds in \"$l_kfile\"" [ "$l_idv" = "0" ] && l_output2="$l_output2\n - The \"idle-delay\" option is set to \"$l_idv\" (disabled) in \"$l_kfile\"" [ "$l_idv" -gt "$l_idmv" ] && l_output2="$l_output2\n - The \"idle-delay\" option is set to \"$l_idv\" seconds (greater than $l_idmv) in \"$l_kfile\""
-            else
-                l_output2="$l_output2\n - The \"idle-delay\" option is not set in \"$l_kfile\""
-            fi
-            l_ldv="$(awk -F 'uint32' '/lock-delay/{print $2}' "$l_kfile" | xargs)"
-            if [ -n "$l_ldv" ]; then
-                [ "$l_ldv" -ge "0" -a "$l_ldv" -le "$l_ldmv" ] && l_output="$l_output\n - The \"lock-delay\" option is set to \"$l_ldv\"seconds in \"$l_kfile\"" [ "$l_ldv" -gt "$l_ldmv" ] && l_output2="$l_output2\n - The \"lock-delay\" option is set to \"$l_ldv\" seconds (greater than $l_ldmv) in \"$l_kfile\""
-            else
-                l_output2="$l_output2\n - The \"lock-delay\" option is not set in \"$l_kfile\""
-            fi
-            if grep -Psq "^\h*system-db:$l_profile" /etc/dconf/profile/*; then
-                l_output="$l_output\n - The \"$l_profile\" profile exists"
-            else
-                l_output2="$l_output2\n - The \"$l_profile\" doesn't exist"
-            fi
-            if [ -f "/etc/dconf/db/$l_profile" ]; then
-                l_output="$l_output\n - The \"$l_profile\" profile exists in the dconf database"
-            else
-                l_output2="$l_output2\n - The \"$l_profile\" profile doesn't exist in the dconf database"
-            fi
-        else
-            l_output2="$l_output2\n - The \"idle-delay\" option doesn't exist, remaining tests skipped"
-        fi
-    else
-        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
-    fi
-    [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_184.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1069,55 +853,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.5"
     Task = "Ensure GDM screen locks cannot be overridden"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q"
-    fi
-    l_pcl="gdm gdm3"
-    for l_pn in $l_pcl; do
-        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
-    done
-    if [ -n "$l_pkgoutput" ]; then
-        l_output="" l_output2=""
-        l_kfd="/etc/dconf/db/$(grep -Psril '^\h*idle-delay\h*=\h*uint32\h+\d+\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
-        l_kfd2="/etc/dconf/db/$(grep -Psril '^\h*lock-delay\h*=\h*uint32\h+\d+\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
-        if [ -d "$l_kfd" ]; then
-            if grep -Prilq '\/org\/gnome\/desktop\/session\/idle-delay\b' "$l_kfd"; then
-                l_output="$l_output\n - \"idle-delay\" is locked in \"$(grep -Pril '\/org\/gnome\/desktop\/session\/idle-delay\b' "$l_kfd")\""
-            else
-                l_output2="$l_output2\n - \"idle-delay\" is not locked"
-            fi
-        else
-            l_output2="$l_output2\n - \"idle-delay\" is not set so it can not be locked"
-        fi
-        if [ -d "$l_kfd2" ]; then
-            if grep -Prilq '\/org\/gnome\/desktop\/screensaver\/lock-delay\b' "$l_kfd2"; then
-                l_output="$l_output\n - \"lock-delay\" is locked in \"$(grep -Pril '\/org\/gnome\/desktop\/screensaver\/lock-delay\b' "$l_kfd2")\""
-            else
-                l_output2="$l_output2\n - \"lock-delay\" is not locked"
-            fi
-        else
-            l_output2="$l_output2\n - \"lock-delay\" is not set so it can not be locked"
-        fi
-    else
-        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
-    fi
-    [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_185.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1129,71 +867,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.6"
     Task = "Ensure GDM automatic mounting of removable media is disabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput="" l_output="" l_output2=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-            l_pq="rpm -q"
-    fi
-    l_pcl="gdm gdm3"
-    for l_pn in $l_pcl; do
-        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
-    done
-    if [ -n "$l_pkgoutput" ]; then
-        echo -e "$l_pkgoutput"
-        l_kfile="$(grep -Prils -- '^\h*automount\b' /etc/dconf/db/*.d)"
-        l_kfile2="$(grep -Prils -- '^\h*automount-open\b' /etc/dconf/db/*.d)"
-        if [ -f "$l_kfile" ]; then
-            l_gpname="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile")"
-        elif [ -f "$l_kfile2" ]; then
-            l_gpname="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile2")"
-        fi
-        if [ -n "$l_gpname" ]; then
-            l_gpdir="/etc/dconf/db/$l_gpname.d"
-            if grep -Pq -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*; then
-                l_output="$l_output\n - dconf database profile file \"$(grep -Pl -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*)\" exists"
-            else
-                l_output2="$l_output2\n - dconf database profile isn't set"
-            fi
-            if [ -f "/etc/dconf/db/$l_gpname" ]; then
-                l_output="$l_output\n - The dconf database \"$l_gpname\" exists"
-            else
-                l_output2="$l_output2\n - The dconf database \"$l_gpname\" doesn't exist"
-            fi
-            if [ -d "$l_gpdir" ]; then
-                l_output="$l_output\n - The dconf directory \"$l_gpdir\" exitst"
-            else
-                l_output2="$l_output2\n - The dconf directory \"$l_gpdir\" doesn't exist"
-            fi
-            if grep -Pqrs -- '^\h*automount\h*=\h*false\b' "$l_kfile"; then
-                l_output="$l_output\n - \"automount\" is set to false in: \"$l_kfile\""
-            else
-                l_output2="$l_output2\n - \"automount\" is not set correctly"
-            fi
-            if grep -Pqs -- '^\h*automount-open\h*=\h*false\b' "$l_kfile2"; then
-                l_output="$l_output\n - \"automount-open\" is set to false in: \"$l_kfile2\""
-            else
-                l_output2="$l_output2\n - \"automount-open\" is not set correctly"
-            fi
-        else
-            l_output2="$l_output2\n - neither \"automount\" or \"automount-open\" is set"
-        fi
-    else
-        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_186.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1205,55 +881,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.7"
     Task = "Ensure GDM disabling automatic mounting of removable media is not overridden"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q"
-    fi
-    l_pcl="gdm gdm3"
-    for l_pn in $l_pcl; do
-        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration"
-    done
-    if [ -n "$l_pkgoutput" ]; then
-        l_output="" l_output2=""
-        l_kfd="/etc/dconf/db/$(grep -Psril '^\h*automount\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
-        l_kfd2="/etc/dconf/db/$(grep -Psril '^\h*automount-open\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
-        if [ -d "$l_kfd" ]; then
-            if grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount\b' "$l_kfd"; then
-                l_output="$l_output\n - \"automount\" is locked in \"$(grep -Pil '^\h*\/org/gnome\/desktop\/media-handling\/automount\b' "$l_kfd")\""
-            else
-                l_output2="$l_output2\n - \"automount\" is not locked"
-            fi
-        else
-            l_output2="$l_output2\n - \"automount\" is not set so it can not be locked"
-        fi
-        if [ -d "$l_kfd2" ]; then
-            if grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount-open\b' "$l_kfd2"; then
-                l_output="$l_output\n - \"lautomount-open\" is locked in \"$(grep -Pril '^\h*\/org/gnome\/desktop\/media-handling\/automount-open\b' "$l_kfd2")\""
-            else
-                l_output2="$l_output2\n - \"automount-open\" is not locked"
-            fi
-        else
-            l_output2="$l_output2\n - \"automount-open\" is not set so it can not be locked"
-        fi
-    else
-        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
-    fi
-    [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_187.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1265,63 +895,23 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.8.8"
     Task = "Ensure GDM autorun-never is enabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_pkgoutput="" l_output="" l_output2=""
-    if command -v dpkg-query > /dev/null 2>&1; then
-        l_pq="dpkg-query -W"
-    elif command -v rpm > /dev/null 2>&1; then
-        l_pq="rpm -q"
-    fi
-    l_pcl="gdm gdm3"
-    for l_pn in $l_pcl; do
-        $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n - Package: \"$l_pn\" exists on the system\n - checking configuration" echo -e "$l_pkgoutput"
-    done
-    if [ -n "$l_pkgoutput" ]; then
-        echo -e "$l_pkgoutput"
-        l_kfile="$(grep -Prils -- '^\h*autorun-never\b' /etc/dconf/db/*.d)"
-        if [ -f "$l_kfile" ]; then
-            l_gpname="$(awk -F\/ '{split($(NF-1),a,".");print a[1]}' <<< "$l_kfile")"
-        fi
-        if [ -n "$l_gpname" ]; then
-            l_gpdir="/etc/dconf/db/$l_gpname.d"
-            if grep -Pq -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*; then
-                l_output="$l_output\n - dconf database profile file \"$(grep -Pl -- "^\h*system-db:$l_gpname\b" /etc/dconf/profile/*)\" exists"
-            else
-                l_output2="$l_output2\n - dconf database profile isn't set"
-            fi
-            if [ -f "/etc/dconf/db/$l_gpname" ]; then
-                l_output="$l_output\n - The dconf database \"$l_gpname\" exists"
-            else
-                l_output2="$l_output2\n - The dconf database \"$l_gpname\" doesn't exist"
-            fi
-            if [ -d "$l_gpdir" ]; then
-                l_output="$l_output\n - The dconf directory \"$l_gpdir\" exitst"
-            else
-                l_output2="$l_output2\n - The dconf directory \"$l_gpdir\" doesn't exist"
-            fi
-            if grep -Pqrs -- '^\h*autorun-never\h*=\h*true\b' "$l_kfile"; then
-                l_output="$l_output\n - \"autorun-never\" is set to true in: \"$l_kfile\""
-            else
-                l_output2="$l_output2\n - \"autorun-never\" is not set correctly"
-            fi
-        else
-            l_output2="$l_output2\n - \"autorun-never\" is not set"
-        fi
-    else
-        l_output="$l_output\n - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
+        $resultScript = $scriptPath + "CIS100_RHEL9_188.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
 }
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+
+[AuditTest] @{
+    Id = "1.8.9"
+    Task = "Ensure GDM autorun-never is not overridden"
+    Test = {
+        $resultScript = $scriptPath + "CIS100_RHEL9_189.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1695,7 +1285,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
 
 
 [AuditTest] @{
-    Id = "3.1.2"
+    Id = "3.1.1"
     Task = "Ensure IPv6 status is identified"
     Test = {
         return $retNonCompliantManualReviewRequired
@@ -1899,86 +1489,22 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.1"
     Task = "Ensure packet redirect sending is disabled"
     Test = {
-        $script_string11 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.all.accept_source_route" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string12 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.default.accept_source_route" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string21 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv6.conf.all.accept_source_route"
-    kpvalue="0" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string22 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.default.accept_source_route" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script11 = bash -c $script_string11
-        $script12 = bash -c $script_string12
-        $script21 = bash -c $script_string21
-        $script22 = bash -c $script_string22
+        $resultScript11 = $scriptPath + "CIS100_RHEL9_331_11.sh"
+        $result11 = bash $resultScript11
+        $resultScript12 = $scriptPath + "CIS100_RHEL9_331_12.sh"
+        $result12 = bash $resultScript12
+        $resultScript21 = $scriptPath + "CIS100_RHEL9_331_21.sh"
+        $result21 = bash $resultScript21
+        $resultScript22 = $scriptPath + "CIS100_RHEL9_331_22.sh"
+        $result22 = bash $resultScript22
         if ($IPv6Status -eq "enabled") {
-            if ($script21 -match "PASS" -and $script22 -match "PASS") {
+            if ($result21 -match "PASS" -and $result22 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
             }
         } else {
-            if ($script11 -match "PASS" -and $script12 -match "PASS") {
+            if ($result11 -match "PASS" -and $result12 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -1991,85 +1517,22 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.2"
     Task = "Ensure ICMP redirects are not accepted"
     Test = {
-        $script_string11 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.all.accept_redirects" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string12 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.default.accept_redirects" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n" [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string21 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile="" kpname="net.ipv6.conf.all.accept_redirects" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string22 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv6.conf.default.accept_redirects"
-    kpvalue="0" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script11 = bash -c $script_string11
-        $script12 = bash -c $script_string12
-        $script21 = bash -c $script_string21
-        $script22 = bash -c $script_string22
+        $resultScript11 = $scriptPath + "CIS100_RHEL9_332_11.sh"
+        $result11 = bash $resultScript11
+        $resultScript12 = $scriptPath + "CIS100_RHEL9_332_12.sh"
+        $result12 = bash $resultScript12
+        $resultScript21 = $scriptPath + "CIS100_RHEL9_332_21.sh"
+        $result21 = bash $resultScript21
+        $resultScript22 = $scriptPath + "CIS100_RHEL9_332_22.sh"
+        $result22 = bash $resultScript22
         if ($IPv6Status -eq "enabled") {
-            if ($script21 -match "PASS" -and $script22 -match "PASS") {
+            if ($result21 -match "PASS" -and $result22 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
             }
         } else {
-            if ($script11 -match "PASS" -and $script12 -match "PASS") {
+            if ($result11 -match "PASS" -and $result12 -match "PASS") {
                 return $retCompliant
             } else {
                 return $retNonCompliant
@@ -2084,45 +1547,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.4"
     Task = "Ensure suspicious packets are logged"
     Test = {
-        $script_string1 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.all.log_martians" kpvalue="1"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string2 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.default.accept_redirects" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-
-        $script1 = bash -c $script_string1
-        $script2 = bash -c $script_string2
-        if ($script1 -match "PASS" -and $script2 -match "PASS") {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_334_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_334_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -match "PASS" -and $result2 -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2134,27 +1563,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.5"
     Task = "Ensure broadcast ICMP requests are ignored"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.icmp_echo_ignore_broadcasts"
-    kpvalue="1"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_335.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2166,25 +1577,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.6"
     Task = "Ensure bogus ICMP responses are ignored"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.icmp_ignore_bogus_error_responses" kpvalue="1"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_336.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2196,43 +1591,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.7"
     Task = "Ensure Reverse Path Filtering is enabled"
     Test = {
-        $script_string1 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile="" kpname="net.ipv4.conf.all.rp_filter" kpvalue="1"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)" pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string2 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.default.rp_filter"
-    kpvalue="1" searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script1 = bash -c $script_string1
-        $script2 = bash -c $script_string2
-        if ($script1 -match "PASS" -and $script2 -match "PASS") {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_337_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_337_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -match "PASS" -and $result2 -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2244,25 +1607,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.8"
     Task = "Ensure TCP SYN Cookies is enabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile="" kpname="net.ipv4.tcp_syncookies" kpvalue="1"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_338.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2274,46 +1621,13 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.3.9"
     Task = "Ensure IPv6 router advertisements are not accepted"
     Test = {
-        $script_string1 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile="" kpname="net.ipv6.conf.all.accept_ra" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string2 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv6.conf.default.accept_ra" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_339_1.sh"
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_339_2.sh"
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         } else {
-            $script1 = bash -c $script_string1
-            $script2 = bash -c $script_string2
+            $script1 = bash $resultScript1
+            $script2 = bash $resultScript2
             if ($script1 -match "PASS" -and $script2 -match "PASS") {
                 return $retCompliant
             } else {
@@ -2340,36 +1654,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.4.1.2"
     Task = "Ensure a single firewall configuration utility is in use"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2="" l_fwd_status="" l_nft_status="" l_fwutil_status=""
-    rpm -q firewalld > /dev/null 2>&1 && l_fwd_status="$(systemctl is-enabled firewalld.service):$(systemctl is-active firewalld.service)"
-    rpm -q nftables > /dev/null 2>&1 && l_nft_status="$(systemctl is-enabled nftables.service):$(systemctl is-active nftables.service)"
-    l_fwutil_status="$l_fwd_status:$l_nft_status"
-    case $l_fwutil_status in
-        enabled:active:masked:inactive|enabled:active:disabled:inactive)
-        l_output="\n - FirewallD utility is in use, enabled and active\n - NFTables utility is correctly disabled or masked and inactive" ;;
-        masked:inactive:enabled:active|disabled:inactive:enabled:active)
-        l_output="\n - NFTables utility is in use, enabled and active\n - FirewallD utility is correctly disabled or masked and inactive" ;;
-        enabled:active:enabled:active)
-        l_output2="\n - Both FirewallD and NFTables utilities are enabled and active" ;;
-        enabled:*:enabled:*) l_output2="\n - Both FirewallD and NFTables utilities are enabled" ;;
-        *:active:*:active) l_output2="\n - Both FirewallD and NFTables utilities are enabled" ;;
-        :enabled:active) l_output="\n - NFTables utility is in use, enabled, and active\n - FirewallD package is not installed" ;;
-        :) l_output2="\n - Neither FirewallD or NFTables is installed." ;;
-        *:*:) l_output2="\n - NFTables package is not installed on the system" ;;
-        *) l_output2="\n - Unable to determine firewall state" ;;
-    esac
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Results:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Results:\n FAIL\n$l_output2\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_3412.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2381,28 +1668,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.4.2.1"
     Task = "Ensure firewalld default zone is set"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2="" l_zone=""
-    if systemctl is-enabled firewalld.service | grep -q 'enabled'; then
-        l_zone="$(firewall-cmd --get-default-zone)" if [ -n "$l_zone" ]; then
-            l_output=" - The default zone is set to: \"$l_zone\""
-        else
-            l_output2=" - The default zone is not set"
-        fi
-    else
-        l_output=" - FirewallD is not in use on the system"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Results:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Results:\n FAIL\n$l_output2\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_3421.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2615,8 +1883,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "4.1.3.1"
     Task = "Ensure changes to system administration scope (sudoers) is collected"
     Test = {
-        $result1 = awk '/^ *-w/ \ &&/\/etc\/sudoers/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $result2 = auditctl -l | awk '/^ *-w/ \ &&/\/etc\/sudoers/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $result1 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $result2 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
         if ($result1 -match "-w /etc/sudoers -p wa -k scope" -and $result1 -match "-w /etc/sudoers.d -p wa -k scope" -and $result2 -match "-w /etc/sudoers -p wa -k scope" -and $result2 -match "-w /etc/sudoers.d -p wa -k scope") {
             return $retCompliant
         } else {
