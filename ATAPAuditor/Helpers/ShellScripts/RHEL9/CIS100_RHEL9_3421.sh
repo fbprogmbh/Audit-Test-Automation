@@ -2,7 +2,8 @@
 {
     l_output="" l_output2="" l_zone=""
     if systemctl is-enabled firewalld.service | grep -q 'enabled'; then
-        l_zone="$(firewall-cmd --get-default-zone)" if [ -n "$l_zone" ]; then
+        l_zone="$(firewall-cmd --get-default-zone)"
+        if [ -n "$l_zone" ]; then
             l_output=" - The default zone is set to: \"$l_zone\""
         else
             l_output2=" - The default zone is not set"
