@@ -1296,47 +1296,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.1.2"
     Task = "Ensure wireless interfaces are disabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2=""
-    module_chk() {
-        l_loadable="$(modprobe -n -v "$l_mname")"
-        if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
-        fi
-        if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loaded" else l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
-        fi
-        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
-            l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"
-        fi
-    }
-    if [ -n "$(find /sys/class/net/*/ -type d -name wireless)" ]; then
-        l_dname=$(for driverdir in $(find /sys/class/net/*/ -type d -name wireless | xargs -0 dirname); do
-            basename "$(readlink -f "$driverdir"/device/driver/module)";done | sort -u)
-        for l_mname in $l_dname; do
-            module_chk
-        done
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS"
-        if [ -z "$l_output" ]; then
-            echo -e "\n - System has no wireless NICs installed"
-        else
-            echo -e "\n$l_output\n"
-        fi
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_312.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1348,38 +1310,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.1.3"
     Task = "Ensure TIPC is disabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2="" l_mname="tipc"
-    if [ -z "$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")" ]; then
-        l_loadable="$(modprobe -n -v "$l_mname")"
-        [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
-        if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
-        fi
-        if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loaded" else l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
-        fi
-        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
-            l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
-        else
-            l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"
-        fi
-    else
-        l_output="$l_output\n - Module \"$l_mname\" doesn't exist on the system"
-    fi
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-    else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-    fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_313.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1391,44 +1324,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.2.1"
     Task = "Ensure IP forwarding is disabled"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-        l_output="" l_output2="" l_kparameters="net.ipv4.ip_forward=0 net.ipv6.conf.all.forwarding=0"
-        searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf $([ -f /etc/default/ufw ] && awk -F= '/^\s*IPT_SYSCTL=/ {print $2}' /etc/default/ufw)"
-        kernel_par_chk()
-        {
-            krp="" pafile="" fafile=""
-            krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-            pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-            fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')" [ "$krp" = "$kpvalue" ] && l_output="$l_output\n - \"$kpname\" is set to \"$kpvalue\" in the running configuration"
-            [ -n "$pafile" ] && l_output="$l_output\n - \"$kpname\" is set to \"$kpvalue\" in \"$pafile\""
-            [ -z "$fafile" ] && l_output="$l_output\n - \"$kpname\" is not set incorectly in a kernel parameter configuration file" [ "$krp" != "$kpvalue" ] && l_output2="$l_output2\n - \"$kpname\" is incorrectly set to \"$krp\" in the running configuration"
-            [ -n "$fafile" ] && l_output2="$l_output2\n - \"$kpname\" is set incorrectly in \"$fafile\""
-            [ -z "$pafile" ] && l_output2="$l_output2\n - \"$kpname = $kpvalue\" is not set in a kernel parameter configuration file"
-        }
-        for l_kpar in $l_kparameters; do
-            kpname="$(awk -F"=" '{print $1}' <<< "$l_kpar" | xargs)" kpvalue="$(awk -F"=" '{print $2}' <<< "$l_kpar" | xargs)"
-            if grep -Pq '^\h*net\.ipv6\.' <<< "$l_kpname"; then
-                if grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable; then
-                    kernel_par_chk
-                else
-                    l_output="$l_output\n - IPv6 is not enabled, check for: \"$l_kpar\" is not applicable"
-                fi
-            else
-                kernel_par_chk
-            fi
-        done
-        if [ -z "$l_output2" ]; then
-            echo -e "\n- Audit Result:\n PASS\n$l_output\n"
-        else
-            echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
-            [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
-        fi
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_321.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1440,44 +1338,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "3.2.2"
     Task = "Ensure packet redirect sending is disabled"
     Test = {
-        $script_string1 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile=""
-    kpname="net.ipv4.conf.all.send_redirects" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)" fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL "
-        [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script_string2 = @'
-#!/usr/bin/env bash
-{
-    krp="" pafile="" fafile="" kpname="net.ipv4.conf.default.send_redirects" kpvalue="0"
-    searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
-    krp="$(sysctl "$kpname" | awk -F= '{print $2}' | xargs)"
-    pafile="$(grep -Psl -- "^\h*$kpname\h*=\h*$kpvalue\b\h*(#.*)?$" $searchloc)"
-    fafile="$(grep -s -- "^\s*$kpname" $searchloc | grep -Pv -- "\h*=\h*$kpvalue\b\h*" | awk -F: '{print $1}')"
-    if [ "$krp" = "$kpvalue" ] && [ -n "$pafile" ] && [ -z "$fafile" ]; then
-        echo -e "\nPASS:\n\"$kpname\" is set to \"$kpvalue\" in the running configuration and in \"$pafile\""
-    else
-        echo -e "\nFAIL: " [ "$krp" != "$kpvalue" ] && echo -e "\"$kpname\" is set to \"$krp\" in the running configuration\n"
-        [ -n "$fafile" ] && echo -e "\n\"$kpname\" is set incorrectly in \"$fafile\""
-        [ -z "$pafile" ] && echo -e "\n\"$kpname = $kpvalue\" is not set in a kernel parameter configuration file\n"
-    fi
-}
-'@
-        $script1 = bash -c $script_string1
-        $script2 = bash -c $script_string2
-        if ($script1 -match "PASS" -and $script2 -match "PASS") {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_322_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_322_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -match "PASS" -and $result2 -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant

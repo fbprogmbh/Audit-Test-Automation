@@ -10,7 +10,9 @@
             l_output2="$l_output2\n - module: \"$l_mname\" is loadable: \"$l_loadable\""
         fi
         if ! lsmod | grep "$l_mname" > /dev/null 2>&1; then
-            l_output="$l_output\n - module: \"$l_mname\" is not loaded" else l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
+            l_output="$l_output\n - module: \"$l_mname\" is not loaded"
+        else
+            l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
         fi
         if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
             l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
@@ -23,6 +25,7 @@
     if [ -z "$l_output2" ]; then
         echo -e "\n- Audit Result:\n PASS\n$l_output\n"
     else
-        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n" [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+        echo -e "\n- Audit Result:\n FAIL\n - Reason(s) for audit failure:\n$l_output2\n"
+        [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
     fi
 }
