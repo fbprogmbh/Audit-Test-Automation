@@ -2216,14 +2216,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "4.1.4.5"
     Task = "Ensure audit configuration files are 640 or more restrictive"
     Test = {
-        $result1_string = @'
-#!/usr/bin/env bash
-{
-    find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) -exec stat -Lc "%n %a" {} + | grep -Pv -- '^\h*\H+\h*([0,2,4,6][0,4]0)\h*$'
-}
-'@
-        $result1 = bash -c $result1_string
-        if ($result1 -eq $null) {
+        $resultScript = $scriptPath + "CIS100_RHEL9_4145.sh"
+        $result = bash $resultScript
+        if ($result -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2771,40 +2766,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.2"
     Task = "Ensure permissions on SSH private host key files are configured"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2="" l_skgn="ssh_keys"
-    l_skgid="$(awk -F: '($1 == "'"$l_skgn"'"){print $3}' /etc/group)" [ -n "$l_skgid" ] && l_cga="$l_skgn" || l_cga="root" awk '{print}' <<< "$(find -L /etc/ssh -xdev -type f -exec stat -Lc "%n %#a %U %G %g" {} +)" | (while read -r l_file l_mode l_owner l_group l_gid; do
-        if file "$l_file" | grep -Pq ':\h+OpenSSH\h+private\h+key\b'; then
-            [ "$l_gid" = "$l_skgid" ] && l_pmask="0137" || l_pmask="0177" l_maxperm="$( printf '%o' $(( 0777 & ~$l_pmask )) )"
-                if [ $(( $l_mode & $l_pmask )) -gt 0 ]; then
-                    l_output2="$l_output2\n - File: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
-                else
-                    l_output="$l_output\n - File: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
-                fi
-                if [ "$l_owner" != "root" ]; then
-                    l_output2="$l_output2\n - File: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
-                else
-                    l_output="$l_output\n - File: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
-                fi
-                if [ "$l_group" != "root" ] && [ "$l_gid" != "$l_skgid" ]; then
-                    l_output2="$l_output2\n - File: \"$l_file\" is owned by group \"$l_group\" should belong to group \"$l_cga\""
-                else
-                    l_output="$l_output\n - File: \"$l_file\" is owned by group \"$l_group\" should belong to group \"$l_cga\""
-                fi
-        fi
-    done
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n *PASS*\n$l_output"
-    else
-        echo -e "\n- Audit Result:\n *FAIL*\n$l_output2\n\n - Correctly set:\n$l_output"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_522.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2816,40 +2780,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.3"
     Task = "Ensure permissions on SSH public host key files are configured"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    l_output="" l_output2="" l_pmask="0133"
-    awk '{print}' <<< "$(find -L /etc/ssh -xdev -type f -exec stat -Lc "%n %#a %U %G" {} +)" | (while read -r l_file l_mode l_owner l_group; do
-        if file "$l_file" | grep -Pq ':\h+OpenSSH\h+(\H+\h+)?public\h+key\b'; then
-            l_maxperm="$( printf '%o' $(( 0777 & ~$l_pmask )) )"
-            if [ $(( $l_mode & $l_pmask )) -gt 0 ]; then
-                l_output2="$l_output2\n - Public key file: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
-            else
-                l_output="$l_output\n - Public key file: \"$l_file\" is mode \"$l_mode\" should be mode: \"$l_maxperm\" or more restrictive"
-            fi
-            if [ "$l_owner" != "root" ]; then
-                l_output2="$l_output2\n - Public key file: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
-            else
-                l_output="$l_output\n - Public key file: \"$l_file\" is owned by: \"$l_owner\" should be owned by \"root\""
-            fi
-            if [ "$l_group" != "root" ]; then
-                l_output2="$l_output2\n - Public key file: \"$l_file\" is owned by group \"$l_group\" should belong to group \"root\"\n"
-            else
-                l_output="$l_output\n - Public key file: \"$l_file\" is owned by group \"$l_group\" should belong to group \"root\"\n"
-            fi
-        fi
-    done
-    if [ -z "$l_output2" ]; then
-        echo -e "\n- Audit Result:\n *PASS*\n$l_output"
-    else
-        echo -e "\n- Audit Result:\n *FAIL*\n$l_output2\n\n - Correctly set:\n$l_output"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "PASS") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_523.sh"
+        $result = bash $resultScript
+        if ($result -match "PASS") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3271,9 +3204,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.6.1.1"
     Task = "Ensure password expiration is 365 days or less"
     Test = {
-        $test1 = grep PASS_MAX_DAYS /etc/login.defs | cut -d ' ' -f 2
-        $test2 = awk -F: '(/^[^:]+:[^!*]/ && ($5>365 || $5~/([0-1]|-1|\s*)/)){print $1 " " $5}' /etc/shadow
-        if ($test1 -le 365 -and $test2 -eq $null) {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_5611_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_5611_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -le 365 -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3285,9 +3220,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.6.1.2"
     Task = "Ensure minimum days between password changes is configured"
     Test = {
-        $test1 = grep PASS_MIN_DAYS /etc/login.defs | cut -d ' ' -f 2
-        $test2 = awk -F : '(/^[^:]+:[^!*]/ && $4 < 1){print $1 " " $4}' /etc/shadow
-        if ($test1 -ge 1 -and $test2 -eq $null) {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_5612_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_5612_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -ge 1 -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3299,9 +3236,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.6.1.3"
     Task = "Ensure password expiration warning days is 7 or more"
     Test = {
-        $test1 = grep PASS_WARN_AGE /etc/login.defs | cut -d ' ' -f 2
-        $test2 = awk -F: '(/^[^:]+:[^!*]/ && `$6<7){print `$1 " " `$6}' /etc/shadow
-        if ($test1 -ge 7 -and $test2 -eq $null) {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_5613_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_5613_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -ge 7 -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3313,9 +3252,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.6.1.4"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d '=' -f 2
-        $test2 = awk -F: '/^[^#:]+:[^!\*:]*:[^:]*:[^:]*:[^:]*:[^:]*:(\s*|-1|3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):[^:]*:[^:]*\s*$/ {print $1":"$7}' /etc/shadow
-        if ($test1 -ge 2 -and $test2 -eq $null) {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_5614_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_5614_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -ge 2 -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3327,19 +3268,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.6.1.5"
     Task = "Ensure all users last password change date is in the past"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    awk -F: '/^[^:]+:[^!*]/{print $1}' /etc/shadow | while read -r usr; do
-        change=$(date -d "$(chage --list $usr | grep '^Last password change' | cut -d: -f2 | grep -v 'never$')" +%s);
-        if [[ "$change" -gt "$(date +%s)" ]]; then 
-            echo "User: \"$usr\" last password change was \"$(chage --list $usr | grep '^Last password change' | cut -d: -f2)\"";
-        fi;
-    done
-}
-'@
-        $script = bash -c $script_string
-        if ($script -eq $null) {
+        $resultScript = $scriptPath + "CIS100_RHEL9_5615.sh"
+        $result = bash $resultScript
+        if ($result -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3351,9 +3282,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.6.2"
     Task = "Ensure system accounts are secured"
     Test = {
-        $test1 = awk -F: '($1!~/^(root|halt|sync|shutdown|nfsnobody)$/ && ($3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' || $3 == 65534) && $7!~/^(\/usr)?\/sbin\/nologin$/) { print $1 }' /etc/passwd
-        $test2 = awk -F: '/nologin/ {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
-        if ($test1 -eq $null -and $test2 -eq $null) {
+        $resultScript1 = $scriptPath + "CIS100_RHEL9_562_1.sh"
+        $result1 = bash $resultScript1
+        $resultScript2 = $scriptPath + "CIS100_RHEL9_562_2.sh"
+        $result2 = bash $resultScript2
+        if ($result1 -eq $null -and $result2 -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3645,8 +3578,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.1"
     Task = "Ensure accounts in /etc/passwd use shadowed passwords"
     Test = {
-        $test1 = awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
-        if ($test1 -eq $null) {
+        $resultScript = $scriptPath + "CIS100_RHEL9_621.sh"
+        $result = bash $resultScript
+        if ($result -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3658,8 +3592,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.2"
     Task = "Ensure /etc/shadow password fields are not empty"
     Test = {
-        $test1 = awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
-        if ($test1 -eq $null) {
+        $resultScript = $scriptPath + "CIS100_RHEL9_622.sh"
+        $result = bash $resultScript
+        if ($result -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3782,25 +3717,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.8"
     Task = "Ensure root PATH Integrity"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    RPCV="$(sudo -Hiu root env | grep '^PATH' | cut -d= -f2)"
-    echo "$RPCV" | grep -q "::" && echo "root's path contains a empty directory (::)"
-    echo "$RPCV" | grep -q ":$" && echo "root's path contains a trailing (:)" for x in $(echo "$RPCV" | tr ":" " "); do
-        if [ -d "$x" ]; then
-            ls -ldH "$x" | awk '$9 == "." {print "PATH contains current working directory (.)"}
-            $3 != "root" {print $9, "is not owned by root"}
-            substr($1,6,1) != "-" {print $9, "is group writable"}
-            substr($1,9,1) != "-" {print $9, "is world writable"}'
-        else
-            echo "$x is not a directory"
-        fi
-    done
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "is not a directory") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_628.sh"
+        $result = bash $resultScript
+        if ($result -match "is not a directory") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3812,8 +3731,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.9"
     Task = "Ensure root is the only UID 0 account"
     Test = {
-        $test1 = awk -F: '($3 == 0) { print $1 }' /etc/passwd
-        if ($test1 -eq "root") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_629.sh"
+        $result = bash $resultScript
+        if ($result -eq "root") {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3825,24 +3745,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.10"
     Task = "Ensure local interactive user home directories exist"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output=""
-    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        [ ! -d "$home" ] && output="$output\n - User \"$user\" home directory \"$home\" doesn't exist"
-    done
-    if [ -z "$output" ]; then
-        echo -e "\n-PASSED: - All local interactive users have a home directory\n"
-    else
-        echo -e "\n- FAILED:\n$output\n"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "FAILED") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6210.sh"
+        $result = bash $resultScript
+        if ($result -match "FAILED") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3854,24 +3759,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.11"
     Task = "Ensure local interactive users own their home directories"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output=""
-    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        owner="$(stat -L -c "%U" "$home")" [ "$owner" != "$user" ] && output="$output\n - User \"$user\" home directory \"$home\" is owned by user \"$owner\""
-    done
-    if [ -z "$output" ]; then
-        echo -e "\n-PASSED: - All local interactive users have a home directory\n"
-    else
-        echo -e "\n- FAILED:\n$output\n"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "FAILED") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6210.sh"
+        $result = bash $resultScript
+        if ($result -match "FAILED") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3883,26 +3773,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.12"
     Task = "Ensure local interactive user home directories are mode 750 or more restrictive"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output=""
-    perm_mask='0027'
-    maxperm="$( printf '%o' $(( 0777 & ~$perm_mask)) )" valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        mode=$( stat -L -c '%#a' "$home" )
-        [ $(( $mode & $perm_mask )) -gt 0 ] && output="$output\n- User $user home directory: \"$home\" is too permissive: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
-    done
-    if [ -n "$output" ]; then
-        echo -e "\n- Failed:$output"
-    else
-        echo -e "\n- Passed:\n- All user home directories are mode: \"$maxperm\" or more restrictive"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "FAILED") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6212.sh"
+        $result = bash $resultScript
+        if ($result -match "FAILED") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3914,35 +3787,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.13"
     Task = "Ensure no local interactive user has .netrc files"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output="" output2="" perm_mask='0177'
-    maxperm="$( printf '%o' $(( 0777 & ~$perm_mask)) )"
-    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        if [ -f "$home/.netrc" ]; then mode="$( stat -L -c '%#a' "$home/.netrc" )"
-            if [ $(( $mode & $perm_mask )) -gt 0 ]; then
-                output="$output\n - User \"$user\" file: \"$home/.netrc\" is too permissive: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
-            else
-                output2="$output2\n - User \"$user\" file: \"$home/.netrc\" exists and has file mode: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
-            fi
-        fi
-    done
-    if [ -z "$output" ]; then
-        if [ -z "$output2" ]; then
-            echo -e "\n-PASSED: - No local interactive users have \".netrc\" files in their home directory\n"
-        else
-            echo -e "\n- WARNING:\n$output2\n"
-        fi
-    else
-        echo -e "\n- FAILED:\n$output\n" [ -n "$output2" ] && echo -e "\n- WARNING:\n$output2\n"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "FAILED") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6213.sh"
+        $result = bash $resultScript
+        if ($result -match "FAILED") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3954,25 +3801,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.14"
     Task = "Ensure no local interactive user has .forward files"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output=""
-    fname=".forward"
-    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        [ -f "$home/$fname" ] && output="$output\n - User \"$user\" file: \"$home/$fname\" exists"
-    done
-    if [ -z "$output" ]; then
-        echo -e "\n-PASSED: - No local interactive users have \"$fname\" files in their home directory\n"
-    else
-        echo -e "\n- FAILED:\n$output\n"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "FAILED") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6214.sh"
+        $result = bash $resultScript
+        if ($result -match "FAILED") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -3984,25 +3815,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.15"
     Task = "Ensure no local interactive user has .rhosts files"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output=""
-    fname=".rhosts"
-    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        [ -f "$home/$fname" ] && output="$output\n - User \"$user\" file: \"$home/$fname\" exists"
-    done
-    if [ -z "$output" ]; then
-        echo -e "\n-PASSED: - No local interactive users have \"$fname\" files in their home directory\n"
-    else
-        echo -e "\n- FAILED:\n$output\n"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "FAILED") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6215.sh"
+        $result = bash $resultScript
+        if ($result -match "FAILED") {
             return $retNonCompliant
         } else {
             return $retCompliant
@@ -4014,28 +3829,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.2.16"
     Task = "Ensure local interactive user dot files are not group or world writable"
     Test = {
-        $script_string = @'
-#!/usr/bin/env bash
-{
-    output=""
-    perm_mask='0022'
-    maxperm="$( printf '%o' $(( 0777 & ~$perm_mask)) )"
-    valid_shells="^($( sed -rn '/^\//{s,/,\\\\/,g;p}' /etc/shells | paste -s -d '|' - ))$"
-    awk -v pat="$valid_shells" -F: '$(NF) ~ pat { print $1 " " $(NF-1) }' /etc/passwd | (while read -r user home; do
-        for dfile in $(find "$home" -type f -name '.*'); do
-            mode=$( stat -L -c '%#a' "$dfile" ) [ $(( $mode & $perm_mask )) -gt 0 ] && output="$output\n- User $user file: \"$dfile\" is too permissive: \"$mode\" (should be: \"$maxperm\" or more restrictive)"
-        done
-    done
-    if [ -n "$output" ]; then
-        echo -e "\n- Failed:$output"
-    else
-        echo -e "\n- Passed:\n- All user home dot files are mode: \"$maxperm\" or more restrictive"
-    fi
-    )
-}
-'@
-        $script = bash -c $script_string
-        if ($script -match "Failed") {
+        $resultScript = $scriptPath + "CIS100_RHEL9_6216.sh"
+        $result = bash $resultScript
+        if ($result -match "Failed") {
             return $retNonCompliant
         } else {
             return $retCompliant
