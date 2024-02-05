@@ -3240,7 +3240,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
         $result1 = bash $resultScript1
         $resultScript2 = $scriptPath + "CIS100_RHEL9_5613_2.sh"
         $result2 = bash $resultScript2
-        if ($result1 -match "PASS_WARN_AGE\s*7" -and $result2 -eq $null) {
+        if ($result1 -match "PASS_WARN_AGE\s*7" -and !($result2 -match "FAIL")) {
             return $retCompliant
         } else {
             return $retNonCompliant
