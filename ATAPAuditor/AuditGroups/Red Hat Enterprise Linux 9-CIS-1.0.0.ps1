@@ -3529,8 +3529,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.1.12"
     Task = "Ensure sticky bit is set on all world-writable directories"
     Test = {
-        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
-        if ($test1 -eq $null) {
+        $test_string = "df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null"
+        $test = bash -c $test_string
+        if ($test -eq $null) {
             return $retCompliant
         } else {
             return $retNonCompliant
