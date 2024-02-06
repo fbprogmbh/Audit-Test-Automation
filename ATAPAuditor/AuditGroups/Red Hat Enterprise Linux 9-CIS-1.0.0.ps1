@@ -3503,7 +3503,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "6.1.10"
     Task = "Ensure no unowned files or directories exist"
     Test = {
-        $test1 = df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -nouser
         if ($test1 -eq $null) {
             return $retCompliant
         } else {
