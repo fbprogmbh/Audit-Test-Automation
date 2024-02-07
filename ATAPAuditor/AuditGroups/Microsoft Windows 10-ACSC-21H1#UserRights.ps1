@@ -68,7 +68,7 @@ function ConvertTo-NTAccountUser {
 # Tests
 [AuditTest] @{
     Id = "Medium-013"
-    Task = "(L1) Ensure 'Access this computer from the network' is set to 'Administrators, Remote Desktop Users'"
+    Task = "Ensure 'Access this computer from the network' is set to 'Administrators, Remote Desktop Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
@@ -139,7 +139,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-040"
-    Task = "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators'"
+    Task = "Ensure 'Manage auditing and security log' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSecurityPrivilege"]
@@ -209,7 +209,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-185"
-    Task = "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Remote Desktop Users'"
+    Task = "Ensure 'Allow log on through Remote Desktop Services' is set to 'Remote Desktop Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteInteractiveLogonRight"]
@@ -244,7 +244,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-232"
-    Task = "(L1) Ensure 'Back up files and directories' is set to 'Administrators'"
+    Task = "Ensure 'Back up files and directories' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeBackupPrivilege"]
@@ -279,7 +279,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-233"
-    Task = "(L1) Ensure 'Restore files and directories' is set to 'Administrators'"
+    Task = "Ensure 'Restore files and directories' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRestorePrivilege"]
@@ -314,7 +314,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-234"
-    Task = "(L1) Ensure 'Access Credential Manager as a trusted caller' is set to 'No One'"
+    Task = "Ensure 'Access Credential Manager as a trusted caller' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTrustedCredManAccessPrivilege"]
@@ -348,7 +348,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-235"
-    Task = "(L1) Ensure 'Act as part of the operating system' is set to 'No One'"
+    Task = "Ensure 'Act as part of the operating system' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTcbPrivilege"]
@@ -382,7 +382,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-236"
-    Task = "(L1) Ensure 'Allow log on locally' is set to 'Administrators, Users'"
+    Task = "Ensure 'Allow log on locally' is set to 'Administrators, Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeInteractiveLogonRight"]
@@ -418,7 +418,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-240"
-    Task = "(L1) Ensure 'Create a pagefile' is set to 'Administrators'"
+    Task = "Ensure 'Create a pagefile' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePagefilePrivilege"]
@@ -453,7 +453,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-241"
-    Task = "(L1) Ensure 'Create a token object' is set to 'No One'"
+    Task = "Ensure 'Create a token object' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateTokenPrivilege"]
@@ -487,7 +487,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-242"
-    Task = "(L1) Ensure 'Create global objects' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'"
+    Task = "Ensure 'Create global objects' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateGlobalPrivilege"]
@@ -525,7 +525,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-243"
-    Task = "(L1) Ensure 'Create permanent shared objects' is set to 'No One'"
+    Task = "Ensure 'Create permanent shared objects' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePermanentPrivilege"]
@@ -559,7 +559,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-244"
-    Task = "(L1) Ensure 'Debug programs' is set to 'Administrators'"
+    Task = "Ensure 'Debug programs' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDebugPrivilege"]
@@ -606,7 +606,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-245"
-    Task = "(L1) Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One'"
+    Task = "Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeEnableDelegationPrivilege"]
@@ -640,7 +640,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-246"
-    Task = "(L1) Ensure 'Force shutdown from a remote system' is set to 'Administrators'"
+    Task = "Ensure 'Force shutdown from a remote system' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteShutdownPrivilege"]
@@ -675,7 +675,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-247"
-    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' [IIS Role installed] (MS only)"
+    Task = "Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' [IIS Role installed] (MS only)"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
@@ -717,7 +717,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-248"
-    Task = "(L1) Ensure 'Load and unload device drivers' is set to 'Administrators'"
+    Task = "Ensure 'Load and unload device drivers' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLoadDriverPrivilege"]
@@ -752,7 +752,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-249"
-    Task = "(L1) Ensure 'Lock pages in memory' is set to 'No One'"
+    Task = "Ensure 'Lock pages in memory' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeLockMemoryPrivilege"]
@@ -786,7 +786,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-250"
-    Task = "(L1) Ensure 'Modify firmware environment values' is set to 'Administrators'"
+    Task = "Ensure 'Modify firmware environment values' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeSystemEnvironmentPrivilege"]
@@ -821,7 +821,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-251"
-    Task = "(L1) Ensure 'Perform volume maintenance tasks' is set to 'Administrators'"
+    Task = "Ensure 'Perform volume maintenance tasks' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeManageVolumePrivilege"]
@@ -856,7 +856,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-252"
-    Task = "(L1) Ensure 'Profile single process' is set to 'Administrators'"
+    Task = "Ensure 'Profile single process' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeProfileSingleProcessPrivilege"]
@@ -891,7 +891,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "Medium-253"
-    Task = "(L1) Ensure 'Take ownership of files or other objects' is set to 'Administrators'"
+    Task = "Ensure 'Take ownership of files or other objects' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTakeOwnershipPrivilege"]

@@ -17,8 +17,8 @@ ATAPAuditor:\
 			<td>
 
 
-AuditTAP Release 5.7.1:\
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.7.1)
+AuditTAP Release 5.8.0:\
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.8.0)
 			</td>
 		</tr>
 	</table>
@@ -84,7 +84,7 @@ Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
-Microsoft Edge | - | - | 99 | - | -
+Microsoft Edge | - | 2.0.0 | 99 | - | -
 Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
 Microsoft IIS10 | - | 1.1.1 | - | - | -
 Microsoft Office 2016 Excel | V1R2 | - | - | - | -
@@ -105,7 +105,7 @@ Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R23 | 2.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
-Microsoft Windows 10 Stand-alone | - | Stand-alone 1.0.1 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 | - | 2.0.0 | 22H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
@@ -123,12 +123,12 @@ The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recomme
 Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
 --------- | -----| --- | -- | --- | --- | ---
 Debian 10 | - | - | - | - | - | Base
+Debian 11 | - | 1.0.0 | - | - | - | -
 Fedora 35 | - | - | - | - | - | Base
 Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
-Ubuntu 20.04 | - | 1.1.0 | - | - | - | Base
-Ubuntu 22.04 | - | 1.0.0 | - | - | - | Base
-Debian 11 | - | 1.0.0 | - | - | - | Base
 SUSE Linux Enterprise 15 | - | 1.1.1 | - | - | - | -
+Ubuntu 20.04 | - | 1.1.0 | - | - | - | -
+Ubuntu 22.04 | - | 1.0.0 | - | - | - | -
 
 
 
@@ -164,7 +164,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.6.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.8.zip -Verbose
 ```
 The following screenshot shows the output:
 
@@ -174,7 +174,7 @@ The following screenshot shows the output:
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.6.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.8.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 

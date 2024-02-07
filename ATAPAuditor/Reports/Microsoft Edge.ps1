@@ -3,7 +3,7 @@
 	ModuleName = 'ATAPAuditor'
 	BasedOn = @(
 		"Microsoft Edge v99 Security Baseline FINAL, Version: 99, Date: 2022-03-07"
-		"CIS Microsoft Edge Benchmark, Version: 1.1.0, Date: 2022-09-19"
+		"CIS Microsoft Edge Benchmark, Version: 2.0.0, Date: 2023-09-21"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -22,7 +22,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Edge-CIS-1.1.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Edge-CIS-2.0.0#RegistrySettings"
 				}
 			)
 		}
