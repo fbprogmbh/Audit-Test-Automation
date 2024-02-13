@@ -3626,7 +3626,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
         [ -z "$x" ] && break
         set - $x
         if [ $1 -gt 1 ]; then
-            users=$(awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | xargs) echo "Duplicate UID ($2): $users"
+            users=$(awk -F: '($3 == n) { print $1 }' n=$2 /etc/passwd | xargs)
+            echo "Duplicate UID ($2): $users"
         fi
     done
 }
