@@ -20,7 +20,10 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
 	Id = "SBD-010"
-	Task = "Get amount of active local users on system."
+	Task = "Get amount of active local users on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
+	Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation",  "Standalone Server", "Member Server"}
+    )
 	Test = {	
 		$users = Get-LocalUser;
 		$amountOfActiveUser = 0;
@@ -61,6 +64,9 @@ $RootPath = Split-Path $RootPath -Parent
 [AuditTest] @{
 	Id = "SBD-011"
 	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
+	Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation",  "Standalone Server", "Member Server"}
+    )
 	Test = {	
 		try { 
 			#List all groups 
