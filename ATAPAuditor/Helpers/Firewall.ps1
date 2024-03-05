@@ -26,7 +26,7 @@ function Test-FirewallPaths {
             -Name $Key `
         | Select-Object -ExpandProperty "$($Key)"
         # if regValue == expectedValue OR if the LogFilePath ends with .log
-        if (($regValue -eq $ExpectedValue) -or (($Key -eq "LogFilePath") -and ($ExpectedValue -match "$ProfileType[a-z]*.log"))) {
+        if (($regValue -eq $ExpectedValue) -or (($Key -eq "LogFilePath") -and ($regValue -match "$ProfileType[a-z]*.log"))) {
             $Result = @{
                 Message = "Compliant"
                 Status  = "True"
