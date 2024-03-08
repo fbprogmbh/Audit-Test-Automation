@@ -53,11 +53,19 @@
 	Id = "SBD-038"
 	Task = "Ensure WinFW Service is running."
 	Test = {
-		$value = (Get-Service WinRM).status
-        if($value -eq "Running"){
+        try{
+            $value = (Get-Service WinRM -ErrorAction Stop).status
+            if($value -eq "Running"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        catch [System.SystemException]{
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "Service not found!"
+                Status = "False"
             }
         }
         return @{
