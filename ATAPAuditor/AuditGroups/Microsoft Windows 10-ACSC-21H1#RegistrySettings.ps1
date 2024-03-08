@@ -10511,11 +10511,11 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn off Inventory Collector' is set to 'Enabled'"
     Test = {
         try {
-            $status = (get-service -name pcasvc).Status
-            if ($status -ne "Stopped") {
+            $status = get-service -name pcasvc -ErrorAction Stop
+            if($status.Status -ne "Stopped"){
                 return @{
                     Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
-                    Status  = "True"
+                    Status = "True"
                 }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10542,7 +10542,13 @@ $windefrunning = CheckWindefRunning
                 Status  = "False"
             }
         }
-        
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
+            }
+        }
+
         return @{
             Message = "Compliant"
             Status  = "True"
@@ -10554,11 +10560,11 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Turn off Steps Recorder' is set to 'Enabled'"
     Test = {
         try {
-            $status = (get-service -name pcasvc).Status
-            if ($status -ne "Stopped") {
+            $status = get-service -name pcasvc -ErrorAction Stop
+            if($status.Status -ne "Stopped"){
                 return @{
                     Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
-                    Status  = "True"
+                    Status = "True"
                 }
             }
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -10583,6 +10589,12 @@ $windefrunning = CheckWindefRunning
             return @{
                 Message = "Registry key not found."
                 Status  = "False"
+            }
+        }
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
             }
         }
         

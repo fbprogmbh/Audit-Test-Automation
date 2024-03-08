@@ -10388,7 +10388,7 @@ $windefrunning = CheckWindefRunning
     Task = "(ND, NE) Ensure 'Connected User Experiences and Telemetry' is set to 'Disabled'."
     Test = {
         try {
-            $status = Get-Service DiagTrack | select -property starttype
+            $status = Get-Service DiagTrack -ErrorAction Stop | select -property starttype
             if($status.StartType -ne "Disabled"){
                 return @{
                     Message = "Service not compliant. Currently: $($status)"
@@ -10408,7 +10408,13 @@ $windefrunning = CheckWindefRunning
                 Status = "False"
             }
         }
-        
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
+            }
+        }
+
         return @{
             Message = "Compliant"
             Status = "True"
