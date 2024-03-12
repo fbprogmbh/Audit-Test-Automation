@@ -804,6 +804,11 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
+	if([Environment]::Is64BitProcess -eq $false){
+		Write-Host "Please use 64-bit version of PowerShell in order to use AuditTAP. Closing..." -ForegroundColor red
+		return;
+	}
+
 	$parent = $path
 	if ($Path -match ".html") {
 		$parent = Split-Path -Path $Path
