@@ -1,3 +1,4 @@
+# this function does NOT check for the same logging file in different paths for LogFilePaths (public, private, domain)
 function Test-FirewallPaths {
     [CmdletBinding()]
     [OutputType([Object])]
