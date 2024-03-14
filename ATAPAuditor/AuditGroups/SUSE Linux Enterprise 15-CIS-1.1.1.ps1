@@ -2,8 +2,9 @@ $parentPath = Split-Path -Parent -Path $PSScriptRoot
 $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
+$rcNone = "None"
 $rcNonCompliant = "Non-Compliant"
-$rcNonCompliantManualReviewRequired = "None"
+$rcNonCompliantManualReviewRequired = "Manual Review Required"
 $rcCompliantIPv6isDisabled = "IPv6 is disabled"
 
 $retCompliant = @{
@@ -20,7 +21,7 @@ $retCompliantIPv6Disabled = @{
 }
 $retNonCompliantManualReviewRequired = @{
     Message = $rcNonCompliantManualReviewRequired
-    Status = $rcFalse
+    Status = $rcNone
 }
 
 $IPv6Status_script = @'
