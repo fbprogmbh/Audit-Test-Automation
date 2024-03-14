@@ -3,7 +3,7 @@ $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
 $rcNonCompliant = "Non-Compliant"
-$rcNonCompliantManualReviewRequired = "Manual review required"
+$rcNonCompliantManualReviewRequired = "None"
 $rcCompliantIPv6isDisabled = "IPv6 is disabled"
 
 $retCompliant = @{
