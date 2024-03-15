@@ -732,6 +732,222 @@
     }
 }
 [AuditTest] @{
+    Id = "1.6.1"
+    Task = "Enable TLS1.3 Protocol (Server)"
+    Test = {
+        try{
+            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
+            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status = "None"
+                }
+            }
+        }
+        catch{
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status = "None"
+            }
+        }
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.6.2"
+    Task = "Enable TLS1.3 Protocol (Server DisabledByDefault)"
+    Test = {
+        try{
+            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
+            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status = "None"
+                }
+            }
+        }
+        catch{
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status = "None"
+            }
+        }
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server" `
+                -Name "DisabledByDefault" `
+                | Select-Object -ExpandProperty "DisabledByDefault"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.6.3"
+    Task = "Enable TLS1.3 Protocol (Client)"
+    Test = {
+        try{
+            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
+            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status = "None"
+                }
+            }
+        }
+        catch{
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status = "None"
+            }
+        }
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.6.4"
+    Task = "Enable TLS1.3 Protocol (Client DisabledByDefault)"
+    Test = {
+        try{
+            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
+            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status = "None"
+                }
+            }
+        }
+        catch{
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status = "None"
+            }
+        }
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client" `
+                -Name "DisabledByDefault" `
+                | Select-Object -ExpandProperty "DisabledByDefault"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "2.1"
     Task = "Disable NULL Cipher"
     Test = {
