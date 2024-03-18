@@ -6,6 +6,9 @@ $rcNone = "None"
 $rcNonCompliant = "Non-Compliant"
 $rcNonCompliantManualReviewRequired = "Manual Review Required"
 $rcCompliantIPv6isDisabled = "IPv6 is disabled"
+$rcFirewallStatus1 = "Using firewalld with iptables"
+$rcFirewallStatus2 = "Using nftables"
+$rcFirewallStatus3 = "Using iptables"
 
 $retCompliant = @{
     Message = $rcCompliant
@@ -23,6 +26,19 @@ $retNonCompliantManualReviewRequired = @{
     Message = $rcNonCompliantManualReviewRequired
     Status = $rcNone
 }
+$retUsingFW1 = @{
+    Message = $rcFirewallStatus1
+    Status = $rcNone
+}
+$retUsingFW2 = @{
+    Message = $rcFirewallStatus2
+    Status = $rcNone
+}
+$retUsingFW3 = @{
+    Message = $rcFirewallStatus3
+    Status = $rcNone
+}
+
 
 $IPv6Status_script = @'
 #!/bin/bash
@@ -40,6 +56,54 @@ if ($IPv6Status -match "enabled") {
     $IPv6Status = "enabled"
 } else {
     $IPv6Status = "disabled"
+}
+
+# Firewall evaluation
+
+# 0 = init. value, undefined
+# 1 = using firewalld with iptabes as backend
+# 2 = using nftables
+# 3 = using iptables
+$FirewallStatus = 0
+
+# Testing for firewalld with iptables as backend
+$test1 = rpm -q firewalld iptables
+$test2 = rpm -q nftables
+$test3 = systemctl status nftables | grep "Active: " | grep -v "active (running)"
+$test4 = systemctl is-enabled nftables
+$test5 = systemctl is-enabled firewalld
+$test6 = firewall-cmd --state
+if($test1 -match "firewalld-" -and $test1 -match "iptables-" -and !($test2 -match "nftables-" -or $test3 -match "active (running)") -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled" -and $test6 -match "running") {
+    $FirewallStatus = 1
+}
+
+# Testing for nftables
+$test1 = rpm -q nftables
+$test2 = rpm -q firewalld
+$test3 = systemctl status firewalld | grep "Active: " | grep -v "active (running)"
+$test4 = systemctl is-enabled firewalld
+$test5 = systemctl is-enabled nftables
+if($test1 -match "nftables-" -and !($test2 -match "firewalld-" -or $test3 -match "active (running)") -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled") {
+    $FirewallStatus = 2
+}
+
+# Testing for iptables
+$test1 = rpm -q iptables
+$test2 = rpm -q nftables
+$test3 = rpm -q firewalld
+$test4 = systemctl status firewalld | grep "Active: " | grep -v "active (running)"
+$test5 = systemctl is-enabled firewalld
+if($test1 -match "iptables-" -and $test2 -match "not installed" -and $test3 -match "not installed" -and !($test4 -match "running (active)") -and $test5 -match "masked") {
+    $FirewallStatus = 3
+}
+if ($FirewallStatus = 1) {
+    return $retUsingFW1
+}
+if ($FirewallStatus = 2) {
+    return $retUsingFW2
+}
+if ($FirewallStatus = 3) {
+    return $retUsingFW3
 }
 
 ### Chapter 1 - Initial Setup
@@ -1378,6 +1442,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.1"
     Task = "Ensure FirewallD is installed"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = rpm -q firewalld iptables
         if($result -match "firewalld-" -and $result -match "iptables-"){
             return $retCompliant
@@ -1391,8 +1461,14 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.2"
     Task = "Ensure nftables is not installed or stopped and masked"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = rpm -q nftables
-        $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running) "
+        $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running)"
         $result22 = systemctl is-enabled nftables
         if($result1 -match "not installed" -or ($result21 -eq $null -and $result22 -match "masked")){
             return $retCompliant
@@ -1406,6 +1482,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.3"
     Task = "Ensure firewalld service is enabled and running"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = systemctl is-enabled firewalld
         $result2 = firewall-cmd --state
         if($result1 -match "enabled" -and $result2 -match "running"){
@@ -1420,6 +1502,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.4"
     Task = "Ensure default zone is set"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = firewall-cmd --get-default-zone
         if($result -ne $null){
             return $retCompliant
@@ -1433,6 +1521,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.5"
     Task = "Ensure network interfaces are assigned to appropriate zone"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         return $retNonCompliantManualReviewRequired
     }
 }
@@ -1441,6 +1535,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.6"
     Task = "Ensure unnecessary services and ports are not accepted"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         return $retNonCompliantManualReviewRequired
     }
 }
@@ -1449,6 +1549,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.1"
     Task = "Ensure nftables is installed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = rpm -q nftables
         if($result -match "nftables-"){
             return $retCompliant
@@ -1462,6 +1568,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.2"
     Task = "Ensure firewalld is not installed or stopped and masked"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = rpm -q firewalld
         $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled firewalld
@@ -1477,6 +1589,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.3"
     Task = "Ensure iptables are flushed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1485,6 +1603,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.4"
     Task = "Ensure a table exists"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = nft list tables
         if($result -match "table inet filter") {
             return $retCompliant
@@ -1498,6 +1622,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.5"
     Task = "Ensure base chain exist"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = nft list ruleset | grep 'hook input'
         $result2 = nft list ruleset | grep 'hook forward'
         $result3 = nft list ruleset | grep 'hook output'
@@ -1513,6 +1643,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.6"
     Task = "Ensure loopback traffic is configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
         $result2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
         if($result1 -match "iif ""lo"" accept" -and $result2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop") {
@@ -1527,6 +1663,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.7"
     Task = "Ensure outbound and established connections are configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1535,6 +1677,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.8"
     Task = "Ensure default deny firewall policy"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = nft list ruleset | grep 'hook input'
         $result2 = nft list ruleset | grep 'hook forward'
         $result3 = nft list ruleset | grep 'hook output'
@@ -1550,6 +1698,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.9"
     Task = "Ensure nftables service is enabled"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = systemctl is-enabled nftables
         if($result -match "enabled") {
             return $retCompliant
@@ -1563,6 +1717,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.10"
     Task = "Ensure nftables rules are permanent"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1571,6 +1731,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.1"
     Task = "Ensure iptables package is installed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $result = rpm -q iptables
         if($result -match "iptables-") {
             return $retCompliant
@@ -1584,6 +1750,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.2"
     Task = "Ensure nftables is not installed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $result = rpm -q nftables
         if($result -match "not installed") {
             return $retCompliant
@@ -1597,6 +1769,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.3"
     Task = "Ensure firewalld is not installed or stopped and masked"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $result1 = rpm -q firewalld
         $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled firewalld
@@ -1612,6 +1790,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.1"
     Task = "Ensure default deny firewall policy"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $output = iptables -L
         $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $result11 = $?
@@ -1637,6 +1821,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.2"
     Task = "Ensure iptables loopback traffic is configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
         $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
         if($test1 -ne $null -and $test2 -ne $null){
@@ -1650,6 +1840,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.3"
     Task = "Ensure outbound and established connections are configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1658,6 +1854,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.4"
     Task = "Ensure firewall rules exist for all open ports"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1666,6 +1868,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.1"
     Task = "Ensure IPv6 default deny firewall policy"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
@@ -1694,6 +1902,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.2"
     Task = "Ensure IPv6 loopback traffic is configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
@@ -1714,6 +1928,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.3"
     Task = "Ensure IPv6 outbound and established connections are configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
@@ -1725,6 +1945,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.4"
     Task = "Ensure IPv6 firewall rules exist for all open ports"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
