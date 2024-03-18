@@ -96,15 +96,6 @@ $test5 = systemctl is-enabled firewalld
 if($test1 -match "iptables-" -and $test2 -match "not installed" -and $test3 -match "not installed" -and !($test4 -match "running (active)") -and $test5 -match "masked") {
     $FirewallStatus = 3
 }
-if ($FirewallStatus = 1) {
-    return $retUsingFW1
-}
-if ($FirewallStatus = 2) {
-    return $retUsingFW2
-}
-if ($FirewallStatus = 3) {
-    return $retUsingFW3
-}
 
 ### Chapter 1 - Initial Setup
 
