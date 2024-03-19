@@ -770,6 +770,12 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
                 Message = "Registry key not found."
                 Status = "False"
@@ -821,6 +827,12 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
                 Message = "Registry key not found."
                 Status = "False"
@@ -929,6 +941,12 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
                 Message = "Registry key not found."
                 Status = "False"
