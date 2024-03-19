@@ -736,8 +736,8 @@
     Task = "Enable TLS1.3 Protocol (Server)"
     Test = {
         try{
-            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -787,8 +787,8 @@
     Task = "Enable TLS1.3 Protocol (Server DisabledByDefault)"
     Test = {
         try{
-            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -838,8 +838,8 @@
     Task = "Enable TLS1.3 Protocol (Client)"
     Test = {
         try{
-            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -895,8 +895,8 @@
     Task = "Enable TLS1.3 Protocol (Client DisabledByDefault)"
     Test = {
         try{
-            $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
