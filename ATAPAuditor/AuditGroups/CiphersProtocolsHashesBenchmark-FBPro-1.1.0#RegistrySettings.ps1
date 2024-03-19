@@ -737,7 +737,7 @@
     Test = {
         try{
             $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -765,7 +765,7 @@
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
+                Message = "PowerShell cmdlet not found."
                 Status = "False"
             }
         }
@@ -788,7 +788,7 @@
     Test = {
         try{
             $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -816,7 +816,7 @@
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
+                Message = "PowerShell cmdlet not found."
                 Status = "False"
             }
         }
@@ -839,7 +839,7 @@
     Test = {
         try{
             $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -866,14 +866,8 @@
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
-            if($OS -match "Server 2022" -or $OS -match "Windows 11"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
             return @{
-                Message = "Registry value not found."
+                Message = "PowerShell cmdlet not found."
                 Status = "False"
             }
         }
@@ -902,7 +896,7 @@
     Test = {
         try{
             $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
-            if($OS -notmatch "Server 2022" -or $OS -notmatch "Windows 11"){
+            if($OS.Caption -notmatch "Server 2022" -or $OS.Caption -notmatch "Windows 11"){
                 return @{
                     Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
                     Status = "None"
@@ -930,7 +924,7 @@
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
+                Message = "PowerShell cmdlet not found."
                 Status = "False"
             }
         }
