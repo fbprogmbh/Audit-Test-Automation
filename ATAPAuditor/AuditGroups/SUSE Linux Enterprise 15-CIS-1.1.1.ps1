@@ -1467,7 +1467,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
         $result1 = rpm -q nftables
         $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running)"
         $result22 = systemctl is-enabled nftables
-        if($result1 -match "not installed" -or ($result21 -eq $null -and $result22 -match "masked")){
+        if($result1 -match "not installed" -or (!($result21 -match "active (running)") -and $result22 -match "masked")){
             return $retCompliant
         } else {
             return $retNonCompliant
