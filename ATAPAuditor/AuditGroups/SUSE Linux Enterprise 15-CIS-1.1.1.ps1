@@ -74,7 +74,7 @@ function GetFirewallStatus {
     $test4 = systemctl is-enabled nftables
     $test5 = systemctl is-enabled firewalld
     $test6 = firewall-cmd --state
-    if($test1 -match "firewalld-" -and $test1 -match "iptables-" -and !($test2 -match "nftables-" -or $test3 -match "active (running)") -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled" -and $test6 -match "running") {
+    if($test1 -match "firewalld-" -and $test1 -match "iptables-" -and (!($test2 -match "nftables-") -or !($test3 -match "active (running)")) -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled" -and $test6 -match "running") {
         return 1
     }
 
