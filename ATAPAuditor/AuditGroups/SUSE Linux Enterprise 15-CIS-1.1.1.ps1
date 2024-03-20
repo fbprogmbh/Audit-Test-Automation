@@ -70,7 +70,7 @@ function GetFirewallStatus {
     # Testing for firewalld with iptables as backend
     $test1 = rpm -q firewalld iptables
     $test2 = rpm -q nftables
-    $test3 = systemctl status nftables | grep "Active: " | grep -v "active (running)"
+    $test3 = systemctl status nftables | grep "active (running)"
     $test4 = systemctl is-enabled nftables
     $test5 = systemctl is-enabled firewalld
     $test6 = firewall-cmd --state
@@ -81,7 +81,7 @@ function GetFirewallStatus {
     # Testing for nftables
     $test1 = rpm -q nftables
     $test2 = rpm -q firewalld
-    $test3 = systemctl status firewalld | grep "Active: " | grep -v "active (running)"
+    $test3 = systemctl status firewalld | grep "active (running)"
     $test4 = systemctl is-enabled firewalld
     $test5 = systemctl is-enabled nftables
     if($test1 -match "nftables-" -and !($test2 -match "firewalld-" -or $test3 -match "active (running)") -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled") {
@@ -92,7 +92,7 @@ function GetFirewallStatus {
     $test1 = rpm -q iptables
     $test2 = rpm -q nftables
     $test3 = rpm -q firewalld
-    $test4 = systemctl status firewalld | grep "Active: " | grep -v "active (running)"
+    $test4 = systemctl status firewalld | grep "active (running)"
     $test5 = systemctl is-enabled firewalld
     if($test1 -match "iptables-" -and $test2 -match "not installed" -and $test3 -match "not installed" -and !($test4 -match "running (active)") -and ($test5 -match "masked" -or $test5 -match "Failed to get unit file")) {
         return 3
@@ -1465,7 +1465,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
             return $retUsingFW3
         }
         $result1 = rpm -q nftables
-        $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running)"
+        $result21 = systemctl status nftables | grep "active (running)"
         $result22 = systemctl is-enabled nftables
         if($result1 -match "not installed" -or (!($result21 -match "active (running)") -and $result22 -match "masked")){
             return $retCompliant
