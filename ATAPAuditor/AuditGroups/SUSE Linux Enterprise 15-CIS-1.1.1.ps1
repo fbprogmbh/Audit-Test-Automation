@@ -74,7 +74,7 @@ function GetFirewallStatus {
     $test4 = systemctl is-enabled nftables
     $test5 = systemctl is-enabled firewalld
     $test6 = firewall-cmd --state
-    if($test1 -match "firewalld-" -and $test1 -match "iptables-" -and (!($test2 -match "nftables-") -or !($test3 -match "active (running)")) -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled" -and $test6 -match "running") {
+    if($test1 -match "firewalld-" -and $test1 -match "iptables-" -and (!($test2 -match "nftables-") -or !($test3 -match "active (running)")) -and !($test4 -match "enabled") -and $test5 -match "enabled" -and $test6 -match "running") {
         return 1
     }
 
@@ -84,7 +84,7 @@ function GetFirewallStatus {
     $test3 = systemctl status firewalld | grep "active (running)"
     $test4 = systemctl is-enabled firewalld
     $test5 = systemctl is-enabled nftables
-    if($test1 -match "nftables-" -and !($test2 -match "firewalld-" -or $test3 -match "active (running)") -and ($test4 -match "masked" -or $test4 -match "Failed to get unit file") -and $test5 -match "enabled") {
+    if($test1 -match "nftables-" -and !($test2 -match "firewalld-" -or $test3 -match "active (running)") -and !($test4 -match "enabled") -and $test5 -match "enabled") {
         return 2
     }
 
@@ -94,7 +94,7 @@ function GetFirewallStatus {
     $test3 = rpm -q firewalld
     $test4 = systemctl status firewalld | grep "active (running)"
     $test5 = systemctl is-enabled firewalld
-    if($test1 -match "iptables-" -and $test2 -match "not installed" -and $test3 -match "not installed" -and !($test4 -match "running (active)") -and ($test5 -match "masked" -or $test5 -match "Failed to get unit file")) {
+    if($test1 -match "iptables-" -and $test2 -match "not installed" -and $test3 -match "not installed" -and !($test4 -match "running (active)") -and !($test5 -match "enabled")) {
         return 3
     }
 
@@ -1467,7 +1467,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
         $result1 = rpm -q nftables
         $result21 = systemctl status nftables | grep "active (running)"
         $result22 = systemctl is-enabled nftables
-        if($result1 -match "not installed" -or (!($result21 -match "active (running)") -and $result22 -match "masked")){
+        if($result1 -match "not installed" -or (!($result21 -match "active (running)") -and !($result22 -match "enabled"))){
             return $retCompliant
         } else {
             return $retNonCompliant
