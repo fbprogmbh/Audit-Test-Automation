@@ -1,4 +1,5 @@
 $parentPath = Split-Path -Parent -Path $PSScriptRoot
+$scriptPath = $parentPath + "Helpers/ShellScripts/SLE_15/"
 $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
@@ -375,21 +376,7 @@ function GetFirewallStatus {
     Id = "1.1.19"
     Task = "Ensure noexec option set on removable media partitions"
     Test = {
-        $result_script = @'
-#!/bin/bash
-while read -r name; do
-    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
-        mount | grep "$name"
-    fi
-done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
-'@
-        $result = bash -c $result_script
-        foreach($line in $result){
-            if(!($line -match "noexec")){
-                return $retNonCompliant
-            }
-        }
-        return $retCompliant
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -397,21 +384,7 @@ done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq
     Id = "1.1.20"
     Task = "Ensure nodev option set on removable media partitions"
     Test = {
-        $result_script = @'
-#!/bin/bash
-while read -r name; do
-    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
-        mount | grep "$name"
-    fi
-done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
-'@
-        $result = bash -c $result_script
-        foreach($line in $result){
-            if(!($line -match "nodev")){
-                return $retNonCompliant
-            }
-        }
-        return $retCompliant
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -419,21 +392,7 @@ done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq
     Id = "1.1.21"
     Task = "Ensure nosuid option set on removable media partitions"
     Test = {
-        $result_script = @'
-#!/bin/bash
-while read -r name; do
-    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
-        mount | grep "$name"
-    fi
-done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
-'@
-        $result = bash -c $result_script
-        foreach($line in $result){
-            if(!($line -match "nosuid")){
-                return $retNonCompliant
-            }
-        }
-        return $retCompliant
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -752,7 +711,8 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.3"
     Task = "Ensure remote login warning banner is configured properly"
     Test = {
-        $result = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/issue.net
+        $script = $scriptPath + "CIS-SEL15-1.8.1.3.sh"
+        $result = bash $script
         if($result -eq $null){
             return $retCompliant
         } else {
