@@ -1,5 +1,5 @@
 $parentPath = Split-Path -Parent -Path $PSScriptRoot
-$scriptPath = $parentPath + "Helpers/ShellScripts/SLE_15/"
+$scriptPath = $parentPath + "/Helpers/ShellScripts/SLE_15/"
 $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
