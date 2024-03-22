@@ -685,7 +685,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.1"
     Task = "Ensure message of the day is configured properly"
     Test = {
-        $result = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/motd
+        $result = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/motd 2>/dev/null
         if($result -eq $null){
             return $retCompliant
         } else {
@@ -3022,16 +3022,10 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Id = "5.4.2"
     Task = "Ensure system accounts are secured"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!="'"$(which nologin)"'" && $7!="/bin/false") {print}' /etc/passwd
-'@
-        $test1 = bash -c $test1_script
-        $test2_script = @'
-#!/bin/bash
-awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
-'@
-        $test2 = bash -c $test2_script
+        $script1 = $scriptPath + "CIS-SEL15-5.4.2_1.sh"
+        $test1 = bash $script1
+        $script2 = $scriptPath + "CIS-SEL15-5.4.2_2.sh"
+        $test2 = bash $script2
         if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
@@ -3057,11 +3051,8 @@ awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/l
     Id = "5.4.4"
     Task = "Ensure default user shell timeout is configured"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^$#;]+\s*)*)?\s*TMOUT=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9])\b' $f && grep -Eq '(^|^[^#]*;)\s*readonly\s+TMOUT\b' $f && grep -Eq '(^|^[^#]*;)\s*export\s+([^$#;]+\s+)*TMOUT\b' $f && echo "TMOUT correctly configured in file: $f"; done
-'@
-        $test1 = bash -c $test1_script
+        $script = $scriptPath + "CIS-SEL15-5.4.4.sh"
+        $test1 = bash $script
         $test2 = grep -PR '^\s*([^$#;]+\s+)*TMOUT=(9[0-9][1-9]|0+|[1-9]\d{3,})\b\s*(\S+\s*)*(\s+#.*)?$' /etc/profile* /etc/bashrc.bashrc*
         if($test1 -match "configured in file: /etc/profile.d/" -and $test2 -eq $null){
             return $retCompliant
@@ -3256,11 +3247,8 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.2.1"
     Task = "Ensure accounts in /etc/passwd use shadowed passwords"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
-'@
-        $test1 = bash -c $test1_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.1.sh"
+        $test1 = bash $script1
         if($test1 -eq $null){
             return $retCompliant
         } else {
@@ -3273,11 +3261,8 @@ awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/pas
     Id = "6.2.2"
     Task = "Ensure /etc/shadow password fields are not empty"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
-'@
-        $test1 = bash -c $test1_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.2.sh"
+        $test1 = bash $script1
         if($test1 -eq $null){
             return $retCompliant
         } else {
@@ -3340,15 +3325,8 @@ done
     Id = "6.2.5"
     Task = "Ensure all users' home directories exist"
     Test = {
-        $test_script = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read -r user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.5.sh"
+        $test = bash $script1
         if($test -match "does not exist"){
             return $retNonCompliant
         } else {
@@ -3361,29 +3339,8 @@ done
     Id = "6.2.6"
     Task = "Ensure users' home directories permissions are 750 or more restrictive"
     Test = {
-        $test_script = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        dirperm=$(ls -ld $dir | cut -f1 -d" ")
-        if [ $(echo $dirperm | cut -c6) != "-" ]; then
-            echo "Group Write permission set on the home directory ($dir) of user $user"
-        fi
-        if [ $(echo $dirperm | cut -c8) != "-" ]; then
-            echo "Other Read permission set on the home directory ($dir) of user $user"
-        fi
-        if [ $(echo $dirperm | cut -c9) != "-" ]; then
-            echo "Other Write permission set on the home directory ($dir) of user $user"
-        fi
-        if [ $(echo $dirperm | cut -c10) != "-" ]; then
-            echo "Other Execute permission set on the home directory ($dir) of user $user"
-        fi
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.6.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3421,27 +3378,8 @@ done
     Id = "6.2.8"
     Task = "Ensure users' dot files are not group or world writable"
     Test = {
-        $test_script = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        for file in $dir/.[A-Za-z0-9]*; do
-            if [ ! -h "$file" -a -f "$file" ]; then
-                fileperm=$(ls -ld $file | cut -f1 -d" ")
-                if [ $(echo $fileperm | cut -c6) != "-" ]; then
-                    echo "Group Write permission set on file $file"
-                fi
-                if [ $(echo $fileperm | cut -c9) != "-" ]; then
-                    echo "Other Write permission set on file $file"
-                fi
-            fi
-        done
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.8.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3454,19 +3392,8 @@ done
     Id = "6.2.9"
     Task = "Ensure no users have .forward files"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ] ; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        if [ ! -h "$dir/.forward" -a -f "$dir/.forward" ]; then
-            echo ".forward file $dir/.forward exists"
-        fi
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.9.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3479,19 +3406,8 @@ done
     Id = "6.2.10"
     Task = "Ensure no users have .netrc files"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        if [ ! -h "$dir/.netrc" -a -f "$dir/.netrc" ]; then
-            echo ".netrc file $dir/.netrc exists"
-        fi
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.10.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3504,39 +3420,8 @@ done
     Id = "6.2.11"
     Task = "Ensure users' .netrc Files are not group or world accessible"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        for file in $dir/.netrc; do
-            if [ ! -h "$file" -a -f "$file" ]; then
-                fileperm=$(ls -ld $file | cut -f1 -d" ")
-                if [ $(echo $fileperm | cut -c5) != "-" ]; then
-                    echo "Group Read set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c6) != "-" ]; then
-                    echo "Group Write set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c7) != "-" ]; then
-                    echo "Group Execute set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c8) != "-" ]; then
-                    echo "Other Read set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c9) != "-" ]; then
-                    echo "Other Write set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c10) != "-" ]; then
-                    echo "Other Execute set on $file"
-                fi
-            fi
-        done
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.11.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3549,21 +3434,8 @@ done
     Id = "6.2.12"
     Task = "Ensure no users have .rhosts files"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        for file in $dir/.rhosts; do
-            if [ ! -h "$file" -a -e "$file" ]; then
-                echo ".rhosts file in $dir"
-            fi
-        done
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.12.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3679,8 +3551,10 @@ done
     Id = "6.2.18"
     Task = "Ensure shadow group is empty"
     Test = {
-        $test1 = grep ^shadow:[^:]*:[^:]*:[^:]+ /etc/group
-        $test2 = awk -F: '($4 == "<shadow-gid>") { print }' /etc/passwd
+        $script1 = $scriptPath + "CIS-SEL15-6.2.18_1.sh"
+        $test1 = bash $script1
+        $script2 = $scriptPath + "CIS-SEL15-6.2.18_2.sh"
+        $test2 = bash $script2
         if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
