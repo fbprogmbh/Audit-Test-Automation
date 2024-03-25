@@ -1521,7 +1521,7 @@ function Get-ATAPHtmlReport {
 								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;"} { "BIOS Version" }
 								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;"} { $($SystemInformation.HardwareInformation.BIOSVersion) }
 
-								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 8; grid-row-end: 9; font-weight: bold;"} { "Free disk space" }
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 8; grid-row-end: 9; font-weight: bold;"} { "Free disk space (C:)" }
 								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 8; grid-row-end: 9;"} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
 
 								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;"} { "Free physical memory" }
