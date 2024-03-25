@@ -173,7 +173,7 @@
                     Status = "False"
                 }
             }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Caption -lt [System.Version]"10.0.11000"){
+            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
                 return @{
                     Message = "Registry key not found."
                     Status = "False"
@@ -222,7 +222,7 @@
                     Status = "False"
                 }
             }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Caption -lt [System.Version]"10.0.11000"){
+            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
                 return @{
                     Message = "Registry key not found."
                     Status = "False"
@@ -271,7 +271,7 @@
                     Status = "False"
                 }
             }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Caption -lt [System.Version]"10.0.11000"){
+            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
                 return @{
                     Message = "Registry key not found."
                     Status = "False"
@@ -320,7 +320,7 @@
                     Status = "False"
                 }
             }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Caption -lt [System.Version]"10.0.11000"){
+            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
                 return @{
                     Message = "Registry key not found."
                     Status = "False"
