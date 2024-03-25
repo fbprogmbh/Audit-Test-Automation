@@ -227,7 +227,7 @@
 }
 [AuditTest] @{
     Id = "1.2.3"
-    Task = " (L1) Ensure 'Allow Administrator account lockout' is set to 'Enabled'"
+    Task = "(L1) Ensure 'Allow Administrator account lockout' is set to 'Enabled'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $setPolicy = $securityPolicy['System Access']["AllowAdministratorLockout"]
