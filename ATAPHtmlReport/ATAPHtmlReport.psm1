@@ -1501,130 +1501,61 @@ function Get-ATAPHtmlReport {
 					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'}{
 						#Tab: Foundation Data (Only works for Windows OS!)
 						htmlElement 'h1' @{} {"Security Base Data"}
-						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-							$floating = "float:right"
+						htmlElement 'div' @{id="testGrid"} {
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 2; font-size: 23px; font-weight: bold; border: 0; padding-top: 0px;"} {"System Information"}
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 3; grid-row-start: 2; grid-row-end: 3; font-weight: bold; background-color: lightgray;"} {"Software Information"}
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 6; grid-row-start: 2; grid-row-end: 3; font-weight: bold; background-color: lightgray;"} {"Hardware Information"}
+
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 3; grid-row-end: 4; background-color: #efefef; font-weight: bold;"} { "System Manufacturer" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 3; grid-row-end: 4; background-color: #efefef;"} { $($SystemInformation.HardwareInformation.SystemManufacturer) }
+								
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 4; grid-row-end: 5; font-weight: bold;"} { "System SKU" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 4; grid-row-end: 5;"} { $($SystemInformation.HardwareInformation.SystemSKU) }
+
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 5; grid-row-end: 6; background-color: #efefef; font-weight: bold;"} { "System Model" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 5; grid-row-end: 6; background-color: #efefef;"} { $($SystemInformation.HardwareInformation.SystemModel) }
+
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 6; grid-row-end: 7; font-weight: bold;"} { "System Serialnumber" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 6; grid-row-end: 7;"} { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
+
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;"} { "BIOS Version" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;"} { $($SystemInformation.HardwareInformation.BIOSVersion) }
+
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 8; grid-row-end: 9; font-weight: bold;"} { "Free disk space" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 8; grid-row-end: 9;"} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
+
+								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 5; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;"} { "Free physical memory" }
+								htmlElement 'div' @{style="grid-column-start: 5; grid-column-end: 6; grid-row-start: 9; grid-row-end: 10; background-color: #efefef;"} { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
+
+
+
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 3; grid-row-end: 4; background-color: #efefef; font-weight: bold;"} { "Hostname" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 3; grid-row-end: 4; background-color: #efefef;"} { $($SystemInformation.SoftwareInformation.Hostname) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 4; grid-row-end: 5; font-weight: bold;"} { "System Uptime" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 4; grid-row-end: 5;"} { $($SystemInformation.SoftwareInformation.SystemUptime) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 5; grid-row-end: 6; background-color: #efefef; font-weight: bold;"} { "Operating System" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 5; grid-row-end: 6; background-color: #efefef;"} { $($SystemInformation.SoftwareInformation.OperatingSystem) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 6; grid-row-end: 7; font-weight: bold;"} { "Build Number" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 6; grid-row-end: 7;"} { $($SystemInformation.SoftwareInformation.BuildNumber) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;"} { "OS Architecture" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;"} { $($SystemInformation.SoftwareInformation.OSArchitecture) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 8; grid-row-end: 9; font-weight: bold;"} { "License Status" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 8; grid-row-end: 9;"} { $($SystemInformation.SoftwareInformation.LicenseStatus) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;"} { "Installation Language" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 9; grid-row-end: 10; background-color: #efefef;"} { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
+
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 10; grid-row-end: 11; font-weight: bold;"} { "Domain role" }
+								htmlElement 'div' @{style="grid-column-start: 2; grid-column-end: 3; grid-row-start: 10; grid-row-end: 11;"} { $($SystemInformation.SoftwareInformation.DomainRole) }
 						}
-						else{
-							$floating = "float:none"
-						}
-						htmlElement 'div' @{style="$floating"; id="systemData"} {
-							htmlElement 'h2' @{id="systemInformation"} {'System Information'}
-							htmlElement 'table' @{id='hardwareInformation'}{
-								htmlElement 'thead' @{} {
-									htmlElement 'tr' @{} {
-										htmlElement 'td' @{ style="padding-left:0;padding-right:0; font-weight:bold; border-bottom: 1px solid black;padding: 0;vertical-align: middle;"}{"Hardware Information"}
-										htmlElement 'td' @{}{} 
-									}
-								}
-								htmlElement 'tbody' @{class="systemInformationContent"} {
-									#Hostname
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System Manufacturer" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemManufacturer) }
-									}
-									#Domain Role
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System SKU" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSKU) }
-									}
-									#Operating System
-									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { "System Model" }
-											htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemModel) }
-										}
-									}
-									#Build Number
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System Serialnumber" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
-									}
-									#Installation Language
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "BIOS Version" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.BIOSVersion) }
-									}
-									#Free disk space
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free disk space" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
-									}
-									#Free physican memory
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Free physical memory" }
-										htmlElement 'td' @{} { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
-									}
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
-									}
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
-									}
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "" }
-										htmlElement 'td' @{} { "" }
-									}
-								}
-							}
-							htmlElement 'table' @{id='softwareInformation'}{
-								htmlElement 'thead' @{} {
-									htmlElement 'tr' @{} {
-										htmlElement 'td' @{style="font-weight:bold;border-bottom: 1px solid black;"}{"Software Information"}
-										htmlElement 'td' @{}{} 
-									}
-								}
-								htmlElement 'tbody' @{} {
-									#Hostname
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Hostname" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.Hostname) }
-									}
-									#System Uptime
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "System Uptime" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.SystemUptime) }
-									}
-									#Operating System
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Operating System" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OperatingSystem) }
-									}
-									#Build Number
-									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { "Build Number" }
-											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.BuildNumber) }
-										}
-									}
-									#OS Architecture
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "OS Architecture" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.OSArchitecture) }
-									}
-									#licence activation status
-									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { "License Status" }
-											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.LicenseStatus) }
-										}
-									}
-									#Installation Language
-									htmlElement 'tr' @{} {
-										htmlElement 'th' @{ scope = 'row' } { "Installation Language" }
-										htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
-									}
-									#Domain role
-									if([System.Environment]::OSVersion.Platform -ne 'Unix'){
-										htmlElement 'tr' @{} {
-											htmlElement 'th' @{ scope = 'row' } { "Domain role" }
-											htmlElement 'td' @{} { $($SystemInformation.SoftwareInformation.DomainRole) }
-										}
-									}
-								}
-							}
-						}
+						# htmlElement 'div' @{id="systemData"} {
+						# }
 						if([System.Environment]::OSVersion.Platform -ne 'Unix'){
 							htmlElement 'h2' @{} {"Table Of Contents"}
 							htmlElement 'p' @{} { 'Use below links to jump to a specific report section.' }
