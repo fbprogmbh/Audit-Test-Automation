@@ -1,16 +1,3 @@
-Write-Host "Checking operating system activation status. This may take a while..."
-$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
-switch ($licenseStatus) {
-    "0" { $lcStatus = "Unlicensed" }
-    "1" { $lcStatus = "Licensed" }
-    "2" { $lcStatus = "OOBGrace" }
-    "3" { $lcStatus = "OOTGrace" }
-    "4" { $lcStatus = "NonGenuineGrace" }
-    "5" { $lcStatus = "Notification" }
-    "6" { $lcStatus = "ExtendedGrace" }
-}
-
-
 $infos = Get-CimInstance Win32_OperatingSystem
 $disk = Get-CimInstance Win32_LogicalDisk | Where-Object -Property DeviceID -eq "C:"
 $role = Switch ((Get-CimInstance -Class Win32_ComputerSystem).DomainRole) {
