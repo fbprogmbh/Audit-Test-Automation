@@ -1502,7 +1502,7 @@ function Get-ATAPHtmlReport {
 						#Tab: Foundation Data (Only works for Windows OS!)
 						htmlElement 'h1' @{} {"Security Base Data"}
 						htmlElement 'div' @{id="testGrid"} {
-								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 2; font-size: 23px; font-weight: bold; border: 0;"} {"System Information"}
+								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 2; font-size: 23px; font-weight: bold; border: 0; padding-top: 0px;"} {"System Information"}
 								htmlElement 'div' @{style="grid-column-start: 1; grid-column-end: 3; grid-row-start: 2; grid-row-end: 3; font-weight: bold; background-color: lightgray;"} {"Software Information"}
 								htmlElement 'div' @{style="grid-column-start: 4; grid-column-end: 6; grid-row-start: 2; grid-row-end: 3; font-weight: bold; background-color: lightgray;"} {"Hardware Information"}
 
