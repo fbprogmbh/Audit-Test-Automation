@@ -1552,13 +1552,14 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.3"
     Task = "Ensure iptables are flushed"
     Test = {
+        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
         if ($FirewallStatus -match 3) {
             return $retUsingFW3
         }
-        $retNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1636,7 +1637,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
         if ($FirewallStatus -match 3) {
             return $retUsingFW3
         }
-        $retNonCompliantManualReviewRequired
+        return $retNonCompliantManualReviewRequired
     }
 }
 
