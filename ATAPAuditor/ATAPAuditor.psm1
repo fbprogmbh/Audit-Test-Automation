@@ -120,6 +120,29 @@ class ResultTable {
 #endregion
 
 #region helpers
+function GetLicenseStatus{
+	param(
+		$SkipLicenseCheck
+	)
+	if($SkipLicenseCheck -eq $false){
+		Write-Host "Checking operating system activation status. This may take a while..."
+		$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
+		switch ($licenseStatus) {
+			"0" { $lcStatus = "Unlicensed" }
+			"1" { $lcStatus = "Licensed" }
+			"2" { $lcStatus = "OOBGrace" }
+			"3" { $lcStatus = "OOTGrace" }
+			"4" { $lcStatus = "NonGenuineGrace" }
+			"5" { $lcStatus = "Notification" }
+			"6" { $lcStatus = "ExtendedGrace" }
+		}
+		return $lcStatus
+	}
+	else{
+		return "License check has been skipped."
+	}
+}
+
 function Test-ArrayEqual {
 	[OutputType([bool])]
 	[CmdletBinding()]
@@ -795,6 +818,9 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$RiskScore,
 
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$SkipLicenseCheck,
 		# [Parameter(Mandatory = $false)]
 		# [switch]
 		# $MITRE,
@@ -835,6 +861,7 @@ function Save-ATAPHtmlReport {
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
+		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		if ($psVersion.Major -ne 5) {
@@ -852,7 +879,6 @@ function Save-ATAPHtmlReport {
 	$hashtable_sha256 = GenerateHashTable $report
 	
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
-
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
