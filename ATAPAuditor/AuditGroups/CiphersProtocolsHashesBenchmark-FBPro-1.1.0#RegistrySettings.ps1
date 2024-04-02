@@ -23,8 +23,8 @@
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -59,8 +59,8 @@
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -95,8 +95,8 @@
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -131,8 +131,8 @@
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -166,9 +166,16 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if($OS.Caption -match "Server 2012 R2"){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -202,9 +209,16 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if($OS.Caption -match "Server 2012 R2"){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -238,9 +252,16 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if($OS.Caption -match "Server 2012 R2"){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
@@ -274,9 +295,16 @@
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if($OS.Caption -match "Server 2012 R2"){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         
