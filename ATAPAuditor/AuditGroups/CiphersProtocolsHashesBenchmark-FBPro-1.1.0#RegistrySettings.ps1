@@ -173,12 +173,6 @@
                     Status = "False"
                 }
             }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -217,12 +211,6 @@
         catch [System.Management.Automation.ItemNotFoundException] {
             $OS = Get-CimInstance Win32_OperatingSystem
             if($OS.Caption -match "Server 2012 R2"){
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
                 return @{
                     Message = "Registry key not found."
                     Status = "False"
@@ -271,12 +259,6 @@
                     Status = "False"
                 }
             }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -315,12 +297,6 @@
         catch [System.Management.Automation.ItemNotFoundException] {
             $OS = Get-CimInstance Win32_OperatingSystem
             if($OS.Caption -match "Server 2012 R2"){
-                return @{
-                    Message = "Registry key not found."
-                    Status = "False"
-                }
-            }
-            if($OS.Caption -match "Windows 10" -and (Get-CimInstance Win32_OperatingSystem).Version -lt [System.Version]"10.0.11000"){
                 return @{
                     Message = "Registry key not found."
                     Status = "False"
