@@ -32,9 +32,9 @@ AuditTAP Release 5.8.0:\
   - [Overview](#overview)
   - [Modules](#modules)
   - [Reports](#reports)
-    - [Application](#application)
-    - [Microsoft OS](#microsoft-os)
-    - [Unix OS](#unix-os)
+    - [**Application**](#application)
+    - [**Microsoft OS**](#microsoft-os)
+    - [**Unix OS**](#unix-os)
   - [How to install](#how-to-install)
     - [Installation from PS Gallery](#installation-from-ps-gallery)
     - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
@@ -107,7 +107,7 @@ Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
 Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 | - | 2.0.0 | 22H2 | SiSyPHuS 1.3 | -
+Microsoft Windows 11 | - | 3.0.0 | 22H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2016 DC | V1R6 | 2.0.0 | FINAL | - | -
