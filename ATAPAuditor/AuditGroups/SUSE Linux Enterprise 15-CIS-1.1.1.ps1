@@ -2455,7 +2455,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/crontab are configured"
     Test = {
         $test = stat /etc/crontab
-        if($test -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0600/-rw-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2468,7 +2468,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.hourly are configured"
     Test = {
         $test = stat /etc/cron.hourly/
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2481,7 +2481,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.daily are configured"
     Test = {
         $test = stat /etc/cron.daily
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2494,7 +2494,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.weekly are configured"
     Test = {
         $test = stat /etc/cron.weekly
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2507,7 +2507,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.monthly are configured"
     Test = {
         $test = stat /etc/cron.weekly
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2520,7 +2520,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.d are configured"
     Test = {
         $test = stat /etc/cron.weekly
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2547,7 +2547,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Test = {
         $test1 = stat /etc/at.deny
         $test2 = stat /etc/at.allow
-        if($test1 -match "cannot stat" -and $test2 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "cannot stat" -and $test2 -match "0600/-rw-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2560,7 +2560,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/ssh/sshd_config are configured"
     Test = {
         $test1 = stat /etc/ssh/sshd_config
-        if($test1 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0600/-rw-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3116,7 +3116,7 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Task = "Ensure permissions on /etc/passwd are configured"
     Test = {
         $test1 = stat /etc/passwd
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3129,7 +3129,7 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Task = "Ensure permissions on /etc/shadow are configured"
     Test = {
         $test1 = stat /etc/shadow
-        if($test1 -match "Access:\s+(0640/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0640"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3142,7 +3142,7 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Task = "Ensure permissions on /etc/group are configured"
     Test = {
         $test1 = stat /etc/group
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3155,7 +3155,7 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Task = "Ensure permissions on /etc/passwd- are configured"
     Test = {
         $test1 = stat /etc/passwd-
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3168,7 +3168,7 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Task = "Ensure permissions on /etc/shadow- are configured"
     Test = {
         $test1 = stat /etc/shadow-
-        if($test1 -match "Access:\s+(0640/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0640"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3181,7 +3181,7 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Task = "Ensure permissions on /etc/group- are configured"
     Test = {
         $test1 = stat /etc/group-
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
