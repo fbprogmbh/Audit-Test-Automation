@@ -37,9 +37,9 @@
                 Status = "False"
             }
         }
-        if ($setOption -notmatch "^(?!.*\bAdministrator\b).*$") {
+        if ($setOption -notmatch "^(?i)(?!.*\b(?:Administrator)\b).*$") {
             return @{
-                Message = "'NewAdministratorName' currently set to: $setOption."
+                Message = "'NewAdministratorName' currently set to: $setOption. Expected any other name than 'Administrator'"
                 Status = "False"
             }
         }
@@ -65,7 +65,7 @@
         }
         if ($setOption -notmatch "^(?i)(?!.*\b(?:Guest|Gast)\b).*$") {
             return @{
-                Message = "'NewGuestName' currently set to: $setOption."
+                Message = "'NewGuestName' currently set to: $setOption. Expected any other name than 'Guest' or 'Gast'"
                 Status = "False"
             }
         }
