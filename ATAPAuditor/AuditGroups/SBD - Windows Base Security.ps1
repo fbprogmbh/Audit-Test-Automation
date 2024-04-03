@@ -75,7 +75,7 @@ $RootPath = Split-Path $RootPath -Parent
 			$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
 			$message = ""
 			foreach($member in $group_members){
-				$message += "$($member) "
+				$message += "- $($member) `r`n"
 			}
 			$amountOfUserAndGroups = $group_members.Count
 			
