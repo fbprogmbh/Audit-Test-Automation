@@ -102,6 +102,7 @@ function GetFirewallStatus {
     return $FirewallStatus
 }
 
+$FirewallStatus = GetFirewallStatus
 ### Chapter 1 - Initial Setup
 
 [AuditTest] @{
@@ -725,8 +726,8 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.4"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $result = stat -L /etc/motd | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
-        if($result -eq $null -or $result -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        $result = stat -L /etc/motd | grep "0644"
+        if($result -eq $null -or $result -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -738,7 +739,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.5"
     Task = "Ensure permissions on /etc/issue are configured"
     Test = {
-        $result = stat -L /etc/issue | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
+        $result = stat -L /etc/issue | grep "(0644"
         if($result -ne $null){
             return $retCompliant
         } else {
@@ -747,17 +748,19 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
+if (Test-Path -Path '/etc/issue.net') {
 [AuditTest] @{
     Id = "1.8.1.6"
     Task = "Ensure permissions on /etc/issue.net are configured"
     Test = {
-        $result = stat -L /etc/issue.net | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
+        $result = stat -L /etc/issue.net | grep "(0644"
         if($result -ne $null){
             return $retCompliant
         } else {
             return $retNonCompliant
         }
     }
+}
 }
 
 [AuditTest] @{
@@ -1393,11 +1396,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
+### Chapter 3.5.1.X firewalld
+if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 1) ){
 [AuditTest] @{
     Id = "3.5.1.1"
     Task = "Ensure FirewallD is installed"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
@@ -1417,7 +1421,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.2"
     Task = "Ensure nftables is not installed or stopped and masked"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
@@ -1439,7 +1442,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.3"
     Task = "Ensure firewalld service is enabled and running"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
@@ -1460,7 +1462,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.4"
     Task = "Ensure default zone is set"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
@@ -1480,7 +1481,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.5"
     Task = "Ensure network interfaces are assigned to appropriate zone"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
@@ -1495,7 +1495,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.6"
     Task = "Ensure unnecessary services and ports are not accepted"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
@@ -1505,12 +1504,14 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
         return $retNonCompliantManualReviewRequired
     }
 }
+}
 
+### Chapter 3.5.2.X nftables
+if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 2) ){
 [AuditTest] @{
     Id = "3.5.2.1"
     Task = "Ensure nftables is installed"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1530,7 +1531,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.2"
     Task = "Ensure firewalld is not installed or stopped and masked"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1552,7 +1552,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.3"
     Task = "Ensure iptables are flushed"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1567,7 +1566,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.4"
     Task = "Ensure a table exists"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1587,7 +1585,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.5"
     Task = "Ensure base chain exist"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1609,7 +1606,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.6"
     Task = "Ensure loopback traffic is configured"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1630,7 +1626,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.7"
     Task = "Ensure outbound and established connections are configured"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1645,7 +1640,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.8"
     Task = "Ensure default deny firewall policy"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1667,7 +1661,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.9"
     Task = "Ensure nftables service is enabled"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1687,7 +1680,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.10"
     Task = "Ensure nftables rules are permanent"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1697,12 +1689,14 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
         $retNonCompliantManualReviewRequired
     }
 }
+}
 
+### Chapter 3.5.3.X iptables
+if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
 [AuditTest] @{
     Id = "3.5.3.1.1"
     Task = "Ensure iptables package is installed"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1722,7 +1716,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.2"
     Task = "Ensure nftables is not installed"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1742,7 +1735,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.3"
     Task = "Ensure firewalld is not installed or stopped and masked"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1764,7 +1756,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.1"
     Task = "Ensure default deny firewall policy"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1796,7 +1787,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.2"
     Task = "Ensure iptables loopback traffic is configured"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1816,7 +1806,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.3"
     Task = "Ensure outbound and established connections are configured"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1831,7 +1820,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.4"
     Task = "Ensure firewall rules exist for all open ports"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1846,7 +1834,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.1"
     Task = "Ensure IPv6 default deny firewall policy"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1881,7 +1868,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.2"
     Task = "Ensure IPv6 loopback traffic is configured"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1908,7 +1894,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.3"
     Task = "Ensure IPv6 outbound and established connections are configured"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1926,7 +1911,6 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.4"
     Task = "Ensure IPv6 firewall rules exist for all open ports"
     Test = {
-        $FirewallStatus = GetFirewallStatus
         if ($FirewallStatus -match 1) {
             return $retUsingFW1
         }
@@ -1938,6 +1922,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
         }
         return $retNonCompliantManualReviewRequired
     }
+}
 }
 
 ## Chapter 4 Logging and Auditing
@@ -2785,6 +2770,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
+if (Test-Path -Path '/etc/issue.net') {
 [AuditTest] @{
     Id = "5.2.18"
     Task = "Ensure SSH warning banner is configured"
@@ -2796,6 +2782,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
             return $retNonCompliant
         }
     }
+}
 }
 
 [AuditTest] @{
