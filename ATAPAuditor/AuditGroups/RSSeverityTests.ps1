@@ -2230,9 +2230,16 @@ if($domainRole -ge 4){
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
         
-            if ($regValue -ne 1 -and $regValue -ne 4294967295) {
+            if ($regValue -eq 4294967295) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1 or 4294967295"
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.
+                    https://docs.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings"
+                    Status = "False"
+                }
+            }
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
