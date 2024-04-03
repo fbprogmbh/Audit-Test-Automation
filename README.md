@@ -140,7 +140,7 @@ Before proceeding with the installation, please ensure that your system meets th
 
 ### Windows
 
-* PS 5.1
+* PowerShell version 5.1
 * Administrative Powershell x64 session
 * Administrative permissions on the system to be audited
 
