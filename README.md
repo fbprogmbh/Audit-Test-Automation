@@ -35,6 +35,8 @@ AuditTAP Release 5.8.0:\
     - [**Application**](#application)
     - [**Microsoft OS**](#microsoft-os)
     - [**Unix OS**](#unix-os)
+  - [Prerequisites](#prerequisites)
+    - [Windows](#windows)
   - [How to install](#how-to-install)
     - [Installation from PS Gallery](#installation-from-ps-gallery)
     - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
@@ -132,7 +134,19 @@ Ubuntu 22.04 | - | 1.0.0 | - | - | - | -
 
 
 
+## Prerequisites
+
+Before proceeding with the installation, please ensure that your system meets the following prerequisites:
+
+### Windows
+
+* PS 5.1
+* Administrative Powershell x64 session
+* Administrative permissions on the system to be audited
+
+
 ## How to install
+
 We offer several ways of how you can use our free of charge . 
 Find several detailed explanations below and use them as follows:
 
