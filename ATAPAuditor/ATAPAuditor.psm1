@@ -864,8 +864,8 @@ function Save-ATAPHtmlReport {
 		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
-		if ($psVersion.Major -ne 5) {
-			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
+		if (($psVersion.Major -ne 5) -and ($psVersion.Minor -ne 1) ) {
+			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5.1 . Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
 			$in = Read-Host
 			switch ($in) {
 				Y { Start Powershell; return }
