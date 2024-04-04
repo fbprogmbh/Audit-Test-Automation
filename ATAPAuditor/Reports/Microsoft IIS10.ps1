@@ -2514,31 +2514,37 @@ function Test-IISTLSCipherOrder {
 
     try 
     {
-        $regValue = Get-ItemProperty -ErrorAction Stop `
-            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
-            -Name "Functions" `
-            | Select-Object -ExpandProperty "Functions"
-    
-        $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-
-        $res = $regValue.GetType().Name
-
-        if ($res -isnot [String]) {
-            @{
+		$regValue = Get-ItemProperty -ErrorAction Stop `
+		-Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
+		-Name "Functions"
+		$reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+		$res = $regValue.Functions.GetType().Name
+					
+		$typeTable = @{
+			"String" = "String Value"
+			"Byte" = "Byte Value"
+			"Int32" = "DWORD (32-bit) Value"
+			"Int64" = "QWORD (64-bit) Value"
+			"String[]" = "Multi-String Value"
+		}
+		$currentType = $typeTable[$res]
+		$regValue = $regValue | Select-Object -ExpandProperty "Functions"
+		if ($res -ne [String]) {
+			@{
                 Id      = "7.12"
                 Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
                 Status = "False"
-                Message = "Wrong Registry type! Registry type is '$res'. Expected: [String]"
+                Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
             } | Write-Output
-        }
-        if ($regValue -ne $reference) {
-            @{
+		}
+		if ($regValue -ne $reference) {
+			@{
                 Id      = "7.12"
                 Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
                 Status  = "False"
                 Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
             } | Write-Output
-        }
+		}
     }
     catch [System.Management.Automation.PSArgumentException] {
         @{

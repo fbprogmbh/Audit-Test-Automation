@@ -1389,17 +1389,25 @@
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
-                -Name "Functions" `
-                | Select-Object -ExpandProperty "Functions"
-        
+            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
+            -Name "Functions"
             $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-
-            $res = $regValue.GetType().Name
-
-            if ($res -isnot [String]) {
-                Message = "Wrong Registry type! Registry type is '$res'. Expected: [String]"
-                Status = "False"
+            $res = $regValue.Functions.GetType().Name
+                        
+            $typeTable = @{
+                "String" = "String Value"
+                "Byte" = "Byte Value"
+                "Int32" = "DWORD (32-bit) Value"
+                "Int64" = "QWORD (64-bit) Value"
+                "String[]" = "Multi-String Value"
+            }
+            $currentType = $typeTable[$res]
+            $regValue = $regValue | Select-Object -ExpandProperty "Functions"
+            if ($res -ne [String]) {
+                return @{  
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
+                    Status = "False"
+                }
             }
             if ($regValue -ne $reference) {
                 return @{                                                                               
