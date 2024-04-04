@@ -694,8 +694,8 @@
 
             if ($regValue -eq 4294967295) {
                 return @{
-                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.
-                    https://docs.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings"
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.<br/>"`
+                    +'<a href="https://docs.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings">Visit Microsoft.com<a/>'
                     Status = "False"
                 }
             }
