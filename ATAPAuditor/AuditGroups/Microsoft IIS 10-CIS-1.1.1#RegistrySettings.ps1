@@ -907,10 +907,18 @@
                 -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256" `
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 1 -and $regValue -ne 4294967295) {
+
+            if ($regValue -eq 4294967295) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1 or 4294967295"
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
+                    +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
+                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    Status = "False"
+                }
+            }
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
