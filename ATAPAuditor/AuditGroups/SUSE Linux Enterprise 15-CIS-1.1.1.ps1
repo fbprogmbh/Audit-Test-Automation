@@ -1,10 +1,15 @@
 $parentPath = Split-Path -Parent -Path $PSScriptRoot
+$scriptPath = $parentPath + "/Helpers/ShellScripts/SLE_15/"
 $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
+$rcNone = "None"
 $rcNonCompliant = "Non-Compliant"
-$rcNonCompliantManualReviewRequired = "Manual review required"
+$rcNonCompliantManualReviewRequired = "Manual Review Required"
 $rcCompliantIPv6isDisabled = "IPv6 is disabled"
+$rcFirewallStatus1 = "Using firewalld with iptables"
+$rcFirewallStatus2 = "Using nftables"
+$rcFirewallStatus3 = "Using iptables"
 
 $retCompliant = @{
     Message = $rcCompliant
@@ -20,8 +25,21 @@ $retCompliantIPv6Disabled = @{
 }
 $retNonCompliantManualReviewRequired = @{
     Message = $rcNonCompliantManualReviewRequired
-    Status = $rcFalse
+    Status = $rcNone
 }
+$retUsingFW1 = @{
+    Message = $rcFirewallStatus1
+    Status = $rcNone
+}
+$retUsingFW2 = @{
+    Message = $rcFirewallStatus2
+    Status = $rcNone
+}
+$retUsingFW3 = @{
+    Message = $rcFirewallStatus3
+    Status = $rcNone
+}
+
 
 $IPv6Status_script = @'
 #!/bin/bash
@@ -41,6 +59,50 @@ if ($IPv6Status -match "enabled") {
     $IPv6Status = "disabled"
 }
 
+
+# Firewall evaluation
+function GetFirewallStatus {
+    # 0 = init. value, undefined
+    # 1 = using firewalld with iptabes as backend
+    # 2 = using nftables
+    # 3 = using iptables
+    $FirewallStatus = 0
+
+    # Testing for firewalld with iptables as backend
+    $test1 = rpm -q firewalld iptables
+    $test2 = rpm -q nftables
+    $test3 = systemctl status nftables | grep "active (running)"
+    $test4 = systemctl is-enabled nftables
+    $test5 = systemctl is-enabled firewalld
+    $test6 = firewall-cmd --state
+    if($test1 -match "firewalld-" -and $test1 -match "iptables-" -and (!($test2 -match "nftables-") -or !($test3 -match "active (running)")) -and !($test4 -match "enabled") -and $test5 -match "enabled" -and $test6 -match "running") {
+        return 1
+    }
+
+    # Testing for nftables
+    $test1 = rpm -q nftables
+    $test2 = rpm -q firewalld
+    $test3 = systemctl status firewalld | grep "active (running)"
+    $test4 = systemctl is-enabled firewalld
+    $test5 = systemctl is-enabled nftables
+    if($test1 -match "nftables-" -and !($test2 -match "firewalld-" -or $test3 -match "active (running)") -and !($test4 -match "enabled") -and $test5 -match "enabled") {
+        return 2
+    }
+
+    # Testing for iptables
+    $test1 = rpm -q iptables
+    $test2 = rpm -q nftables
+    $test3 = rpm -q firewalld
+    $test4 = systemctl status firewalld | grep "active (running)"
+    $test5 = systemctl is-enabled firewalld
+    if($test1 -match "iptables-" -and $test2 -match "not installed" -and $test3 -match "not installed" -and !($test4 -match "running (active)") -and !($test5 -match "enabled")) {
+        return 3
+    }
+
+    return $FirewallStatus
+}
+
+$FirewallStatus = GetFirewallStatus
 ### Chapter 1 - Initial Setup
 
 [AuditTest] @{
@@ -315,21 +377,7 @@ if ($IPv6Status -match "enabled") {
     Id = "1.1.19"
     Task = "Ensure noexec option set on removable media partitions"
     Test = {
-        $result_script = @'
-#!/bin/bash
-while read -r name; do
-    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
-        mount | grep "$name"
-    fi
-done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
-'@
-        $result = bash -c $result_script
-        foreach($line in $result){
-            if(!($line -match "noexec")){
-                return $retNonCompliant
-            }
-        }
-        return $retCompliant
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -337,21 +385,7 @@ done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq
     Id = "1.1.20"
     Task = "Ensure nodev option set on removable media partitions"
     Test = {
-        $result_script = @'
-#!/bin/bash
-while read -r name; do
-    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
-        mount | grep "$name"
-    fi
-done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
-'@
-        $result = bash -c $result_script
-        foreach($line in $result){
-            if(!($line -match "nodev")){
-                return $retNonCompliant
-            }
-        }
-        return $retCompliant
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -359,21 +393,7 @@ done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq
     Id = "1.1.21"
     Task = "Ensure nosuid option set on removable media partitions"
     Test = {
-        $result_script = @'
-#!/bin/bash
-while read -r name; do
-    if [ "$(<${name/dev/sys\/block}/removable)" -eq "1" ]; then 
-        mount | grep "$name"
-    fi
-done < <(awk '/^\/dev\/sd/ {sub(/[0-9]+$/,"",$1); print $1}' /proc/mounts | uniq)
-'@
-        $result = bash -c $result_script
-        foreach($line in $result){
-            if(!($line -match "nosuid")){
-                return $retNonCompliant
-            }
-        }
-        return $retCompliant
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -666,7 +686,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.1"
     Task = "Ensure message of the day is configured properly"
     Test = {
-        $result = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/motd
+        $result = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/motd 2>/dev/null
         if($result -eq $null){
             return $retCompliant
         } else {
@@ -692,7 +712,8 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.3"
     Task = "Ensure remote login warning banner is configured properly"
     Test = {
-        $result = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/issue.net
+        $script = $scriptPath + "CIS-SEL15-1.8.1.3.sh"
+        $result = bash $script
         if($result -eq $null){
             return $retCompliant
         } else {
@@ -705,8 +726,8 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.4"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $result = stat -L /etc/motd | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
-        if($result -eq $null -or $result -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
+        $result = stat -L /etc/motd | grep "0644"
+        if($result -eq $null -or $result -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -718,7 +739,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.5"
     Task = "Ensure permissions on /etc/issue are configured"
     Test = {
-        $result = stat -L /etc/issue | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
+        $result = stat -L /etc/issue | grep "0644"
         if($result -ne $null){
             return $retCompliant
         } else {
@@ -727,17 +748,19 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
+if (Test-Path -Path '/etc/issue.net') {
 [AuditTest] @{
     Id = "1.8.1.6"
     Task = "Ensure permissions on /etc/issue.net are configured"
     Test = {
-        $result = stat -L /etc/issue.net | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
+        $result = stat -L /etc/issue.net | grep "0644"
         if($result -ne $null){
             return $retCompliant
         } else {
             return $retNonCompliant
         }
     }
+}
 }
 
 [AuditTest] @{
@@ -1373,10 +1396,18 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
+### Chapter 3.5.1.X firewalld
+if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 1) ){
 [AuditTest] @{
     Id = "3.5.1.1"
     Task = "Ensure FirewallD is installed"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = rpm -q firewalld iptables
         if($result -match "firewalld-" -and $result -match "iptables-"){
             return $retCompliant
@@ -1390,10 +1421,16 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.2"
     Task = "Ensure nftables is not installed or stopped and masked"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = rpm -q nftables
-        $result21 = systemctl status nftables | grep "Active: " | grep -v "active (running) "
+        $result21 = systemctl status nftables | grep "active (running)"
         $result22 = systemctl is-enabled nftables
-        if($result1 -match "not installed" -or ($result21 -eq $null -and $result22 -match "masked")){
+        if($result1 -match "not installed" -or (!($result21 -match "active (running)") -and !($result22 -match "enabled"))){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -1405,6 +1442,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.3"
     Task = "Ensure firewalld service is enabled and running"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = systemctl is-enabled firewalld
         $result2 = firewall-cmd --state
         if($result1 -match "enabled" -and $result2 -match "running"){
@@ -1419,6 +1462,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.4"
     Task = "Ensure default zone is set"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = firewall-cmd --get-default-zone
         if($result -ne $null){
             return $retCompliant
@@ -1432,6 +1481,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.5"
     Task = "Ensure network interfaces are assigned to appropriate zone"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         return $retNonCompliantManualReviewRequired
     }
 }
@@ -1440,14 +1495,29 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.1.6"
     Task = "Ensure unnecessary services and ports are not accepted"
     Test = {
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         return $retNonCompliantManualReviewRequired
     }
 }
+}
 
+### Chapter 3.5.2.X nftables
+if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 2) ){
 [AuditTest] @{
     Id = "3.5.2.1"
     Task = "Ensure nftables is installed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = rpm -q nftables
         if($result -match "nftables-"){
             return $retCompliant
@@ -1461,6 +1531,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.2"
     Task = "Ensure firewalld is not installed or stopped and masked"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = rpm -q firewalld
         $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled firewalld
@@ -1476,7 +1552,13 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.3"
     Task = "Ensure iptables are flushed"
     Test = {
-        $retNonCompliantManualReviewRequired
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1484,6 +1566,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.4"
     Task = "Ensure a table exists"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = nft list tables
         if($result -match "table inet filter") {
             return $retCompliant
@@ -1497,6 +1585,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.5"
     Task = "Ensure base chain exist"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = nft list ruleset | grep 'hook input'
         $result2 = nft list ruleset | grep 'hook forward'
         $result3 = nft list ruleset | grep 'hook output'
@@ -1512,6 +1606,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.6"
     Task = "Ensure loopback traffic is configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = nft list ruleset | awk '/hook input/,/}/' | grep 'iif "lo" accept'
         $result2 = nft list ruleset | awk '/hook input/,/}/' | grep 'ip saddr'
         if($result1 -match "iif ""lo"" accept" -and $result2 -match "ip saddr 127.0.0.0/8 counter packets 0 bytes 0 drop") {
@@ -1526,7 +1626,13 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.7"
     Task = "Ensure outbound and established connections are configured"
     Test = {
-        $retNonCompliantManualReviewRequired
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
+        return $retNonCompliantManualReviewRequired
     }
 }
 
@@ -1534,6 +1640,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.8"
     Task = "Ensure default deny firewall policy"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result1 = nft list ruleset | grep 'hook input'
         $result2 = nft list ruleset | grep 'hook forward'
         $result3 = nft list ruleset | grep 'hook output'
@@ -1549,6 +1661,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.9"
     Task = "Ensure nftables service is enabled"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $result = systemctl is-enabled nftables
         if($result -match "enabled") {
             return $retCompliant
@@ -1562,14 +1680,29 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.2.10"
     Task = "Ensure nftables rules are permanent"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 3) {
+            return $retUsingFW3
+        }
         $retNonCompliantManualReviewRequired
     }
 }
+}
 
+### Chapter 3.5.3.X iptables
+if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
 [AuditTest] @{
     Id = "3.5.3.1.1"
     Task = "Ensure iptables package is installed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $result = rpm -q iptables
         if($result -match "iptables-") {
             return $retCompliant
@@ -1583,6 +1716,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.2"
     Task = "Ensure nftables is not installed"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $result = rpm -q nftables
         if($result -match "not installed") {
             return $retCompliant
@@ -1596,6 +1735,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.1.3"
     Task = "Ensure firewalld is not installed or stopped and masked"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $result1 = rpm -q firewalld
         $result21 = systemctl status firewalld | grep "Active: " | grep -v "active (running) "
         $result22 = systemctl is-enabled firewalld
@@ -1611,6 +1756,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.1"
     Task = "Ensure default deny firewall policy"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $output = iptables -L
         $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $result11 = $?
@@ -1636,6 +1787,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.2"
     Task = "Ensure iptables loopback traffic is configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
         $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
         if($test1 -ne $null -and $test2 -ne $null){
@@ -1649,6 +1806,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.3"
     Task = "Ensure outbound and established connections are configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1657,6 +1820,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.2.4"
     Task = "Ensure firewall rules exist for all open ports"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         $retNonCompliantManualReviewRequired
     }
 }
@@ -1665,6 +1834,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.1"
     Task = "Ensure IPv6 default deny firewall policy"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
@@ -1693,6 +1868,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.2"
     Task = "Ensure IPv6 loopback traffic is configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
@@ -1713,6 +1894,12 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.3"
     Task = "Ensure IPv6 outbound and established connections are configured"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
@@ -1724,11 +1911,18 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "3.5.3.3.4"
     Task = "Ensure IPv6 firewall rules exist for all open ports"
     Test = {
+        if ($FirewallStatus -match 1) {
+            return $retUsingFW1
+        }
+        if ($FirewallStatus -match 2) {
+            return $retUsingFW2
+        }
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
         return $retNonCompliantManualReviewRequired
     }
+}
 }
 
 ## Chapter 4 Logging and Auditing
@@ -2246,7 +2440,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/crontab are configured"
     Test = {
         $test = stat /etc/crontab
-        if($test -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0600/-rw-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2259,7 +2453,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.hourly are configured"
     Test = {
         $test = stat /etc/cron.hourly/
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2272,7 +2466,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.daily are configured"
     Test = {
         $test = stat /etc/cron.daily
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2285,7 +2479,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.weekly are configured"
     Test = {
         $test = stat /etc/cron.weekly
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2298,7 +2492,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.monthly are configured"
     Test = {
         $test = stat /etc/cron.weekly
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2311,7 +2505,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/cron.d are configured"
     Test = {
         $test = stat /etc/cron.weekly
-        if($test -match "Access:\s+(0700/drwx------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test -match "0700/drwx"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2338,7 +2532,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Test = {
         $test1 = stat /etc/at.deny
         $test2 = stat /etc/at.allow
-        if($test1 -match "cannot stat" -and $test2 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "cannot stat" -and $test2 -match "0600/-rw-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2351,7 +2545,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Task = "Ensure permissions on /etc/ssh/sshd_config are configured"
     Test = {
         $test1 = stat /etc/ssh/sshd_config
-        if($test1 -match "Access:\s+(0600/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0600/-rw-"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2576,6 +2770,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     }
 }
 
+if (Test-Path -Path '/etc/issue.net') {
 [AuditTest] @{
     Id = "5.2.18"
     Task = "Ensure SSH warning banner is configured"
@@ -2587,6 +2782,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
             return $retNonCompliant
         }
     }
+}
 }
 
 [AuditTest] @{
@@ -2814,16 +3010,10 @@ for usr in $(cut -d: -f1 /etc/shadow); do
     Id = "5.4.2"
     Task = "Ensure system accounts are secured"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-awk -F: '($1!="root" && $1!="sync" && $1!="shutdown" && $1!="halt" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!="'"$(which nologin)"'" && $7!="/bin/false") {print}' /etc/passwd
-'@
-        $test1 = bash -c $test1_script
-        $test2_script = @'
-#!/bin/bash
-awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!="L" && $2!="LK") {print $1}'
-'@
-        $test2 = bash -c $test2_script
+        $script1 = $scriptPath + "CIS-SEL15-5.4.2_1.sh"
+        $test1 = bash $script1
+        $script2 = $scriptPath + "CIS-SEL15-5.4.2_2.sh"
+        $test2 = bash $script2
         if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
@@ -2849,11 +3039,8 @@ awk -F: '($1!="root" && $1!~/^\+/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/l
     Id = "5.4.4"
     Task = "Ensure default user shell timeout is configured"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^$#;]+\s*)*)?\s*TMOUT=(900|[1-8][0-9][0-9]|[1-9][0-9]|[1-9])\b' $f && grep -Eq '(^|^[^#]*;)\s*readonly\s+TMOUT\b' $f && grep -Eq '(^|^[^#]*;)\s*export\s+([^$#;]+\s+)*TMOUT\b' $f && echo "TMOUT correctly configured in file: $f"; done
-'@
-        $test1 = bash -c $test1_script
+        $script = $scriptPath + "CIS-SEL15-5.4.4.sh"
+        $test1 = bash $script
         $test2 = grep -PR '^\s*([^$#;]+\s+)*TMOUT=(9[0-9][1-9]|0+|[1-9]\d{3,})\b\s*(\S+\s*)*(\s+#.*)?$' /etc/profile* /etc/bashrc.bashrc*
         if($test1 -match "configured in file: /etc/profile.d/" -and $test2 -eq $null){
             return $retCompliant
@@ -2916,7 +3103,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Task = "Ensure permissions on /etc/passwd are configured"
     Test = {
         $test1 = stat /etc/passwd
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2929,7 +3116,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Task = "Ensure permissions on /etc/shadow are configured"
     Test = {
         $test1 = stat /etc/shadow
-        if($test1 -match "Access:\s+(0640/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0640"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2942,7 +3129,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Task = "Ensure permissions on /etc/group are configured"
     Test = {
         $test1 = stat /etc/group
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2955,7 +3142,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Task = "Ensure permissions on /etc/passwd- are configured"
     Test = {
         $test1 = stat /etc/passwd-
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2968,7 +3155,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Task = "Ensure permissions on /etc/shadow- are configured"
     Test = {
         $test1 = stat /etc/shadow-
-        if($test1 -match "Access:\s+(0640/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0640"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2981,7 +3168,7 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Task = "Ensure permissions on /etc/group- are configured"
     Test = {
         $test1 = stat /etc/group-
-        if($test1 -match "Access:\s+(0644/-rw-------)\s+Uid:\s+(\s+0/\s+root)\s+Gid: (\s+0/\s+root)"){
+        if($test1 -match "0644"){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3048,11 +3235,8 @@ for f in /etc/profile.d/*.sh ; do grep -Eq '(^|^[^#]*;)\s*(readonly|export(\s+[^
     Id = "6.2.1"
     Task = "Ensure accounts in /etc/passwd use shadowed passwords"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/passwd
-'@
-        $test1 = bash -c $test1_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.1.sh"
+        $test1 = bash $script1
         if($test1 -eq $null){
             return $retCompliant
         } else {
@@ -3065,11 +3249,8 @@ awk -F: '($2 != "x" ) { print $1 " is not set to shadowed passwords "}' /etc/pas
     Id = "6.2.2"
     Task = "Ensure /etc/shadow password fields are not empty"
     Test = {
-        $test1_script = @'
-#!/bin/bash
-awk -F: '($2 == "" ) { print $1 " does not have a password "}' /etc/shadow
-'@
-        $test1 = bash -c $test1_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.2.sh"
+        $test1 = bash $script1
         if($test1 -eq $null){
             return $retCompliant
         } else {
@@ -3132,15 +3313,8 @@ done
     Id = "6.2.5"
     Task = "Ensure all users' home directories exist"
     Test = {
-        $test_script = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read -r user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.5.sh"
+        $test = bash $script1
         if($test -match "does not exist"){
             return $retNonCompliant
         } else {
@@ -3153,29 +3327,8 @@ done
     Id = "6.2.6"
     Task = "Ensure users' home directories permissions are 750 or more restrictive"
     Test = {
-        $test_script = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        dirperm=$(ls -ld $dir | cut -f1 -d" ")
-        if [ $(echo $dirperm | cut -c6) != "-" ]; then
-            echo "Group Write permission set on the home directory ($dir) of user $user"
-        fi
-        if [ $(echo $dirperm | cut -c8) != "-" ]; then
-            echo "Other Read permission set on the home directory ($dir) of user $user"
-        fi
-        if [ $(echo $dirperm | cut -c9) != "-" ]; then
-            echo "Other Write permission set on the home directory ($dir) of user $user"
-        fi
-        if [ $(echo $dirperm | cut -c10) != "-" ]; then
-            echo "Other Execute permission set on the home directory ($dir) of user $user"
-        fi
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.6.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3188,20 +3341,9 @@ done
     Id = "6.2.7"
     Task = "Ensure users own their home directories"
     Test = {
-        $test1 = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        owner=$(stat -L -c "%U" "$dir")
-        if [ "$owner" != "$user" ]; then
-            echo "The home directory ($dir) of user $user is owned by $owner."
-        fi
-    fi
-done
-'@
-        if($test1 -eq $null){
+        $script1 = $scriptPath + "CIS-SEL15-6.2.7.sh"
+        $test = bash $script1
+        if($test -eq $null){
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -3213,27 +3355,8 @@ done
     Id = "6.2.8"
     Task = "Ensure users' dot files are not group or world writable"
     Test = {
-        $test_script = @'
-#!/bin/bash
-grep -E -v '^(halt|sync|shutdown)' /etc/passwd | awk -F: '($7 != "'"$(which nologin)"'" && $7 != "/bin/false") { print $1 " " $6 }' | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        for file in $dir/.[A-Za-z0-9]*; do
-            if [ ! -h "$file" -a -f "$file" ]; then
-                fileperm=$(ls -ld $file | cut -f1 -d" ")
-                if [ $(echo $fileperm | cut -c6) != "-" ]; then
-                    echo "Group Write permission set on file $file"
-                fi
-                if [ $(echo $fileperm | cut -c9) != "-" ]; then
-                    echo "Other Write permission set on file $file"
-                fi
-            fi
-        done
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.8.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3246,19 +3369,8 @@ done
     Id = "6.2.9"
     Task = "Ensure no users have .forward files"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ] ; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        if [ ! -h "$dir/.forward" -a -f "$dir/.forward" ]; then
-            echo ".forward file $dir/.forward exists"
-        fi
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.9.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3271,19 +3383,8 @@ done
     Id = "6.2.10"
     Task = "Ensure no users have .netrc files"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        if [ ! -h "$dir/.netrc" -a -f "$dir/.netrc" ]; then
-            echo ".netrc file $dir/.netrc exists"
-        fi
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.10.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3296,39 +3397,8 @@ done
     Id = "6.2.11"
     Task = "Ensure users' .netrc Files are not group or world accessible"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        for file in $dir/.netrc; do
-            if [ ! -h "$file" -a -f "$file" ]; then
-                fileperm=$(ls -ld $file | cut -f1 -d" ")
-                if [ $(echo $fileperm | cut -c5) != "-" ]; then
-                    echo "Group Read set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c6) != "-" ]; then
-                    echo "Group Write set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c7) != "-" ]; then
-                    echo "Group Execute set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c8) != "-" ]; then
-                    echo "Other Read set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c9) != "-" ]; then
-                    echo "Other Write set on $file"
-                fi
-                if [ $(echo $fileperm | cut -c10) != "-" ]; then
-                    echo "Other Execute set on $file"
-                fi
-            fi
-        done
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.11.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3341,21 +3411,8 @@ done
     Id = "6.2.12"
     Task = "Ensure no users have .rhosts files"
     Test = {
-        $test_script = @'
-#!/bin/bash
-awk -F: '($1 !~ /^(root|halt|sync|shutdown)$/ && $7 != "'"$(which nologin)"'" && $7 != "/bin/false" && $7 != "/usr/bin/false") { print $1 " " $6 }' /etc/passwd | while read user dir; do
-    if [ ! -d "$dir" ]; then
-        echo "The home directory ($dir) of user $user does not exist."
-    else
-        for file in $dir/.rhosts; do
-            if [ ! -h "$file" -a -e "$file" ]; then
-                echo ".rhosts file in $dir"
-            fi
-        done
-    fi
-done
-'@
-        $test = bash -c $test_script
+        $script1 = $scriptPath + "CIS-SEL15-6.2.12.sh"
+        $test = bash $script1
         if($test -ne $null){
             return $retNonCompliant
         } else {
@@ -3471,8 +3528,10 @@ done
     Id = "6.2.18"
     Task = "Ensure shadow group is empty"
     Test = {
-        $test1 = grep ^shadow:[^:]*:[^:]*:[^:]+ /etc/group
-        $test2 = awk -F: '($4 == "<shadow-gid>") { print }' /etc/passwd
+        $script1 = $scriptPath + "CIS-SEL15-6.2.18_1.sh"
+        $test1 = bash $script1
+        $script2 = $scriptPath + "CIS-SEL15-6.2.18_2.sh"
+        $test2 = bash $script2
         if($test1 -eq $null -and $test2 -eq $null){
             return $retCompliant
         } else {
