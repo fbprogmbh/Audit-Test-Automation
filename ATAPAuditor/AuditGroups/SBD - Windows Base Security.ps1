@@ -74,9 +74,13 @@ $RootPath = Split-Path $RootPath -Parent
 			$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
 			$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
 			$message = ""
+			$cnt = 1
 			foreach($member in $group_members){
-				$message += "- $($member) <br/>"
+				$message += "$cnt.   $($member) <br/>"
+				$cnt++
 			}
+			#Delete for better readability
+			$message = $message.Replace("WinNT://","")
 			$amountOfUserAndGroups = $group_members.Count
 			
 			$status = switch ($amountOfUserAndGroups.Count) {
