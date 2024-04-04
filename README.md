@@ -47,7 +47,7 @@ AuditTAP Release 5.8.0:\
   - [Good to know](#good-to-know)
   - [Sample reports](#sample-reports)
   - [Customization](#customization)
-  - [Converting reports to Xml instead of HTML](#converting-reports-to-xml-instead-of-html)
+  - [Converting reports to xml instead of HTML](#converting-reports-to-xml-instead-of-html)
   - [Related links](#related-links)
     - [AuditTAP information](#audittap-information)
     - [Hardening recommendations in general](#hardening-recommendations-in-general)
@@ -136,14 +136,12 @@ Ubuntu 22.04 | - | 1.0.0 | - | - | - | -
 
 ## Prerequisites
 
-Before proceeding with the installation, please ensure that your system meets the following prerequisites:
+Before proceeding with the installation, please ensure the following prerequisites are met:
 
 ### Windows
 
 * PowerShell version 5.1
-* Administrative Powershell x64 session
 * Administrative permissions on the system to be audited
-
 
 ## How to install
 
@@ -211,7 +209,7 @@ Import-Module -Name ATAPAuditor
 By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark. Append `-Path` to specify output folder.
 
 :exclamation: 
-ATAP is only compatible with PowerShell 5. When run in a different PowerShell version, the user will be prompted to open a PowerShell 5 console or stop the script.
+ATAP is only compatible with PowerShell 5.1. When run in a different PowerShell version, the user will be prompted to open a PowerShell 5 console or stop the script.
 :exclamation: 
 
 **Examples:**
@@ -302,7 +300,7 @@ Permanent scope: Machine
 [System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::Machine)
 ```
 
-## Converting reports to Xml instead of HTML
+## Converting reports to xml instead of HTML
 
 For this functionality, it is handy to know the Invoke-ATAPReport command can be used:
 Just use the following code snippet, and exchange the variables "Reportname" and "FilePath".
