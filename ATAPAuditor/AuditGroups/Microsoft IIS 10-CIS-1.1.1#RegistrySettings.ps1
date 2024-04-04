@@ -945,9 +945,19 @@
                 -Name "Functions" `
                 | Select-Object -ExpandProperty "Functions"
         
-            return @{
-                Message = "Registry value is '$regValue'. Expected: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+
+            $res = $regValue.GetType().Name
+
+            if ($res -isnot [String]) {
+                Message = "Wrong Registry type! Registry type is '$res'. Expected: [String]"
                 Status = "False"
+            }
+            if ($regValue -ne $reference) {
+                return @{
+                    Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08"
+                    Status = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {

@@ -2512,63 +2512,59 @@ function Test-IISTLSCipherOrder {
 		Cipher suites are a named combination of authentication, encryption, message authentication code, and key exchange algorithms used for the security settings of a network connection using TLS protocol. Clients send a cipher list and a list of ciphers that it supports in order of preference to a server. The server then replies with the cipher suite that it selects from the client cipher suite list.
 	#>
 
-	[String[]]$cipherList = @(
-		"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-		"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-		"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-		"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-		"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
-		"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
-		"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
-		"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-	)
+    try 
+    {
+        $regValue = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
+            -Name "Functions" `
+            | Select-Object -ExpandProperty "Functions"
+    
+        $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
 
-	$message1 = "TLS Cipher Suite ordering does not match reference"
-	$audit1 = "False"
+        $res = $regValue.GetType().Name
 
-	$message2 = "TLS Cipher Suite contains more ciphers"
-	$audit2 = "False"
+        if ($res -isnot [String]) {
+            @{
+                Id      = "7.12"
+                Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+                Status = "False"
+                Message = "Wrong Registry type! Registry type is '$res'. Expected: [String]"
+            } | Write-Output
+        }
+        if ($regValue -ne $reference) {
+            @{
+                Id      = "7.12"
+                Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+                Status  = "False"
+                Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08"
+            } | Write-Output
+        }
+    }
+    catch [System.Management.Automation.PSArgumentException] {
+        @{
+            Id      = "7.12"
+            Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+            Status  = "False"
+            Message = "Registry value not found."
+        } | Write-Output
+    }
+    catch [System.Management.Automation.ItemNotFoundException] {
+        @{
+            Id      = "7.12"
+            Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+            Status  = "False"
+            Message = "Registry key not found."
+        } | Write-Output
+    }
 
-	$path = "HKLM:\System\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002\"
-
-	if (Test-Path $path) {
-		$Key = Get-Item $path
-		if ($null -ne $Key.GetValue("Functions", $null)) {
-			$functions = (Get-ItemProperty $path).Functions
-
-			if ($cipherList.Count -ge $functions.Count) {
-				$message2 = $MESSAGE_ALLGOOD
-				$audit2 = "True"
-
-				$equalOrdering = [System.Linq.Enumerable]::Zip($cipherList, $functions, `
-					[Func[String, String, Boolean]] {
-						param($cipher, $function)
-						$cipher -eq $function
-					})
-
-				if (-not ($equalOrdering -contains $false)) {
-					$message1 = $MESSAGE_ALLGOOD
-					$audit1 = "True"
-				}
-			}
-		}
-	}
-
-	@{
-		Id      = "7.12.1"
+    @{
+		Id      = "7.12"
 		Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
-		Status  = $audit1
-		Message = $message1
-	} | Write-Output
-
-
-	@{
-		Id      = "7.12.2"
-		Task    = "Ensure TLS Cipher Suite does not contain more ciphers"
-		Status  = $audit2
-		Message = $message2
+		Status  = "True"
+		Message = "Compliant"
 	} | Write-Output
 }
+
 
 #endregion
 
