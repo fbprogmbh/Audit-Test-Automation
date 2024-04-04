@@ -726,9 +726,9 @@
         
             if ($regValue -eq 4294967295) {
                 return @{
-                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.<br/>"`
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
                     +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
-                    +'Visit learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
                     Status = "False"
                 }
             }
@@ -807,9 +807,9 @@
 
             if ($regValue -eq 4294967295) {
                 return @{
-                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.<br/>"`
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
                     +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
-                    +'Visit learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
                     Status = "False"
                 }
             }
@@ -1151,9 +1151,9 @@
         
             if ($regValue -eq 4294967295) {
                 return @{
-                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.<br/>"`
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
                     +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
-                    +'Visit learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
                     Status = "False"
                 }
             }
