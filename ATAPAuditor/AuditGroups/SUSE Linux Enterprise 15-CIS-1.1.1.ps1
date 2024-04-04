@@ -739,7 +739,7 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.8.1.5"
     Task = "Ensure permissions on /etc/issue are configured"
     Test = {
-        $result = stat -L /etc/issue | grep "(0644"
+        $result = stat -L /etc/issue | grep "0644"
         if($result -ne $null){
             return $retCompliant
         } else {
@@ -753,7 +753,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "1.8.1.6"
     Task = "Ensure permissions on /etc/issue.net are configured"
     Test = {
-        $result = stat -L /etc/issue.net | grep "(0644"
+        $result = stat -L /etc/issue.net | grep "0644"
         if($result -ne $null){
             return $retCompliant
         } else {
