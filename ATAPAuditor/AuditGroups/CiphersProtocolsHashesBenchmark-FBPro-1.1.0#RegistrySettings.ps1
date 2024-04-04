@@ -612,6 +612,13 @@
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
         
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.
+                    https://docs.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings"
+                    Status = "False"
+                }
+            }
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
@@ -685,6 +692,13 @@
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
 
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link.
+                    https://docs.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings"
+                    Status = "False"
+                }
+            }
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
