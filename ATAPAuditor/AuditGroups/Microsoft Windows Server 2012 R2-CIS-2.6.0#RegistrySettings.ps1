@@ -4569,7 +4569,7 @@ try {
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }
@@ -4621,7 +4621,7 @@ try {
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }
