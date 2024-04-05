@@ -2378,23 +2378,29 @@ if($domainRole -ge 4){
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
-                -Name "Functions" `
-                | Select-Object -ExpandProperty "Functions"
-        
-            $reference = @(
-                "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-                "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-                "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-                "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-                "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
-                "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
-                "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
-                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-            )
-            if (-not (Test-ArrayEqual $regValue $reference)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
+            -Name "Functions"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $res = $regValue.Functions.GetType().Name
+                        
+            $typeTable = @{
+                "String" = "String Value"
+                "Byte" = "Byte Value"
+                "Int32" = "DWORD (32-bit) Value"
+                "Int64" = "QWORD (64-bit) Value"
+                "String[]" = "Multi-String Value"
+            }
+            $currentType = $typeTable[$res]
+            $regValue = $regValue | Select-Object -ExpandProperty "Functions"
+            if ($res -ne [String]) {
+                return @{  
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
+                    Status = "False"
+                }
+            }
+            if ($regValue -ne $reference) {
+                return @{                                                                               
+                    Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
                     Status = "False"
                 }
             }
