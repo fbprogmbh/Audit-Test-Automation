@@ -1590,11 +1590,11 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "The Application Compatibility Program service must be disabled in order to prefent sending inventory data."
     Test = {
         try {
-            $status = (get-service -name pcasvc).Status
-            if ($status -ne "Stopped") {
+            $status = get-service -name pcasvc -ErrorAction Stop
+            if($status.Status -ne "Stopped"){
                 return @{
-                    Message = "Service not stopped. Currently set: $status"
-                    Status = "False"
+                    Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
+                    Status = "True"
                 }
             }
         }
@@ -1610,6 +1610,13 @@ $RootPath = Split-Path $RootPath -Parent
                 Status = "False"
             }
         }
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
+            }
+        }
+
         return @{
             Message = "Compliant"
             Status = "True"
@@ -1621,8 +1628,8 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
-            $status = (get-service -name pcasvc).Status
-            if($status -ne "Stopped"){
+            $status = get-service -name pcasvc -ErrorAction Stop
+            if($status.Status -ne "Stopped"){
                 return @{
                     Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
                     Status = "True"
@@ -1652,6 +1659,13 @@ $RootPath = Split-Path $RootPath -Parent
                 Status = "False"
             }
         }
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
+            }
+        }
+        
         return @{
             Message = "Compliant"
             Status = "True"

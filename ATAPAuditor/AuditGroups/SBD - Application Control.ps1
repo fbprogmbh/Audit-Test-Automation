@@ -30,15 +30,23 @@ $RootPath = Split-Path $RootPath -Parent
 	Id = "SBD-075"
 	Task = "Ensure Windows Defender Application ID Service is running."
 	Test = {
-        if((Get-Service -Name APPIDSvc).Status -eq "Running"){
+        try{
+            if((Get-Service -Name APPIDSvc -ErrorAction Stop).Status -eq "Running"){
+                return @{
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status = "True"
+                Message = "AppLocker is not running. Currently: $((Get-Service -Name APPIDSvc -ErrorAction Stop).Status)"
+                Status = "False"
             }
         }
-        return @{
-            Message = "AppLocker is not running. Currently: $((Get-Service -Name APPIDSvc).Status)"
-            Status = "False"
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "False"
+            }
         }
 	}
 }

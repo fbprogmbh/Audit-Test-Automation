@@ -1,3 +1,4 @@
+# this function does NOT check for the same logging file in different paths for LogFilePaths (public, private, domain)
 function Test-FirewallPaths {
     [CmdletBinding()]
     [OutputType([Object])]
@@ -26,7 +27,7 @@ function Test-FirewallPaths {
             -Name $Key `
         | Select-Object -ExpandProperty "$($Key)"
         # if regValue == expectedValue OR if the LogFilePath ends with .log
-        if (($regValue -eq $ExpectedValue) -or (($Key -eq "LogFilePath") -and ($ExpectedValue -match "$ProfileType[a-z]*.log"))) {
+        if (($regValue -eq $ExpectedValue) -or (($Key -eq "LogFilePath") -and ($regValue -match "[a-z]*.log"))) {
             $Result = @{
                 Message = "Compliant"
                 Status  = "True"

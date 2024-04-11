@@ -120,6 +120,29 @@ class ResultTable {
 #endregion
 
 #region helpers
+function GetLicenseStatus{
+	param(
+		$SkipLicenseCheck
+	)
+	if($SkipLicenseCheck -eq $false){
+		Write-Host "Checking operating system activation status. This may take a while..."
+		$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
+		switch ($licenseStatus) {
+			"0" { $lcStatus = "Unlicensed" }
+			"1" { $lcStatus = "Licensed" }
+			"2" { $lcStatus = "OOBGrace" }
+			"3" { $lcStatus = "OOTGrace" }
+			"4" { $lcStatus = "NonGenuineGrace" }
+			"5" { $lcStatus = "Notification" }
+			"6" { $lcStatus = "ExtendedGrace" }
+		}
+		return $lcStatus
+	}
+	else{
+		return "License check has been skipped."
+	}
+}
+
 function Test-ArrayEqual {
 	[OutputType([bool])]
 	[CmdletBinding()]
@@ -795,6 +818,9 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$RiskScore,
 
+		[Parameter(Mandatory = $false)]
+		[switch]
+		$SkipLicenseCheck,
 		# [Parameter(Mandatory = $false)]
 		# [switch]
 		# $MITRE,
@@ -803,6 +829,11 @@ function Save-ATAPHtmlReport {
 		[switch]
 		$Force
 	)
+
+	if([Environment]::Is64BitProcess -eq $false){
+		Write-Host "Please use 64-bit version of PowerShell in order to use AuditTAP. Closing..." -ForegroundColor red
+		return;
+	}
 
 	$parent = $path
 	if ($Path -match ".html") {
@@ -830,10 +861,12 @@ function Save-ATAPHtmlReport {
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
+		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
-		if ($psVersion.Major -ne 5) {
-			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
+		#PowerShell Major version not 5.*
+		if (($psVersion.Major -ne 5)) {
+			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5.1. Your version is $psVersion. Do you want to open a Powershell 5? Y/N"
 			$in = Read-Host
 			switch ($in) {
 				Y { Start Powershell; return }
@@ -841,13 +874,17 @@ function Save-ATAPHtmlReport {
 				default { Write-Warning "You did not choose Y nor N. Stopping Script..."; return }
 			}
 		}
+		#PowerShell version not 5.1
+		if (($psVersion.Major -eq 5) -and ($psVersion.Minor -eq 0)) {
+			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5.1. Your version is $psVersion. You need to upgrade to a higher Windows version!"
+			return;
+		}
 	}
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
 	$hashtable_sha256 = GenerateHashTable $report
 	
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
-
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport
