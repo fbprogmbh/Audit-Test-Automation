@@ -17541,6 +17541,78 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
+    Id = "19.7.8.3"
+    Task = "(L2) Ensure 'Do not use diagnostic data for tailored experiences' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Name "DisableTailoredExperiencesWithDiagnosticData" `
+                | Select-Object -ExpandProperty "DisableTailoredExperiencesWithDiagnosticData"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "19.7.8.4"
+    Task = "(L2) Ensure 'Turn off all Windows spotlight features' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
+                -Name "DisableWindowsSpotlightFeatures" `
+                | Select-Object -ExpandProperty "DisableWindowsSpotlightFeatures"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "19.7.8.5"
     Task = "(L1) Ensure 'Turn off Spotlight collection on Desktop' is set to 'Enabled'"
     Test = {
@@ -17661,6 +17733,42 @@ $windefrunning = CheckWindefRunning
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "19.7.44.2.1"
+    Task = "(L2) Ensure 'Prevent Codec Download' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Installer" `
+                -Name "PreventCodecDownload" `
+                | Select-Object -ExpandProperty "PreventCodecDownload"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
