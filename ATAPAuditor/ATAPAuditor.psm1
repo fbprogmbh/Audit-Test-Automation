@@ -120,6 +120,40 @@ class ResultTable {
 #endregion
 
 #region helpers
+function Start-ModuleTest {
+	$moduleList = @(Get-Module -ListAvailable).Name | Select-Object -Unique
+	$necessaryModules = @(
+		"Microsoft.PowerShell.LocalAccounts",
+		"Microsoft.PowerShell.Management",
+		"Microsoft.PowerShell.Security",
+		"Microsoft.PowerShell.Utility",
+		"Microsoft.PowerShell.Core",
+		"TrustedPlatformModule",
+		"IISAdministration",
+		"ServerManager",
+		"NetSecurity",
+		"CimCmdlets",
+		"SQLServer",
+		"SmbShare",
+		"Defender",
+		"DISM"
+	)
+	$missingModules = @()
+	foreach($module in $necessaryModules){
+		if($moduleList -notcontains $module){
+			$missingModules += $module
+		}
+	}
+
+	if($missingModules.Count -gt 0){
+		Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
+		for ($i = 0; $i -lt $missingModules.Count; $i++) {
+			Write-Warning $missingModules[$i]
+		}
+	}
+
+}
+
 function GetLicenseStatus{
 	param(
 		$SkipLicenseCheck
@@ -861,6 +895,7 @@ function Save-ATAPHtmlReport {
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
+		Start-ModuleTest
 		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
