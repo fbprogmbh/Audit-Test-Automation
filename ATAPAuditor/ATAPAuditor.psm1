@@ -150,6 +150,7 @@ function Start-ModuleTest {
 		for ($i = 0; $i -lt $missingModules.Count; $i++) {
 			Write-Warning $missingModules[$i]
 		}
+		Write-Warning "Check out this link on how to install modules: https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-3.x"
 	}
 
 }
