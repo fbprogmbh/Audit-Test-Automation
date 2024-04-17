@@ -471,7 +471,19 @@ $RootPath = Split-Path $RootPath -Parent
 	Id = "SBD-021"
 	Task = "Ensure Credential Guard is running."
 	Test = {
-		if (isWindows10OrNewer) {
+		$value = isWindows10OrNewer
+		if($value -eq $false){
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "None"
+			}
+		}
+		$systemSKU = (Get-CimInstance Win32_OperatingSystem).Caption
+		$supportedSKUs = @("Windows Enterprise", "Windows Education")
+
+		$system = $systemSKU -replace "\d\s*", ""
+		$system = $system -replace "Microsoft ", ""
+		if($supportedSKUs.Contains($system)){
 			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 1) {
 				return @{
 					Message = "Compliant"
@@ -485,10 +497,18 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 		}
-		else {
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
+		else{
+			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesConfigured -contains 1) {
+				return @{
+					Message = "Credential Guard is configured but not running, due to incompatibility with $($systemSKU)"
+					Status = "None"
+				}
+			}
+			else {
+				return @{
+					Message = "Credential Guard is not configured."
+					Status = "False"
+				}
 			}
 		}
 	}
