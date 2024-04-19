@@ -1,0 +1,27 @@
+name: Help
+description: If you have a question regarding the AuditTAP.
+title: "[Help]: "
+labels: ["question"]
+projects: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Your support is greatly appreciated, thanks for your time!
+      
+  - type: textarea
+    id: info
+    attributes:
+      label: Description
+      description: You need help with something? Let us know!
+      placeholder: Tell us what you need!
+    validations:
+      required: true
+            
+
+      
+ 
+  
+
+
