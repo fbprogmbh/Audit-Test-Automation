@@ -124,4 +124,3 @@ body:
         - label: I used the latest official release.
         - label: I used the altest prerelease version.
           required: true
-  
