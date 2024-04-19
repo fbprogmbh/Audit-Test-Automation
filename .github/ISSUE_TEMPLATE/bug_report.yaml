@@ -122,5 +122,5 @@ body:
       description: Are you using the latest official Version of AuditTAP?
       options:
         - label: I used the latest official release.
-        - label: I used the altest prerelease version.
+        - label: I used the latest prerelease version.
           required: true
