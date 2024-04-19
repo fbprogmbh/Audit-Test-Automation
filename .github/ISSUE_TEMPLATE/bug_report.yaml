@@ -103,7 +103,7 @@ body:
     validations:
       required: true
 
-   - type: dropdown
+  - type: dropdown
     id: version_check
     attributes:
       label: Current Version?
