@@ -1,5 +1,5 @@
 name: Bug Report
-description: If you have a problem or bug with the AuditTAP.
+description: If you have a problem or bug with AuditTAP.
 title: "[Bug]: "
 labels: ["bug"]
 projects: []
@@ -81,15 +81,15 @@ body:
   - type: input
     id: benchmark_id
     attributes: 
-      label: Banchmark and ID (OPTIONAL)
+      label: Benchmark and ID (OPTIONAL)
       description: If the bug occurred in connection with a benchmark, please provide us with the benchmark name and its corresponding ID to which the bug is linked.
-      placeholder: e.g. CIS benchmark 1.1.6
+      placeholder: e.g. CIS Microsoft Windows 11 Enterprise 3.0.0 Benchmark
       
   - type: textarea
     id: what-happened
     attributes:
       label: What happened?
-      description: Please try to describe your problem as thoroughly as possible!
+      description: Please try to describe your problem as thoroughly as possible! Also, add a screenshot if necessary. "A picture is worth a thousand words".
       placeholder: Tell us what you see!
     validations:
       required: true
@@ -97,18 +97,20 @@ body:
   - type: textarea
     id: what-expected
     attributes:
-      label: What have you expected?
+      label: What did you expect?
       description: Please describe what you expected to happen when the bug occurred!
       placeholder: Tell us what you want to see!
     validations:
       required: true
-       
-  - type: checkboxes
+
+  - type: dropdown
     id: version_check
     attributes:
       label: Current Version?
-      description: Have you already ensured that you are working on our current version of the AuditTAP?
+      description: Are you using the latest official Version of AuditTAP?
       options:
-        - label: This bug occured on version 5.9 of the AuditTAP
-          required: true
-  
+        - PLEASE SELECT!
+        - I used the latest official release.
+        - I used the latest prerelease version.
+    validations:
+      required: true
