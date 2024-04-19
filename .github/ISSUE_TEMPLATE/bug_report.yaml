@@ -116,7 +116,7 @@ body:
       required: true
       
   - type: checkboxes
-    id: version_check
+    id: version_check_dropdown
     attributes:
       label: Current Version?
       description: Are you using the latest official Version of AuditTAP?
