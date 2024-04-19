@@ -4815,7 +4815,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }
@@ -4867,7 +4867,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }

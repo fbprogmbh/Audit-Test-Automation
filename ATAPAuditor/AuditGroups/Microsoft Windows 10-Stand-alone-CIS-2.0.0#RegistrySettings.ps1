@@ -5350,7 +5350,59 @@ $windefrunning = CheckWindefRunning
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.14.1 B"
+    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\SYSVOL)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Name "\\*\SYSVOL" `
+                | Select-Object -ExpandProperty "\\*\SYSVOL"
+        
+            if($regValue -eq $null){
+                return @{
+                    Message = "Registry key not found."
+                    Status = "False"
+                }
+            }
+            $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+
+            $missingElements = @()
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            foreach ($element in $elementsToCheck) {
+                if ($array -notcontains $element) {
+                    $missingElements += $element
+                }
+            }
+
+            if ($missingElements.Length -gt 0) {
+                return @{
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }
