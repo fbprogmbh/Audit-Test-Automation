@@ -476,7 +476,7 @@ $RootPath = Split-Path $RootPath -Parent
 			}
 		}
 		$systemSKU = (Get-CimInstance Win32_OperatingSystem).Caption
-		$supportedSKUs = @("Windows Enterprise", "Windows Education")
+		$supportedSKUs = @("Windows Enterprise", "Windows Education", "Windows Server")
 
 		$system = $systemSKU -replace "\d\s*", ""
 		$system = $system -replace "Microsoft ", ""
@@ -497,8 +497,8 @@ $RootPath = Split-Path $RootPath -Parent
 		else{
 			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesConfigured -contains 1) {
 				return @{
-					Message = "Credential Guard is configured but not running, due to incompatibility with $($systemSKU)"
-					Status = "None"
+					Message = "Credential Guard is configured but not running, due to incompatibility with $($systemSKU) </br>See Microsoft documentation for further information: <a href='https://learn.microsoft.com/en-us/windows/security/identity-protection/credential-guard/#windows-edition-and-licensing-requirements'>Here</a>"
+					Status = "False"
 				}
 			}
 			else {
