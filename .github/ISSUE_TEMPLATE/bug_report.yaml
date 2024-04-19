@@ -111,16 +111,6 @@ body:
       options:
         - PLEASE SELECT!
         - I used the latest official release.
-        - I used the altest prerelease version.
+        - I used the latest prerelease version.
     validations:
       required: true
-      
-  - type: checkboxes
-    id: version_check_dropdown
-    attributes:
-      label: Current Version?
-      description: Are you using the latest official Version of AuditTAP?
-      options:
-        - label: I used the latest official release.
-        - label: I used the latest prerelease version.
-          required: true
