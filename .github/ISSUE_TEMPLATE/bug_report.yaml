@@ -1,0 +1,114 @@
+name: Bug Report
+description: If you have a problem or bug with the AuditTAP.
+title: "[Bug]: "
+labels: ["bug"]
+projects: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Your feedback and support is greatly appreciated, thanks for your time!
+  - type: dropdown
+    id: operating_system
+    attributes:
+      label: Operating System
+      description: Which operating system did the bug occur on?
+      options:
+        - PLEASE SELECT!
+        - Windows 7
+        - Windows 10
+        - Windows 11
+        - Microsoft Windows 10 Stand-alone
+        - Microsoft Windows 11 Stand-alone
+        - Microsoft Windows Server 2012
+        - Microsoft Windows Server 2016
+        - Microsoft Windows Server 2019
+        - Microsoft Windows Server 2022
+        - Linux - Debian
+        - Linux - Fedora
+        - Linux - Red Hat
+        - Linux - SUSE
+    validations:
+      required: true    
+      
+  - type: dropdown
+    id: report
+    attributes:
+      label: Report Name
+      description: Which report did you execute for the bug to occur?
+      options:
+        - PLEASE SELECT!
+        - Microsoft Windows 7
+        - Microsoft Windows 10
+        - Microsoft Windows 10 GDPR
+        - Microsoft Windows 10 BSI
+        - Microsoft Windows 10 Stand-alone
+        - Microsoft Windows 11 Stand-alone
+        - Microsoft Windows 11
+        - Microsoft Windows Server 2012
+        - Microsoft Windows Server 2016
+        - Microsoft Windows Server 2016 DC
+        - Microsoft Windows Server 2019
+        - Microsoft Windows Server 2019 DC
+        - Microsoft Windows Server 2022
+        - Microsoft Windows Server 2022 DC
+        - --------------------------------
+        - Debian 10
+        - Debian 11
+        - Fedora 35
+        - Red Hat Enterprise Linux 8
+        - SUSE Linux Enterprise 15
+        - Ubuntu 20.04
+        - Ubuntu 22.04
+        - ---------------------------------
+        - Google Chrome
+        - Mozilla Firefox
+        - Microsoft Edge
+        - Microsoft Internet Explorer 11
+        - Microsoft IIS10
+        - Microsoft Office 2016 Excel
+        - Microsoft Office 2016 Outlook
+        - Microsoft Office 2016 PowerPoint
+        - Microsoft Office 2016 SkypeForBusiness
+        - Microsoft Office 2016 Word
+        - Microsoft Office 2016 
+        - Microsoft SQL Server 2016
+    validations:
+      required: true    
+
+
+  - type: input
+    id: benchmark_id
+    attributes: 
+      label: Banchmark and ID (OPTIONAL)
+      description: If the bug occurred in connection with a benchmark, please provide us with the benchmark name and its corresponding ID to which the bug is linked.
+      placeholder: e.g. CIS benchmark 1.1.6
+      
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Please try to describe your problem as thoroughly as possible!
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+            
+  - type: textarea
+    id: what-expected
+    attributes:
+      label: What have you expected?
+      description: Please describe what you expected to happen when the bug occurred!
+      placeholder: Tell us what you want to see!
+    validations:
+      required: true
+       
+  - type: checkboxes
+    id: version_check
+    attributes:
+      label: Current Version?
+      description: Have you already ensured that you are working on our current version of the AuditTAP?
+      options:
+        - label: This bug occured on version 5.9 of the AuditTAP
+          required: true
+  
