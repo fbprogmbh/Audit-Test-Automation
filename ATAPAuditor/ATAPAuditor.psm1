@@ -127,16 +127,16 @@ function Start-ModuleTest {
 		"Microsoft.PowerShell.Management",
 		"Microsoft.PowerShell.Security",
 		"Microsoft.PowerShell.Utility",
-		"Microsoft.PowerShell.Core",
 		"TrustedPlatformModule",
-		"IISAdministration",
 		"ServerManager",
 		"NetSecurity",
 		"CimCmdlets",
-		"SQLServer",
 		"SmbShare",
 		"Defender",
 		"DISM"
+		#Modules only necessary for specific server tests
+		#"IISAdministration",
+		#"SQLServer",
 	)
 	$missingModules = @()
 	foreach($module in $necessaryModules){
