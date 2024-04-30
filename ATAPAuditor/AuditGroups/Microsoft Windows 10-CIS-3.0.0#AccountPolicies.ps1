@@ -41,7 +41,10 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
+        if ($setPolicy -gt 365 -or $setPolicy -le 0) {
+            if($setPolicy -eq -1){
+                $setPolicy = "Password never expires"
+            }
             return @{
                 Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 days and x > 0 days"
                 Status = "False"
@@ -212,6 +215,34 @@
         if (($setPolicy -gt 5 -or $setPolicy -le 0)) {
             return @{
                 Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 5 and x > 0"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "1.2.3"
+    Task = "(L1) Ensure 'Allow Administrator account lockout' is set to 'Enabled'"
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $setPolicy = $securityPolicy['System Access']["AllowAdministratorLockout"]
+        
+        if ($null -eq $setPolicy) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        $setPolicy = [long]$setPolicy
+        
+        if ($setPolicy -ne 1) {
+            return @{
+                Message = "'AllowAdministratorLockout' currently set to: $setPolicy. Expected: 1"
                 Status = "False"
             }
         }
