@@ -174,9 +174,9 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeIncreaseQuotaPrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
             "S-1-5-20"
+            "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -346,8 +346,8 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTimeZonePrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
+            "S-1-5-32-544"
             "S-1-5-32-545"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -452,9 +452,9 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateGlobalPrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
             "S-1-5-20"
+            "S-1-5-32-544"
             "S-1-5-6"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -632,8 +632,8 @@ else{
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
         $identityAccounts = @(
-            "S-1-5-32-546"
             "S-1-5-113"
+            "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         
@@ -761,8 +761,8 @@ else{
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
         $identityAccounts = @(
-            "S-1-5-32-546"
             "S-1-5-113"
+            "S-1-5-32-546"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         
@@ -858,7 +858,7 @@ else{
 }
 [AuditTest] @{
     Id = "2.2.23"
-    Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE' [ADFS-ROLE NOT installed]"
+    Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeAuditPrivilege"]
@@ -894,15 +894,15 @@ else{
 }
 [AuditTest] @{
     Id = "2.2.24"
-    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' [IIS Role NOT installed]"
+    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
+            "S-1-5-6"
             "S-1-5-19"
             "S-1-5-20"
-            "S-1-5-6"
+            "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
