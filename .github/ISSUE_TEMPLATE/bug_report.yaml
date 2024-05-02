@@ -1,6 +1,6 @@
 name: Bug Report
 description: If you have a problem or bug with AuditTAP.
-title: "[Bug]: "
+title: ""
 labels: ["bug"]
 projects: []
 assignees: []
