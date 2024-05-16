@@ -8,11 +8,11 @@
 		<tr>
 			<td>
 
-ATAPHtmlReport:\
-[![ataphtmlreportshield](https://img.shields.io/powershellgallery/v/ATAPHtmlReport)](https://www.powershellgallery.com/packages/ATAPHtmlReport)
-
 ATAPAuditor:\
 [![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
+
+ATAPHtmlReport:\
+[![ataphtmlreportshield](https://img.shields.io/powershellgallery/v/ATAPHtmlReport)](https://www.powershellgallery.com/packages/ATAPHtmlReport)
 			</td>
 			<td>
 
