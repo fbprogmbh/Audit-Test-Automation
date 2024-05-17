@@ -2596,8 +2596,8 @@ function Test-IISTLSCipherOrder {
 			@{
 				Id      = $id
 				Task    = $task
-				Status  = "False"
-				Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
+				Status  = "True"
+				Message = "Compliant"
 			} | Write-Output
 		}
 	}
@@ -2678,8 +2678,8 @@ function Test-IISTLSCipherOrder {
 			@{
                 Id      = $id
                 Task    = $task
-                Status  = "False"
-                Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
+				Status = "True"
+				Message = "Compliant"
             } | Write-Output
 		}
 	}
