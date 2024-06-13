@@ -2448,13 +2448,6 @@ if($domainRole -ge 4){
                     Status = $status
                 }
             }
-    
-            if ($regValue -ne $reference) {
-                return @{                                                                               
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
         }
         catch {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -2507,13 +2500,6 @@ if($domainRole -ge 4){
                 return @{
                     Message = $message
                     Status = $status
-                }
-            }
-    
-            if ($regValue -ne $reference) {
-                return @{                                                                               
-                    Message = "Compliant"
-                    Status = "True"
                 }
             }
         }

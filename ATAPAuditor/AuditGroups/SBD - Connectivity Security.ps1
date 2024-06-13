@@ -1370,13 +1370,6 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
                     Status = $status
                 }
             }
-    
-            if ($regValue -ne $reference) {
-                return @{                                                                               
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
         }
         catch {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1429,13 +1422,6 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
                 return @{
                     Message = $message
                     Status = $status
-                }
-            }
-    
-            if ($regValue -ne $reference) {
-                return @{                                                                               
-                    Message = "Compliant"
-                    Status = "True"
                 }
             }
         }
