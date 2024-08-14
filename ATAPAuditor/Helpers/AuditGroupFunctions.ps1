@@ -135,42 +135,35 @@ function Get-LicenseStatus{
 	return $lcStatus
 }
 
+
+
 function CheckWindefRunning {
-    # for systems, won't work if server 
-    try {
+    $domainRole = (Get-CimInstance -Class Win32_ComputerSystem).DomainRole
+
+    #Domain Role - Clients
+    if($domainRole -le 1)
+    {
+        #checks if defender is active
+        if((Get-MpPreference).DisableRealtimeMonitoring -eq $true){
+            return $false
+        }
+        #checks if defender is running in active mode
         $defStatus = (Get-MpComputerStatus -ErrorAction Ignore | Select-Object AMRunningMode)
         if ($defStatus.AMRunningMode -eq "Normal") {
             return $true
         }   
     }
-    catch {
-        <#Do this if a terminating exception happens#>
-    }
-
-    # for standalone systems, won't work if server 
-    try {
-        $defStatus = (Get-MpComputerStatus -ErrorAction Ignore)
-        if ($defStatus.AMServiceEnabled -eq $true -and $defStatus.AntispywareEnabled -eq $true -and $defStatus.AntivirusEnabled -eq $true -and $defStatus.NISEnabled -eq $true -and $defStatus.RealTimeProtectionEnabled  -eq $true) {
-            return $true
-        }    
-    }
-    catch {
-        <#Do this if a terminating exception happens#>
-    }
-
-    # for servers, won't work if standalone system
-    try {
+    #Domain Role - Server (won't work with clients)
+    else
+    {
         if ((Get-WindowsFeature -Name Windows-Defender -ErrorAction Ignore).installed) {
             if ((Get-Service -Name windefend -ErrorAction Ignore).Status -eq "Running") {
                 return $true
             }
         }
     }
-    catch {
-        <#Do this if a terminating exception happens#>
-    }
     
-    return $false
+    return $false    
 }
 
 function CheckForActiveAV {
