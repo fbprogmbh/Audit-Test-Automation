@@ -419,7 +419,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -461,7 +461,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -522,7 +522,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -583,7 +583,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -644,7 +644,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -705,7 +705,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -766,7 +766,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -827,7 +827,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -888,7 +888,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -949,7 +949,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -1010,7 +1010,7 @@ if($domainRole -ge 4){
        try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -1071,7 +1071,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -1132,7 +1132,7 @@ if($domainRole -ge 4){
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -1195,7 +1195,7 @@ if($domainRole -ge 4){
 
                 if ((-not $windefrunning)) {
                     return @{
-                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                         Status = "None"
                     }
                 }

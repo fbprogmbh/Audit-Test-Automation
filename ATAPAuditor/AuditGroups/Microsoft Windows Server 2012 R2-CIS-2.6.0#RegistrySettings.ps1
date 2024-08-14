@@ -9530,7 +9530,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9572,7 +9572,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9614,7 +9614,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9656,7 +9656,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9698,7 +9698,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9740,7 +9740,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9782,7 +9782,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9824,7 +9824,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9866,7 +9866,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
@@ -9908,7 +9908,7 @@ try {
         try {
             if ((-not $windefrunning)) {
                 return @{
-                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
                     Status = "None"
                 }
             }
