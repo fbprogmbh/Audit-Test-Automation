@@ -133,16 +133,26 @@ function Start-ModuleTest {
 		"CimCmdlets",
 		"SmbShare",
 		"Defender",
+		"ConfigDefender",
 		"DISM"
 		#Modules only necessary for specific server tests
 		#"IISAdministration",
 		#"SQLServer",
 	)
+
+
 	$missingModules = @()
 	foreach($module in $necessaryModules){
 		if($moduleList -notcontains $module){
 			$missingModules += $module
 		}
+	}
+
+	#Remove Modules "Defender" and "ConfigDefender" from list of missing Modules, if at least one of both modules is available
+	if($missingModules -contains "Defender" -or $missingModules -contains "ConfigDefender")
+	{
+		$missingModules = $missingModules | Where-Object {$_ -ne "Defender"}
+		$missingModules = $missingModules | Where-Object {$_ -ne "ConfigDefender"}
 	}
 
 	if($missingModules.Count -gt 0){
