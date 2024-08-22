@@ -5,7 +5,6 @@
 	BasedOn = @(
         "DISA Windows Server 2019 Security Technical Implementation Guide, Version: V1R2, Date: 2020-01-24"
         "CIS Microsoft Windows Server 2019 Benchmark, Version: 2.0.0, Date: 2023-04-14"
-        "Microsoft Security baseline for Windows Server 2019 Domain Controller, Version: FINAL, Date 2019-06-18"
         "FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
         "FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
 	)
@@ -63,28 +62,6 @@
 				[ReportSection] @{
 					Title = " Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#AuditPolicies"
-				}
-			)
-		}
-		[ReportSection] @{
-			Title = "Microsoft Benchmarks"
-			Description = "This section contains all benchmarks from Microsoft"
-			SubSections = @(
-				[ReportSection] @{
-					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#RegistrySettings"
-				}
-				[ReportSection] @{
-					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#UserRights"
-				}
-				[ReportSection] @{
-					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#AccountPolicies"
-				}
-				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019 Domain Controller-Microsoft-FINAL#AuditPolicies"
 				}
 			)
 		}
