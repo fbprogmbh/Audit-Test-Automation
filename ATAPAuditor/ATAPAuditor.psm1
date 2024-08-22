@@ -795,7 +795,10 @@ function Invoke-ATAPReport {
 		}
 	}
  catch [System.Management.Automation.CommandNotFoundException] {
-		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
+		Write-Host "Either your input for -Reportname is faulty or the report does not resolve due to a bug. Please report this bug with the following errormessage: 
+		1. ErrorException: $_
+		2. PositionMessage: $($_.InvocationInfo.PositionMessage)
+		3. ReportName: $ReportName"
 		break
 	}
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
