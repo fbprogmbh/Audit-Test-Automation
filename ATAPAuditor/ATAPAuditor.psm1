@@ -891,13 +891,13 @@ function Save-ATAPHtmlReport {
 		}
 	}
 	Write-Verbose "OS-Check"
-	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
+	$isUnix = [System.Environment]::OSVersion.Platform -eq 'Unix'
+	if ($isUnix) {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
 		Start-ModuleTest
-		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		#PowerShell Major version not 5.*
@@ -918,6 +918,9 @@ function Save-ATAPHtmlReport {
 	}
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
+	if (!$isUnix) {
+		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
+	}
 	$hashtable_sha256 = GenerateHashTable $report
 	
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
