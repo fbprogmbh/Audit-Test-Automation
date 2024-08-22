@@ -268,21 +268,9 @@ function checkReportNameWithOSSystem {
 			$OsName,
 			[Parameter()]
 			[bool]
-			$ShouldBeStandAlone = $False,
-			[Parameter()]
-			[bool]
-			$ShouldBeDomainController = $False,
-			[Parameter()]
-			[bool]
-			$ShouldNotBeDomainController = $False
+			$ShouldBeStandAlone = $False
 		)
-		if ($ShouldBeDomainController -eq $True) {
-			Write-Host "You chose the Reportname $ReportName but the operating system is not a domaincontroller. Be aware that a different report type could affect the result."
-		}
-		elseif ($ShouldNotBeDomainController -eq $True) {
-			Write-Host "You chose the Reportname $ReportName but the operating system is a domaincontroller. Be aware that a different report type could affect the result."
-		}
-		elseif ($ShouldBeStandAlone -eq $True) {
+		if ($ShouldBeStandAlone -eq $True) {
 			Write-Host "You chose the Reportname $ReportName but the operating system is domain-joined. Be aware that a different report type could affect the result."
 		} 
 		else {
@@ -320,9 +308,6 @@ function checkReportNameWithOSSystem {
 			[string]
 			$OsType,
 			[Parameter()]
-			[string]
-			$ShouldBeDomainController = $False,
-			[Parameter()]
 			[bool]
 			$ShouldBeStandAlone = $False
 		)
@@ -346,28 +331,6 @@ function checkReportNameWithOSSystem {
 		}
 		if (-not(isOsNameSimilarToType -OsName $osName -OsType $osType)) {
 			return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName
-		}
-
-		###
-		# get whether domaincontroller info for later use
-		function IsDomainController {	
-			$domainrole = Get-DomainRole
-			if ($domainrole -eq "Backup Domain Controller" -or $domainrole -eq "Primary Domain Controller"){
-				return $true
-			}
-			return $false
-		}
-		$isDomainController = IsDomainController
-		# should be DC
-		if ($ShouldBeDomainController -eq $True) {
-			if (-not($isDomainController -eq $True)) {
-				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
-			} 
-		# should not be DC
-		} else {
-			if ($isDomainController -eq $True) {
-				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldNotBeDomainController $True
-			}
 		}
 
 		###
