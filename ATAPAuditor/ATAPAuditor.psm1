@@ -207,8 +207,8 @@ function Test-ArrayEqual {
 		return $false
 	}
 
-	for ($i = 0; $i -lt $Array1.Count; $i++) {
-		if ($Array1[$i] -ne $Array2[$i]) {
+	foreach ($a in $Array1) {
+		if ($a -notin $Array2) {
 			return $false
 		}
 	}
