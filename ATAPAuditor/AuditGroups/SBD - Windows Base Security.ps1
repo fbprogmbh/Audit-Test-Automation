@@ -70,35 +70,53 @@ $RootPath = Split-Path $RootPath -Parent
 	Test = {	
 		try { 
 			#List all groups 
-			$group = Get-LocalGroup -sid "S-1-5-32-544" -ErrorAction Stop
-			$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
-			$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
-			$message = ""
-			$cnt = 1
-			foreach($member in $group_members){
-				$message += "$cnt.   $($member) <br/>"
-				$cnt++
+			function Get-ADAdminCount($groupname) {
+				$output = & net group "$groupName" /domain
+				$lines = $output -split "`r`n"
+				$membersStartIndex = ($lines | Select-String -Pattern 'Members').LineNumber
+				$members = $lines[$membersStartIndex..($lines.Length - 1)] | Where-Object { $_.Trim() -ne '' }
+				return ($members[1] -split '\s+' | Where-Object { $_ -ne '' }).Count
 			}
-			#Delete for better readability
-			$message = $message.Replace("WinNT://","")
-			$amountOfUserAndGroups = $group_members.Count
-			
-			$status = switch ($amountOfUserAndGroups.Count) {
+
+			$allgroups = Get-LocalGroup "Administrators" | Get-LocalGroupMember 
+			[int]$ADCount = 0
+			[int]$localCount = 0
+			foreach ($entry in $allgroups) {
+				if ($entry.PrincipalSource -eq "ActiveDirectory") {
+					if ($entry.ObjectClass -eq "Group") {
+						# only applies to ActiveDirectory Groups
+						$group = $entry.Name -split '\\' | Select-Object -Last 1
+						$ADCount += Get-ADAdminCount $group
+					} else {
+						$ADCount++
+					}
+				} elseif ($entry.PrincipalSource -eq "Local") {
+					if ($entry.ObjectClass -eq "Group") {
+						# only applies to Local Groups
+						$group = $entry.Name -split '\\' | Select-Object -Last 1
+						$localCount += (Get-LocalGroupMember $group).Count
+					} else {
+						$localCount++
+					}
+				}
+			}
+			[int]$amountOfUserAndGroups = $ADCount + $localCount
+			$status = switch ($amountOfUserAndGroups) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups <br/> $message"
+						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups <br/> $message"
+						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups <br/> $message"
+						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
 						Status = "False"
 					}
 				}
