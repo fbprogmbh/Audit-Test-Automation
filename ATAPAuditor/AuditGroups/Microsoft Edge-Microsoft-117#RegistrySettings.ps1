@@ -44,7 +44,7 @@
                 -Name "AuthSchemes" `
                 | Select-Object -ExpandProperty "AuthSchemes"
         
-            if ($regValue -ne "ntlm, negotiate") {
+            if ($regValue -notmatch "^(ntlm\s*,\s*negotiate|negotiate\s*,\s*ntlm)$") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: ntlm, negotiate"
                     Status = "False"
