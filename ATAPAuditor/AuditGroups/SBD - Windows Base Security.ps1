@@ -71,11 +71,19 @@ $RootPath = Split-Path $RootPath -Parent
 		try { 
 			#List all groups 
 			function Get-ADAdminCount($groupname) {
-				$output = & net group "$groupName" /domain
-				$lines = $output -split "`r`n"
-				$membersStartIndex = ($lines | Select-String -Pattern 'Members').LineNumber
-				$members = $lines[$membersStartIndex..($lines.Length - 1)] | Where-Object { $_.Trim() -ne '' }
-				return ($members[1] -split '\s+' | Where-Object { $_ -ne '' }).Count
+				try {
+					$domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+					$root = $domain.GetDirectoryEntry()
+					$searcher = New-Object System.DirectoryServices.DirectorySearcher($root)
+					$searcher.Filter = "(&(objectCategory=group)(cn=$groupName))"
+					$group = $searcher.FindOne()
+					$groupDN = $group.Properties["distinguishedname"][0]
+					$searcher.Filter = "(&(objectCategory=user)(memberOf=$groupDN))"
+					$members = $searcher.FindAll()
+					return ($members | ForEach-Object { $_.Properties["distinguishedname"] }).Count
+				} catch {
+					return 1
+				}
 			}
 
 			$allgroups = Get-LocalGroup "Administrators" | Get-LocalGroupMember 
