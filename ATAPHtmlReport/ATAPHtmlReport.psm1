@@ -1918,11 +1918,20 @@ function Get-ATAPHtmlReport {
 			$name = Split-Path -Path $Path -Leaf
 			$Path = Split-Path -Path $Path -Parent
 			New-Item -Path $Path -Name $name -ItemType File -Value $html -Force 
-
 		} else {
 			$Title = $Title -replace " Audit Report",""
 			$auditReport += "$($Title)_$(Get-Date -UFormat %Y%m%d_%H%M%S).html"
 			New-Item -Path $Path -Name $auditReport -ItemType File -Value $html -Force 
+		}
+		if ($_) {
+			Write-Host "Do you want to open the created report? Y/N"
+			$in = Read-Host 
+			Write-Host "You chose `"$in`""
+			switch ($in) {
+				Y { Get-ChildItem -Path $Path| Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Invoke-Item }
+				N { "Continuing..."}
+				Default { "Continuing..." }
+			}
 		}
 		if([System.Environment]::OSVersion.Platform -eq 'Unix'){
 			# $shellPath = $Path"/"$name
@@ -1933,3 +1942,4 @@ function Get-ATAPHtmlReport {
 		#$html | Out-File -FilePath $auditReport -Encoding utf8
 	}
 }
+
