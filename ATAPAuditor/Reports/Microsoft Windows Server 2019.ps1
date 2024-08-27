@@ -53,7 +53,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-CIS-2.0.0#AuditPolicies"
 				}
 			)
@@ -75,8 +75,12 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-Microsoft-FINAL#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = "Security Options"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-Microsoft-FINAL#SecurityOptions"
 				}
 			)
 		}

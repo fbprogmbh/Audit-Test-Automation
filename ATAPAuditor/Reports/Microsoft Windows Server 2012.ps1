@@ -26,8 +26,12 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = "Security Options"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-CIS-2.6.0#SecurityOptions"
 				}
 			)
 		}
@@ -45,7 +49,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2012 R2-DISA-2.19#AuditPolicies"
 				}
 			)
