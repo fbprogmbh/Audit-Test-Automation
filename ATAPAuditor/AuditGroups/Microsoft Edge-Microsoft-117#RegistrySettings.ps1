@@ -36,7 +36,7 @@
 }
 [AuditTest] @{
     Id = "1.1.2"
-    Task = "Ensure 'Supported authentication schemes' is set to 'ntlm,negotiate'."
+    Task = "Ensure 'Supported authentication schemes' is set to 'ntlm, negotiate'."
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -44,9 +44,9 @@
                 -Name "AuthSchemes" `
                 | Select-Object -ExpandProperty "AuthSchemes"
         
-            if ($regValue -ne "ntlm,negotiate") {
+            if ($regValue -ne "ntlm, negotiate") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ntlm,negotiate"
+                    Message = "Registry value is '$regValue'. Expected: ntlm, negotiate"
                     Status = "False"
                 }
             }
