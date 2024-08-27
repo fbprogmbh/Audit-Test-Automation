@@ -35,7 +35,7 @@
 	Task = "Ensure PowerShell is set to configured to use Constrained Language."
 	Test = {
 		$languageMode = $ExecutionContext.SessionState.LanguageMode
-        if($languageMode -eq "Constrained Language"){
+        if($languageMode -eq "ConstrainedLanguage"){
             return @{
                 Message = "Compliant"
                 Status = "True"
