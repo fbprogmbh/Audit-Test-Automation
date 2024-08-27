@@ -514,6 +514,13 @@ $RootPath = Split-Path $RootPath -Parent
 	Id = "SBD-022"
 	Task = "Ensure Attack Surface Reduction (ASR) rules are enabled."
 	Test = {
+		$windefrunning = CheckWindefRunning
+		if ((-not $windefrunning)) {
+			return @{
+				Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
+				Status = "None"
+			}
+		}
 		if (isWindows10OrNewer) {
 			$ruleids = (Get-MpPreference).AttackSurfaceReductionRules_Ids
 			$ruleactions = (Get-MpPreference).AttackSurfaceReductionRules_Actions
@@ -548,13 +555,6 @@ $RootPath = Split-Path $RootPath -Parent
 			return $status
 		}
 		else {
-			$windefrunning = CheckWindefRunning
-			if ((-not $windefrunning)) {
-				return @{
-					Message = "This rule requires Windows Defender Antivirus to be enabled and running in active mode."
-					Status = "None"
-				}
-			}
 			$countEnabled = 0
 			$Rule1 = @{
 				Path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
