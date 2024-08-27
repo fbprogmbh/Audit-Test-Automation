@@ -27,8 +27,12 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#RegistrySettings"
 				},
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = "Security Options"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#SecurityOptions"
 				}
 				#,
 				# [ReportSection] @{
@@ -46,7 +50,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
@@ -80,7 +84,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-Microsoft-FINAL#AuditPolicies"
 				}
 			)

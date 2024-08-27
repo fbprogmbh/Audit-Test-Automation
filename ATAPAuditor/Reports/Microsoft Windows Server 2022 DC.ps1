@@ -26,7 +26,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022 Domain Controller-Microsoft-2022#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022 Domain Controller-Microsoft-2022#AuditPolicies"
 				}
 			)
@@ -48,7 +48,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AuditPolicies"
 				}
 			)

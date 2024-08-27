@@ -53,7 +53,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
@@ -87,7 +87,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016 Domain Controller-Microsoft-FINAL#AuditPolicies"
 				}
 			)

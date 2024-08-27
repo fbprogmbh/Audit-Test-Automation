@@ -27,8 +27,12 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = "Security Options"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#SecurityOptions"
 				}
 			)
 		}
@@ -49,11 +53,11 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#AuditPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-Microsoft-FINAL#SecurityOptions"
 				}
 			)
@@ -71,11 +75,11 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AuditPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#SecurityOptions"
 				}
 			)

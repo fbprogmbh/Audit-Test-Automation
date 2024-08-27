@@ -58,6 +58,10 @@
 					Title = 'Advanced Audit Policy Configuration'
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AuditPolicies"
 				}
+				[ReportSection] @{
+					Title = 'Security Options'
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#SecurityOptions"
+				}
 			)
 		}
 		[ReportSection] @{
