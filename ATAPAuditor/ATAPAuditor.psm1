@@ -376,19 +376,19 @@ function checkReportNameWithOSSystem {
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
 		}
 		"Microsoft Windows Server 2022 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
 		}
 		"Microsoft Windows Server 2019" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
 		}
 		"Microsoft Windows Server 2019 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
 		}
 		"Microsoft Windows Server 2016" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
 		}
 		"Microsoft Windows Server 2016 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
+			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
 		}
 		"Microsoft Windows Server 2012" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
