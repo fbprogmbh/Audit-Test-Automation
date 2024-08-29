@@ -139,13 +139,13 @@ function Start-ModuleTest {
 		#"SQLServer",
 	)
 	$missingModules = @()
-	foreach($module in $necessaryModules){
-		if($moduleList -notcontains $module){
+	foreach ($module in $necessaryModules) {
+		if ($moduleList -notcontains $module) {
 			$missingModules += $module
 		}
 	}
 
-	if($missingModules.Count -gt 0){
+	if ($missingModules.Count -gt 0) {
 		Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
 		for ($i = 0; $i -lt $missingModules.Count; $i++) {
 			Write-Warning $missingModules[$i]
@@ -155,11 +155,11 @@ function Start-ModuleTest {
 
 }
 
-function GetLicenseStatus{
+function GetLicenseStatus {
 	param(
 		$SkipLicenseCheck
 	)
-	if($SkipLicenseCheck -eq $false){
+	if ($SkipLicenseCheck -eq $false) {
 		Write-Host "Checking operating system activation status. This may take a while..."
 		$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 		switch ($licenseStatus) {
@@ -173,7 +173,7 @@ function GetLicenseStatus{
 		}
 		return $lcStatus
 	}
-	else{
+	else {
 		return "License check has been skipped."
 	}
 }
@@ -352,7 +352,7 @@ function checkReportNameWithOSSystem {
 		# get whether domaincontroller info for later use
 		function IsDomainController {	
 			$domainrole = Get-DomainRole
-			if ($domainrole -eq "Backup Domain Controller" -or $domainrole -eq "Primary Domain Controller"){
+			if ($domainrole -eq "Backup Domain Controller" -or $domainrole -eq "Primary Domain Controller") {
 				return $true
 			}
 			return $false
@@ -363,8 +363,9 @@ function checkReportNameWithOSSystem {
 			if (-not($isDomainController -eq $True)) {
 				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
 			} 
-		# should not be DC
-		} else {
+			# should not be DC
+		}
+		else {
 			if ($isDomainController -eq $True) {
 				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldNotBeDomainController $True
 			}
@@ -770,8 +771,8 @@ function Invoke-ATAPReport {
 	$script:loadedResources = @{}
 	# Load the module manifest
 
+	#Windows OS
 	try {
-		#Windows OS
 		if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
 			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 			[string]$ReportName = checkReportNameWithOSSystem -ReportName $ReportName
@@ -794,8 +795,11 @@ function Invoke-ATAPReport {
 			[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
 		}
 	}
- catch [System.Management.Automation.CommandNotFoundException] {
-		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
+ 	catch [System.Management.Automation.CommandNotFoundException] {
+		Write-Host "Either your input for -Reportname is faulty or the report does not resolve due to a bug. Please report this bug with the following errormessage: 
+		1. ErrorException: $_
+		2. PositionMessage: $($_.InvocationInfo.PositionMessage)
+		3. ReportName: $ReportName"
 		break
 	}
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
@@ -865,7 +869,7 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
-	if([Environment]::Is64BitProcess -eq $false){
+	if ([Environment]::Is64BitProcess -eq $false) {
 		Write-Host "Please use 64-bit version of PowerShell in order to use AuditTAP. Closing..." -ForegroundColor red
 		return;
 	}
@@ -891,13 +895,13 @@ function Save-ATAPHtmlReport {
 		}
 	}
 	Write-Verbose "OS-Check"
-	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
+	$isUnix = [System.Environment]::OSVersion.Platform -eq 'Unix'
+	if ($isUnix) {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
 		Start-ModuleTest
-		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		#PowerShell Major version not 5.*
@@ -918,6 +922,9 @@ function Save-ATAPHtmlReport {
 	}
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
+	if (!$isUnix) {
+		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
+	}
 	$hashtable_sha256 = GenerateHashTable $report
 	
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
