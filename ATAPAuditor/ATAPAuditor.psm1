@@ -141,7 +141,6 @@ function Start-ModuleTest {
 		"Microsoft.PowerShell.Security",
 		"Microsoft.PowerShell.Utility",
 		"TrustedPlatformModule",
-		"ServerManager",
 		"NetSecurity",
 		"CimCmdlets",
 		"SmbShare",
