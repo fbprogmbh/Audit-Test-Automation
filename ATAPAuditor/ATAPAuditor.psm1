@@ -885,9 +885,9 @@ function Save-ATAPHtmlReport {
 
 	if (($languagemode = IsIn-FullLanguageMode) -ne $true) {
 		if ($languagemode -eq $false) {
-			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information on how to change the language mode, read up on it in the FAQ section. Closing..." -ForegroundColor red
+			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, ask your administrator. Closing..." -ForegroundColor red
 		} else {
-			Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information on how to change the language mode, read up on it in the FAQ section. Closing..." -ForegroundColor red
+			Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, ask your administrator. Closing..." -ForegroundColor red
 		}
 		return
 	}
