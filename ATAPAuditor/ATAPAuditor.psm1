@@ -120,6 +120,19 @@ class ResultTable {
 #endregion
 
 #region helpers
+function IsIn-FullLanguageMode {
+	try {
+		$languageMode = $ExecutionContext.SessionState.LanguageMode
+		if ($languageMode -eq "FullLanguage"){
+			return $true
+		}
+	} catch {
+		return $false
+	}
+	# returns alternate language modes if not FullLanguage
+	return $languageMode
+}
+
 function Start-ModuleTest {
 	$moduleList = @(Get-Module -ListAvailable).Name | Select-Object -Unique
 	$necessaryModules = @(
@@ -872,6 +885,15 @@ function Save-ATAPHtmlReport {
 	if ([Environment]::Is64BitProcess -eq $false) {
 		Write-Host "Please use 64-bit version of PowerShell in order to use AuditTAP. Closing..." -ForegroundColor red
 		return;
+	}
+
+	if (($languagemode = IsIn-FullLanguageMode) -ne $true) {
+		if ($languagemode -eq $false) {
+			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information on how to change the language mode, read up on it in the FAQ section. Closing..." -ForegroundColor red
+		} else {
+			Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information on how to change the language mode, read up on it in the FAQ section. Closing..." -ForegroundColor red
+		}
+		return
 	}
 
 	$parent = $path
