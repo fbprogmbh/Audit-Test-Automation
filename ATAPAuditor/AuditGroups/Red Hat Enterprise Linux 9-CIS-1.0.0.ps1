@@ -1,6 +1,7 @@
 $rcTrue = "True"
 $rcCompliant = "Compliant"
 $rcFalse = "False"
+$rcNone = "None"
 $rcNonCompliant = "Non-Compliant"
 $rcNonCompliantManualReviewRequired = "Manual review required"
 $rcCompliantIPv6isDisabled = "IPv6 is disabled"
@@ -19,7 +20,7 @@ $retCompliantIPv6Disabled = @{
 }
 $retNonCompliantManualReviewRequired = @{
     Message = $rcNonCompliantManualReviewRequired
-    Status = $rcFalse
+    Status = $rcNone
 }
 
 $IPv6Status_script = grep -Pqs '^\h*0\b' /sys/module/ipv6/parameters/disable && echo "IPv6 is enabled" || echo "IPv6 is not enabled"
@@ -759,8 +760,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.7.4"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $result = stat -L /etc/motd | grep 'Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)'
-        if ($result -match "0644") {
+        $result = stat  -c "%a" /etc/motd )'
+        if ($result -eq 644) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -772,8 +773,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.7.5"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $result = stat -L /etc/issue | grep 'Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)'
-        if ($result -match "0644") {
+        $result = stat -c "%a" /etc/issue )'
+        if ($result -eq 644) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -785,8 +786,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.7.6"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $result = stat -L /etc/issue.net | grep 'Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)'
-        if ($result -match "0644") {
+        $result = stat -c "%a" /etc/issue.net )'
+        if ($result -eq 644) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -972,7 +973,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
 
 [AuditTest] @{
     Id = "2.1.2"
-    Task = "Ensure time synchronization is in use"
+    Task = "Ensure chrony is configured"
     Test = {
         $test = grep -E "^(server|pool)" /etc/chrony.conf | grep OPTIONS\s*-u\s*chrony
         if ($test -match "OPTIONS") {
@@ -1182,11 +1183,11 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "2.2.16"
     Task = "Ensure nfs-utils is not installed or the nfs-server service is masked"
     Test = {
-        $test = rpm -q nfs-utils
-        if ($test -eq $null) {
-            return $retCompliant
+        rpm -q nfs-utils
+        if ($?) {
+          return $retCompliant
         } else {
-            return $retNonCompliant
+          return $retNonCompliant
         }
     }
 }
@@ -2611,8 +2612,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.1.2"
     Task = "Ensure permissions on /etc/crontab are configured"
     Test = {
-        $result1 = stat /etc/crontab
-        if ($result1 -match "Access: (0600/-rw-------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+        $result1 = stat -c "%a" /etc/crontab
+        if ($result1 -eq 600 ) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2624,8 +2625,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.1.3"
     Task = "Ensure permissions on /etc/cron.hourly are configured"
     Test = {
-        $result1 = stat /etc/cron.hourly
-        if ($result1 -match "Access: (0700/-rw-------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+        $result1 = stat -c "%a" /etc/cron.hourly
+        if ($result1 -eq 700 ) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2637,8 +2638,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.1.4"
     Task = "Ensure permissions on /etc/cron.daily are configured"
     Test = {
-        $result1 = stat /etc/cron.daily
-        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+        $result1 = stat -c "%a" /etc/cron.daily
+        if ($result1 -eq 700 ) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2650,8 +2651,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.1.5"
     Task = "Ensure permissions on /etc/cron.weekly are configured"
     Test = {
-        $result1 = stat /etc/cron.weekly
-        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+        $result1 = stat -c "%a" /etc/cron.weekly
+        if ($result1 -eq 700 ) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2663,8 +2664,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.1.6"
     Task = "Ensure permissions on /etc/cron.monthly are configured"
     Test = {
-        $result1 = stat /etc/cron.monthly
-        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+        $result1 = stat -c "%a" /etc/cron.monthly
+        if ($result1 -eq 700 ) {
             return $retCompliant
         } else {
             return $retNonCompliant
@@ -2676,8 +2677,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.1.7"
     Task = "Ensure permissions on /etc/cron.d are configured"
     Test = {
-        $result1 = stat /etc/cron.d
-        if ($result1 -match "Access: (0700/drwx------)\s+Uid: (\s+0/\s+root)\s+Gid: (\s+0/\s+root)") {
+        $result1 = stat -c "%a" /etc/cron.d
+        if ($result1 -eq 700 ) {
             return $retCompliant
         } else {
             return $retNonCompliant
