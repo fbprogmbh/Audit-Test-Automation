@@ -186,42 +186,6 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "2.3.4.1"
-    Task = "(L1) Ensure 'Devices: Allowed to format and eject removable media' is set to 'Administrators and Interactive Users'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
-                -Name "AllocateDASD" `
-                | Select-Object -ExpandProperty "AllocateDASD"
-        
-            if ($regValue -ne "2") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.3.4.2"
     Task = "(L2) Ensure 'Devices: Prevent users from installing printer drivers' is set to 'Enabled'"
     Test = {
         try {
@@ -510,7 +474,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "2.3.7.2"
-    Task = "(L1) Ensure 'Interactive logon: Do not display last user name' is set to 'Enabled'"
+    Task = "(L1) Ensure 'Interactive logon: Don't display last signed-in' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1100,43 +1064,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 2"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.3.10.1"
-    Task = "(L1) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
-                -Name "TurnOffAnonymousBlock" `
-                | Select-Object -ExpandProperty "TurnOffAnonymousBlock"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -1316,7 +1244,7 @@ $windefrunning = CheckWindefRunning
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ' '"
+                    Message = "Registry value is '$regValue'. Expected: "
                     Status = "False"
                 }
             }
@@ -1514,7 +1442,7 @@ $windefrunning = CheckWindefRunning
         
             if ($regValue -ne "") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: ' '"
+                    Message = "Registry value is '$regValue'. Expected: "
                     Status = "False"
                 }
             }
@@ -1756,7 +1684,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "2.3.11.7"
-    Task = "(L1) Ensure 'Network security: LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM&NTLM'"
+    Task = "(L1) Ensure 'Network security: LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM & NTLM'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -1800,9 +1728,9 @@ $windefrunning = CheckWindefRunning
                 -Name "LDAPClientIntegrity" `
                 | Select-Object -ExpandProperty "LDAPClientIntegrity"
         
-            if (($regValue -lt 1)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 1"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -1875,6 +1803,78 @@ $windefrunning = CheckWindefRunning
             if ($regValue -ne 537395200) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 537395200"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.3.11.11"
+    Task = "(L1) Ensure 'Network security: Restrict NTLM: Audit Incoming NTLM Traffic' is set to 'Enable auditing for all accounts'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Name "AuditReceivingNTLMTraffic" `
+                | Select-Object -ExpandProperty "AuditReceivingNTLMTraffic"
+        
+            if ($regValue -ne 2) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.3.11.12"
+    Task = "(L1) Ensure 'Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers' is set to 'Audit all' or higher"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
+                -Name "RestrictSendingNTLMTraffic" `
+                | Select-Object -ExpandProperty "RestrictSendingNTLMTraffic"
+        
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -2052,9 +2052,9 @@ $windefrunning = CheckWindefRunning
                 -Name "ConsentPromptBehaviorAdmin" `
                 | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
         
-            if (($regValue -ne 2) -and ($regValue -ne 3)) {
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -2548,42 +2548,6 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "5.8"
-    Task = "(L1) Ensure 'Internet Connection Sharing (ICS) (SharedAccess)' is set to 'Disabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess" `
-                -Name "Start" `
-                | Select-Object -ExpandProperty "Start"
-        
-            if ($regValue -ne 4) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 4"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "5.9"
     Task = "(L2) Ensure 'Link-Layer Topology Discovery Mapper (lltdsvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -2619,35 +2583,43 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.10"
+    Id = "5.9"
     Task = "(L1) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
-            $result = Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux
-            $state = $result.State            
-            if($state -eq "Disabled" -or $state -eq "Not Installed"){
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LxssManager" `
+                -Name "Start" `
+                | Select-Object -ExpandProperty "Start"
+        
+            if ($regValue -ne 4) {
                 return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            else{
-                return @{
-                    Message = "Registry value is '$state'. Expected: 'Disabled' or 'Not Installed'"
+                    Message = "Registry value is '$regValue'. Expected: 4"
                     Status = "False"
                 }
             }
         }
-        catch [System.Management.Automation.PSArgumentException]{
+        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Value not found."
-                Status = "Error"
+                Message = "Compliant. Registry value not found."
+                Status = "True"
             }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Compliant. Registry key not found."
+                Status = "True"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "5.11"
+    Id = "5.10"
     Task = "(L1) Ensure 'Microsoft FTP Service (FTPSVC)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -2683,7 +2655,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.12"
+    Id = "5.11"
     Task = "(L2) Ensure 'Microsoft iSCSI Initiator Service (MSiSCSI)' is set to 'Disabled'"
     Test = {
         try {
@@ -2719,7 +2691,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.13"
+    Id = "5.12"
     Task = "(L1) Ensure 'OpenSSH SSH Server (sshd)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -2755,7 +2727,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.14"
+    Id = "5.13"
     Task = "(L2) Ensure 'Peer Name Resolution Protocol (PNRPsvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -2791,7 +2763,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.15"
+    Id = "5.14"
     Task = "(L2) Ensure 'Peer Networking Grouping (p2psvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -2827,7 +2799,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.16"
+    Id = "5.15"
     Task = "(L2) Ensure 'Peer Networking Identity Manager (p2pimsvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -2863,7 +2835,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.17"
+    Id = "5.16"
     Task = "(L2) Ensure 'PNRP Machine Name Publication Service (PNRPAutoReg)' is set to 'Disabled'"
     Test = {
         try {
@@ -2899,7 +2871,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.18"
+    Id = "5.17"
     Task = "(L2) Ensure 'Print Spooler (Spooler)' is set to 'Disabled'"
     Test = {
         try {
@@ -2935,7 +2907,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.19"
+    Id = "5.18"
     Task = "(L2) Ensure 'Problem Reports and Solutions Control Panel Support (wercplsupport)' is set to 'Disabled'"
     Test = {
         try {
@@ -2971,7 +2943,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.20"
+    Id = "5.19"
     Task = "(L2) Ensure 'Remote Access Auto Connection Manager (RasAuto)' is set to 'Disabled'"
     Test = {
         try {
@@ -3007,7 +2979,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.21"
+    Id = "5.20"
     Task = "(L2) Ensure 'Remote Desktop Configuration (SessionEnv)' is set to 'Disabled'"
     Test = {
         try {
@@ -3043,7 +3015,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.22"
+    Id = "5.21"
     Task = "(L2) Ensure 'Remote Desktop Services (TermService)' is set to 'Disabled'"
     Test = {
         try {
@@ -3079,7 +3051,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.23"
+    Id = "5.22"
     Task = "(L2) Ensure 'Remote Desktop Services UserMode Port Redirector (UmRdpService)' is set to 'Disabled'"
     Test = {
         try {
@@ -3115,7 +3087,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.24"
+    Id = "5.23"
     Task = "(L1) Ensure 'Remote Procedure Call (RPC) Locator (RpcLocator)' is set to 'Disabled'"
     Test = {
         try {
@@ -3151,7 +3123,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.25"
+    Id = "5.24"
     Task = "(L2) Ensure 'Remote Registry (RemoteRegistry)' is set to 'Disabled'"
     Test = {
         try {
@@ -3187,7 +3159,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.26"
+    Id = "5.25"
     Task = "(L1) Ensure 'Routing and Remote Access (RemoteAccess)' is set to 'Disabled'"
     Test = {
         try {
@@ -3223,7 +3195,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.27"
+    Id = "5.26"
     Task = "(L2) Ensure 'Server (LanmanServer)' is set to 'Disabled'"
     Test = {
         try {
@@ -3259,7 +3231,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.28"
+    Id = "5.27"
     Task = "(L1) Ensure 'Simple TCP/IP Services (simptcp)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -3295,7 +3267,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.29"
+    Id = "5.28"
     Task = "(L2) Ensure 'SNMP Service (SNMP)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -3331,7 +3303,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.30"
+    Id = "5.29"
     Task = "(L1) Ensure 'Special Administration Console Helper (sacsvr)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -3367,7 +3339,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.31"
+    Id = "5.30"
     Task = "(L1) Ensure 'SSDP Discovery (SSDPSRV)' is set to 'Disabled'"
     Test = {
         try {
@@ -3403,7 +3375,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.32"
+    Id = "5.31"
     Task = "(L1) Ensure 'UPnP Device Host (upnphost)' is set to 'Disabled'"
     Test = {
         try {
@@ -3439,7 +3411,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.33"
+    Id = "5.32"
     Task = "(L1) Ensure 'Web Management Service (WMSvc)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -3475,7 +3447,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.34"
+    Id = "5.33"
     Task = "(L2) Ensure 'Windows Error Reporting Service (WerSvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -3511,7 +3483,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.35"
+    Id = "5.34"
     Task = "(L2) Ensure 'Windows Event Collector (Wecsvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -3547,7 +3519,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.36"
+    Id = "5.35"
     Task = "(L1) Ensure 'Windows Media Player Network Sharing Service (WMPNetworkSvc)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -3583,7 +3555,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.37"
+    Id = "5.36"
     Task = "(L1) Ensure 'Windows Mobile Hotspot Service (icssvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -3619,7 +3591,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.38"
+    Id = "5.37"
     Task = "(L2) Ensure 'Windows Push Notifications System Service (WpnService)' is set to 'Disabled'"
     Test = {
         try {
@@ -3655,7 +3627,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.39"
+    Id = "5.38"
     Task = "(L2) Ensure 'Windows PushToInstall Service (PushToInstall)' is set to 'Disabled'"
     Test = {
         try {
@@ -3691,7 +3663,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.40"
+    Id = "5.39"
     Task = "(L2) Ensure 'Windows Remote Management (WS-Management) (WinRM)' is set to 'Disabled'"
     Test = {
         try {
@@ -3727,7 +3699,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.41"
+    Id = "5.40"
     Task = "(L1) Ensure 'World Wide Web Publishing Service (W3SVC)' is set to 'Disabled' or 'Not Installed'"
     Test = {
         try {
@@ -3763,7 +3735,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.42"
+    Id = "5.41"
     Task = "(L1) Ensure 'Xbox Accessory Management Service (XboxGipSvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -3799,7 +3771,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.43"
+    Id = "5.42"
     Task = "(L1) Ensure 'Xbox Live Auth Manager (XblAuthManager)' is set to 'Disabled'"
     Test = {
         try {
@@ -3835,7 +3807,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.44"
+    Id = "5.43"
     Task = "(L1) Ensure 'Xbox Live Game Save (XblGameSave)' is set to 'Disabled'"
     Test = {
         try {
@@ -3871,7 +3843,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "5.45"
+    Id = "5.44"
     Task = "(L1) Ensure 'Xbox Live Networking Service (XboxNetApiSvc)' is set to 'Disabled'"
     Test = {
         try {
@@ -3946,25 +3918,6 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "9.1.3"
-    Task = "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
-    )
-    Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
-        $key = "DefaultOutboundAction"
-        $expectedValue = 0;
-        $profileType = "Domain"
-        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
-        return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
-        }
-    }
-}
-[AuditTest] @{
-    Id = "9.1.4"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
@@ -3983,7 +3936,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.1.5"
+    Id = "9.1.4"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
@@ -4002,7 +3955,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.1.6"
+    Id = "9.1.5"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
@@ -4021,7 +3974,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.1.7"
+    Id = "9.1.6"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
@@ -4040,7 +3993,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.1.8"
+    Id = "9.1.7"
     Task = "(L1) Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller"}
@@ -4092,22 +4045,6 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "9.2.3"
-    Task = "(L1) Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
-    Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
-        $key = "DefaultOutboundAction"
-        $expectedValue = 0;
-        $profileType = "Private"
-        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
-        return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
-        }
-    }
-}
-[AuditTest] @{
-    Id = "9.2.4"
     Task = "(L1) Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile"
@@ -4123,7 +4060,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.2.5"
+    Id = "9.2.4"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
@@ -4139,7 +4076,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.2.6"
+    Id = "9.2.5"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
@@ -4155,7 +4092,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.2.7"
+    Id = "9.2.6"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
@@ -4171,7 +4108,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.2.8"
+    Id = "9.2.7"
     Task = "(L1) Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
@@ -4220,22 +4157,6 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "9.3.3"
-    Task = "(L1) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
-    Test = {
-        $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
-        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
-        $key = "DefaultOutboundAction"
-        $expectedValue = 0;
-        $profileType = "Public"
-        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
-        return @{
-            Message = $($result.Message)
-            Status = $($result.Status)
-        }
-    }
-}
-[AuditTest] @{
-    Id = "9.3.4"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
@@ -4251,7 +4172,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.3.5"
+    Id = "9.3.4"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
@@ -4267,7 +4188,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.3.6"
+    Id = "9.3.5"
     Task = "(L1) Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile"
@@ -4283,7 +4204,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.3.7"
+    Id = "9.3.6"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
@@ -4299,7 +4220,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.3.8"
+    Id = "9.3.7"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
@@ -4315,7 +4236,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.3.9"
+    Id = "9.3.8"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
@@ -4331,7 +4252,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.3.10"
+    Id = "9.3.9"
     Task = "(L1) Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
@@ -4467,186 +4388,6 @@ $windefrunning = CheckWindefRunning
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.3.2"
-    Task = "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd" `
-                -Name "PwdExpirationProtectionEnabled" `
-                | Select-Object -ExpandProperty "PwdExpirationProtectionEnabled"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.3.3"
-    Task = "(L1) Ensure 'Enable Local Admin Password Management' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd" `
-                -Name "AdmPwdEnabled" `
-                | Select-Object -ExpandProperty "AdmPwdEnabled"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.3.4"
-    Task = "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd" `
-                -Name "PasswordComplexity" `
-                | Select-Object -ExpandProperty "PasswordComplexity"
-        
-            if ($regValue -ne 4) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 4"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.3.5"
-    Task = "(L1) Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd" `
-                -Name "PasswordLength" `
-                | Select-Object -ExpandProperty "PasswordLength"
-        
-            if (($regValue -lt 15)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x >= 15"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.3.6"
-    Task = "(L1) Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft Services\AdmPwd" `
-                -Name "PasswordAgeDays" `
-                | Select-Object -ExpandProperty "PasswordAgeDays"
-        
-            if (($regValue -gt 30)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x <= 30"
                     Status = "False"
                 }
             }
@@ -4816,6 +4557,42 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.4.5"
+    Task = "(L1) Ensure 'Enable Certificate Padding' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Wintrust\Config" `
+                -Name "EnableCertPaddingCheck" `
+                | Select-Object -ExpandProperty "EnableCertPaddingCheck"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.4.6"
     Task = "(L1) Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
     Test = {
         try {
@@ -4851,7 +4628,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.4.6"
+    Id = "18.4.7"
     Task = "(L1) Ensure 'NetBT NodeType configuration' is set to 'Enabled: P-node (recommended)'"
     Test = {
         try {
@@ -4887,7 +4664,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.4.7"
+    Id = "18.4.8"
     Task = "(L1) Ensure 'WDigest Authentication' is set to 'Disabled'"
     Test = {
         try {
@@ -4924,7 +4701,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.1"
-    Task = "(L1) Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon (not recommended)' is set to 'Disabled'"
+    Task = "(L1) Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4960,7 +4737,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.2"
-    Task = "(L1) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'"
+    Task = "(L1) Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4996,7 +4773,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.3"
-    Task = "(L1) Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'"
+    Task = "(L1) Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5104,7 +4881,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.6"
-    Task = "(L2) Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes (recommended)'"
+    Task = "(L2) Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5176,7 +4953,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.8"
-    Task = "(L2) Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)' is set to 'Disabled'"
+    Task = "(L2) Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5212,7 +4989,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.9"
-    Task = "(L1) Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode (recommended)' is set to 'Enabled'"
+    Task = "(L1) Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5248,7 +5025,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.5.10"
-    Task = "(L1) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)' is set to 'Enabled: 5 or fewer seconds'"
+    Task = "(L1) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires' is set to 'Enabled: 5 or fewer seconds'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5392,7 +5169,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.4.1"
-    Task = "(L1) Ensure 'Configure DNS over HTTPS (DoH) name resolution' is set to 'Enabled: Allow DoH' or higher"
+    Task = "(L1) Ensure 'Configure DNS over HTTPS (DoH) name resolution' is set to 2 - 'Enabled: Allow DoH' or higher"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5402,7 +5179,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 2) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 3"
                     Status = "False"
                 }
             }
@@ -5428,17 +5205,17 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.4.2"
-    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution' or 'Enabled: Disable NetBIOS name resolution on public networks'"
+    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 2 - 'Enabled: Disable NetBIOS name resolution on public networks'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" `
-                -Name "EnableNetBIOS" `
-                | Select-Object -ExpandProperty "EnableNetBIOS"
+                -Name "EnableNetbios" `
+                | Select-Object -ExpandProperty "EnableNetbios"
         
-            if (-not( ($regValue -eq 0) -or ($regValue -eq 2) )) {
+            if (($regValue -ne 2) -and ($regValue -ne 0)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0 or 2"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 0"
                     Status = "False"
                 }
             }
@@ -5572,7 +5349,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.9.1 A"
-    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (AllowLLTDIOOnDomain)"
+    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (Domain network)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5608,7 +5385,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.9.1 B"
-    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (AllowLLTDIOOnPublicNet)"
+    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (Public network)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5680,7 +5457,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.9.1 D"
-    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (ProhibitLLTDIOOnPrivateNet)"
+    Task = "(L2) Ensure 'Turn on Mapper I/O (LLTDIO) driver' is set to 'Disabled' (Private network)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5716,7 +5493,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.9.2 A"
-    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (AllowRspndrOnDomain)"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (Domain network)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5752,7 +5529,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.9.2 B"
-    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (AllowRspndrOnPublicNet)"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (Public network)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5824,7 +5601,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.9.2 D"
-    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (ProhibitRspndrOnPrivateNet)"
+    Task = "(L2) Ensure 'Turn on Responder (RSPNDR) driver' is set to 'Disabled' (Private network)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6004,11 +5781,11 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.14.1 A"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\NETLOGON)"
+    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`", `"Require Integrity`", and `"Require Privacy`" set for all NETLOGON and SYSVOL shares'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
@@ -6021,7 +5798,7 @@ $windefrunning = CheckWindefRunning
             $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
 
             $missingElements = @()
-            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1", "RequirePrivacy=1")
             foreach ($element in $elementsToCheck) {
                 if ($array -notcontains $element) {
                     $missingElements += $element
@@ -6056,11 +5833,11 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.6.14.1 B"
-    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`" and `"Require Integrity`" set for all NETLOGON and SYSVOL shares' (\\*\SYSVOL)"
+    Task = "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with `"Require Mutual Authentication`", `"Require Integrity`", and `"Require Privacy`" set for all NETLOGON and SYSVOL shares'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths" `
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
@@ -6073,7 +5850,7 @@ $windefrunning = CheckWindefRunning
             $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
 
             $missingElements = @()
-            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1")
+            $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1", "RequirePrivacy=1")
             foreach ($element in $elementsToCheck) {
                 if ($array -notcontains $element) {
                     $missingElements += $element
@@ -6143,7 +5920,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.6.20.1"
+    Id = "18.6.20.1 A"
     Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (EnableRegistrars)"
     Test = {
         try {
@@ -6151,6 +5928,150 @@ $windefrunning = CheckWindefRunning
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
                 -Name "EnableRegistrars" `
                 | Select-Object -ExpandProperty "EnableRegistrars"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 B"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableUPnPRegistrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableUPnPRegistrar" `
+                | Select-Object -ExpandProperty "DisableUPnPRegistrar"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 C"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableInBand802DOT11Registrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableInBand802DOT11Registrar" `
+                | Select-Object -ExpandProperty "DisableInBand802DOT11Registrar"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 D"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableFlashConfigRegistrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableFlashConfigRegistrar" `
+                | Select-Object -ExpandProperty "DisableFlashConfigRegistrar"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.6.20.1 E"
+    Task = "(L2) Ensure 'Configuration of wireless settings using Windows Connect Now' is set to 'Disabled' (DisableWPDRegistrar)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WCN\Registrars" `
+                -Name "DisableWPDRegistrar" `
+                | Select-Object -ExpandProperty "DisableWPDRegistrar"
         
             if ($regValue -ne 0) {
                 return @{
@@ -6514,7 +6435,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 0) -and ($regValue -ne 1)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0 or x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 1"
                     Status = "False"
                 }
             }
@@ -6576,7 +6497,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.7.8"
-    Task = "(L1) Ensure 'Limits print driver installation to Administrators' is set to 'Enabled' (Automated)"
+    Task = "(L1) Ensure 'Limits print driver installation to Administrators' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6727,6 +6648,42 @@ $windefrunning = CheckWindefRunning
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications" `
                 -Name "NoCloudApplicationNotification" `
                 | Select-Object -ExpandProperty "NoCloudApplicationNotification"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.8.2"
+    Task = "(L2) Ensure 'Remove Personalized Website Recommendations from the Recommended section in the Start Menu' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer" `
+                -Name "HideRecommendedPersonalizedSites" `
+                | Select-Object -ExpandProperty "HideRecommendedPersonalizedSites"
         
             if ($regValue -ne 1) {
                 return @{
@@ -6972,7 +6929,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.5.4"
-    Task = " (L1) Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'"
+    Task = "(L1) Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7404,7 +7361,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.7.1.6"
-    Task = "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes: Also apply to matching devices that are already installed.' is set to 'True' (checked)"
+    Task = "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes: Also apply to matching devices that are already installed.' is set to 'True'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7440,7 +7397,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.7.2"
-    Task = "(L1) Ensure 'Prevent device metadata retrieval from the Internet' is set to 'Enabled' (Automated)"
+    Task = "(L1) Ensure 'Prevent device metadata retrieval from the Internet' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7584,6 +7541,78 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.19.4"
+    Task = "(L1) Ensure 'Configure security policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}" `
+                -Name "NoBackgroundPolicy" `
+                | Select-Object -ExpandProperty "NoBackgroundPolicy"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.19.5"
+    Task = "(L1) Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}" `
+                -Name "NoGPOListChanges" `
+                | Select-Object -ExpandProperty "NoGPOListChanges"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.19.6"
     Task = "(L1) Ensure 'Continue experiences on this device' is set to 'Disabled'"
     Test = {
         try {
@@ -7619,12 +7648,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.19.5"
+    Id = "18.9.19.7"
     Task = "(L1) Ensure 'Turn off background refresh of Group Policy' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
                 -Name "DisableBkGndGroupPolicy" `
                 | Select-Object -ExpandProperty "DisableBkGndGroupPolicy"
         
@@ -8304,6 +8333,294 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.9.25.1"
+    Task = "(L1) Ensure 'Configure password backup directory' is set to 'Enabled: Active Directory' or 'Enabled: Azure Active Directory'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "BackupDirectory" `
+                | Select-Object -ExpandProperty "BackupDirectory"
+        
+            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.2"
+    Task = "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "PwdExpirationProtectionEnabled" `
+                | Select-Object -ExpandProperty "PwdExpirationProtectionEnabled"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.3"
+    Task = "(L1) Ensure 'Enable password encryption' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "ADPasswordEncryptionEnabled" `
+                | Select-Object -ExpandProperty "ADPasswordEncryptionEnabled"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.4"
+    Task = "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "PasswordComplexity" `
+                | Select-Object -ExpandProperty "PasswordComplexity"
+        
+            if ($regValue -ne 4) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 4"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.5"
+    Task = "(L1) Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "PasswordLength" `
+                | Select-Object -ExpandProperty "PasswordLength"
+        
+            if (($regValue -lt 15)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x >= 15"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.6"
+    Task = "(L1) Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "PasswordAgeDays" `
+                | Select-Object -ExpandProperty "PasswordAgeDays"
+        
+            if (($regValue -gt 30 -or $regValue -lt 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x <= 30 and x >= 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.7"
+    Task = "(L1) Ensure 'Post-authentication actions: Grace period (hours)' is set to 'Enabled: 8 or fewer hours, but not 0'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "PostAuthenticationResetDelay" `
+                | Select-Object -ExpandProperty "PostAuthenticationResetDelay"
+        
+            if (($regValue -gt 8 -or $regValue -le 0)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x <= 8 and x > 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.25.8"
+    Task = "(L1) Ensure 'Post-authentication actions: Actions' is set to 'Enabled: Reset the password and logoff the managed account' or higher"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
+                -Name "PostAuthenticationActions" `
+                | Select-Object -ExpandProperty "PostAuthenticationActions"
+        
+            if (($regValue -ne 3) -and ($regValue -ne 5)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 3 or 5"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.9.26.1"
     Task = "(L1) Ensure 'Allow Custom SSPs and APs to be loaded into LSASS' is set to 'Disabled'"
     Test = {
         try {
@@ -8339,14 +8656,14 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.25.2"
+    Id = "18.9.26.2"
     Task = "(L1) Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" `
-                -Name "ConfigureLsaProtectedProcess" `
-                | Select-Object -ExpandProperty "ConfigureLsaProtectedProcess"
+                -Name "RunAsPPL" `
+                | Select-Object -ExpandProperty "RunAsPPL"
         
             if ($regValue -ne 1) {
                 return @{
@@ -8375,7 +8692,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.26.1"
+    Id = "18.9.27.1"
     Task = "(L2) Ensure 'Disallow copying of user input methods to the system account for sign-in' is set to 'Enabled'"
     Test = {
         try {
@@ -8411,7 +8728,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.1"
+    Id = "18.9.28.1"
     Task = "(L1) Ensure 'Block user from showing account details on sign-in' is set to 'Enabled'"
     Test = {
         try {
@@ -8447,7 +8764,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.2"
+    Id = "18.9.28.2"
     Task = "(L1) Ensure 'Do not display network selection UI' is set to 'Enabled'"
     Test = {
         try {
@@ -8483,7 +8800,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.3"
+    Id = "18.9.28.3"
     Task = "(L1) Ensure 'Do not enumerate connected users on domain-joined computers' is set to 'Enabled'"
     Test = {
         try {
@@ -8519,7 +8836,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.4"
+    Id = "18.9.28.4"
     Task = "(L1) Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled'"
     Test = {
         try {
@@ -8555,7 +8872,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.5"
+    Id = "18.9.28.5"
     Task = "(L1) Ensure 'Turn off app notifications on the lock screen' is set to 'Enabled'"
     Test = {
         try {
@@ -8591,7 +8908,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.6"
+    Id = "18.9.28.6"
     Task = "(L1) Ensure 'Turn off picture password sign-in' is set to 'Enabled'"
     Test = {
         try {
@@ -8627,7 +8944,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.27.7"
+    Id = "18.9.28.7"
     Task = "(L1) Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'"
     Test = {
         try {
@@ -8663,7 +8980,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.30.1"
+    Id = "18.9.31.1"
     Task = "(L2) Ensure 'Allow Clipboard synchronization across devices' is set to 'Disabled'"
     Test = {
         try {
@@ -8699,7 +9016,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.30.2"
+    Id = "18.9.31.2"
     Task = "(L2) Ensure 'Allow upload of User Activities' is set to 'Disabled'"
     Test = {
         try {
@@ -8735,7 +9052,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.32.6.1"
+    Id = "18.9.33.6.1"
     Task = "(L1) Ensure 'Allow network connectivity during connected-standby (on battery)' is set to 'Disabled'"
     Test = {
         try {
@@ -8771,7 +9088,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.32.6.2"
+    Id = "18.9.33.6.2"
     Task = "(L1) Ensure 'Allow network connectivity during connected-standby (plugged in)' is set to 'Disabled'"
     Test = {
         try {
@@ -8807,7 +9124,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.32.6.3"
+    Id = "18.9.33.6.3"
     Task = "(BL) Ensure 'Allow standby states (S1-S3) when sleeping (on battery)' is set to 'Disabled'"
     Test = {
         try {
@@ -8843,7 +9160,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.32.6.4"
+    Id = "18.9.33.6.4"
     Task = "(BL) Ensure 'Allow standby states (S1-S3) when sleeping (plugged in)' is set to 'Disabled'"
     Test = {
         try {
@@ -8879,7 +9196,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.32.6.5"
+    Id = "18.9.33.6.5"
     Task = "(L1) Ensure 'Require a password when a computer wakes (on battery)' is set to 'Enabled'"
     Test = {
         try {
@@ -8915,7 +9232,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.32.6.6"
+    Id = "18.9.33.6.6"
     Task = "(L1) Ensure 'Require a password when a computer wakes (plugged in)' is set to 'Enabled'"
     Test = {
         try {
@@ -8951,7 +9268,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.34.1"
+    Id = "18.9.35.1"
     Task = "(L1) Ensure 'Configure Offer Remote Assistance' is set to 'Disabled'"
     Test = {
         try {
@@ -8987,7 +9304,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.34.2"
+    Id = "18.9.35.2"
     Task = "(L1) Ensure 'Configure Solicited Remote Assistance' is set to 'Disabled'"
     Test = {
         try {
@@ -9023,7 +9340,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.35.1"
+    Id = "18.9.36.1"
     Task = "(L1) Ensure 'Enable RPC Endpoint Mapper Client Authentication' is set to 'Enabled'"
     Test = {
         try {
@@ -9059,7 +9376,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.35.2"
+    Id = "18.9.36.2"
     Task = "(L1) Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'"
     Test = {
         try {
@@ -9095,7 +9412,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.46.5.1"
+    Id = "18.9.47.5.1"
     Task = "(L2) Ensure 'Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider' is set to 'Disabled'"
     Test = {
         try {
@@ -9131,7 +9448,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.46.11.1"
+    Id = "18.9.47.11.1"
     Task = "(L2) Ensure 'Enable/Disable PerfTrack' is set to 'Disabled'"
     Test = {
         try {
@@ -9167,7 +9484,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.48.1"
+    Id = "18.9.49.1"
     Task = "(L2) Ensure 'Turn off the advertising ID' is set to 'Enabled'"
     Test = {
         try {
@@ -9203,8 +9520,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.50.1.1"
-    Task = "(L2) Ensure 'Enable Windows NTP Client' is set to 'Enabled'"
+    Id = "18.9.51.1.1"
+    Task = "(L1) Ensure 'Enable Windows NTP Client' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9239,8 +9556,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.9.50.1.2"
-    Task = "(L2) Ensure 'Enable Windows NTP Server' is set to 'Disabled'"
+    Id = "18.9.51.1.2"
+    Task = "(L1) Ensure 'Enable Windows NTP Server' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9609,9 +9926,6 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
-                if($regValue -eq "<none>"){
-                    $regValue = "&lt;none&gt;"
-                }
                 return @{
                     Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"
@@ -9711,7 +10025,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.10.9.1.4"
-    Task = "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Password' is set to 'Enabled: Allow 48-digit recovery password'"
+    Task = "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Password' is set to 'Enabled: Allow 48-digit recovery password' or higher"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9719,9 +10033,9 @@ $windefrunning = CheckWindefRunning
                 -Name "FDVRecoveryPassword" `
                 | Select-Object -ExpandProperty "FDVRecoveryPassword"
         
-            if ($regValue -ne 2) {
+            if (($regValue -ne 2) -and ($regValue -ne 1)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 1"
                     Status = "False"
                 }
             }
@@ -9747,7 +10061,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.10.9.1.5"
-    Task = "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Key' is set to 'Enabled: Allow 256-bit recovery key'"
+    Task = "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Key' is set to 'Enabled: Allow 256-bit recovery key' or higher"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -9755,9 +10069,9 @@ $windefrunning = CheckWindefRunning
                 -Name "FDVRecoveryKey" `
                 | Select-Object -ExpandProperty "FDVRecoveryKey"
         
-            if ($regValue -ne 2) {
+            if (($regValue -ne 2) -and ($regValue -ne 1)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 1"
                     Status = "False"
                 }
             }
@@ -10574,6 +10888,150 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
+    Id = "18.10.9.2.15"
+    Task = "(BL) Ensure 'Require additional authentication at startup: Configure TPM startup:' is set to 'Enabled: Do not allow TPM'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
+                -Name "UseTPM" `
+                | Select-Object -ExpandProperty "UseTPM"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.9.2.16"
+    Task = "(BL) Ensure 'Require additional authentication at startup: Configure TPM startup PIN:' is set to 'Enabled: Require startup PIN with TPM'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
+                -Name "UseTPMPIN" `
+                | Select-Object -ExpandProperty "UseTPMPIN"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.9.2.17"
+    Task = "(BL) Ensure 'Require additional authentication at startup: Configure TPM startup key:' is set to 'Enabled: Do not allow startup key with TPM'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
+                -Name "UseTPMKey" `
+                | Select-Object -ExpandProperty "UseTPMKey"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.9.2.18"
+    Task = "(BL) Ensure 'Require additional authentication at startup: Configure TPM startup key and PIN:' is set to 'Enabled: Do not allow startup key and PIN with TPM'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE" `
+                -Name "UseTPMKeyPIN" `
+                | Select-Object -ExpandProperty "UseTPMKeyPIN"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "18.10.9.3.1"
     Task = "(BL) Ensure 'Allow access to BitLocker-protected removable data drives from earlier versions of Windows' is set to 'Disabled'"
     Test = {
@@ -10583,15 +11041,12 @@ $windefrunning = CheckWindefRunning
                 -Name "RDVDiscoveryVolumeType" `
                 | Select-Object -ExpandProperty "RDVDiscoveryVolumeType"
         
-                if ($regValue -ne "") {
-                    if($regValue -eq "<none>"){
-                        $regValue = "&lt;none&gt;"
-                    }
-                    return @{
-                        Message = "Registry value is '$regValue'. Expected: This value should be empty."
-                        Status = "False"
-                    }
+            if ($regValue -ne "") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: This value should be empty."
+                    Status = "False"
                 }
+            }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
@@ -11334,7 +11789,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 2)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -11756,7 +12211,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id = "18.10.16.1"
-    Task = "(L1) Ensure 'Download Mode' is NOT set to 'Enabled: Internet'"
+    Task = "(L1) Ensure 'Download Mode' is NOT set to 'Enabled: Internet (3)'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -11764,9 +12219,9 @@ $windefrunning = CheckWindefRunning
                 -Name "DODownloadMode" `
                 | Select-Object -ExpandProperty "DODownloadMode"
         
-            if (($regValue -eq 3)) {
+            if ($regValue -notmatch "^(0|1|2|99|100)$") {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x != 3"
+                    Message = "Registry value is '$regValue'. Expected: Matching expression '^(0|1|2|99|100)$'"
                     Status = "False"
                 }
             }
@@ -11935,7 +12390,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.1.1"
+    Id = "18.10.25.1.1"
     Task = "(L1) Ensure 'Application: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
     Test = {
         try {
@@ -11971,7 +12426,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.1.2"
+    Id = "18.10.25.1.2"
     Task = "(L1) Ensure 'Application: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
     Test = {
         try {
@@ -12007,7 +12462,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.2.1"
+    Id = "18.10.25.2.1"
     Task = "(L1) Ensure 'Security: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
     Test = {
         try {
@@ -12043,7 +12498,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.2.2"
+    Id = "18.10.25.2.2"
     Task = "(L1) Ensure 'Security: Specify the maximum log file size (KB)' is set to 'Enabled: 196,608 or greater'"
     Test = {
         try {
@@ -12079,7 +12534,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.3.1"
+    Id = "18.10.25.3.1"
     Task = "(L1) Ensure 'Setup: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
     Test = {
         try {
@@ -12115,7 +12570,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.3.2"
+    Id = "18.10.25.3.2"
     Task = "(L1) Ensure 'Setup: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
     Test = {
         try {
@@ -12151,7 +12606,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.4.1"
+    Id = "18.10.25.4.1"
     Task = "(L1) Ensure 'System: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
     Test = {
         try {
@@ -12187,7 +12642,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.26.4.2"
+    Id = "18.10.25.4.2"
     Task = "(L1) Ensure 'System: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
     Test = {
         try {
@@ -12223,7 +12678,43 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.29.2"
+    Id = "18.10.28.2"
+    Task = "(L2) Ensure 'Turn off account-based insights, recent, favorite, and recommended files in File Explorer' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer" `
+                -Name "DisableGraphRecentItems" `
+                | Select-Object -ExpandProperty "DisableGraphRecentItems"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.28.3"
     Task = "(L1) Ensure 'Turn off Data Execution Prevention for Explorer' is set to 'Disabled'"
     Test = {
         try {
@@ -12259,43 +12750,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.29.3"
-    Task = "(L2) Ensure 'Turn off files from Office.com in Quick access view' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer" `
-                -Name "DisableGraphRecentItems" `
-                | Select-Object -ExpandProperty "DisableGraphRecentItems"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.10.29.4"
+    Id = "18.10.28.4"
     Task = "(L1) Ensure 'Turn off heap termination on corruption' is set to 'Disabled'"
     Test = {
         try {
@@ -12331,7 +12786,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.29.5"
+    Id = "18.10.28.5"
     Task = "(L1) Ensure 'Turn off shell protocol protected mode' is set to 'Disabled'"
     Test = {
         try {
@@ -12367,43 +12822,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.33.1"
-    Task = "(L1) Ensure 'Prevent the computer from joining a homegroup' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\HomeGroup" `
-                -Name "DisableHomeGroup" `
-                | Select-Object -ExpandProperty "DisableHomeGroup"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.10.37.2"
+    Id = "18.10.36.1"
     Task = "(L2) Ensure 'Turn off location' is set to 'Enabled'"
     Test = {
         try {
@@ -12439,7 +12858,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.41.1"
+    Id = "18.10.40.1"
     Task = "(L2) Ensure 'Allow Message Service Cloud Sync' is set to 'Disabled'"
     Test = {
         try {
@@ -12475,7 +12894,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.42.1"
+    Id = "18.10.41.1"
     Task = "(L1) Ensure 'Block all consumer Microsoft account user authentication' is set to 'Enabled'"
     Test = {
         try {
@@ -12511,7 +12930,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.5.1"
+    Id = "18.10.42.5.1"
     Task = "(L1) Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
@@ -12556,7 +12975,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.5.2"
+    Id = "18.10.42.5.2"
     Task = "(L2) Ensure 'Join Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
@@ -12601,7 +13020,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.1"
+    Id = "18.10.42.6.1.1"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
@@ -12665,44 +13084,16 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 B"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
+    Id = "18.10.42.6.1.2 A"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes'"
     Test = {
         try {
-            if($avstatus){
-
-                if ((-not $windefrunning)) {
-                    return @{
-                        Message = "This rule requires Windows Defender Antivirus to be enabled."
-                        Status = "None"
-                    }
-                }
-            }                  
-            $regValue = 0;
-            $regValueTwo = 0;
-            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
-            $Value = "3b576869-a4ec-4529-8536-b80a7769e899"
-
-            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
-            if($asrTest1){
-                $regValue = Get-ItemProperty -ErrorAction Stop `
-                    -Path $Path `
-                    -Name $Value `
-                    | Select-Object -ExpandProperty $Value
-            }
-
-            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
-            $Value2 = "3b576869-a4ec-4529-8536-b80a7769e899"
-
-            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
-            if($asrTest2){
-                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
-                    -Path $Path2 `
-                    -Name $Value2 `
-                    | Select-Object -ExpandProperty $Value2
-            }
-
-            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
+                | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
+        
+            if ($regValue -ne "1") {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -12729,7 +13120,43 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 C"
+    Id = "18.10.42.6.1.2 B"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
+                -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
+                | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
+        
+            if ($regValue -ne "1") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.42.6.1.2 C"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block abuse of exploited vulnerable signed drivers'"
     Test = {
         try {
@@ -12793,7 +13220,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 D"
+    Id = "18.10.42.6.1.2 D"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block execution of potentially obfuscated scripts'"
     Test = {
         try {
@@ -12857,7 +13284,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 E"
+    Id = "18.10.42.6.1.2 E"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes'"
     Test = {
         try {
@@ -12921,7 +13348,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 F"
+    Id = "18.10.42.6.1.2 F"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Adobe Reader from creating child processes'"
     Test = {
         try {
@@ -12985,7 +13412,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 G"
+    Id = "18.10.42.6.1.2 G"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
     Test = {
         try {
@@ -13049,8 +13476,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 H"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe))'"
+    Id = "18.10.42.6.1.2 H"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe)'"
     Test = {
         try {
             if($avstatus){
@@ -13113,8 +13540,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 I"
-    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB' is configured"
+    Id = "18.10.42.6.1.2 I"
+    Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB'"
     Test = {
         try {
             if($avstatus){
@@ -13177,7 +13604,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 J"
+    Id = "18.10.42.6.1.2 J"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block executable content from email client and webmail'"
     Test = {
         try {
@@ -13241,7 +13668,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 K"
+    Id = "18.10.42.6.1.2 K"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block JavaScript or VBScript from launching downloaded executable content'"
     Test = {
         try {
@@ -13305,7 +13732,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 L"
+    Id = "18.10.42.6.1.2 L"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating child processes'"
     Test = {
         try {
@@ -13369,7 +13796,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.1.2 M"
+    Id = "18.10.42.6.1.2 M"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block persistence through WMI event subscription'"
     Test = {
             try {
@@ -13433,7 +13860,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.6.3.1"
+    Id = "18.10.42.6.3.1"
     Task = "(L1) Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
     Test = {
         try {
@@ -13478,8 +13905,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.7.1"
-    Task = "(L2) Ensure 'Enable file hash computation feature' is set to 'Enabled'"
+    Id = "18.10.42.7.1"
+    Task = "(L1) Ensure 'Enable file hash computation feature' is set to 'Enabled'"
     Test = {
         try {
             if($avstatus){
@@ -13523,7 +13950,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.10.1"
+    Id = "18.10.42.10.1"
     Task = "(L1) Ensure 'Scan all downloaded files and attachments' is set to 'Enabled'"
     Test = {
         try {
@@ -13568,7 +13995,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.10.2"
+    Id = "18.10.42.10.2"
     Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
@@ -13613,7 +14040,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.10.3"
+    Id = "18.10.42.10.3"
     Task = "(L1) Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
     Test = {
         try {
@@ -13658,7 +14085,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.10.4"
+    Id = "18.10.42.10.4"
     Task = "(L1) Ensure 'Turn on script scanning' is set to 'Enabled'"
     Test = {
         try {
@@ -13703,7 +14130,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.12.1"
+    Id = "18.10.42.12.1"
     Task = "(L2) Ensure 'Configure Watson events' is set to 'Disabled'"
     Test = {
         try {
@@ -13748,7 +14175,52 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.13.1"
+    Id = "18.10.42.13.1"
+    Task = "(L1) Ensure 'Scan packed executables' is set to 'Enabled'"
+    Test = {
+        try {
+            if($avstatus){
+
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status = "None"
+                    }
+                }
+            }
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
+                -Name "DisablePackedExeScanning" `
+                | Select-Object -ExpandProperty "DisablePackedExeScanning"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.42.13.2"
     Task = "(L1) Ensure 'Scan removable drives' is set to 'Enabled'"
     Test = {
         try {
@@ -13793,7 +14265,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.13.2"
+    Id = "18.10.42.13.3"
     Task = "(L1) Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
     Test = {
         try {
@@ -13838,7 +14310,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.16"
+    Id = "18.10.42.16"
     Task = "(L1) Ensure 'Configure detection for potentially unwanted applications' is set to 'Enabled: Block'"
     Test = {
         try {
@@ -13883,7 +14355,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.43.17"
+    Id = "18.10.42.17"
     Task = "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'"
     Test = {
         try {
@@ -13928,7 +14400,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.44.1"
+    Id = "18.10.43.1"
     Task = "(L1) Ensure 'Allow auditing events in Microsoft Defender Application Guard' is set to 'Enabled'"
     Test = {
         try {
@@ -13964,7 +14436,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.44.2"
+    Id = "18.10.43.2"
     Task = "(L1) Ensure 'Allow camera and microphone access in Microsoft Defender Application Guard' is set to 'Disabled'"
     Test = {
         try {
@@ -14000,7 +14472,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.44.3"
+    Id = "18.10.43.3"
     Task = "(L1) Ensure 'Allow data persistence for Microsoft Defender Application Guard' is set to 'Disabled'"
     Test = {
         try {
@@ -14036,7 +14508,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.44.4"
+    Id = "18.10.43.4"
     Task = "(L1) Ensure 'Allow files to download and save to the host operating system from Microsoft Defender Application Guard' is set to 'Disabled'"
     Test = {
         try {
@@ -14072,7 +14544,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.44.5"
+    Id = "18.10.43.5"
     Task = "(L1) Ensure 'Configure Microsoft Defender Application Guard clipboard settings: Clipboard behavior setting' is set to 'Enabled: Enable clipboard operation from an isolated session to the host'"
     Test = {
         try {
@@ -14108,7 +14580,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.44.6"
+    Id = "18.10.43.6"
     Task = "(L1) Ensure 'Turn on Microsoft Defender Application Guard in Managed Mode' is set to 'Enabled: 1'"
     Test = {
         try {
@@ -14144,7 +14616,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.50.1"
+    Id = "18.10.49.1"
     Task = "(L2) Ensure 'Enable news and interests on the taskbar' is set to 'Disabled'"
     Test = {
         try {
@@ -14180,7 +14652,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.51.1"
+    Id = "18.10.50.1"
     Task = "(L1) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'"
     Test = {
         try {
@@ -14216,7 +14688,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.56.1"
+    Id = "18.10.55.1"
     Task = "(L2) Ensure 'Turn off Push To Install service' is set to 'Enabled'"
     Test = {
         try {
@@ -14252,7 +14724,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.2.2"
+    Id = "18.10.56.2.2"
     Task = "(L2) Ensure 'Disable Cloud Clipboard integration for server-to-client data transfer' is set to 'Enabled'"
     Test = {
         try {
@@ -14288,7 +14760,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.2.3"
+    Id = "18.10.56.2.3"
     Task = "(L1) Ensure 'Do not allow passwords to be saved' is set to 'Enabled'"
     Test = {
         try {
@@ -14324,7 +14796,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.2.1"
+    Id = "18.10.56.3.2.1"
     Task = "(L2) Ensure 'Allow users to connect remotely by using Remote Desktop Services' is set to 'Disabled'"
     Test = {
         try {
@@ -14360,7 +14832,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.1"
+    Id = "18.10.56.3.3.1"
     Task = "(L2) Ensure 'Allow UI Automation redirection' is set to 'Disabled'"
     Test = {
         try {
@@ -14396,7 +14868,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.2"
+    Id = "18.10.56.3.3.2"
     Task = "(L2) Ensure 'Do not allow COM port redirection' is set to 'Enabled'"
     Test = {
         try {
@@ -14432,7 +14904,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.3"
+    Id = "18.10.56.3.3.3"
     Task = "(L1) Ensure 'Do not allow drive redirection' is set to 'Enabled'"
     Test = {
         try {
@@ -14468,7 +14940,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.4"
+    Id = "18.10.56.3.3.4"
     Task = "(L2) Ensure 'Do not allow location redirection' is set to 'Enabled'"
     Test = {
         try {
@@ -14504,7 +14976,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.5"
+    Id = "18.10.56.3.3.5"
     Task = "(L2) Ensure 'Do not allow LPT port redirection' is set to 'Enabled'"
     Test = {
         try {
@@ -14540,7 +15012,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.6"
+    Id = "18.10.56.3.3.6"
     Task = "(L2) Ensure 'Do not allow supported Plug and Play device redirection' is set to 'Enabled'"
     Test = {
         try {
@@ -14576,7 +15048,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.3.7"
+    Id = "18.10.56.3.3.7"
     Task = "(L2) Ensure 'Do not allow WebAuthn redirection' is set to 'Enabled'"
     Test = {
         try {
@@ -14612,7 +15084,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.9.1"
+    Id = "18.10.56.3.9.1"
     Task = "(L1) Ensure 'Always prompt for password upon connection' is set to 'Enabled'"
     Test = {
         try {
@@ -14648,7 +15120,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.9.2"
+    Id = "18.10.56.3.9.2"
     Task = "(L1) Ensure 'Require secure RPC communication' is set to 'Enabled'"
     Test = {
         try {
@@ -14684,7 +15156,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.9.3"
+    Id = "18.10.56.3.9.3"
     Task = "(L1) Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'"
     Test = {
         try {
@@ -14720,7 +15192,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.9.4"
+    Id = "18.10.56.3.9.4"
     Task = "(L1) Ensure 'Require user authentication for remote connections by using Network Level Authentication' is set to 'Enabled'"
     Test = {
         try {
@@ -14756,7 +15228,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.9.5"
+    Id = "18.10.56.3.9.5"
     Task = "(L1) Ensure 'Set client connection encryption level' is set to 'Enabled: High Level'"
     Test = {
         try {
@@ -14792,7 +15264,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.10.1"
+    Id = "18.10.56.3.10.1"
     Task = "(L2) Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less, but not Never (0)'"
     Test = {
         try {
@@ -14828,7 +15300,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.10.2"
+    Id = "18.10.56.3.10.2"
     Task = "(L2) Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
     Test = {
         try {
@@ -14864,7 +15336,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.57.3.11.1"
+    Id = "18.10.56.3.11.1"
     Task = "(L1) Ensure 'Do not delete temp folders upon exit' is set to 'Disabled'"
     Test = {
         try {
@@ -14900,7 +15372,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.58.1"
+    Id = "18.10.57.1"
     Task = "(L1) Ensure 'Prevent downloading of enclosures' is set to 'Enabled'"
     Test = {
         try {
@@ -14936,7 +15408,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.59.2"
+    Id = "18.10.58.2"
     Task = "(L2) Ensure 'Allow Cloud Search' is set to 'Enabled: Disable Cloud Search'"
     Test = {
         try {
@@ -14972,7 +15444,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.59.3"
+    Id = "18.10.58.3"
     Task = "(L1) Ensure 'Allow Cortana' is set to 'Disabled'"
     Test = {
         try {
@@ -15008,7 +15480,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.59.4"
+    Id = "18.10.58.4"
     Task = "(L1) Ensure 'Allow Cortana above lock screen' is set to 'Disabled'"
     Test = {
         try {
@@ -15044,7 +15516,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.59.5"
+    Id = "18.10.58.5"
     Task = "(L1) Ensure 'Allow indexing of encrypted files' is set to 'Disabled'"
     Test = {
         try {
@@ -15080,7 +15552,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.59.6"
+    Id = "18.10.58.6"
     Task = "(L1) Ensure 'Allow search and Cortana to use location' is set to 'Disabled'"
     Test = {
         try {
@@ -15116,7 +15588,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.59.7"
+    Id = "18.10.58.7"
     Task = "(L2) Ensure 'Allow search highlights' is set to 'Disabled'"
     Test = {
         try {
@@ -15152,7 +15624,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.63.1"
+    Id = "18.10.62.1"
     Task = "(L2) Ensure 'Turn off KMS Client Online AVS Validation' is set to 'Enabled'"
     Test = {
         try {
@@ -15188,7 +15660,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.66.1"
+    Id = "18.10.65.1"
     Task = "(L2) Ensure 'Disable all apps from Microsoft Store' is set to 'Disabled'"
     Test = {
         try {
@@ -15224,7 +15696,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.66.2"
+    Id = "18.10.65.2"
     Task = "(L1) Ensure 'Only display the private store within the Microsoft Store' is set to 'Enabled'"
     Test = {
         try {
@@ -15260,7 +15732,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.66.3"
+    Id = "18.10.65.3"
     Task = "(L1) Ensure 'Turn off Automatic Download and Install of updates' is set to 'Disabled'"
     Test = {
         try {
@@ -15296,7 +15768,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.66.4"
+    Id = "18.10.65.4"
     Task = "(L1) Ensure 'Turn off the offer to update to the latest version of Windows' is set to 'Enabled'"
     Test = {
         try {
@@ -15332,7 +15804,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.66.5"
+    Id = "18.10.65.5"
     Task = "(L2) Ensure 'Turn off the Store application' is set to 'Enabled'"
     Test = {
         try {
@@ -15368,7 +15840,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.72.1"
+    Id = "18.10.71.1"
     Task = "(L1) Ensure 'Allow widgets' is set to 'Disabled'"
     Test = {
         try {
@@ -15404,7 +15876,43 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.1.1"
+    Id = "18.10.75.1.1"
+    Task = "(L1) Ensure 'Automatic Data Collection' is set to 'Enabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WTDS\Components" `
+                -Name "CaptureThreatWindow" `
+                | Select-Object -ExpandProperty "CaptureThreatWindow"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.75.1.2"
     Task = "(L1) Ensure 'Notify Malicious' is set to 'Enabled'"
     Test = {
         try {
@@ -15440,7 +15948,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.1.2"
+    Id = "18.10.75.1.3"
     Task = "(L1) Ensure 'Notify Password Reuse' is set to 'Enabled'"
     Test = {
         try {
@@ -15476,7 +15984,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.1.3"
+    Id = "18.10.75.1.4"
     Task = "(L1) Ensure 'Notify Unsafe App' is set to 'Enabled'"
     Test = {
         try {
@@ -15512,7 +16020,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.1.4"
+    Id = "18.10.75.1.5"
     Task = "(L1) Ensure 'Service Enabled' is set to 'Enabled'"
     Test = {
         try {
@@ -15548,7 +16056,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.2.1 A"
+    Id = "18.10.75.2.1 A"
     Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (EnableSmartScreen)"
     Test = {
         try {
@@ -15584,7 +16092,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.2.1 B"
+    Id = "18.10.75.2.1 B"
     Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass' (ShellSmartScreenLevel)"
     Test = {
         try {
@@ -15620,79 +16128,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.76.3.1"
-    Task = "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" `
-                -Name "EnabledV9" `
-                | Select-Object -ExpandProperty "EnabledV9"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.10.76.3.2"
-    Task = "(L1) Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for sites' is set to 'Enabled' (PreventOverride)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter" `
-                -Name "PreventOverride" `
-                | Select-Object -ExpandProperty "PreventOverride"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "18.10.78.1"
+    Id = "18.10.77.1"
     Task = "(L1) Ensure 'Enables or disables Windows Game Recording and Broadcasting' is set to 'Disabled'"
     Test = {
         try {
@@ -15728,7 +16164,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.79.1"
+    Id = "18.10.78.1"
     Task = "(L1) Ensure 'Enable ESS with Supported Peripherals' is set to 'Enabled: 1'"
     Test = {
         try {
@@ -15764,7 +16200,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.80.1"
+    Id = "18.10.79.1"
     Task = "(L2) Ensure 'Allow suggested apps in Windows Ink Workspace' is set to 'Disabled'"
     Test = {
         try {
@@ -15800,7 +16236,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.80.2"
+    Id = "18.10.79.2"
     Task = "(L1) Ensure 'Allow Windows Ink Workspace' is set to 'Enabled: On, but disallow access above lock' OR 'Enabled: Disabled'"
     Test = {
         try {
@@ -15811,7 +16247,7 @@ $windefrunning = CheckWindefRunning
         
             if (($regValue -ne 1) -and ($regValue -ne 0)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 0"
                     Status = "False"
                 }
             }
@@ -15836,7 +16272,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.81.1"
+    Id = "18.10.80.1"
     Task = "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'"
     Test = {
         try {
@@ -15872,7 +16308,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.81.2"
+    Id = "18.10.80.2"
     Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled'"
     Test = {
         try {
@@ -15908,7 +16344,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.81.3"
+    Id = "18.10.80.3"
     Task = "(L2) Ensure 'Prevent Internet Explorer security prompt for Windows Installer scripts' is set to 'Disabled'"
     Test = {
         try {
@@ -15944,7 +16380,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.82.1"
+    Id = "18.10.81.1"
     Task = "(L1) Ensure 'Enable MPR notifications for the system' is set to 'Disabled'"
     Test = {
         try {
@@ -15980,7 +16416,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.82.2"
+    Id = "18.10.81.2"
     Task = "(L1) Ensure 'Sign-in and lock last interactive user automatically after a restart' is set to 'Disabled'"
     Test = {
         try {
@@ -16016,8 +16452,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.87.1"
-    Task = "(L1) Ensure 'Turn on PowerShell Script Block Logging' is set to 'Enabled'"
+    Id = "18.10.86.1"
+    Task = "(L2) Ensure 'Turn on PowerShell Script Block Logging' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -16052,8 +16488,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.87.2"
-    Task = "(L1) Ensure 'Turn on PowerShell Transcription' is set to 'Enabled'"
+    Id = "18.10.86.2"
+    Task = "(L2) Ensure 'Turn on PowerShell Transcription' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -16088,7 +16524,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.1.1"
+    Id = "18.10.88.1.1"
     Task = "(L1) Ensure 'Allow Basic authentication' is set to 'Disabled' (Client)"
     Test = {
         try {
@@ -16124,7 +16560,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.1.2"
+    Id = "18.10.88.1.2"
     Task = "(L1) Ensure 'Allow unencrypted traffic' is set to 'Disabled' (Client)"
     Test = {
         try {
@@ -16160,8 +16596,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.1.3"
-    Task = "(L1) Ensure 'Disallow Digest authentication' is set to 'Enabled'"
+    Id = "18.10.88.1.3"
+    Task = "(L1) Ensure 'Disallow Digest authentication' is set to 'Enabled' (Client)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -16196,7 +16632,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.2.1"
+    Id = "18.10.88.2.1"
     Task = "(L1) Ensure 'Allow Basic authentication' is set to 'Disabled' (Service)"
     Test = {
         try {
@@ -16232,8 +16668,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.2.2"
-    Task = "(L2) Ensure 'Allow remote server management through WinRM' is set to 'Disabled'"
+    Id = "18.10.88.2.2"
+    Task = "(L2) Ensure 'Allow remote server management through WinRM' is set to 'Disabled' (Service)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -16268,7 +16704,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.2.3"
+    Id = "18.10.88.2.3"
     Task = "(L1) Ensure 'Allow unencrypted traffic' is set to 'Disabled' (Service)"
     Test = {
         try {
@@ -16304,8 +16740,8 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.89.2.4"
-    Task = "(L1) Ensure 'Disallow WinRM from storing RunAs credentials' is set to 'Enabled'"
+    Id = "18.10.88.2.4"
+    Task = "(L1) Ensure 'Disallow WinRM from storing RunAs credentials' is set to 'Enabled' (Service)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -16340,7 +16776,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.90.1"
+    Id = "18.10.89.1"
     Task = "(L2) Ensure 'Allow Remote Shell Access' is set to 'Disabled'"
     Test = {
         try {
@@ -16376,7 +16812,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.91.1"
+    Id = "18.10.90.1"
     Task = "(L1) Ensure 'Allow clipboard sharing with Windows Sandbox' is set to 'Disabled'"
     Test = {
         try {
@@ -16412,7 +16848,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.91.2"
+    Id = "18.10.90.2"
     Task = "(L1) Ensure 'Allow networking in Windows Sandbox' is set to 'Disabled'"
     Test = {
         try {
@@ -16448,7 +16884,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.92.2.1"
+    Id = "18.10.91.2.1"
     Task = "(L1) Ensure 'Prevent users from modifying settings' is set to 'Enabled'"
     Test = {
         try {
@@ -16493,7 +16929,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.1.1"
+    Id = "18.10.92.1.1"
     Task = "(L1) Ensure 'No auto-restart with logged on users for scheduled automatic updates installations' is set to 'Disabled'"
     Test = {
         try {
@@ -16529,7 +16965,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.2.1"
+    Id = "18.10.92.2.1"
     Task = "(L1) Ensure 'Configure Automatic Updates' is set to 'Enabled'"
     Test = {
         try {
@@ -16565,7 +17001,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.2.2"
+    Id = "18.10.92.2.2"
     Task = "(L1) Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"
     Test = {
         try {
@@ -16601,7 +17037,43 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.2.3"
+    Id = "18.10.92.2.3"
+    Task = "(L1) Ensure 'Enable features introduced via servicing that are off by default' is set to 'Disabled'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" `
+                -Name "AllowTemporaryEnterpriseFeatureControl" `
+                | Select-Object -ExpandProperty "AllowTemporaryEnterpriseFeatureControl"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "18.10.92.2.4"
     Task = "(L1) Ensure 'Remove access to `"Pause updates`" feature' is set to 'Enabled'"
     Test = {
         try {
@@ -16637,7 +17109,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.4.1"
+    Id = "18.10.92.4.1"
     Task = "(L1) Ensure 'Manage preview builds' is set to 'Disabled'"
     Test = {
         try {
@@ -16673,7 +17145,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.4.2 A"
+    Id = "18.10.92.4.2 A"
     Task = "(L1) Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days' (DeferFeatureUpdates)"
     Test = {
         try {
@@ -16709,7 +17181,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.4.2 B"
+    Id = "18.10.92.4.2 B"
     Task = "(L1) Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days' (DeferFeatureUpdatesPeriodInDays)"
     Test = {
         try {
@@ -16745,7 +17217,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.4.3 A"
+    Id = "18.10.92.4.3 A"
     Task = "(L1) Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days' (DeferQualityUpdates)"
     Test = {
         try {
@@ -16781,7 +17253,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "18.10.93.4.3 B"
+    Id = "18.10.92.4.3 B"
     Task = "(L1) Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days' (DeferQualityUpdatesPeriodInDays)"
     Test = {
         try {
@@ -16817,90 +17289,18 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.1.3.1"
-    Task = "(L1) Ensure 'Enable screen saver' is set to 'Enabled'"
+    Id = "18.10.92.4.4"
+    Task = "(L1) Ensure 'Enable optional updates' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" `
-                -Name "ScreenSaveActive" `
-                | Select-Object -ExpandProperty "ScreenSaveActive"
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" `
+                -Name "AllowOptionalContent" `
+                | Select-Object -ExpandProperty "AllowOptionalContent"
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "19.1.3.2"
-    Task = "(L1) Ensure 'Password protect the screen saver' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" `
-                -Name "ScreenSaverIsSecure" `
-                | Select-Object -ExpandProperty "ScreenSaverIsSecure"
-        
-            if ($regValue -ne "1") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "19.1.3.3"
-    Task = "(L1) Ensure 'Screen saver timeout' is set to 'Enabled: 900 seconds or fewer, but not 0'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop" `
-                -Name "ScreenSaveTimeOut" `
-                | Select-Object -ExpandProperty "ScreenSaveTimeOut"
-        
-            if (($regValue -gt 900 -or $regValue -le 0)) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: x <= 900 and x > 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
                 }
             }
@@ -16966,7 +17366,7 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Assistance\Client\1.0" `
                 -Name "NoImplicitFeedback" `
                 | Select-Object -ExpandProperty "NoImplicitFeedback"
         
@@ -16997,12 +17397,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.4.1"
+    Id = "19.7.5.1"
     Task = "(L1) Ensure 'Do not preserve zone information in file attachments' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
                 -Name "SaveZoneInformation" `
                 | Select-Object -ExpandProperty "SaveZoneInformation"
         
@@ -17033,12 +17433,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.4.2"
+    Id = "19.7.5.2"
     Task = "(L1) Ensure 'Notify antivirus programs when opening attachments' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" `
                 -Name "ScanWithAntiVirus" `
                 | Select-Object -ExpandProperty "ScanWithAntiVirus"
         
@@ -17069,12 +17469,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.7.1"
-    Task = "(L1) Ensure 'Configure Windows spotlight on lock screen' is set to Disabled'"
+    Id = "19.7.8.1"
+    Task = "(L1) Ensure 'Configure Windows spotlight on lock screen' is set to 'Disabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
                 -Name "ConfigureWindowsSpotlight" `
                 | Select-Object -ExpandProperty "ConfigureWindowsSpotlight"
         
@@ -17105,12 +17505,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.7.2"
+    Id = "19.7.8.2"
     Task = "(L1) Ensure 'Do not suggest third-party content in Windows spotlight' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableThirdPartySuggestions" `
                 | Select-Object -ExpandProperty "DisableThirdPartySuggestions"
         
@@ -17141,84 +17541,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.7.3"
-    Task = "(L2) Ensure 'Do not use diagnostic data for tailored experiences' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
-                -Name "DisableTailoredExperiencesWithDiagnosticData" `
-                | Select-Object -ExpandProperty "DisableTailoredExperiencesWithDiagnosticData"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "19.7.7.4"
-    Task = "(L2) Ensure 'Turn off all Windows spotlight features' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
-                -Name "DisableWindowsSpotlightFeatures" `
-                | Select-Object -ExpandProperty "DisableWindowsSpotlightFeatures"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "19.7.7.5"
+    Id = "19.7.8.5"
     Task = "(L1) Ensure 'Turn off Spotlight collection on Desktop' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent" `
                 -Name "DisableSpotlightCollectionOnDesktop" `
                 | Select-Object -ExpandProperty "DisableSpotlightCollectionOnDesktop"
         
@@ -17249,12 +17577,12 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.25.1"
+    Id = "19.7.26.1"
     Task = "(L1) Ensure 'Prevent users from sharing files within their profile.' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+                -Path "Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
                 -Name "NoInplaceSharing" `
                 | Select-Object -ExpandProperty "NoInplaceSharing"
         
@@ -17285,18 +17613,18 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.40.1"
-    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' (AlwaysInstallElevated)"
+    Id = "19.7.38.1"
+    Task = "(L1) Ensure 'Turn off Windows Copilot' is set to 'Enabled'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Installer" `
-                -Name "AlwaysInstallElevated" `
-                | Select-Object -ExpandProperty "AlwaysInstallElevated"
+                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot" `
+                -Name "TurnOffWindowsCopilot" `
+                | Select-Object -ExpandProperty "TurnOffWindowsCopilot"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -17321,18 +17649,18 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "19.7.42.2.1"
-    Task = "(L2) Ensure 'Prevent Codec Download' is set to 'Enabled'"
+    Id = "19.7.42.1"
+    Task = "(L1) Ensure 'Always install with elevated privileges' is set to 'Disabled' (AlwaysInstallElevated)"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\WindowsMediaPlayer" `
-                -Name "PreventCodecDownload" `
-                | Select-Object -ExpandProperty "PreventCodecDownload"
+                -Path "Registry::HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Installer" `
+                -Name "AlwaysInstallElevated" `
+                | Select-Object -ExpandProperty "AlwaysInstallElevated"
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status = "False"
                 }
             }

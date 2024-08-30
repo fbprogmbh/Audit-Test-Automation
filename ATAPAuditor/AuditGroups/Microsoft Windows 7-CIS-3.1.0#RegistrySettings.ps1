@@ -6265,9 +6265,6 @@ $RootPath = Split-Path $RootPath -Parent
                 | Select-Object -ExpandProperty "FDVDiscoveryVolumeType"
         
             if ($regValue -ne "") {
-                if($regValue -eq "<none>"){
-                    $regValue = "&lt;none&gt;"
-                }
                 return @{
                     Message = "Registry value is '$regValue'. Expected: This value should be empty."
                     Status = "False"

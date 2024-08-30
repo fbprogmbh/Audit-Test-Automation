@@ -37,9 +37,9 @@
                 Status = "False"
             }
         }
-        if ($setOption -notmatch "^(?!.*\bAdministrator\b).*$") {
+        if ($setOption -notmatch "^(?i)(?!.*\b(?:Administrator)\b).*$") {
             return @{
-                Message = "'NewAdministratorName' currently set to: $setOption."
+                Message = "'NewAdministratorName' currently set to: $setOption. Expected any other name than 'Administrator'"
                 Status = "False"
             }
         }
@@ -65,7 +65,33 @@
         }
         if ($setOption -notmatch "^(?i)(?!.*\b(?:Guest|Gast)\b).*$") {
             return @{
-                Message = "'NewGuestName' currently set to: $setOption."
+                Message = "'NewGuestName' currently set to: $setOption. Expected any other name than 'Guest' or 'Gast'"
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "2.3.10.1"
+    Task = "(L1) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled'"
+    Test = {
+        $securityOption = Get-AuditResource "WindowsSecurityPolicy"
+        $setOption = $securityOption['System Access']["LSAAnonymousNameLookup"]
+
+        if ($null -eq $setOption) {
+            return @{
+                Message = "Currently not set."
+                Status = "False"
+            }
+        }
+        if ($setOption -ne 0) {
+            return @{
+                Message = "'LSAAnonymousNameLookup' currently set to: $setOption. Expected: 0"
                 Status = "False"
             }
         }

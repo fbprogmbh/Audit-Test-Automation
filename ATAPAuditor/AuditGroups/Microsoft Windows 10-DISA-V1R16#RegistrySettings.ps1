@@ -1551,8 +1551,8 @@
     Task = "The Application Compatibility Program Inventory must be prevented from collecting data and sending the information to Microsoft."
     Test = {
         try {
-            $status = (get-service -name pcasvc).Status
-            if($status -ne "Stopped"){
+            $status = get-service -name pcasvc -ErrorAction Stop
+            if($status.Status -ne "Stopped"){
                 return @{
                     Message = "Compliant - AppCompat Service is disabled (no inventory data will be collected)."
                     Status = "True"
@@ -1580,6 +1580,12 @@
             return @{
                 Message = "Registry key not found."
                 Status = "False"
+            }
+        }
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
             }
         }
         

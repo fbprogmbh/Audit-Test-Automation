@@ -20,7 +20,10 @@ $RootPath = Split-Path $RootPath -Parent
 }
 [AuditTest] @{
 	Id = "SBD-010"
-	Task = "Get amount of active local users on system."
+	Task = "Get amount of active local users on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
+	Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation",  "Standalone Server", "Member Server"}
+    )
 	Test = {	
 		$users = Get-LocalUser;
 		$amountOfActiveUser = 0;
@@ -61,6 +64,9 @@ $RootPath = Split-Path $RootPath -Parent
 [AuditTest] @{
 	Id = "SBD-011"
 	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
+	Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation",  "Standalone Server", "Member Server"}
+    )
 	Test = {	
 		try { 
 			#List all groups 
@@ -68,27 +74,31 @@ $RootPath = Split-Path $RootPath -Parent
 			$group = [ADSI]"WinNT://$env:COMPUTERNAME/$group"
 			$group_members = @($group.Invoke('Members') | % {([adsi]$_).path})
 			$message = ""
+			$cnt = 1
 			foreach($member in $group_members){
-				$message += "$($member) "
+				$message += "$cnt.   $($member) <br/>"
+				$cnt++
 			}
+			#Delete for better readability
+			$message = $message.Replace("WinNT://","")
 			$amountOfUserAndGroups = $group_members.Count
 			
 			$status = switch ($amountOfUserAndGroups.Count) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
+						Message = "Amount of entries: $amountOfUserAndGroups <br/> $message"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
+						Message = "Amount of entries: $amountOfUserAndGroups <br/> $message"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "Amount of entries: $amountOfUserAndGroups; `r`n $message"
+						Message = "Amount of entries: $amountOfUserAndGroups <br/> $message"
 						Status = "False"
 					}
 				}

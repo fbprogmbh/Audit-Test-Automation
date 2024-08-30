@@ -9826,42 +9826,6 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "263"
-    Task = "(ND) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled'."
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa" `
-                -Name "TurnOffAnonymousBlock" `
-                | Select-Object -ExpandProperty "TurnOffAnonymousBlock"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "264"
     Task = "(ND, NE) Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'."
     Test = {
@@ -10388,7 +10352,7 @@ $windefrunning = CheckWindefRunning
     Task = "(ND, NE) Ensure 'Connected User Experiences and Telemetry' is set to 'Disabled'."
     Test = {
         try {
-            $status = Get-Service DiagTrack | select -property starttype
+            $status = Get-Service DiagTrack -ErrorAction Stop | select -property starttype
             if($status.StartType -ne "Disabled"){
                 return @{
                     Message = "Service not compliant. Currently: $($status)"
@@ -10408,7 +10372,13 @@ $windefrunning = CheckWindefRunning
                 Status = "False"
             }
         }
-        
+        catch [System.SystemException]{
+            return @{
+                Message = "Service not found!"
+                Status = "True"
+            }
+        }
+
         return @{
             Message = "Compliant"
             Status = "True"

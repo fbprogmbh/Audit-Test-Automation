@@ -907,7 +907,15 @@
                 -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256" `
                 -Name "Enabled" `
                 | Select-Object -ExpandProperty "Enabled"
-        
+
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
+                    +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
+                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    Status = "False"
+                }
+            }
             if ($regValue -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
@@ -941,13 +949,31 @@
         try 
         {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
-                -Name "Functions" `
-                | Select-Object -ExpandProperty "Functions"
-        
-            return @{
-                Message = "Registry value is '$regValue'. Expected: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-                Status = "False"
+            -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
+            -Name "Functions"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $res = $regValue.Functions.GetType().Name
+                        
+            $typeTable = @{
+                "String" = "String Value"
+                "Byte" = "Byte Value"
+                "Int32" = "DWORD (32-bit) Value"
+                "Int64" = "QWORD (64-bit) Value"
+                "String[]" = "Multi-String Value"
+            }
+            $currentType = $typeTable[$res]
+            $regValue = $regValue | Select-Object -ExpandProperty "Functions"
+            if ($res -ne [String]) {
+                return @{  
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
+                    Status = "False"
+                }
+            }
+            if ($regValue -ne $reference) {
+                return @{                                                                               
+                    Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
+                    Status = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {

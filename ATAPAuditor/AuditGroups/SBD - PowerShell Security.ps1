@@ -49,7 +49,7 @@
 }
 [AuditTest] @{
 	Id = "SBD-026"
-	Task = "Ensure Execution policy is set to set to AllSigned / RemoteSigned."
+	Task = "Ensure Execution policy is set to AllSigned / RemoteSigned."
 	Test = {
 		$execPolicy = Get-ExecutionPolicy
         if($execPolicy -eq "AllSigned" -or $execPolicy -eq "RemoteSigned"){
@@ -168,7 +168,7 @@
 }
 [AuditTest] @{
 	Id = "SBD-033"
-	Task = "Ensure PowerShell ProtectedEventLogging is set to set to 'Enabled'."
+	Task = "Ensure PowerShell ProtectedEventLogging is set to 'Enabled'."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging' -ErrorAction SilentlyContinue).EnableProtectedEventLogging
         if($value -eq 1){
