@@ -112,6 +112,29 @@
 					}
 				)
 			}
+		} else {
+			[ReportSection] @{
+				Title = 'BSI Benchmarks SiSyPHuS NE'
+				Description = 'This section contains the BSI Benchmark results.'
+				SubSections = @(
+					[ReportSection] @{
+						Title = 'Registry Settings/Group Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#RegistrySettings"
+					}
+					[ReportSection] @{
+						Title = 'User Rights Assignment'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#UserRights"
+					}
+					[ReportSection] @{
+						Title = 'Account Policies'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#AccountPolicies"
+					}
+					[ReportSection] @{
+						Title = 'Security Options'
+						AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHuS NE-BSI-1.3#SecurityOptions"
+					}
+				)
+			}
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHus-BSI'
