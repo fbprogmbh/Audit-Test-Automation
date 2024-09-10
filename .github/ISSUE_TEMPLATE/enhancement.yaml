@@ -1,0 +1,59 @@
+name: Enhancement Proposal
+description: If you have a proposal to enhance AuditTAP.
+labels: ["enhancement"]
+projects: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Your feedback and support is greatly appreciated, thanks for your time!
+      
+  - type: textarea
+    id: idea
+    attributes:
+      label: Description
+      description: Provide a detailed description of the proposed enhancement and why it's important.
+      placeholder: Tell us what you think!
+    validations:
+      required: true
+            
+  - type: textarea
+    id: benefits
+    attributes:
+      label: What are the benefits?
+      description: Explain the benefits that implementing this enhancement would bring.
+      placeholder: Tell us the possible benefits!
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria!
+      description: Define clear criteria that must be met for the enhancement to be considered complete.
+      placeholder: Tell us your acceptance criterias
+    validations:
+      required: true
+                        
+  - type: textarea
+    id: linked_issue
+    attributes:
+      label: Linked Issues?
+      description: If the enhancement is related to an existing problem or specific feature, reference it here.
+      placeholder: Any Issues linked to this?
+    validations:
+      required: false
+                                       
+  - type: textarea
+    id: information
+    attributes:
+      label: Additional Information!
+      description: Include any additional relevant information such as screenshots, diagrams, or references to relevant documentation.
+      placeholder: Give us information if needed!
+    validations:
+      required: false
+      
+ 
+  
+
