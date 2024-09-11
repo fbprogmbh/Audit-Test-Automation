@@ -905,6 +905,16 @@ function Save-ATAPHtmlReport {
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
 		Start-ModuleTest
+		if($ReportName -eq "Microsoft IIS10")
+		{
+			$isIIS10Executable = IsIIS10Executable
+			if($isIIS10Executable -eq $false)
+			{
+				Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
+				return;
+			}
+	
+		}
 		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
@@ -923,16 +933,6 @@ function Save-ATAPHtmlReport {
 			Write-Warning "ATAPAuditor is only compatible with PowerShell Version 5.1. Your version is $psVersion. You need to upgrade to a higher Windows version!"
 			return;
 		}
-	}
-	if($ReportName -eq "Microsoft IIS10")
-	{
-		$isIIS10Executable = IsIIS10Executable
-		if($isIIS10Executable -eq $false)
-		{
-			Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
-			return;
-		}
-
 	}
 
 	$report = Invoke-ATAPReport -ReportName $ReportName 
