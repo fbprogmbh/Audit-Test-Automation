@@ -190,6 +190,14 @@ function GetLicenseStatus {
 	}
 }
 
+function IsIIS10Executable {
+	if((Get-Module -ListAvailable IISAdministration) -eq $null)
+	{
+		return $false
+	}
+	return $true
+}
+
 function Test-ArrayEqual {
 	[OutputType([bool])]
 	[CmdletBinding()]
@@ -923,6 +931,15 @@ function Save-ATAPHtmlReport {
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
 		Start-ModuleTest
+		if($ReportName -eq "Microsoft IIS10")
+		{
+			$isIIS10Executable = IsIIS10Executable
+			if($isIIS10Executable -eq $false)
+			{
+				Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
+				return;
+			}
+		}
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		#PowerShell Major version not 5.*
@@ -941,6 +958,7 @@ function Save-ATAPHtmlReport {
 			return;
 		}
 	}
+
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
 	if (!$isUnix) {
