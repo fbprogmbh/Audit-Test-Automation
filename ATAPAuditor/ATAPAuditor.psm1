@@ -288,21 +288,9 @@ function checkReportNameWithOSSystem {
 			$OsName,
 			[Parameter()]
 			[bool]
-			$ShouldBeStandAlone = $False,
-			[Parameter()]
-			[bool]
-			$ShouldBeDomainController = $False,
-			[Parameter()]
-			[bool]
-			$ShouldNotBeDomainController = $False
+			$ShouldBeStandAlone = $False
 		)
-		if ($ShouldBeDomainController -eq $True) {
-			Write-Host "You chose the Reportname $ReportName but the operating system is not a domaincontroller. Be aware that a different report type could affect the result."
-		}
-		elseif ($ShouldNotBeDomainController -eq $True) {
-			Write-Host "You chose the Reportname $ReportName but the operating system is a domaincontroller. Be aware that a different report type could affect the result."
-		}
-		elseif ($ShouldBeStandAlone -eq $True) {
+		if ($ShouldBeStandAlone -eq $True) {
 			Write-Host "You chose the Reportname $ReportName but the operating system is domain-joined. Be aware that a different report type could affect the result."
 		} 
 		else {
@@ -340,9 +328,6 @@ function checkReportNameWithOSSystem {
 			[string]
 			$OsType,
 			[Parameter()]
-			[string]
-			$ShouldBeDomainController = $False,
-			[Parameter()]
 			[bool]
 			$ShouldBeStandAlone = $False
 		)
@@ -369,29 +354,6 @@ function checkReportNameWithOSSystem {
 		}
 
 		###
-		# get whether domaincontroller info for later use
-		function IsDomainController {	
-			$domainrole = Get-DomainRole
-			if ($domainrole -eq "Backup Domain Controller" -or $domainrole -eq "Primary Domain Controller") {
-				return $true
-			}
-			return $false
-		}
-		$isDomainController = IsDomainController
-		# should be DC
-		if ($ShouldBeDomainController -eq $True) {
-			if (-not($isDomainController -eq $True)) {
-				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
-			} 
-			# should not be DC
-		}
-		else {
-			if ($isDomainController -eq $True) {
-				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldNotBeDomainController $True
-			}
-		}
-
-		###
 		# should be standalone
 		if ($ShouldBeStandAlone -eq $True) {
 			function IsDomainedJoined {		
@@ -413,11 +375,8 @@ function checkReportNameWithOSSystem {
 	function Get-OsType {		
 		switch ($ReportName) {
 			"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
-			"Microsoft Windows Server 2022 DC" { return "Microsoft Windows Server 2022" }
 			"Microsoft Windows Server 2019" { return "Microsoft Windows Server 2019" }
-			"Microsoft Windows Server 2019 DC" { return "Microsoft Windows Server 2019" }
 			"Microsoft Windows Server 2016" { return "Microsoft Windows Server 2016" }
-			"Microsoft Windows Server 2016 DC" { return "Microsoft Windows Server 2016" }
 			"Microsoft Windows Server 2012" { return "Microsoft Windows Server 2012" }
 			"Microsoft Windows 11" { return "Microsoft Windows 11" }
 			"Microsoft Windows 11 Stand-alone" { return "Microsoft Windows 11" }
@@ -433,20 +392,11 @@ function checkReportNameWithOSSystem {
 		"Microsoft Windows Server 2022" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
 		}
-		"Microsoft Windows Server 2022 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
-		}
 		"Microsoft Windows Server 2019" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
 		}
-		"Microsoft Windows Server 2019 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
-		}
 		"Microsoft Windows Server 2016" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows Server 2016 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
 		}
 		"Microsoft Windows Server 2012" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
