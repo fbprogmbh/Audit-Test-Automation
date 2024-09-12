@@ -4,7 +4,7 @@ $RootPath = Split-Path $RootPath -Parent
 $listOfWeakCipherSuites = getListOfWeakCipherSuites
 $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
 [AuditTest] @{
-    Id = "1.1.1"
+    Id = "1.1 A"
     Task = "Disable SSLv2 Protocol (Server)"
     Test = {
         try {
@@ -40,7 +40,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.1.2"
+    Id = "1.1 B"
     Task = "Disable SSLv2 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -76,7 +76,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.1.3"
+    Id = "1.1 C"
     Task = "Disable SSLv2 Protocol (Client)"
     Test = {
         try {
@@ -112,7 +112,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.1.4"
+    Id = "1.1 D"
     Task = "Disable SSLv2 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -148,7 +148,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.2.1"
+    Id = "1.2 A"
     Task = "Disable SSLv3 Protocol (Server)"
     Test = {
         try {
@@ -191,7 +191,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.2.2"
+    Id = "1.2 B"
     Task = "Disable SSLv3 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -234,7 +234,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.2.3"
+    Id = "1.2 C"
     Task = "Disable SSLv3 Protocol (Client)"
     Test = {
         try {
@@ -277,7 +277,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.2.4"
+    Id = "1.2 D"
     Task = "Disable SSLv3 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -320,7 +320,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.3.1"
+    Id = "1.3 A"
     Task = "Disable TLS1.0 Protocol (Server)"
     Test = {
         try {
@@ -356,7 +356,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.3.2"
+    Id = "1.3 B"
     Task = "Disable TLS1.0 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -392,7 +392,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.3.3"
+    Id = "1.3 C"
     Task = "Disable TLS1.0 Protocol (Client)"
     Test = {
         try {
@@ -428,7 +428,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.3.4"
+    Id = "1.3 D"
     Task = "Disable TLS1.0 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -464,7 +464,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.4.1"
+    Id = "1.4 A"
     Task = "Disable TLS1.1 Protocol (Server)"
     Test = {
         try {
@@ -500,7 +500,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.4.2"
+    Id = "1.4 B"
     Task = "Disable TLS1.1 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -536,7 +536,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.4.3"
+    Id = "1.4 C"
     Task = "Disable TLS1.1 Protocol (Client)"
     Test = {
         try {
@@ -572,7 +572,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.4.4"
+    Id = "1.4 D"
     Task = "Disable TLS1.1 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -608,7 +608,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.5.1"
+    Id = "1.5 A"
     Task = "Enable TLS1.2 Protocol (Server)"
     Test = {
         try {
@@ -652,7 +652,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.5.2"
+    Id = "1.5 B"
     Task = "Enable TLS1.2 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -688,7 +688,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.5.3"
+    Id = "1.5 C"
     Task = "Enable TLS1.2 Protocol (Client)"
     Test = {
         $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
@@ -745,7 +745,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.5.4"
+    Id = "1.5 D"
     Task = "Enable TLS1.2 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -781,7 +781,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.6.1"
+    Id = "1.6 A"
     Task = "Enable TLS1.3 Protocol (Server)"
     Test = {
         try{
@@ -838,7 +838,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.6.2"
+    Id = "1.6 B"
     Task = "Enable TLS1.3 Protocol (Server DisabledByDefault)"
     Test = {
         try{
@@ -895,7 +895,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.6.3"
+    Id = "1.6 C"
     Task = "Enable TLS1.3 Protocol (Client)"
     Test = {
         try{
@@ -952,7 +952,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "1.6.4"
+    Id = "1.6 D"
     Task = "Enable TLS1.3 Protocol (Client DisabledByDefault)"
     Test = {
         try{
@@ -1081,7 +1081,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "2.3.1"
+    Id = "2.4 A"
     Task = "Disable RC4 Cipher Suite - 40/128"
     Test = {
         try {
@@ -1117,7 +1117,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "2.3.2"
+    Id = "2.4 B"
     Task = "Disable RC4 Cipher Suite - 56/128"
     Test = {
         try {
@@ -1153,7 +1153,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "2.3.3"
+    Id = "2.4 C"
     Task = "Disable RC4 Cipher Suite - 64/128"
     Test = {
         try {
@@ -1189,7 +1189,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "2.3.4"
+    Id = "2.4 D"
     Task = "Disable RC4 Cipher Suite - 128/128"
     Test = {
         try {
@@ -1225,7 +1225,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
-    Id = "2.4"
+    Id = "2.5"
     Task = "Disable AES 128/128 Cipher Suite"
     Test = {
         try {
@@ -1237,50 +1237,6 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
             if ($regValue -ne 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.5"
-    Task = "Enable AES 256/256 Cipher Suite"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256" `
-                -Name "Enabled" `
-                | Select-Object -ExpandProperty "Enabled"
-
-            if ($regValue -eq 4294967295) {
-                return @{
-                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
-                    +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
-                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
-                    Status = "False"
-                }
-            }
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -1341,79 +1297,51 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
     }
 }
 [AuditTest] @{
+    Id = "2.7"
+    Task = "Enable AES 256/256 Cipher Suite"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
+                    +'<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
+                    +'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    Status = "False"
+                }
+            }
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "3.1"
-    Task = "Disable SHA-1 hash"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\SHA" `
-                -Name "Enabled" `
-                | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "3.2"
-    Task = "Disable MD5 hash"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\MD5" `
-                -Name "Enabled" `
-                | Select-Object -ExpandProperty "Enabled"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "4.1"
     Task = "Configure Cipher Suite Ordering"
     Test = {
         #check if correct type 
@@ -1553,6 +1481,366 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
                     Message = "Compliant"
                     Status = "True"
                 }
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.1"
+    Task = "Disable SHA-1 hash"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\SHA" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "4.2"
+    Task = "Disable MD5 hash"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\MD5" `
+                -Name "Enabled" `
+                | Select-Object -ExpandProperty "Enabled"
+        
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.1 A"
+    Task = "Enable .Net Strong Crypto v2.0.50727 SystemDefaultTlsVersions 32 Bit on 64 Bit System"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v2.0.50727" `
+                -Name "SystemDefaultTlsVersions" `
+                | Select-Object -ExpandProperty "SystemDefaultTlsVersions"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.1 B"
+    Task = "Enable .Net Strong Crypto v2.0.50727 SchUseStrongCrypto 32 Bit on 64 Bit System"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v2.0.50727" `
+                -Name "SchUseStrongCrypto" `
+                | Select-Object -ExpandProperty "SchUseStrongCrypto"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.1 C"
+    Task = "Enable .Net Strong Crypto v2.0.50727 SystemDefaultTlsVersions"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v2.0.50727" `
+                -Name "SystemDefaultTlsVersions" `
+                | Select-Object -ExpandProperty "SystemDefaultTlsVersions"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.1 D"
+    Task = "Enable .Net Strong Crypto v2.0.50727 SchUseStrongCrypto"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v2.0.50727" `
+                -Name "SchUseStrongCrypto" `
+                | Select-Object -ExpandProperty "SchUseStrongCrypto"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.2 A"
+    Task = "Enable .Net Strong Crypto v4.0.30319 SystemDefaultTlsVersions 32 Bit on 64 Bit System"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319" `
+                -Name "SystemDefaultTlsVersions" `
+                | Select-Object -ExpandProperty "SystemDefaultTlsVersions"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.2 B"
+    Task = "Enable .Net Strong Crypto v4.0.30319 SchUseStrongCrypto 32 Bit on 64 Bit System"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319" `
+                -Name "SchUseStrongCrypto" `
+                | Select-Object -ExpandProperty "SchUseStrongCrypto"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.2 C"
+    Task = "Enable .Net Strong Crypto v4.0.30319 SystemDefaultTlsVersions"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319" `
+                -Name "SystemDefaultTlsVersions" `
+                | Select-Object -ExpandProperty "SystemDefaultTlsVersions"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.2 D"
+    Task = "Enable .Net Strong Crypto v4.0.30319 SchUseStrongCrypto"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319" `
+                -Name "SchUseStrongCrypto" `
+                | Select-Object -ExpandProperty "SchUseStrongCrypto"
+        
+            if (($regValue -ne 1)) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
             }
         }
         
