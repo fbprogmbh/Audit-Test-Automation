@@ -7582,7 +7582,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ SAM" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\SAM" `
                 -Name "SamNGCKeyROCAValidation" `
                 | Select-Object -ExpandProperty "SamNGCKeyROCAValidation"
         

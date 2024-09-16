@@ -1,4 +1,4 @@
-# Audit Test Automation Package
+## Audit Test Automation Package
 <div align="center">
 	<table>
 		<tr>
@@ -8,6 +8,7 @@
 		<tr>
 			<td>
 
+
 ATAPAuditor:\
 [![atapauditorshield](https://img.shields.io/powershellgallery/v/ATAPAuditor)](https://www.powershellgallery.com/packages/ATAPAuditor)
 
@@ -16,8 +17,6 @@ ATAPHtmlReport:\
 			</td>
 			<td>
 
-
-AuditTAP Release 5.9.0:\
 [![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.9.0)
 			</td>
 		</tr>
@@ -25,33 +24,28 @@ AuditTAP Release 5.9.0:\
 </div>
 
 
+
 ## Table of contents
 
 - [Audit Test Automation Package](#audit-test-automation-package)
-  - [Table of contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Modules](#modules)
-  - [Reports](#reports)
-    - [**Application**](#application)
-    - [**Microsoft OS**](#microsoft-os)
-    - [**Unix OS**](#unix-os)
-  - [Prerequisites](#prerequisites)
+- [Table of contents](#table-of-contents)
+- [Overview](#overview)
+- [How to install](#how-to-install)
+  - [Prerequisites](#prerequisites) 
     - [Windows](#windows)
-  - [How to install](#how-to-install)
-    - [Installation from PS Gallery](#installation-from-ps-gallery)
-    - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
-    - [Installer](#installer)
     - [Linux](#linux)
-  - [Usage](#usage)
-  - [How to Update](#how-to-update)
-  - [Good to know](#good-to-know)
-  - [Sample reports](#sample-reports)
-  - [Customization](#customization)
-  - [Converting reports to xml instead of HTML](#converting-reports-to-xml-instead-of-html)
-  - [Related links](#related-links)
-    - [AuditTAP information](#audittap-information)
-    - [Hardening recommendations in general](#hardening-recommendations-in-general)
-  - [Questions, issues or project support](#questions-issues-or-project-support)
+  - [Installation from PS Gallery](#installation-from-ps-gallery)
+  - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
+  - [Installer](#installer)
+- [Usage](#usage)
+- [Reports](#reports)
+  - [Microsoft OS](#microsoft-os)
+  - [Unix OS](#unix-os)
+  - [Application](#application)
+- [Questions, issues or project support](#questions-issues-or-project-support)
+- [Related links](#related-links)
+  - [AuditTAP information](#audittap-information)
+  - [Hardening recommendations in general](#hardening-recommendations-in-general)
 
 
 ## Overview
@@ -60,90 +54,12 @@ Our Audit Test Automation Package enables you to get an overview about the compl
 status of your systems against established hardening guidelines. Below you will find an overview of the integrated hardening standards and their respective authors (such as Microsoft, CIS, BSI, etc.).
 The resulting HTML-reports provide a transparent and comprehensible overview over the compliance-status for each of the different settings and configurations suggested inside the provided industry standards and hardening guides. 
 
-## Modules
-
 The package consists of the following PowerShell modules:
 
 * ATAPHtmlReport
 * ATAPAuditor
 
-## Reports
-
-*ATAPAuditor* contains reports based on the following benchmarks including the version number. 
-How to read the table below:
-
-* The entries in the **DISA** column specify the version of the DISA STIG that is used.
-* The entries in the **CIS** column specify the version of the CIS benchmark that is used.
-* The entries in the **MS** column specify the version of the Microsoft security baseline that is used.
-* The entries in the **BSI** column specify the version of the BSI benchmark that is used.
-* The entries in the **ACSC** column specify the version of the ACSC benchmark that is used.
-
-We currently support the following reports, based on these topics:
-
-### **Application**
-
-Report | DISA | CIS | Microsoft | BSI | ACSC
---------- | -----| --- | -- | --- | ---
-Google Chrome | V1R15 | 2.0.0 | - | - | -
-Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
-Microsoft Edge | - | 2.0.0 | 117 | - | -
-Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
-Microsoft IIS10 | - | 1.1.0 | - | - | -
-Microsoft Office 2016 Excel | V1R2 | - | - | - | -
-Microsoft Office 2016 Outlook | V1R2 | - | - | - | -
-Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
-Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
-Microsoft Office 2016 Word | V1R1 | - | - | - | -
-Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
-Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
-
-The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
-
-### **Microsoft OS**
-
-Report | DISA | CIS | Microsoft | BSI | ACSC
---------- | -----| --- | -- | --- | ---
-Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R23 | 3.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
-Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
-Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
-Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 | - | 3.0.0 | 22H2 | SiSyPHuS 1.3 | -
-Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
-Microsoft Windows Server 2016 | 1.12 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2016 DC | V1R6 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2019 DC | V1R2 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2022 DC | - | 2.0.0 | FINAL | - | -
-
-The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
-
-### **Unix OS**
-
-Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
---------- | -----| --- | -- | --- | --- | ---
-Debian 10 | - | - | - | - | - | Base
-Debian 11 | - | 1.0.0 | - | - | - | -
-Fedora 35 | - | - | - | - | - | Base
-Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
-SUSE Linux Enterprise 15 | - | 1.1.1 | - | - | - | -
-Ubuntu 20.04 | - | 1.1.0 | - | - | - | -
-Ubuntu 22.04 | - | 1.0.0 | - | - | - | -
-
-
-
-## Prerequisites
-
-Before proceeding with the installation, please ensure the following prerequisites are met:
-
-### Windows
-
-* PowerShell version 5.1
-* Administrative permissions on the system to be audited
-
-## How to install
+## Installation
 
 We offer several ways of how you can use our free of charge . 
 Find several detailed explanations below and use them as follows:
@@ -151,6 +67,18 @@ Find several detailed explanations below and use them as follows:
 * Installation via PSGallery - just install our package directly from PowerShell Gallery.
 * Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
 * Use our installer to install or update
+
+### Prerequisites
+
+Before proceeding with the installation, please ensure the following prerequisites are met:
+
+#### Windows
+
+* PowerShell version 5.1
+* Administrative permissions on the system to be audited
+
+#### Linux
+For usage on Linux systems a PowerShell installation is required. The necessary steps depend on the Linux distribution and is documented [here](https://docs.microsoft.com/en-us/PowerShell/scripting/install/installing-PowerShell-on-linux).
 
 ### Installation from PS Gallery
 Simple and straight-forward. Install  with a single line of code.
@@ -195,8 +123,6 @@ Expand-Archive -Path ".\Audit-Test-Automation-5.9.0.zip" -DestinationPath "Audit
 
 Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps to install the necessary modules, along with a convenient Start-menu shortcut.
 
-### Linux
-For usage on Linux systems a PowerShell installation is required. The necessary steps depend on the Linux distribution and is documented [here](https://docs.microsoft.com/en-us/PowerShell/scripting/install/installing-PowerShell-on-linux). Once PowerShell is installed proceed with a [manual](#manual-installation) installation or using [PS Gallery](#installation-from-ps-gallery).
 
 ## Usage
 
@@ -227,89 +153,79 @@ Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortc
 The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
 
 ## How to Update
-In order to update AuditTAP, you need to update both modules "ATAPAuditor" and "ATAPHtmlReport". To do that, just run the following line of code:
+If you already have AuditTAP installed and want to update it, you can find detailed instructions in our [Wiki](https://github.com/fbprogmbh/Audit-Test-Automation/wiki), along with other useful and interesting information.
 
-For updating ATAPAuditor:
-```PowerShell
-Update-Module ATAPAuditor
-```
+## Reports
 
-For updating ATAPHtmlReport:
-```PowerShell
-Update-Module ATAPHtmlReport
-```
+*ATAPAuditor* contains reports based on the following benchmarks including the version number. 
+How to read the table below:
 
-If you want to update via Installer, make sure to download the latest version of AuditTAP. Then just follow the installation steps.
+* The entries in the **DISA** column specify the version of the DISA STIG that is used.
+* The entries in the **CIS** column specify the version of the CIS benchmark that is used.
+* The entries in the **MS** column specify the version of the Microsoft security baseline that is used.
+* The entries in the **BSI** column specify the version of the BSI benchmark that is used.
+* The entries in the **ACSC** column specify the version of the ACSC benchmark that is used.
 
-## Good to know
+We currently support the following reports, based on these topics:
 
-* Make sure your execution policy is set to at least remoteSigned (the scripts are not digitally signed)
+### **Microsoft OS**
 
-```PowerShell
-Set-ExecutionPolicy RemoteSigned -scope CurrentUser
-```
+Report | DISA | CIS | Microsoft | BSI | ACSC
+--------- | -----| --- | -- | --- | ---
+Microsoft Windows 7 | - | 3.1.0 | - | - | -
+Microsoft Windows 10 | V1R23 | 2.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
+Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
+Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
+Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 11 | - | 3.0.0 | 22H2 | SiSyPHuS 1.3 | -
+Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
+Microsoft Windows Server 2016 | 1.12 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2016 DC | V1R6 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2019 DC | V1R2 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 DC | - | 2.0.0 | FINAL | - | -
 
-* You can extend your AuditReports with a RiskScore by adding the RiskScore-Switch parameter (currently only available for Windows Reports):
-```powershell
-Save-ATAPHtmlReport -ReportName "Microsoft Windows 10" -Force -RiskScore
-```
+The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
-* `ATAPAuditor` has a dependency on `ATAPHtmlReport`.
-* Some reports take more than a few seconds because hundreds of individual settings and controls are checked. Please be patient, the result will satisfy your needs 😉
-* If you used old versions of AuditTAP you may want to clean up your modules. Be sure you have not integrated AuditTAP functionality in reporting processes. In order to accomplish this task you can use the following script.
+### **Unix OS**
 
-```PowerShell
-# Remove all old AuditTAP Reports if available
-$collection = @("ATAPHtmlReport","Excel2016Audit","GoogleChromeAudit","IIS8Audit","IIS10Audit","MicrosoftIE11Audit","MozillaFirefoxAudit","Outlook2016Audit","Powerpoint2016Audit","Skype4Business2016Audit","SQL2016Benchmarks","Windows10Audit","Windows10GDPRAudit","WindowsServer2016Audit","Word2016Audit")
-ForEach ($item in $collection)
-{
-  if (Get-Module -ListAvailable -Name $item)
-  {
-    # Module found, so remove it
-    $installPath = Get-Module -ListAvailable $item | Select-Object -ExpandProperty Path | Split-Path -Parent
-    Remove-Item -Path $installPath -Recurse -Force -Confirm:$false
-  }
-  else
-  {
-    # Module not installed, do nothing and take next item
-  }
-}
-```
+Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
+--------- | -----| --- | -- | --- | --- | ---
+Debian 10 | - | - | - | - | - | Base
+Debian 11 | - | 1.0.0 | - | - | - | -
+Fedora 35 | - | - | - | - | - | Base
+Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
+SUSE Linux Enterprise 15 | - | 1.1.1 | - | - | - | -
+Ubuntu 20.04 | - | 1.1.0 | - | - | - | -
+Ubuntu 22.04 | - | 1.0.0 | - | - | - | -
+
+### **Application**
+
+Report | DISA | CIS | Microsoft | BSI | ACSC
+--------- | -----| --- | -- | --- | ---
+Google Chrome | V1R15 | 2.0.0 | - | - | -
+Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
+Microsoft Edge | - | 2.0.0 | 117 | - | -
+Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
+Microsoft IIS10 | - | 1.1.1 | - | - | -
+Microsoft Office 2016 Excel | V1R2 | - | - | - | -
+Microsoft Office 2016 Outlook | V1R2 | - | - | - | -
+Microsoft Office 2016 PowerPoint | V1R1 | - | - | - | -
+Microsoft Office 2016 SkypeForBusiness | V1R1 | - | - | - | -
+Microsoft Office 2016 Word | V1R1 | - | - | - | -
+Microsoft Office 2016 | V1R1, V1R2 | 1.1.0 | - | - | -
+Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
+
+The report *Microsoft Office 2016* aggregates the results of all *Microsoft Office 2016 \<Product>* reports.  
 
 
-## Sample reports
+## Questions, issues or project support
+Please check the [FAQ-section](https://github.com/fbprogmbh/Audit-Test-Automation/tree/master/FAQ) first before opening an issue or contacting us.
 
-You can find several sample reports in the "Samples" folder.
-
-## Customization
-
-You can change the default folder for `Save-ATAPHtmlReport`, which is `Documents\ATAPReports`, by creating and later editing the environment variable `ATAPReportPath`. 
-Environment variables can be set for different scopes - please choose the one that fits your needs. The following samples will set the default path to 'C:\ATAPReports'.
-
-Temporary scope: CurrentSession
-```PowerShell
-$env:ATAPReportPath = 'C:\ATAPReports'
-```
-
-Permanent scope: CurrentUser
-```PowerShell
-[System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::User)
-```
-Permanent scope: Machine
-```PowerShell
-[System.Environment]::SetEnvironmentVariable('ATAPReportPath','C:\ATAPReports',[System.EnvironmentVariableTarget]::Machine)
-```
-
-## Converting reports to xml instead of HTML
-
-For this functionality, it is handy to know the Invoke-ATAPReport command can be used:
-Just use the following code snippet, and exchange the variables "Reportname" and "FilePath".
-
-```ps
-$Reportname = "Microsoft Windows 11"
-$FilePath = "C://YourPath/YourFileName.xml"
-ConvertTo-Xml -InputObject (Invoke-ATAPReport -ReportName $ReportName) -As "String" -Depth 10 | Out-File -FilePath $FilePath
-```
+*  For questions or issues regarding AuditTAP please use GitHub issue tracker.
+*  For questions regarding project support please write a short mail to team@fb-pro.com 
 
 ## Related links
 
@@ -327,8 +243,8 @@ ConvertTo-Xml -InputObject (Invoke-ATAPReport -ReportName $ReportName) -As "Stri
 * DISA STIGs: https://public.cyber.mil/stigs/
 * Microsoft Security baselines: https://techcommunity.microsoft.com/t5/microsoft-security-baselines/bg-p/Microsoft-Security-Baselines
 
- ## Questions, issues or project support
-Please check the [FAQ-section](https://github.com/fbprogmbh/Audit-Test-Automation/tree/master/FAQ) first before opening an issue or contacting us.
 
-*  For questions or issues regarding AuditTAP please use GitHub issue tracker.
-*  For questions regarding project support please write a short mail to team@fb-pro.com 
+
+
+
+
