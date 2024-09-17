@@ -760,7 +760,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "1.7.4"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $result = stat  -c "%a" /etc/motd )'
+        $result = stat  -c "%a" /etc/motd
         if ($result -eq 644) {
             return $retCompliant
         } else {
@@ -771,9 +771,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
 
 [AuditTest] @{
     Id = "1.7.5"
-    Task = "Ensure permissions on /etc/motd are configured"
+    Task = "Ensure permissions on /etc/issue are configured"
     Test = {
-        $result = stat -c "%a" /etc/issue )'
+        $result = stat -c "%a" /etc/issue
         if ($result -eq 644) {
             return $retCompliant
         } else {
@@ -784,9 +784,9 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
 
 [AuditTest] @{
     Id = "1.7.6"
-    Task = "Ensure permissions on /etc/motd are configured"
+    Task = "Ensure permissions on /etc/issue.net are configured"
     Test = {
-        $result = stat -c "%a" /etc/issue.net )'
+        $result = stat -c "%a" /etc/issue.net
         if ($result -eq 644) {
             return $retCompliant
         } else {

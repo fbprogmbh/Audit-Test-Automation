@@ -196,7 +196,7 @@ Report | DISA | CIS | Microsoft | BSI | ACSC | FB Pro
 Debian 10 | - | - | - | - | - | Base
 Debian 11 | - | 1.0.0 | - | - | - | -
 Fedora 35 | - | - | - | - | - | Base
-Red Hat Enterprise Linux 8 | - | - | - | - | - | Base
+Red Hat Enterprise Linux 9 | - | 1.0.0 | - | - | - | -
 SUSE Linux Enterprise 15 | - | 1.1.1 | - | - | - | -
 Ubuntu 20.04 | - | 1.1.0 | - | - | - | -
 Ubuntu 22.04 | - | 1.0.0 | - | - | - | -
