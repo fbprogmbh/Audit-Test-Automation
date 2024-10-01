@@ -61,7 +61,7 @@ The package consists of the following PowerShell modules:
 
 ## Installation
 
-We offer several ways of how you can use our free of charge . 
+We offer several ways of how you can use our free of charge Audit Test Automation Package (AuditTAP). 
 Find several detailed explanations below and use them as follows:
 
 * Installation via PSGallery - just install our package directly from PowerShell Gallery.
