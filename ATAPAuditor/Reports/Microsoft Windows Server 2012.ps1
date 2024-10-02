@@ -5,7 +5,7 @@
 	BasedOn = @(
 		"CIS Microsoft Windows Server 2012 R2 Benchmark, Version: 2.6.0, Date: 2022-05-18",
 		"DISA Microsoft Windows Server 2012 R2 Benchmark, Version: 2.19, Date: 2020-07-17",
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
 	)
 	Sections = @(

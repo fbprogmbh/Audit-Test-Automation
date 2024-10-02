@@ -6,7 +6,7 @@
 		"Security baseline for Microsoft Windows 11, Version: 22H2, Date: 2022-09-20"
 		"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
 	)
 	Sections = @(
