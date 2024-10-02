@@ -17,7 +17,7 @@ ATAPHtmlReport:\
 			</td>
 			<td>
 
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.9.0)
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.10.0)
 			</td>
 		</tr>
 	</table>
@@ -30,18 +30,19 @@ ATAPHtmlReport:\
 - [Audit Test Automation Package](#audit-test-automation-package)
 - [Table of contents](#table-of-contents)
 - [Overview](#overview)
-- [How to install](#how-to-install)
-  - [Prerequisites](#prerequisites) 
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
     - [Windows](#windows)
     - [Linux](#linux)
   - [Installation from PS Gallery](#installation-from-ps-gallery)
   - [Video tutorial for manual installation](#video-tutorial-for-manual-installation)
   - [Installer](#installer)
 - [Usage](#usage)
+- [How to Update](#how-to-update)
 - [Reports](#reports)
-  - [Microsoft OS](#microsoft-os)
-  - [Unix OS](#unix-os)
-  - [Application](#application)
+  - [**Microsoft OS**](#microsoft-os)
+  - [**Unix OS**](#unix-os)
+  - [**Application**](#application)
 - [Questions, issues or project support](#questions-issues-or-project-support)
 - [Related links](#related-links)
   - [AuditTAP information](#audittap-information)
@@ -104,7 +105,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.9.0.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.10.0.zip -Verbose
 ```
 The following screenshot shows the output:
 
@@ -114,7 +115,7 @@ The following screenshot shows the output:
 When using PowerShell, please check correct version number with below code example.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.9.0.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.10.0.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
 
