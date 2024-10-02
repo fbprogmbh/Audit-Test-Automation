@@ -6,8 +6,8 @@
 		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: 1.12, Date: 2020-06-17"
 		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 2.0.0, Date: 2023-04-14"
 		"Microsoft Security baseline for Windows Server 2016, Version: FINAL, Date 2016-10-17"
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.1.0, Date: 2021-04-15"
-		"FB Pro recommendations 'Enhanced settings', Version 1.1.0, Date: 2023-02-24"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
+		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -27,8 +27,12 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#RegistrySettings"
 				},
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#AuditPolicies"
+				}
+				[ReportSection] @{
+					Title = "Security Options"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#SecurityOptions"
 				}
 				#,
 				# [ReportSection] @{
@@ -46,7 +50,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-CIS-2.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
@@ -80,7 +84,7 @@
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-Microsoft-FINAL#AccountPolicies"
 				}
 				[ReportSection] @{
-					Title = " Advanced Audit Policy Configuration"
+					Title = "Advanced Audit Policy Configuration"
 					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-Microsoft-FINAL#AuditPolicies"
 				}
 			)
@@ -91,11 +95,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
-					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.1.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.2.1#RegistrySettings"
 				}
 				[ReportSection] @{
-					Title = 'Enhanced security settings'
-					AuditInfos = Test-AuditGroup "Enhanced security settings-FBPro-1.0#UserRights"
+					Title = 'Enhanced security settings - Registry Settings'
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#RegistrySettings"
+				}
+				[ReportSection] @{
+					Title = 'Enhanced security settings - User Rights'
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#UserRights"
 				}
 			)
 		}

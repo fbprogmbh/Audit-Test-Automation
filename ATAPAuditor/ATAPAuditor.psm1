@@ -120,11 +120,58 @@ class ResultTable {
 #endregion
 
 #region helpers
-function GetLicenseStatus{
+function IsIn-FullLanguageMode {
+	try {
+		$languageMode = $ExecutionContext.SessionState.LanguageMode
+		if ($languageMode -eq "FullLanguage"){
+			return $true
+		}
+	} catch {
+		return $false
+	}
+	# returns alternate language modes if not FullLanguage
+	return $languageMode
+}
+
+function Start-ModuleTest {
+	$moduleList = @(Get-Module -ListAvailable).Name | Select-Object -Unique
+	$necessaryModules = @(
+		"Microsoft.PowerShell.LocalAccounts",
+		"Microsoft.PowerShell.Management",
+		"Microsoft.PowerShell.Security",
+		"Microsoft.PowerShell.Utility",
+		"TrustedPlatformModule",
+		"NetSecurity",
+		"CimCmdlets",
+		"SmbShare",
+		"Defender",
+		"DISM"
+		#Modules only necessary for specific server tests
+		#"IISAdministration",
+		#"SQLServer",
+	)
+	$missingModules = @()
+	foreach ($module in $necessaryModules) {
+		if ($moduleList -notcontains $module) {
+			$missingModules += $module
+		}
+	}
+
+	if ($missingModules.Count -gt 0) {
+		Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
+		for ($i = 0; $i -lt $missingModules.Count; $i++) {
+			Write-Warning $missingModules[$i]
+		}
+		Write-Warning "Check out this link on how to install modules: https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-3.x"
+	}
+
+}
+
+function GetLicenseStatus {
 	param(
 		$SkipLicenseCheck
 	)
-	if($SkipLicenseCheck -eq $false){
+	if ($SkipLicenseCheck -eq $false) {
 		Write-Host "Checking operating system activation status. This may take a while..."
 		$licenseStatus = (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | where { $_.PartialProductKey } | select Description, LicenseStatus -ExpandProperty LicenseStatus)
 		switch ($licenseStatus) {
@@ -138,9 +185,17 @@ function GetLicenseStatus{
 		}
 		return $lcStatus
 	}
-	else{
+	else {
 		return "License check has been skipped."
 	}
+}
+
+function IsIIS10Executable {
+	if((Get-Module -ListAvailable IISAdministration) -eq $null)
+	{
+		return $false
+	}
+	return $true
 }
 
 function Test-ArrayEqual {
@@ -172,8 +227,8 @@ function Test-ArrayEqual {
 		return $false
 	}
 
-	for ($i = 0; $i -lt $Array1.Count; $i++) {
-		if ($Array1[$i] -ne $Array2[$i]) {
+	foreach ($a in $Array1) {
+		if ($a -notin $Array2) {
 			return $false
 		}
 	}
@@ -233,21 +288,9 @@ function checkReportNameWithOSSystem {
 			$OsName,
 			[Parameter()]
 			[bool]
-			$ShouldBeStandAlone = $False,
-			[Parameter()]
-			[bool]
-			$ShouldBeDomainController = $False,
-			[Parameter()]
-			[bool]
-			$ShouldNotBeDomainController = $False
+			$ShouldBeStandAlone = $False
 		)
-		if ($ShouldBeDomainController -eq $True) {
-			Write-Host "You chose the Reportname $ReportName but the operating system is not a domaincontroller. Be aware that a different report type could affect the result."
-		}
-		elseif ($ShouldNotBeDomainController -eq $True) {
-			Write-Host "You chose the Reportname $ReportName but the operating system is a domaincontroller. Be aware that a different report type could affect the result."
-		}
-		elseif ($ShouldBeStandAlone -eq $True) {
+		if ($ShouldBeStandAlone -eq $True) {
 			Write-Host "You chose the Reportname $ReportName but the operating system is domain-joined. Be aware that a different report type could affect the result."
 		} 
 		else {
@@ -285,9 +328,6 @@ function checkReportNameWithOSSystem {
 			[string]
 			$OsType,
 			[Parameter()]
-			[string]
-			$ShouldBeDomainController = $False,
-			[Parameter()]
 			[bool]
 			$ShouldBeStandAlone = $False
 		)
@@ -314,28 +354,6 @@ function checkReportNameWithOSSystem {
 		}
 
 		###
-		# get whether domaincontroller info for later use
-		function IsDomainController {	
-			$domainrole = Get-DomainRole
-			if ($domainrole -eq "Backup Domain Controller" -or $domainrole -eq "Primary Domain Controller"){
-				return $true
-			}
-			return $false
-		}
-		$isDomainController = IsDomainController
-		# should be DC
-		if ($ShouldBeDomainController -eq $True) {
-			if (-not($isDomainController -eq $True)) {
-				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldBeDomainController $True
-			} 
-		# should not be DC
-		} else {
-			if ($isDomainController -eq $True) {
-				return handleReportNameDiscrepancy -ReportName $ReportName -OsName $osName -ShouldNotBeDomainController $True
-			}
-		}
-
-		###
 		# should be standalone
 		if ($ShouldBeStandAlone -eq $True) {
 			function IsDomainedJoined {		
@@ -357,11 +375,8 @@ function checkReportNameWithOSSystem {
 	function Get-OsType {		
 		switch ($ReportName) {
 			"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
-			"Microsoft Windows Server 2022 DC" { return "Microsoft Windows Server 2022" }
 			"Microsoft Windows Server 2019" { return "Microsoft Windows Server 2019" }
-			"Microsoft Windows Server 2019 DC" { return "Microsoft Windows Server 2019" }
 			"Microsoft Windows Server 2016" { return "Microsoft Windows Server 2016" }
-			"Microsoft Windows Server 2016 DC" { return "Microsoft Windows Server 2016" }
 			"Microsoft Windows Server 2012" { return "Microsoft Windows Server 2012" }
 			"Microsoft Windows 11" { return "Microsoft Windows 11" }
 			"Microsoft Windows 11 Stand-alone" { return "Microsoft Windows 11" }
@@ -377,20 +392,11 @@ function checkReportNameWithOSSystem {
 		"Microsoft Windows Server 2022" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
 		}
-		"Microsoft Windows Server 2022 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
-		}
 		"Microsoft Windows Server 2019" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
 		}
-		"Microsoft Windows Server 2019 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
-		}
 		"Microsoft Windows Server 2016" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows Server 2016 DC" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeDomainController $True
 		}
 		"Microsoft Windows Server 2012" { 
 			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
@@ -735,8 +741,8 @@ function Invoke-ATAPReport {
 	$script:loadedResources = @{}
 	# Load the module manifest
 
+	#Windows OS
 	try {
-		#Windows OS
 		if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
 			$moduleInfo = Import-PowerShellDataFile -Path "$RootPath\ATAPAuditor.psd1"
 			[string]$ReportName = checkReportNameWithOSSystem -ReportName $ReportName
@@ -759,8 +765,11 @@ function Invoke-ATAPReport {
 			[Report]$report = (& "$RootPath/Reports/$ReportName.ps1")
 		}
 	}
- catch [System.Management.Automation.CommandNotFoundException] {
-		Write-Host "Input for -Reportname is faulty, please make sure to put the correct input. Stopping script."
+ 	catch [System.Management.Automation.CommandNotFoundException] {
+		Write-Host "Either your input for -Reportname is faulty or the report does not resolve due to a bug. Please report this bug with the following errormessage: 
+		1. ErrorException: $_
+		2. PositionMessage: $($_.InvocationInfo.PositionMessage)
+		3. ReportName: $ReportName"
 		break
 	}
 	$report.AuditorVersion = $moduleInfo.ModuleVersion
@@ -830,9 +839,18 @@ function Save-ATAPHtmlReport {
 		$Force
 	)
 
-	if([Environment]::Is64BitProcess -eq $false){
+	if ([Environment]::Is64BitProcess -eq $false) {
 		Write-Host "Please use 64-bit version of PowerShell in order to use AuditTAP. Closing..." -ForegroundColor red
 		return;
+	}
+
+	if (($languagemode = IsIn-FullLanguageMode) -ne $true) {
+		if ($languagemode -eq $false) {
+			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
+		} else {
+			Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
+		}
+		return
 	}
 
 	$parent = $path
@@ -856,12 +874,22 @@ function Save-ATAPHtmlReport {
 		}
 	}
 	Write-Verbose "OS-Check"
-	if ([System.Environment]::OSVersion.Platform -eq 'Unix') {
+	$isUnix = [System.Environment]::OSVersion.Platform -eq 'Unix'
+	if ($isUnix) {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
-		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
+		Start-ModuleTest
+		if($ReportName -eq "Microsoft IIS10")
+		{
+			$isIIS10Executable = IsIIS10Executable
+			if($isIIS10Executable -eq $false)
+			{
+				Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
+				return;
+			}
+		}
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		#PowerShell Major version not 5.*
@@ -880,8 +908,12 @@ function Save-ATAPHtmlReport {
 			return;
 		}
 	}
+
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
+	if (!$isUnix) {
+		$SystemInformation.SoftwareInformation.LicenseStatus = GetLicenseStatus $SkipLicenseCheck
+	}
 	$hashtable_sha256 = GenerateHashTable $report
 	
 	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation

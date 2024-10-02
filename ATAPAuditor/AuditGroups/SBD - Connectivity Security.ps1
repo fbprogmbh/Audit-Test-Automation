@@ -1,3 +1,8 @@
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$listOfWeakCipherSuites = getListOfWeakCipherSuites
+$listOfInsecureCipherSuites = getListOfInsecureCipherSuites
 [AuditTest] @{
 	Id = "SBD-035"
 	Task = "Ensure system is configured to deny remote access via Terminal Services."
@@ -1295,45 +1300,129 @@
     Id = "SBD-072"
     Task = "Configure Cipher Suite Ordering"
     Test = {
+        #check if correct type 
+        $typeTable = @{
+            "String" = "String Value"
+            "Byte" = "Byte Value"
+            "Int32" = "DWORD (32-bit) Value"
+            "Int64" = "QWORD (64-bit) Value"
+            "String[]" = "Multi-String Value"
+        }
+        #Default status
+        $status = "Error"
+    
+        #Output
+        $verbInsecure = "rules have"
+        $verbWeak = "rules have"
+    
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
             -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
             -Name "Functions"
             $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
             $res = $regValue.Functions.GetType().Name
-                        
-            $typeTable = @{
-                "String" = "String Value"
-                "Byte" = "Byte Value"
-                "Int32" = "DWORD (32-bit) Value"
-                "Int64" = "QWORD (64-bit) Value"
-                "String[]" = "Multi-String Value"
-            }
+    
+    
             $currentType = $typeTable[$res]
-            $regValue = $regValue | Select-Object -ExpandProperty "Functions"
             if ($res -ne [String]) {
                 return @{  
-                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'String Value'"
                     Status = "False"
                 }
             }
-            if ($regValue -ne $reference) {
-                return @{                                                                               
-                    Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
-                    Status = "False"
+    
+            #check if insecure or weak cipher is inside value
+            $regValues = $regValue.Split(',')
+            $regValues = $regValues -replace ' ', ''
+            $weakRulesFound = @()
+            $insecureRulesFound = @()
+            foreach($element in $regValues){
+                if($listOfWeakCipherSuites.Contains($element)){
+                    $weakRulesFound += $element
+                }
+                if($listOfInsecureCipherSuites.Contains($element)){
+                    $insecureRulesFound += $element
+                }
+            }
+            if($insecureRulesFound.Count -eq 1){$verbInsecure = "rule has"}
+            if($weakRulesFound.Count -eq 1){$verbWeak = "rule has"}
+            $insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+            $weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+    
+            #Preparing message
+            foreach($member in $weakRulesFound){
+                $status = "Warning"
+                $weakMessage += "$($member)<br/>"
+            }          
+            foreach($member in $insecureRulesFound){
+                $status = "False"
+                $insecureMessage += "$($member)<br/>"
+            }          
+            #Combine or shorten message
+            if($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0){
+                $message = ""
+                if($weakRulesFound.Count -eq 0){ $weakMessage = "" }
+                if($insecureRulesFound.Count -eq 0){ $insecureMessage = "" }
+    
+                $message = $insecureMessage + $weakMessage
+                return @{
+                    Message = $message
+                    Status = $status
                 }
             }
         }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
+        catch {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002" `
+            -Name "Functions"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $res = $regValue.Functions.GetType().Name
+    
+            $currentType = $typeTable[$res]
+            if ($res -ne [String[]]) {
+                return @{  
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'Multi-String Value'"
+                    Status = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+    
+            #check if insecure or weak cipher is inside value
+            $regValues = $regValue -replace ' ', ''
+            $weakRulesFound = @()
+            $insecureRulesFound = @()
+            foreach($element in $regValues){
+                if($listOfWeakCipherSuites.Contains($element)){
+                    $weakRulesFound += $element
+                }
+                if($listOfInsecureCipherSuites.Contains($element)){
+                    $insecureRulesFound += $element
+                }
+            }
+            if($insecureRulesFound.Count -eq 1){$verbInsecure = "rule has"}
+            if($weakRulesFound.Count -eq 1){$verbWeak = "rule has"}
+            $insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+            $weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+    
+            #Preparing message
+            foreach($member in $weakRulesFound){
+                $status = "Warning"
+                $weakMessage += "$($member)<br/>"
+            }          
+            foreach($member in $insecureRulesFound){
+                $status = "False"
+                $insecureMessage += "$($member)<br/>"
+            }          
+            #Combine or shorten message
+            if($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0){
+                $message = ""
+                if($weakRulesFound.Count -eq 0){ $weakMessage = "" }
+                if($insecureRulesFound.Count -eq 0){ $insecureMessage = "" }
+    
+                $message = $insecureMessage + $weakMessage
+                return @{
+                    Message = $message
+                    Status = $status
+                }
             }
         }
         

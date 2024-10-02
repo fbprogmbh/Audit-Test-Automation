@@ -3277,6 +3277,45 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     }
 }
 [AuditTest] @{
+    Id = "18.3.1"
+    Task = "(L1) Ensure LAPS AdmPwd GPO Extension / CSE is installed (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\GPExtensions\{D76B9641-3288-4f75-942D-087DE603E3EA}" `
+                -Name "DllName" `
+                | Select-Object -ExpandProperty "DllName"
+        
+            if ($regValue -ne "C:\Program Files\LAPS\CSE\AdmPwd.dll") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 'C:\Program Files\LAPS\CSE\AdmPwd.dll'"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "18.3.2"
     Task = "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled' (MS only)"
     Constraints = @(
@@ -4798,7 +4837,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }
@@ -4850,7 +4889,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 
             if ($missingElements.Length -gt 0) {
                 return @{
-                    Message = ($missingElements -join " and ") + " not configured."
+                    Message = ($missingElements -join " and ") + " not configured correctly."
                     Status = "False"
                 }
             }
@@ -7385,7 +7424,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ SAM" `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\SAM" `
                 -Name "SamNGCKeyROCAValidation" `
                 | Select-Object -ExpandProperty "SamNGCKeyROCAValidation"
         
