@@ -182,11 +182,8 @@ Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Sta
 Microsoft Windows 11 | - | 3.0.0 | 22H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
 Microsoft Windows Server 2016 | 1.12 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2016 DC | V1R6 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2019 DC | V1R2 | 2.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2022 DC | - | 2.0.0 | FINAL | - | -
 
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
