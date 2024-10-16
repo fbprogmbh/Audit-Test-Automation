@@ -984,16 +984,24 @@ grep -Eq '^root:\$(y|[0-9])' /etc/shadow || echo 'root is locked'
     Id   = "1.7.4"
     Task = "Ensure permissions on /etc/motd are configured"
     Test = {
-        $test1 = stat /etc/motd | grep 0644
-        if ($test1 -ne $null) {
+        if (Test-Path /etc/motd) {
+            $test1 = stat /etc/motd | grep 0644
+            if ($test1 -ne $null) {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
-        return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+        else {
+            return @{
+                Message = "motd not present"
+                Status  = "None"
+            }
         }
     }
 }
