@@ -2273,16 +2273,24 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "3.5.1.2"
     Task = "Ensure iptables-persistent is not installed with ufw"
     Test = {
-        $test1 = dpkg -l | grep -o iptables-persistent
-        if ($test1 -eq $null) {
+        $testufw = dpkg-query -s ufw 
+        $statusufw = $?
+        if ($statusufw -match "True") {
+            $test1 = dpkg -l | grep -o iptables-persistent
+            if ($test1 -eq $null) {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
             return @{
-                Message = "Compliant"
-                Status  = "True"
+                Message = "Not-Compliant"
+                Status  = "False"
             }
         }
         return @{
-            Message = "Not-Compliant"
-            Status  = "False"
+            Message = "Compliant"
+            Status  = "True"
         }
     }
 }
