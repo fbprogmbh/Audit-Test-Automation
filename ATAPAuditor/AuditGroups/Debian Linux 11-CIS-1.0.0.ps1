@@ -1632,7 +1632,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "2.2.9"
     Task = "Ensure HTTP server is not installed"
     Test = {
-        $result = dpkg -l | grep -o apache2
+        $result = dpkg -l | grep -E 'apache2\s'
         if ($result -eq $null) {
             return @{
                 Message = "Compliant"
@@ -1701,8 +1701,8 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "2.2.13"
     Task = "Ensure SNMP Server is not installed"
     Test = {
-        $result = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' snmp
-        if ($result -match "snmp\s+unknown ok not-installed\s+not-installed") {
+        $result = dpkg -l | grep -E 'snmpd\s'
+        if ($result -eq $null) {
             return @{
                 Message = "Compliant"
                 Status  = "True"
@@ -3046,7 +3046,7 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
     Task = "Ensure events that modify the system's network environment are collected"
     Test = {
         $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $test2 = awk '/^ *-w/ \ &&(/\/etc\/issue/ \ ||/\/etc\/issue.net/ \ ||/\/etc\/hosts/ \ ||/\/etc\/network/) \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
+        $test2 = awk "/^ *-w/  &&(/\/etc\/issue/ ||/\/etc\/issue.net/  ||/\/etc\/hosts/  ||/\/etc\/network/)  &&/ +-p *wa/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules
         try {
             $test3 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
             $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'        
