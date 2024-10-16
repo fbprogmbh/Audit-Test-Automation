@@ -4889,24 +4889,20 @@ dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Pack
     Id   = "6.1.10"
     Task = "Ensure no unowned files or directories exist"
     Test = {
-        try {
-            $test1 = df --local -P | awk { 'if (NR!=1) print $6' } | xargs -I '{}' find '{}' -xdev -nouser
-            if ($test1 -eq $null) {
-                return @{
-                    Message = "Compliant"
-                    Status  = "True"
-                }
-            }
+        $command = @'
+df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser
+'@
+        $test1 = bash -c $command
+            
+        if ($test1 -eq $null) {
             return @{
-                Message = "Not-Compliant"
-                Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
             }
         }
-        catch {
-            return @{
-                Message = "Command not found!"
-                Status  = "False"
-            }  
+        return @{
+            Message = "Not-Compliant"
+            Status  = "False"
         }
     }
 }
