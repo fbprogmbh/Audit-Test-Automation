@@ -2862,7 +2862,10 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "4.1.1.3"
     Task = "Ensure auditing for processes that start prior to auditd is enabled"
     Test = {
-        $test = find /boot -type f -name 'grub.cfg' -exec grep -Ph -- '^\h*linux' {} + | grep -v 'audit=1'
+        $command = @'
+        find /boot -type f -name 'grub.cfg' -exec grep -Ph -- '^\h*linux' {} + | grep -v 'audit=1'
+'@
+        $test = bash -c $command
         if ($test -eq $null) {
             return @{
                 Message = "Compliant"
@@ -2879,7 +2882,10 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "4.1.1.4"
     Task = "Ensure audit_backlog_limit is sufficient"
     Test = {
-        $test = find /boot -type f -name 'grub.cfg' -exec grep -Ph -- '^\h*linux' {} + | grep -Pv 'audit_backlog_limit=\d+\b'
+        $command = @'
+        find /boot -type f -name 'grub.cfg' -exec grep -Ph -- '^\h*linux' {} + | grep -Pv 'audit_backlog_limit=\d+\b'
+'@
+        $test = bash -c $command
         if ($test -eq $null) {
             return @{
                 Message = "Compliant"
@@ -4992,12 +4998,12 @@ dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Pack
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath + "/Helpers/ShellScripts/Debian_11/CIS-Debian-6.2.3.sh"
         $result = bash $path
-        foreach ($line in $result) {
-            if (!($line -match "PASS")) {
-                return @{
-                    Message = "Compliant"
-                    Status  = "True"
-                }
+        $status = $?
+        
+        if ($status -match "True") {
+            return @{
+                Message = "Compliant"
+                Status  = "True"
             }
         }
         return @{
