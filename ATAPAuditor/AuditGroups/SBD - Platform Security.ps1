@@ -2,7 +2,7 @@ $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 [AuditTest] @{
-	Id = "SBD-001"
+	Id = "SBD-101"
 	Task = "Ensure the system is booting in 'UEFI' mode."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -51,7 +51,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-002"
+	Id = "SBD-102"
 	Task = "Ensure the system is using SecureBoot."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -111,7 +111,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-003"
+	Id = "SBD-103"
 	Task = "Ensure the TPM Chip is 'present'."
 	Test = {
 		$hasTpm = hasTPM
@@ -162,7 +162,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-004"
+	Id = "SBD-104"
 	Task = "Ensure the TPM Chip is 'ready'."
 	Test = {
 		$hasTpm = hasTPM
@@ -212,7 +212,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-005"
+	Id = "SBD-105"
 	Task = "Ensure the TPM Chip is 'enabled'."
 	Test = {
 		$hasTpm = hasTPM
@@ -259,7 +259,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-006"
+	Id = "SBD-106"
 	Task = "Ensure the TPM Chip is 'activated'."
 	Test = {
 		$hasTpm = hasTPM
@@ -305,7 +305,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-007"
+	Id = "SBD-107"
 	Task = "Ensure the TPM Chip is 'owned'."
 	Test = {
 		$hasTpm = hasTPM
@@ -352,7 +352,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-008"
+	Id = "SBD-108"
 	Task = "Ensure the TPM Chip is implementing specification version 2.0 or higher."
 	Test = {
 		$hasTpm = hasTPM
