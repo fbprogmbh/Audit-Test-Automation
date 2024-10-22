@@ -86,26 +86,21 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 
-			$allgroups = Get-LocalGroup "Administrators" | Get-LocalGroupMember 
+			$allgroups = Get-LocalGroup -SID "S-1-5-32-544" | Get-LocalGroupMember 
 			[int]$ADCount = 0
 			[int]$localCount = 0
 			foreach ($entry in $allgroups) {
 				if ($entry.PrincipalSource -eq "ActiveDirectory") {
-					if ($entry.ObjectClass -eq "Group") {
-						# only applies to ActiveDirectory Groups
-						$group = $entry.Name -split '\\' | Select-Object -Last 1
-						$ADCount += Get-ADAdminCount $group
-					} else {
-						$ADCount++
-					}
-				} elseif ($entry.PrincipalSource -eq "Local") {
-					if ($entry.ObjectClass -eq "Group") {
-						# only applies to Local Groups
-						$group = $entry.Name -split '\\' | Select-Object -Last 1
-						$localCount += (Get-LocalGroupMember $group).Count
-					} else {
-						$localCount++
-					}
+					$group = $entry.Name -split '\\' | Select-Object -Last 1
+					$ADCount += Get-ADAdminCount $group
+					continue;
+				} 
+				# only applies to Local Groups
+				$group = $entry.Name -split '\\' | Select-Object -Last 1
+				try {
+					$localCount += (Get-LocalGroupMember $group -ErrorAction Stop).Count
+				} catch [Microsoft.PowerShell.Commands.NotFoundException]{
+					$localCount++;
 				}
 			}
 			[int]$amountOfUserAndGroups = $ADCount + $localCount
