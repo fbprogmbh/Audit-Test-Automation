@@ -107,19 +107,19 @@ $RootPath = Split-Path $RootPath -Parent
 			$status = switch ($amountOfUserAndGroups) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
+						Message = "Total amount of users: $amountOfUserAndGroups <br/> Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/>"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
+						Message = "Total amount of users: $amountOfUserAndGroups <br/> Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/>"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
+						Message = "Total amount of users: $amountOfUserAndGroups <br/> Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/>"
 						Status = "False"
 					}
 				}
