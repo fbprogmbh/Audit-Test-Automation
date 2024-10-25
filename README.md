@@ -50,23 +50,22 @@ ATAPHtmlReport:\
 
 ## Overview
 
-Our Audit Test Automation Package enables you to get an overview about the compliance
-status of your systems against established hardening guidelines. Below you will find an overview of the integrated hardening standards and their respective authors (such as Microsoft, CIS, BSI, etc.).
-The resulting HTML-reports provide a transparent and comprehensible overview over the compliance-status for each of the different settings and configurations suggested inside the provided industry standards and hardening guides. 
+The Audit Test Automation Package (AuditTAP or ATAP) offers a comprehensive overview of your systems' compliance with established hardening guidelines. This package includes a variety of industry standards and hardening guides authored by leading organizations (e.g., Microsoft, CIS, BSI), enabling a robust assessment of security adherence.
 
-The package consists of the following PowerShell modules:
+Generated HTML reports provide a transparent and detailed summary of compliance status for each relevant setting and configuration specified in the selected standards. 
 
-* ATAPHtmlReport
-* ATAPAuditor
+AuditTAP consists of the following PowerShell modules:
+
+* ATAPHtmlReport – generates comprehensive HTML compliance reports.
+* ATAPAuditor – audits configurations against established hardening guidelines.
 
 ## Installation
 
-We offer several ways of how you can use our free of charge Audit Test Automation Package (AuditTAP). 
-Find several detailed explanations below and use them as follows:
+There are several ways to install and use ATAP. Choose the method that best fits your environment:
 
-* Installation via PSGallery - just install our package directly from PowerShell Gallery.
-* Manual installation - use the manual way in case you do not have internet connectivity on the system you want to check. We are aware of these "non connected" scenarios for example in datacenter environments.
-* Use our installer to install or update
+* Installation via PSGallery – Install ATAP directly from the PowerShell Gallery.
+* Manual installation – For systems without internet access, follow the manual installation steps. This option is useful for isolated environments, such as certain datacenter setups.
+* Installer option – Use our installer to install or update ATAP easily.
 
 ### Prerequisites
 
@@ -74,21 +73,29 @@ Before proceeding with the installation, please ensure the following prerequisit
 
 #### Windows
 
-* PowerShell version 5.1
-* Administrative permissions on the system to be audited
+* PowerShell version 5.1 - To check your PowerShell version, run the following command:
+```PowerShell
+$PSVersionTable.PSVersion
+```
+* Administrative permissions on the system to be audited - Administrative permissions are required to query certain system information. Please note that the tool only generates a report and does not make any changes to the system.
 
 #### Linux
-For usage on Linux systems a PowerShell installation is required. The necessary steps depend on the Linux distribution and is documented [here](https://docs.microsoft.com/en-us/PowerShell/scripting/install/installing-PowerShell-on-linux).
+A PowerShell installation is required for usage on Linux systems. The installation steps vary by Linux distribution and are documented [here](https://docs.microsoft.com/en-us/PowerShell/scripting/install/installing-PowerShell-on-linux).
 
 ### Installation from PS Gallery
-Simple and straight-forward. Install  with a single line of code.
+Installing from the PowerShell Gallery is simple and straightforward. Run the following command:
 ```PowerShell
 Install-Module -Name ATAPAuditor
 ```
+Note: Ensure you are running PowerShell with administrative privileges to install the module successfully.
 
 ### Video tutorial for manual installation
-Following the well-known phrase "A picture is worth a thousand words" we visualized -installation in a roughly three minute video.
-The first half of the video guides through the process of manual installation, the second half shows installation via PowerShell Gallery.
+We’ve created a brief video tutorial (approximately 3 minutes long) to illustrate the installation process.
+
+* **First Part**: A step-by-step guide for manual installation.
+* **Second Part**: Demonstration of installation via the PowerShell Gallery.
+
+Use this video as a helpful resource to ensure a smooth installation!
 
 <div align="center">
    <a href="https://www.youtube-nocookie.com/embed/5fJGdHCxqpM">
@@ -101,41 +108,43 @@ The first half of the video guides through the process of manual installation, t
 See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerShell/scripting/developer/module/installing-a-PowerShell-module) guide for more specific instructions.
 
 1. Download the most [recent release](https://github.com/fbprogmbh/Audit-Test-Automation/releases/latest)
-2. In case your systems security configuration prevents direct execution / access on internet based ("untrusted") files you may need to "unblock" the file first. 
+2. If your system's security configuration prevents direct execution or access to internet based ("untrusted") files, you may need to "unblock" the file first to allow execution. 
 
 ```PowerShell
 Unblock-File -Path .\Audit-Test-Automation-5.9.0.zip -Verbose
 ```
-The following screenshot shows the output:
+The following screenshot shows the expected output:
 
 ![grafik](https://user-images.githubusercontent.com/35689334/208451043-e183cb31-629c-493c-a46b-97d14c002e70.png)
 
-3. Extract the archive, for example by using the following commands in PowerShell or by using your favourite unzipping toolset.  
-When using PowerShell, please check correct version number with below code example.
+3. Extract the archive using PowerShell (adjust the version number as needed) or your preferred unzipping toolset.
 
 ```PowerShell
 Expand-Archive -Path ".\Audit-Test-Automation-5.9.0.zip" -DestinationPath "AuditTAP"
 ```
-4. Copy `ATAPAuditor` and `ATAPHtmlReport` modules to any of the paths of `$env:PSModulePath`.
+4. Copy the `ATAPAuditor` and `ATAPHtmlReport` modules into one of the directories listed in `$env:PSModulePath` to make them accessible in PowerShell. Use the `$env:PSModulePath` command to view available directories.
 
 
 ### Installer
 
-Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The wizard will guide you through the installation steps to install the necessary modules, along with a convenient Start-menu shortcut.
+Download the installer from the [releases](https://github.com/fbprogmbh/Audit-Test-Automation/releases) page. The installation wizard will guide you through the steps, including installing the necessary modules and creating a convenient Start menu shortcut.
 
 
 ## Usage
 
-Optionally, import `ATAPAuditor` module:
+Optionally, you can import `ATAPAuditor` module:
 
 ```PowerShell
 Import-Module -Name ATAPAuditor
 ```
 
-By default the module creates a new report in `Documents\ATAPReports` folder. A list of all available reports can be found in [above table](#reports). Just substitute the `ReportName` with the name of the benchmark. Append `-Path` to specify output folder.
+By default the module creates a new report in `Documents\ATAPReports` folder. If you wish to specify a different output folder, you can use the `-Path` parameter.
+
+A list of all available reports can be found in this [table](#reports) further down in this document. Just substitute `ReportName` with the name of the benchmark.
+
 
 :exclamation: 
-ATAP is only compatible with PowerShell 5.1. When run in a different PowerShell version, the user will be prompted to open a PowerShell 5 console or stop the script.
+**ATAP is only compatible with PowerShell 5.1.** If you run it in a different PowerShell version, you will be prompted to open a PowerShell 5 console or stop the script.
 :exclamation: 
 
 **Examples:**
@@ -148,9 +157,9 @@ Save-ATAPHtmlReport -ReportName "Microsoft Windows Server 2022" -Path C:\Temp
 Save-ATAPHtmlReport -ReportName "Google Chrome"
 Save-ATAPHtmlReport -ReportName "Ubuntu 20.04"
 ```
-Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters and select the desired  report using arrow-keys.
+Pro-Tip: After typing *Save-ATAPHtmlReport -ReportName*, use the keyboard shortcut `<ctrl>` + `<space>` to display all available parameters. You can then select the desired report using the arrow keys. This feature is available once the module is imported.
 
-The `ATAPAuditor` module also provides a simple menu based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
+The `ATAPAuditor` module also provides a simple menu-based runner for reports. It can be found in `ATAPAuditor\Helpers\Menu.ps1`. When using the Windows based installer, a shortcut can be found in the start menu.
 
 ## How to Update
 If you already have AuditTAP installed and want to update it, you can find detailed instructions in our [Wiki](https://github.com/fbprogmbh/Audit-Test-Automation/wiki), along with other useful and interesting information.
