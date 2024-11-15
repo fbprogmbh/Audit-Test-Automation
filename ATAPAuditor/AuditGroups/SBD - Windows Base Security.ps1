@@ -2,7 +2,7 @@ $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 [AuditTest] @{
-	Id = "SBD-009"
+	Id = "SBD-201"
 	Task = "Get License status."
 	Test = {	
 		$license = Get-LicenseStatus
@@ -19,7 +19,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-010"
+	Id = "SBD-202"
 	Task = "Get amount of active local users on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
 	Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation",  "Standalone Server", "Member Server"}
@@ -62,7 +62,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-011"
+	Id = "SBD-203"
 	Task = "Get amount of users and groups in administrators group on system. (0 - 2: True; 3 - 5: Warning; 6 or higher: False)"
 	Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Standalone Workstation", "Member Workstation",  "Standalone Server", "Member Server"}
@@ -86,45 +86,40 @@ $RootPath = Split-Path $RootPath -Parent
 				}
 			}
 
-			$allgroups = Get-LocalGroup "Administrators" | Get-LocalGroupMember 
+			$allgroups = Get-LocalGroup -SID "S-1-5-32-544" | Get-LocalGroupMember 
 			[int]$ADCount = 0
 			[int]$localCount = 0
 			foreach ($entry in $allgroups) {
 				if ($entry.PrincipalSource -eq "ActiveDirectory") {
-					if ($entry.ObjectClass -eq "Group") {
-						# only applies to ActiveDirectory Groups
-						$group = $entry.Name -split '\\' | Select-Object -Last 1
-						$ADCount += Get-ADAdminCount $group
-					} else {
-						$ADCount++
-					}
-				} elseif ($entry.PrincipalSource -eq "Local") {
-					if ($entry.ObjectClass -eq "Group") {
-						# only applies to Local Groups
-						$group = $entry.Name -split '\\' | Select-Object -Last 1
-						$localCount += (Get-LocalGroupMember $group).Count
-					} else {
-						$localCount++
-					}
+					$group = $entry.Name -split '\\' | Select-Object -Last 1
+					$ADCount += Get-ADAdminCount $group
+					continue;
+				} 
+				# only applies to Local Groups
+				$group = $entry.Name -split '\\' | Select-Object -Last 1
+				try {
+					$localCount += (Get-LocalGroupMember $group -ErrorAction Stop).Count
+				} catch [Microsoft.PowerShell.Commands.NotFoundException]{
+					$localCount++;
 				}
 			}
 			[int]$amountOfUserAndGroups = $ADCount + $localCount
 			$status = switch ($amountOfUserAndGroups) {
 				{($amountOfUserAndGroups -ge 0) -and ($amountOfUserAndGroups -le 2)}{ # 0, 1, 2
 					@{
-						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
+						Message = "Total amount of users: $amountOfUserAndGroups <br/> Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/>"
 						Status = "True"
 					}
 				}
 				{($amountOfUserAndGroups -gt 2) -and ($amountOfUserAndGroups -le 5)}{ # 3, 4, 5
 					@{
-						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
+						Message = "Total amount of users: $amountOfUserAndGroups <br/> Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/>"
 						Status = "Warning"
 					}
 				}
 				{$amountOfUserAndGroups -gt 5}{ # 6, ...
 					@{
-						Message = "Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/> Amount of entries: $amountOfUserAndGroups <br/>"
+						Message = "Total amount of users: $amountOfUserAndGroups <br/> Amount of local users: $localCount <br/> Amount of domain users: $ADCount <br/>"
 						Status = "False"
 					}
 				}
@@ -146,7 +141,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-012"
+	Id = "SBD-204"
 	Task = "Ensure the status of the Bitlocker service is 'Running'."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -175,7 +170,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-013"
+	Id = "SBD-205"
 	Task = "Ensure that Bitlocker is activated on all volumes."
 	Test = {
 		try {
@@ -229,7 +224,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-014"
+	Id = "SBD-206"
 	Task = "Ensure the status of the Windows Defender service is 'Running'."
 	Test = {
 		try{
@@ -258,7 +253,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-015"
+	Id = "SBD-207"
 	Task = "Ensure Windows Defender Application Guard is enabled."
 	Test = {
 		$isWindows10OrNewer = isWindows10OrNewer
@@ -284,7 +279,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-016"
+	Id = "SBD-208"
 	Task = "Ensure the Windows Firewall is enabled on all profiles."
 	Test = {
 		if (isWindows8OrNewer) {
@@ -322,7 +317,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-017"
+	Id = "SBD-209"
 	Task = "Check if the last successful search for updates was in the past 24 hours."
 	Test = {
 		try {
@@ -365,7 +360,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-018"
+	Id = "SBD-210"
 	Task = "Check if the last successful installation of updates was in the past 5 days." # Windows defender definitions do count as updates
 	Test = {
 		try{
@@ -425,7 +420,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-019"
+	Id = "SBD-211"
 	Task = "Ensure Virtualization Based Security is enabled and running."
 	Test = {
 		$isWindows10OrNewer = isWindows10OrNewer
@@ -466,7 +461,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-020"
+	Id = "SBD-212"
 	Task = "Ensure Hypervisor-protected Code Integrity (HVCI) is running."
 	Test = {
 		$isWindows10OrNewer = isWindows10OrNewer
@@ -491,7 +486,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-021"
+	Id = "SBD-213"
 	Task = "Ensure Credential Guard is running."
 	Test = {
 		$value = isWindows10OrNewer
@@ -537,7 +532,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-022"
+	Id = "SBD-214"
 	Task = "Ensure Attack Surface Reduction (ASR) rules are enabled."
 	Test = {
 		if (isWindows10OrNewer) {
