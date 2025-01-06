@@ -43,7 +43,19 @@ function Test-FirewallPaths {
         }
     }
     END {
-        if ((Get-NetFirewallProfile -Name $ProfileType -ErrorAction SilentlyContinue).$Key -eq $expectedValue) {
+        $FirewallProfile = (Get-NetFirewallProfile -Name $ProfileType -ErrorAction SilentlyContinue)
+        $FirewallProfileValue = $FirewallProfile.$Key
+        # check whether value is a number
+        if ($FirewallProfileValue -is [int32] -or $FirewallProfileValue -is [uint32] -or $FirewallProfileValue -is [int64] -or $FirewallProfileValue -is [uint64]) {
+            # if value is a number, the value may also be greater and equals to the expectedvalue
+            if ($FirewallProfileValue -ge $expectedValue) {
+                $Result = @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
+        }
+        if ($FirewallProfileValue -eq $expectedValue) {
             $Result = @{
                 Message = "Compliant"
                 Status  = "True"
