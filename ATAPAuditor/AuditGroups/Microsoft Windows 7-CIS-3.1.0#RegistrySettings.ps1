@@ -479,7 +479,8 @@ $RootPath = Split-Path $RootPath -Parent
                 -Name "LegalNoticeText" `
                 | Select-Object -ExpandProperty "LegalNoticeText"
         
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"
@@ -510,13 +511,18 @@ $RootPath = Split-Path $RootPath -Parent
     Task = "(L1) Configure 'Interactive logon: Message title for users attempting to log on'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
-            if ($regValue.legalnoticetext -notmatch ".+" -or [string]::IsNullOrWhiteSpace($regValue.legalnoticetext) -or [string]::IsNullOrEmpty($regValue.legalnoticetext) -or ($regValue.legalnoticetext.length -eq "1")) {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" `
+                -Name "LegalNoticeCaption" `
+                | Select-Object -ExpandProperty "LegalNoticeCaption"
+
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
-                    Message = "Registry value is '$($regValue.legalnoticetext)'. Expected: Matching expression '.+'"
+                    Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"
                 }
-            } 
+            }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
