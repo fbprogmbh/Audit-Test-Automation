@@ -184,7 +184,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 15)) {
+        if ($setPolicy -lt 15) {
             return @{
                 Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
                 Status = "False"
@@ -226,34 +226,6 @@
     }
 }
 [AuditTest] @{
-    Id = "1.2.3"
-    Task = "(L1) Ensure 'Allow Administrator account lockout' is set to 'Enabled'"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["AllowAdministratorLockout"]
-        
-        if ($null -eq $setPolicy) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        $setPolicy = [long]$setPolicy
-        
-        if ($setPolicy -ne 1) {
-            return @{
-                Message = "'AllowAdministratorLockout' currently set to: $setPolicy. Expected: 1"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "1.2.4"
     Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
     Test = {
@@ -268,7 +240,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 15)) {
+        if ($setPolicy -lt 15) {
             return @{
                 Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
                 Status = "False"
