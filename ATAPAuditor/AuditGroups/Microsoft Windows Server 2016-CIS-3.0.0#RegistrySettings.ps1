@@ -380,9 +380,6 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "2.3.6.1"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -419,9 +416,6 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "2.3.6.2"
     Task = "(L1) Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -458,9 +452,6 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "2.3.6.3"
     Task = "(L1) Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -497,9 +488,6 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "2.3.6.4"
     Task = "(L1) Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -536,9 +524,6 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "2.3.6.5"
     Task = "(L1) Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -575,9 +560,6 @@ $windefrunning = CheckWindefRunning
 [AuditTest] @{
     Id = "2.3.6.6"
     Task = "(L1) Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
-    Constraints = @(
-        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
