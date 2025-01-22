@@ -12,7 +12,7 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = "DISA Recommendations"
-			Description = "This section contains all recommendations from the Windows Server 2016 Security Technical Implementation Guide V1R5 2018-07-27"
+			Description = "This section contains all recommendations from the DISA Windows Server 2016 Security Technical Implementation Guide"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Account Policies"
@@ -43,7 +43,7 @@
 		}
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
-			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 RTM (Release 1607)"
+			Description = "This section contains all benchmarks from CIS Microsoft Windows Server 2016 Benchmark"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Account Policies"
@@ -69,7 +69,7 @@
 		}
 		[ReportSection] @{
 			Title = "Microsoft Benchmarks"
-			Description = "This section contains all benchmarks from Microsoft Microsoft Windows Server 2016 RTM (Release 1607) Benchmark v1.2.0 - 14-05-2020. WARNING: Tests in this version haven't been fully tested yet."
+			Description = "This section contains all benchmarks from Microsoft Security baseline for Windows Server 2016"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
