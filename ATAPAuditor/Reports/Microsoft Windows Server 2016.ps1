@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: 1.12, Date: 2020-06-17"
-		"CIS Microsoft Windows Server 2016 RTM (Release 1607) Benchmark, Version: 3.0.0, Date: 2024-04-19"
+		"CIS Microsoft Windows Server 2016 Benchmark, Version: 3.0.0, Date: 2024-04-19"
 		"Microsoft Security baseline for Windows Server 2016, Version: FINAL, Date 2016-10-17"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
