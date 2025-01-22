@@ -4,7 +4,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"Security baseline for Microsoft Windows Server 2022, Version: FINAL, Date 2021-09-27"
-		"CIS Microsoft Windows Server 2022, Version: 2.0.0, Date 2023-04-14"
+		"CIS Microsoft Windows Server 2022, Version: 3.0.0, Date 2023-04-14"
 		"DISA Windows Server 2022, Version: V1R1, Date 2022-09-28"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
@@ -16,23 +16,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#SecurityOptions"
 				}
 			)
 		}

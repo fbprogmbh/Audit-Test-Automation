@@ -374,7 +374,8 @@ $windefrunning = CheckWindefRunning
                 -Name "LegalNoticeText" `
                 | Select-Object -ExpandProperty "LegalNoticeText"
         
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"
@@ -410,7 +411,8 @@ $windefrunning = CheckWindefRunning
                 -Name "LegalNoticeCaption" `
                 | Select-Object -ExpandProperty "LegalNoticeCaption"
         
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"
