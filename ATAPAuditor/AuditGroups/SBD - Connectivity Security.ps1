@@ -1,5 +1,10 @@
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$listOfWeakCipherSuites = getListOfWeakCipherSuites
+$listOfInsecureCipherSuites = getListOfInsecureCipherSuites
 [AuditTest] @{
-	Id = "SBD-035"
+	Id = "SBD-401"
 	Task = "Ensure system is configured to deny remote access via Terminal Services."
 	Test = {
 		$value = (Get-ItemProperty -path "HKLM:\System\CurrentControlSet\Control\Terminal Server").fDenyTSConnections
@@ -16,7 +21,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-036"
+	Id = "SBD-402"
 	Task = "Ensure system is configured to prevent RDP service."
 	Test = {
 		$value = (Get-ItemProperty -path "HKLM:\System\CurrentControlSet\Control\Terminal Server").AllowRemoteRPC
@@ -33,7 +38,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-037"
+	Id = "SBD-403"
 	Task = "Ensure NTLM Session Server Security settings are configured."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0').NtlmMinServerSec
@@ -50,7 +55,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-038"
+	Id = "SBD-404"
 	Task = "Ensure WinFW Service is running."
 	Test = {
         try{
@@ -75,7 +80,7 @@
 	}
 }
 [AuditTest] @{
-    Id = "SBD-039"
+    Id = "SBD-405"
     Task = "Ensure NetBIOS is set to 'Disabled' for all active Network cards."
     Test = {
         try{
@@ -121,7 +126,7 @@
     }
 }
 [AuditTest] @{
-	Id = "SBD-040"
+	Id = "SBD-406"
 	Task = "Ensure SMBv1 is set to 'Disabled'."
 	Test = {
 		$value = (Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol).State
@@ -139,7 +144,7 @@
 }
 
 [AuditTest] @{
-    Id = "SBD-041"
+    Id = "SBD-407"
     Task = "Disable SSLv2 Protocol (Server)"
     Test = {
         try {
@@ -175,7 +180,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-042"
+    Id = "SBD-408"
     Task = "Disable SSLv2 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -211,7 +216,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-043"
+    Id = "SBD-409"
     Task = "Disable SSLv2 Protocol (Client)"
     Test = {
         try {
@@ -247,7 +252,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-044"
+    Id = "SBD-410"
     Task = "Disable SSLv2 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -283,7 +288,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-045"
+    Id = "SBD-411"
     Task = "Disable SSLv3 Protocol (Server)"
     Test = {
         try {
@@ -319,7 +324,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-046"
+    Id = "SBD-412"
     Task = "Disable SSLv3 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -355,7 +360,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-047"
+    Id = "SBD-413"
     Task = "Disable SSLv3 Protocol (Client)"
     Test = {
         try {
@@ -391,7 +396,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-048"
+    Id = "SBD-414"
     Task = "Disable SSLv3 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -427,7 +432,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-049"
+    Id = "SBD-415"
     Task = "Disable TLS1.0 Protocol (Server)"
     Test = {
         try {
@@ -463,7 +468,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-050"
+    Id = "SBD-416"
     Task = "Disable TLS1.0 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -499,7 +504,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-051"
+    Id = "SBD-417"
     Task = "Disable TLS1.0 Protocol (Client)"
     Test = {
         try {
@@ -535,7 +540,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-052"
+    Id = "SBD-418"
     Task = "Disable TLS1.0 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -571,7 +576,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-053"
+    Id = "SBD-419"
     Task = "Disable TLS1.1 Protocol (Server)"
     Test = {
         try {
@@ -607,7 +612,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-054"
+    Id = "SBD-420"
     Task = "Disable TLS1.1 Protocol (Server DisabledByDefault)"
     Test = {
         try {
@@ -643,7 +648,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-055"
+    Id = "SBD-421"
     Task = "Disable TLS1.1 Protocol (Client)"
     Test = {
         try {
@@ -679,7 +684,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-056"
+    Id = "SBD-422"
     Task = "Disable TLS1.1 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -715,7 +720,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-057"
+    Id = "SBD-423"
     Task = "Enable TLS1.2 Protocol (Server)"
     Test = {
         try {
@@ -759,7 +764,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-058"
+    Id = "SBD-424"
     Task = "Enable TLS1.2 Protocol (Server Default)"
     Test = {
         try {
@@ -795,7 +800,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-059"
+    Id = "SBD-425"
     Task = "Enable TLS1.2 Protocol (Client)"
     Test = {
         $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
@@ -852,7 +857,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-060"
+    Id = "SBD-426"
     Task = "Enable TLS1.2 Protocol (Client DisabledByDefault)"
     Test = {
         try {
@@ -888,7 +893,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-061"
+    Id = "SBD-427"
     Task = "Disable NULL Cipher"
     Test = {
         try {
@@ -924,7 +929,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-062"
+    Id = "SBD-428"
     Task = "Disable DES Cipher Suite"
     Test = {
         try {
@@ -960,7 +965,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-063"
+    Id = "SBD-429"
     Task = "Disable RC4 Cipher Suite - 40/128"
     Test = {
         try {
@@ -996,7 +1001,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-064"
+    Id = "SBD-430"
     Task = "Disable RC4 Cipher Suite - 56/128"
     Test = {
         try {
@@ -1032,7 +1037,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-065"
+    Id = "SBD-431"
     Task = "Disable RC4 Cipher Suite - 64/128"
     Test = {
         try {
@@ -1068,7 +1073,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-066"
+    Id = "SBD-432"
     Task = "Disable RC4 Cipher Suite - 128/128"
     Test = {
         try {
@@ -1104,7 +1109,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-067"
+    Id = "SBD-433"
     Task = "Disable AES 128/128 Cipher Suite"
     Test = {
         try {
@@ -1140,7 +1145,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-068"
+    Id = "SBD-434"
     Task = "Enable AES 256/256 Cipher Suite"
     Test = {
         try {
@@ -1184,7 +1189,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-069"
+    Id = "SBD-435"
     Task = "Disable Triple DES Cipher Suite"
     Test = {
         try {
@@ -1220,7 +1225,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-070"
+    Id = "SBD-436"
     Task = "Disable SHA-1 hash"
     Test = {
         try {
@@ -1256,7 +1261,7 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-071"
+    Id = "SBD-437"
     Task = "Disable MD5 hash"
     Test = {
         try {
@@ -1292,48 +1297,132 @@
     }
 }
 [AuditTest] @{
-    Id = "SBD-072"
+    Id = "SBD-438"
     Task = "Configure Cipher Suite Ordering"
     Test = {
+        #check if correct type 
+        $typeTable = @{
+            "String" = "String Value"
+            "Byte" = "Byte Value"
+            "Int32" = "DWORD (32-bit) Value"
+            "Int64" = "QWORD (64-bit) Value"
+            "String[]" = "Multi-String Value"
+        }
+        #Default status
+        $status = "Error"
+    
+        #Output
+        $verbInsecure = "rules have"
+        $verbWeak = "rules have"
+    
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
             -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
             -Name "Functions"
             $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
             $res = $regValue.Functions.GetType().Name
-                        
-            $typeTable = @{
-                "String" = "String Value"
-                "Byte" = "Byte Value"
-                "Int32" = "DWORD (32-bit) Value"
-                "Int64" = "QWORD (64-bit) Value"
-                "String[]" = "Multi-String Value"
-            }
+    
+    
             $currentType = $typeTable[$res]
-            $regValue = $regValue | Select-Object -ExpandProperty "Functions"
             if ($res -ne [String]) {
                 return @{  
-                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'String Value'"
                     Status = "False"
                 }
             }
-            if ($regValue -ne $reference) {
-                return @{                                                                               
-                    Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
-                    Status = "False"
+    
+            #check if insecure or weak cipher is inside value
+            $regValues = $regValue.Split(',')
+            $regValues = $regValues -replace ' ', ''
+            $weakRulesFound = @()
+            $insecureRulesFound = @()
+            foreach($element in $regValues){
+                if($listOfWeakCipherSuites.Contains($element)){
+                    $weakRulesFound += $element
+                }
+                if($listOfInsecureCipherSuites.Contains($element)){
+                    $insecureRulesFound += $element
+                }
+            }
+            if($insecureRulesFound.Count -eq 1){$verbInsecure = "rule has"}
+            if($weakRulesFound.Count -eq 1){$verbWeak = "rule has"}
+            $insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+            $weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+    
+            #Preparing message
+            foreach($member in $weakRulesFound){
+                $status = "Warning"
+                $weakMessage += "$($member)<br/>"
+            }          
+            foreach($member in $insecureRulesFound){
+                $status = "False"
+                $insecureMessage += "$($member)<br/>"
+            }          
+            #Combine or shorten message
+            if($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0){
+                $message = ""
+                if($weakRulesFound.Count -eq 0){ $weakMessage = "" }
+                if($insecureRulesFound.Count -eq 0){ $insecureMessage = "" }
+    
+                $message = $insecureMessage + $weakMessage
+                return @{
+                    Message = $message
+                    Status = $status
                 }
             }
         }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
+        catch {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002" `
+            -Name "Functions"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $res = $regValue.Functions.GetType().Name
+    
+            $currentType = $typeTable[$res]
+            if ($res -ne [String[]]) {
+                return @{  
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'Multi-String Value'"
+                    Status = "False"
+                }
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
+    
+            #check if insecure or weak cipher is inside value
+            $regValues = $regValue -replace ' ', ''
+            $weakRulesFound = @()
+            $insecureRulesFound = @()
+            foreach($element in $regValues){
+                if($listOfWeakCipherSuites.Contains($element)){
+                    $weakRulesFound += $element
+                }
+                if($listOfInsecureCipherSuites.Contains($element)){
+                    $insecureRulesFound += $element
+                }
+            }
+            if($insecureRulesFound.Count -eq 1){$verbInsecure = "rule has"}
+            if($weakRulesFound.Count -eq 1){$verbWeak = "rule has"}
+            $insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+            $weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+    
+            #Preparing message
+            foreach($member in $weakRulesFound){
+                $status = "Warning"
+                $weakMessage += "$($member)<br/>"
+            }          
+            foreach($member in $insecureRulesFound){
+                $status = "False"
+                $insecureMessage += "$($member)<br/>"
+            }          
+            #Combine or shorten message
+            if($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0){
+                $message = ""
+                if($weakRulesFound.Count -eq 0){ $weakMessage = "" }
+                if($insecureRulesFound.Count -eq 0){ $insecureMessage = "" }
+    
+                $message = $insecureMessage + $weakMessage
+                return @{
+                    Message = $message
+                    Status = $status
+                }
             }
         }
         

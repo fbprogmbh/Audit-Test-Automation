@@ -1,5 +1,5 @@
 [AuditTest] @{
-	Id = "SBD-023"
+	Id = "SBD-301"
 	Task = "Ensure PowerShell Version is set to version 5 or higher."
 	Test = {
 		if ($PSVersionTable.PSVersion.Major -ge 5) {
@@ -15,7 +15,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-024"
+	Id = "SBD-302"
 	Task = "Ensure PowerShell Version 2 is uninstalled."
 	Test = {
 		if((Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).state -eq 'Disabled'){
@@ -31,11 +31,11 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-025"
+	Id = "SBD-303"
 	Task = "Ensure PowerShell is set to configured to use Constrained Language."
 	Test = {
 		$languageMode = $ExecutionContext.SessionState.LanguageMode
-        if($languageMode -eq "Constrained Language"){
+        if($languageMode -eq "ConstrainedLanguage"){
             return @{
                 Message = "Compliant"
                 Status = "True"
@@ -48,7 +48,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-026"
+	Id = "SBD-304"
 	Task = "Ensure Execution policy is set to AllSigned / RemoteSigned."
 	Test = {
 		$execPolicy = Get-ExecutionPolicy
@@ -65,7 +65,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-027"
+	Id = "SBD-305"
 	Task = "Ensure PowerShell Commandline Audting is set to 'Enabled'."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit' -ErrorAction SilentlyContinue).ProcessCreationIncludeCmdLine_Enabled
@@ -82,7 +82,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-028"
+	Id = "SBD-306"
 	Task = "Ensure PowerShell Module Logging is set to 'Enabled'."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging' -ErrorAction SilentlyContinue).EnableModuleLogging
@@ -99,7 +99,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-029"
+	Id = "SBD-307"
 	Task = "Ensure PowerShell ScriptBlockLogging is set to 'Enabled'."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging' -ErrorAction SilentlyContinue).EnableScriptBlockLogging
@@ -116,7 +116,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-030"
+	Id = "SBD-308"
 	Task = "Ensure PowerShell ScriptBlockInvocationLogging is set to 'Enabled'."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging' -ErrorAction SilentlyContinue).EnableScriptBlockInvocationLogging
@@ -133,7 +133,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-031"
+	Id = "SBD-309"
 	Task = "Ensure PowerShell Transcripting is set to 'Enabled'."
 	Test = {	
 		$value = (Get-ItemProperty -path 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription' -ErrorAction SilentlyContinue).EnableTranscripting
@@ -150,7 +150,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-032"
+	Id = "SBD-310"
 	Task = "Ensure PowerShell InvocationHeader is set to 'Enabled'."
 	Test = {	
         $value = (Get-ItemProperty -path 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription' -ErrorAction SilentlyContinue).EnableInvocationHeader
@@ -167,7 +167,7 @@
 	}
 }
 [AuditTest] @{
-	Id = "SBD-033"
+	Id = "SBD-311"
 	Task = "Ensure PowerShell ProtectedEventLogging is set to 'Enabled'."
 	Test = {
 		$value = (Get-ItemProperty -path 'HKLM:\Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging' -ErrorAction SilentlyContinue).EnableProtectedEventLogging
@@ -184,7 +184,7 @@
     }
 }
 [AuditTest] @{
-	Id = "SBD-034"
+	Id = "SBD-312"
 	Task = "Ensure .NET Framework version supports PowerShell Version 2 is uninstalled."
 	Test = {
         $values = (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -Recurse -ErrorAction SilentlyContinue| Get-ItemProperty -Name Version -ErrorAction SilentlyContinue).Version

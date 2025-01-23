@@ -2,6 +2,11 @@
 using namespace Microsoft.Windows.ServerManager.Commands
 Import-Module IISAdministration -Force
 
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$listOfWeakCipherSuites = getListOfWeakCipherSuites
+$listOfInsecureCipherSuites = getListOfInsecureCipherSuites
 #region Helper Functions
 $MESSAGE_ALLGOOD = "All Good"
 
@@ -2484,7 +2489,7 @@ function Test-IISAES256Enabled {
 		$Key = Get-Item $path
 		if ($null -ne $Key.GetValue("Enabled", $null)) {
 			$value = Get-ItemProperty $path | Select-Object -ExpandProperty "Enabled"
-			if ($value -eq 0xffffffff) {
+			if ($value -eq 1) {
 				$message = $MESSAGE_ALLGOOD
 				$audit = "True"
 			}
@@ -2511,15 +2516,16 @@ function Test-IISTLSCipherOrder {
 	.Description
 		Cipher suites are a named combination of authentication, encryption, message authentication code, and key exchange algorithms used for the security settings of a network connection using TLS protocol. Clients send a cipher list and a list of ciphers that it supports in order of preference to a server. The server then replies with the cipher suite that it selects from the client cipher suite list.
 	#>
-
-    try 
-    {
+	$task = "Ensure TLS Cipher Suite ordering is correctly configured"
+	$id = "7.12"
+	try {
 		$regValue = Get-ItemProperty -ErrorAction Stop `
 		-Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
 		-Name "Functions"
 		$reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
 		$res = $regValue.Functions.GetType().Name
-					
+
+		#check if correct type 
 		$typeTable = @{
 			"String" = "String Value"
 			"Byte" = "Byte Value"
@@ -2527,45 +2533,160 @@ function Test-IISTLSCipherOrder {
 			"Int64" = "QWORD (64-bit) Value"
 			"String[]" = "Multi-String Value"
 		}
+
 		$currentType = $typeTable[$res]
-		$regValue = $regValue | Select-Object -ExpandProperty "Functions"
 		if ($res -ne [String]) {
 			@{
-                Id      = "7.12"
-                Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+                Id      = $id
+                Task    = $task
                 Status = "False"
-                Message = "Wrong Registry type! Registry type is '$currentType'. Expected: String Value"
+				Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'String Value'"
             } | Write-Output
 		}
+
+		#check if insecure or weak cipher is inside value
+		$regValues = $regValue.Split(',')
+		$regValues = $regValues -replace ' ', ''
+		$weakRulesFound = @()
+		$insecureRulesFound = @()
+		foreach($element in $regValues){
+			if($listOfWeakCipherSuites.Contains($element)){
+				$weakRulesFound += $element
+			}
+			if($listOfInsecureCipherSuites.Contains($element)){
+				$insecureRulesFound += $element
+			}
+		}
+		#Default status
+		$status = "Error"
+		
+		#Output
+		$verbInsecure = "rules have"
+		$verbWeak = "rules have"
+		if($insecureRulesFound.Count -eq 1){$verbInsecure = "rule has"}
+		if($weakRulesFound.Count -eq 1){$verbWeak = "rule has"}
+		$insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+		$weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+
+		#Preparing message
+		foreach($member in $weakRulesFound){
+			$status = "Warning"
+			$weakMessage += "$($member)<br/>"
+		}          
+		foreach($member in $insecureRulesFound){
+			$status = "False"
+			$insecureMessage += "$($member)<br/>"
+		}          
+		#Combine or shorten message
+		if($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0){
+			$message = ""
+			if($weakRulesFound.Count -eq 0){ $weakMessage = "" }
+			if($insecureRulesFound.Count -eq 0){ $insecureMessage = "" }
+
+			$message = $insecureMessage + $weakMessage
+			@{
+                Id      = $id
+                Task    = $task
+                Status  = $status
+                Message = $message
+            } | Write-Output
+		}
+
 		if ($regValue -ne $reference) {
 			@{
-                Id      = "7.12"
-                Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
-                Status  = "False"
-                Message = "Registry value is '$regValue'. To implement CIS recommendation, please consult <a href='https://www.tenable.com/audits/items/CIS_MS_IIS_10_v1.2.0_Level_2.audit:3a283f2bfffa27bf2edee4be256d3e08'>following tenable recommendations</a>"
+				Id      = $id
+				Task    = $task
+				Status  = "True"
+				Message = "Compliant"
+			} | Write-Output
+		}
+	}
+	catch {
+		$regValue = Get-ItemProperty -ErrorAction Stop `
+		-Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002" `
+		-Name "Functions"
+		$reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+		$res = $regValue.Functions.GetType().Name
+
+		#check if correct type 
+		$typeTable = @{
+			"String" = "String Value"
+			"Byte" = "Byte Value"
+			"Int32" = "DWORD (32-bit) Value"
+			"Int64" = "QWORD (64-bit) Value"
+			"String[]" = "Multi-String Value"
+		}
+
+		$currentType = $typeTable[$res]
+		if ($res -ne [String[]]) {
+			@{
+                Id      = $id
+                Task    = $task
+                Status = "False"
+                Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'Multi-String Value'"
             } | Write-Output
 		}
-    }
-    catch [System.Management.Automation.PSArgumentException] {
-        @{
-            Id      = "7.12"
-            Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
-            Status  = "False"
-            Message = "Registry value not found."
-        } | Write-Output
-    }
-    catch [System.Management.Automation.ItemNotFoundException] {
-        @{
-            Id      = "7.12"
-            Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
-            Status  = "False"
-            Message = "Registry key not found."
-        } | Write-Output
-    }
 
+		#check if insecure or weak cipher is inside value
+		$regValues = $regValue -replace ' ', ''
+		$weakRulesFound = @()
+		$insecureRulesFound = @()
+		foreach($element in $regValues){
+			if($listOfWeakCipherSuites.Contains($element)){
+				$weakRulesFound += $element
+			}
+			if($listOfInsecureCipherSuites.Contains($element)){
+				$insecureRulesFound += $element
+			}
+		}
+		#Default status
+		$status = "Error"
+		
+		#Output
+		$verbInsecure = "rules have"
+		$verbWeak = "rules have"
+		if($insecureRulesFound.Count -eq 1){$verbInsecure = "rule has"}
+		if($weakRulesFound.Count -eq 1){$verbWeak = "rule has"}
+		$insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+		$weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+
+		#Preparing message
+		foreach($member in $weakRulesFound){
+			$status = "Warning"
+			$weakMessage += "$($member)<br/>"
+		}          
+		foreach($member in $insecureRulesFound){
+			$status = "False"
+			$insecureMessage += "$($member)<br/>"
+		}          
+		#Combine or shorten message
+		if($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0){
+			$message = ""
+			if($weakRulesFound.Count -eq 0){ $weakMessage = "" }
+			if($insecureRulesFound.Count -eq 0){ $insecureMessage = "" }
+
+			$message = $insecureMessage + $weakMessage
+			@{
+                Id      = $id
+                Task    = $task
+                Status  = $status
+                Message = $message
+            } | Write-Output
+		}
+
+		if ($regValue -ne $reference) {
+			@{
+                Id      = $id
+                Task    = $task
+				Status = "True"
+				Message = "Compliant"
+            } | Write-Output
+		}
+	}
+	
     @{
-		Id      = "7.12"
-		Task    = "Ensure TLS Cipher Suite ordering is correctly configured"
+		Id      = $id
+		Task    = $task
 		Status  = "True"
 		Message = "Compliant"
 	} | Write-Output

@@ -41,8 +41,8 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if ($setPolicy -gt 365 -or $setPolicy -le 0) {
-            if($setPolicy -eq -1){
+        if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
+            if($setPolicy -eq -1){ #Setting 0 in GroupPolicy translates to -1 in AuditPolicy
                 $setPolicy = "Password never expires"
             }
             return @{
