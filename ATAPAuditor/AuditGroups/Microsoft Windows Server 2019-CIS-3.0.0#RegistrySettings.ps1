@@ -3289,6 +3289,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.4.1"
     Task = "(L1) Ensure 'Apply UAC restrictions to local accounts on network logons' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4044,7 +4047,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 }
 [AuditTest] @{
     Id = "18.6.4.1"
-    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 2 - 'Enabled: Disable NetBIOS name resolution on public networks' (or 0 - Disable NetBIOS name resolution)"
+    Task = "(L1) Ensure 'Configure NetBIOS settings' is set to 2 - 'Enabled: Disable NetBIOS name resolution on public networks' or 0 - 'Enabled: Disable NetBIOS name resolution'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -4052,9 +4055,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "EnableNetBIOS" `
                 | Select-Object -ExpandProperty "EnableNetBIOS"
         
-            if ($regValue -ne 2) -and ($regValue -ne 0) {
+            if ($regValue -ne 2 -and $regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2 or x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 0"
                     Status = "False"
                 }
             }
@@ -4628,12 +4631,28 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "\\*\NETLOGON" `
                 | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1"
-                    Status = "False"
+                if($regValue -eq $null){
+                    return @{
+                        Message = "Registry key not found."
+                        Status = "False"
+                    }
                 }
-            }
+                $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+    
+                $missingElements = @()
+                $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1", "Require Privacy")
+                foreach ($element in $elementsToCheck) {
+                    if ($array -notcontains $element) {
+                        $missingElements += $element
+                    }
+                }
+    
+                if ($missingElements.Length -gt 0) {
+                    return @{
+                        Message = ($missingElements -join " and ") + " not configured correctly."
+                        Status = "False"
+                    }
+                }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
@@ -4664,12 +4683,28 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "\\*\SYSVOL" `
                 | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1"
-                    Status = "False"
+                if($regValue -eq $null){
+                    return @{
+                        Message = "Registry key not found."
+                        Status = "False"
+                    }
                 }
-            }
+                $array = $regValue.Split(',') | ForEach-Object{ $_.Trim() }
+    
+                $missingElements = @()
+                $elementsToCheck = @("RequireMutualAuthentication=1", "RequireIntegrity=1", "Require Privacy")
+                foreach ($element in $elementsToCheck) {
+                    if ($array -notcontains $element) {
+                        $missingElements += $element
+                    }
+                }
+    
+                if ($missingElements.Length -gt 0) {
+                    return @{
+                        Message = ($missingElements -join " and ") + " not configured correctly."
+                        Status = "False"
+                    }
+                }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
@@ -4952,9 +4987,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "fMinimizeConnections" `
                 | Select-Object -ExpandProperty "fMinimizeConnections"
         
-            if ($regValue -ne 3) {
+            if ($null -eq $regValue -or $regValue -gt 3 -or $regValue -lt 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 3"
+                    Message = "Registry value is '$regValue'. Expected: 1-3"
                     Status = "False"
                 }
             }
@@ -4981,6 +5016,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.6.21.2"
     Task = "(L2) Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5204,9 +5242,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "ForceKerberosForRpc" `
                 | Select-Object -ExpandProperty "ForceKerberosForRpc"
         
-            if ($regValue -ne 0) -and ($regValue -ne 1) {
+            if ($regValue -ne 0 -and $regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0 or x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 1"
                     Status = "False"
                 }
             }
@@ -5600,9 +5638,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "RequirePlatformSecurityFeatures" `
                 | Select-Object -ExpandProperty "RequirePlatformSecurityFeatures"
         
-            if ($regValue -ne 1) -and ($regValue -ne 3) {
+            if ($regValue -ne 1 -and $regValue -ne 3) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 3"
                     Status = "False"
                 }
             }
@@ -5701,6 +5739,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.9.5.5"
     Task = "(NG) Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Enabled with UEFI lock' (MS Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -5737,6 +5778,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.9.5.6"
     Task = "(NG) Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Disabled' (DC Only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6077,14 +6121,14 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant. Registry value not found."
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Registry key not found."
-                Status = "False"
+                Message = "Compliant. Registry key not found."
+                Status = "True"
             }
         }
         
@@ -6708,7 +6752,7 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 }
 [AuditTest] @{
     Id = "18.9.25.1"
-    Task = "(L1) Ensure 'Configure password backup directory' is set to 'Enabled: Active Directory' or 'Enabled: Azure Active Directory'"
+    Task = "(L1) Ensure 'Configure password backup directory' is set to 2 - 'Enabled: Active Directory' or 1 - 'Enabled: Azure Active Directory'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -6716,9 +6760,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "BackupDirectory" `
                 | Select-Object -ExpandProperty "BackupDirectory"
         
-            if ($regValue -ne 1) -and ($regValue -ne 2) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1 or x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -6788,9 +6832,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "ADPasswordEncryptionEnabled" `
                 | Select-Object -ExpandProperty "ADPasswordEncryptionEnabled"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }
@@ -6896,9 +6940,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "PasswordAgeDays" `
                 | Select-Object -ExpandProperty "PasswordAgeDays"
         
-            if ($regValue -gt 30 -or $regValue -lt 0) {
+            if ($regValue -gt 30 -or $regValue -lt 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x <= 30 and x >= 0"
+                    Message = "Registry value is '$regValue'. Expected: x <= 30 and x >= 1"
                     Status = "False"
                 }
             }
@@ -6968,9 +7012,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "PostAuthenticationActions" `
                 | Select-Object -ExpandProperty "PostAuthenticationActions"
         
-            if ($regValue -ne 3) -and ($regValue -ne 5) {
+            if ($regValue -ne 3 -and $regValue -ne 5) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 3 or x == 5"
+                    Message = "Registry value is '$regValue'. Expected: 3 or 5"
                     Status = "False"
                 }
             }
@@ -7141,6 +7185,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.9.28.4"
     Task = "(L1) Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7573,6 +7620,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.9.36.1"
     Task = "(L1) Ensure 'Enable RPC Endpoint Mapper Client Authentication' is set to 'Enabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7609,6 +7659,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.9.36.2"
     Task = "(L2) Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -7789,6 +7842,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
 [AuditTest] @{
     Id = "18.9.51.1.2"
     Task = "(L1) Ensure 'Enable Windows NTP Server' is set to 'Disabled' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -8048,10 +8104,36 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "AllowCamera" `
                 | Select-Object -ExpandProperty "AllowCamera"
         
-            if ($regValue -ne 0) {
+            if ($regValue -eq 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
-                    Status = "False"
+                    Message = "Compliant"
+                    Status = "True"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" `
+                -Name "Value" `
+                | Select-Object -ExpandProperty "Value"
+        
+            if ($regValue -match "Deny") {
+        return @{
+            Message = "Compliant"
+            Status = "True"
                 }
             }
         }
@@ -8069,8 +8151,8 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
         }
         
         return @{
-            Message = "Compliant"
-            Status = "True"
+            Message = "Camera is not deactivated."
+            Status = "False"
         }
     }
 }
@@ -8156,9 +8238,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "RequirePinForPairing" `
                 | Select-Object -ExpandProperty "RequirePinForPairing"
         
-            if ($regValue -ne 1) -and ($regValue -ne 2) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1 or x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status = "False"
                 }
             }
@@ -8264,9 +8346,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "AllowTelemetry" `
                 | Select-Object -ExpandProperty "AllowTelemetry"
         
-            if ($regValue -ne 0) -and ($regValue -ne 1) {
+            if ($regValue -ne 0 -and $regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0 or x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 0 or 1"
                     Status = "False"
                 }
             }
@@ -9195,6 +9277,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "LocalSettingOverrideSpynetReporting" `
@@ -9231,6 +9319,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L2) Ensure 'Join Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
@@ -9267,12 +9361,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-                | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
-        
-            if ($regValue -ne 1) {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value = "ExploitGuard_ASR_Rules"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value2 = "ExploitGuard_ASR_Rules"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9303,12 +9422,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office communication application from creating child processes'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
-                | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9339,12 +9483,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating executable content'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
-                | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "3b576869-a4ec-4529-8536-b80a7769e899"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "3b576869-a4ec-4529-8536-b80a7769e899"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9375,12 +9544,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block abuse of exploited vulnerable signed drivers'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "56a863a9-875e-4185-98a7-b882c64b5ce5" `
-                | Select-Object -ExpandProperty "56a863a9-875e-4185-98a7-b882c64b5ce5"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "56a863a9-875e-4185-98a7-b882c64b5ce5" 
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "56a863a9-875e-4185-98a7-b882c64b5ce5" 
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9411,12 +9605,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block execution of potentially obfuscated scripts'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
-                | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9447,12 +9666,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from injecting code into other processes'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
-                | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9483,12 +9727,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Adobe Reader from creating child processes'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
-                | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9519,12 +9788,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Win32 API calls from Office macro'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b" `
-                | Select-Object -ExpandProperty "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9555,12 +9849,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block credential stealing from the Windows local security authority subsystem (lsass.exe)'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
-                | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9591,12 +9910,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block untrusted and unsigned processes that run from USB'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
-                | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9627,12 +9971,37 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block executable content from email client and webmail'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
-                | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9663,48 +10032,98 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block JavaScript or VBScript from launching downloaded executable content'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
-                | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
-        
-            if ($regValue -ne "1") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
+             if (-not $windefrunning) {
+                 return @{
+                     Message = "This rule requires Windows Defender Antivirus to be enabled."
+                     Status = "None"
+                 }
+             }
+             $regValue = 0;
+             $regValueTwo = 0;
+             $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+             $Value = "d3e037e1-3eb8-44c8-a917-57927947596d"
+ 
+             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+             if($asrTest1){
+                 $regValue = Get-ItemProperty -ErrorAction Stop `
+                     -Path $Path `
+                     -Name $Value `
+                     | Select-Object -ExpandProperty $Value
+             }
+ 
+             $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+             $Value2 = "d3e037e1-3eb8-44c8-a917-57927947596d"
+ 
+             $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+             if($asrTest2){
+                 $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                     -Path $Path2 `
+                     -Name $Value2 `
+                     | Select-Object -ExpandProperty $Value2
+             }
+ 
+             if ($regValue -ne 1 -and $regValueTwo -ne 1) {
+                 return @{
+                     Message = "Registry value is '$regValue'. Expected: 1"
+                     Status = "False"
+                 }
+             }
+         }
+         catch [System.Management.Automation.PSArgumentException] {
+             return @{
+                 Message = "Registry value not found."
+                 Status = "False"
+             }
+         }
+         catch [System.Management.Automation.ItemNotFoundException] {
+             return @{
+                 Message = "Registry key not found."
+                 Status = "False"
+             }
+         }
+         
+         return @{
+             Message = "Compliant"
+             Status = "True"
+         }
+     }
 }
 [AuditTest] @{
     Id = "18.10.42.6.1.2 L"
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block Office applications from creating child processes'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
-                | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
-        
-            if ($regValue -ne "1") {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if($asrTest1){
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                    | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if($asrTest2){
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                    | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
@@ -9735,42 +10154,73 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure Attack Surface Reduction rules: Block persistence through WMI event subscription'"
     Test = {
         try {
+        if (-not $windefrunning) {
+            return @{
+                Message = "This rule requires Windows Defender Antivirus to be enabled."
+                Status = "None"
+            }
+        }
+        $regValue = 0;
+        $regValueTwo = 0;
+        $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+        $Value = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+        $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+        if($asrTest1){
             $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
-                | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
-        
-            if ($regValue -ne "1") {
-                return @{
-                    Message = "Registry value is '$regValue'. Expected: 1"
-                    Status = "False"
-                }
-            }
+                -Path $Path `
+                -Name $Value `
+                | Select-Object -ExpandProperty $Value
         }
-        catch [System.Management.Automation.PSArgumentException] {
+
+        $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+        $Value2 = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+        $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+        if($asrTest2){
+            $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                -Path $Path2 `
+                -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+        }
+
+        if ($regValue -ne 1 -and $regValueTwo -ne 1) {
             return @{
-                Message = "Registry value not found."
+                Message = "Registry value is '$regValue'. Expected: 1"
                 Status = "False"
             }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
         }
     }
+    catch [System.Management.Automation.PSArgumentException] {
+        return @{
+            Message = "Registry value not found."
+            Status = "False"
+        }
+    }
+    catch [System.Management.Automation.ItemNotFoundException] {
+        return @{
+            Message = "Registry key not found."
+            Status = "False"
+        }
+    }
+    
+    return @{
+        Message = "Compliant"
+        Status = "True"
+    }
+}
 }
 [AuditTest] @{
     Id = "18.10.42.6.3.1"
     Task = "(L1) Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
     Test = {
         try {
+            if (-not $windefrunning) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection" `
                 -Name "EnableNetworkProtection" `
@@ -9807,6 +10257,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Enable file hash computation feature' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\MpEngine" `
                 -Name "EnableFileHashComputation" `
@@ -9843,6 +10299,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Scan all downloaded files and attachments' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableIOAVProtection" `
@@ -9857,8 +10319,8 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status = "False"
+                Message = "Compliant"
+                Status = "True"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
@@ -9879,6 +10341,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Turn off real-time protection' is set to 'Disabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableRealtimeMonitoring" `
@@ -9915,6 +10383,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableBehaviorMonitoring" `
@@ -9951,6 +10425,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Turn on script scanning' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableScriptScanning" `
@@ -9987,6 +10467,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L2) Ensure 'Configure Watson events' is set to 'Disabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting" `
                 -Name "DisableGenericReports" `
@@ -10023,6 +10509,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Scan packed executables' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisablePackedExeScanning" `
@@ -10059,6 +10551,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Scan removable drives' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableRemovableDriveScanning" `
@@ -10095,6 +10593,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableEmailScanning" `
@@ -10131,6 +10635,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Configure detection for potentially unwanted applications' is set to 'Enabled: Block'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender" `
                 -Name "PUAProtection" `
@@ -10167,6 +10677,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender" `
                 -Name "DisableAntiSpyware" `
@@ -11108,9 +11624,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "AllowWindowsInkWorkspace" `
                 | Select-Object -ExpandProperty "AllowWindowsInkWorkspace"
         
-            if ($regValue -ne 1) -and ($regValue -ne 0) {
+            if ($regValue -ne 1 -and $regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 1 or x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 0"
                     Status = "False"
                 }
             }
@@ -11643,6 +12159,12 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
     Task = "(L1) Ensure 'Prevent users from modifying settings' is set to 'Enabled'"
     Test = {
         try {
+            if ((-not $windefrunning)) {
+                return @{
+                    Message = "This rule requires Windows Defender Antivirus to be enabled."
+                    Status = "None"
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection" `
                 -Name "DisallowExploitProtectionOverride" `
