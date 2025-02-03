@@ -372,6 +372,9 @@ function checkReportNameWithOSSystem {
 	#helpers end
 
 	$osName = (Get-ComputerInfo OsName).OsName
+	if ($osName -eq "Microsoft Windows Server Standard") {
+		$osName = "Microsoft Windows Server 2019"
+	}
 	function Get-OsType {		
 		switch ($ReportName) {
 			"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
