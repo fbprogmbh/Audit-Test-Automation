@@ -504,3 +504,66 @@ $RootPath = Split-Path $RootPath -Parent
 		}
 	}
 }
+[AuditTest] @{
+	Id = "SBD-112"
+	Task = "Virtualization Based Security: Ensure Security Services are running."
+	Test = {
+		$value = isWindows10OrNewer
+		if($value -eq $false){
+			return @{
+				Message = "System does not support this feature (Windows 10 or newer required)."
+				Status = "None"
+			}
+		}
+		$serviceRunningIDs = (Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning
+		if ($serviceRunningIDs -contains 0) {
+			return @{
+				Message = "No Device Guard security services are running."
+				Status = "False"
+			}
+		} 
+		if ($serviceRunningIDs -contains 1) {
+			$message += "Credential Guard"
+		}
+		if ($serviceRunningIDs -contains 2) {
+			if (![string]::IsNullOrEmpty($message)) {
+				$message += ", "
+			}
+			$message += "Memory Integrity (HVCI)"
+		}
+		if ($serviceRunningIDs -contains 3) {
+			if (![string]::IsNullOrEmpty($message)) {
+				$message += ", "
+			}
+			$message += "System Guard Secure Launch"
+		}
+		if ($serviceRunningIDs -contains 4) {
+			if (![string]::IsNullOrEmpty($message)) {
+				$message += ", "
+			}
+			$message += "SMM Firmware Measurement"
+		}
+		if ($serviceRunningIDs -contains 5) {
+			if (![string]::IsNullOrEmpty($message)) {
+				$message += ", "
+			}
+			$message += "Kernel-mode Hardware-enforced Stack Protection"
+		}
+		if ($serviceRunningIDs -contains 6) {
+			if (![string]::IsNullOrEmpty($message)) {
+				$message += ", "
+			}
+			$message += "Kernel-mode Hardware-enforced Stack Protection is configured in Audit mode"
+		}
+		if ($serviceRunningIDs -contains 7) {
+			if (![string]::IsNullOrEmpty($message)) {
+				$message += ", "
+			}
+			$message += "Hypervisor-Enforced Paging Translation"
+		} 
+		return @{
+			Message = "$message are running on Device Guard as services."
+			Status = "True"
+		}
+	}
+}
