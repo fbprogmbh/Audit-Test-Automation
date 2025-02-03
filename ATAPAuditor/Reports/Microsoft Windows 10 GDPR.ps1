@@ -9,18 +9,8 @@
 	)
 	Sections = @(
 		[ReportSection] @{
-			Title = "BSI Recommendations"
-			Description = "This section contains the Telemetry-Recommendations of the Federal Office for Information Security (BSI)"
-			SubSections = @(
-				[ReportSection] @{
-					Title = "Telemetry"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
-				}
-			)
-		}
-		[ReportSection] @{
 			Title = "Data Protection Microsoft"
-			Description = "This section contains all benchmarks given by Microsoft to be GDPR compliant"
+			Description = "This section contains all Microsoft recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings"
@@ -29,8 +19,18 @@
 			)
 		}
 		[ReportSection] @{
+			Title = "BSI Recommendations"
+			Description = "This section contains all BSI recommendations"
+			SubSections = @(
+				[ReportSection] @{
+					Title = "Telemetry"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
+				}
+			)
+		}
+		[ReportSection] @{
 			Title = 'FB Pro recommendations'
-			Description = 'This section contains the FB Pro recommendations.'
+			Description = "This section contains all FB Pro recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'

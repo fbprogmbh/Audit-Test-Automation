@@ -11,7 +11,7 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = 'CIS Stand-alone Benchmarks'
-			Description = 'This section contains the CIS Benchmark results.'
+			Description = "This section contains all CIS recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Account Policies'
@@ -37,7 +37,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHuS Logging'
-			Description = 'This section contains the BSI Benchmark results.'
+			Description = "This section contains all BSI logging recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -51,7 +51,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHus-BSI Telemetrie'
-			Description = 'This section contains the BSI Benchmark results.'
+			Description = "This section contains all BSI telemetry recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -61,7 +61,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHuS NE'
-			Description = 'This section contains the BSI Benchmark results.'
+			Description = "This section contains all BSI NE recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -83,7 +83,7 @@
 		}	
 		[ReportSection] @{
 			Title = 'FB Pro recommendations'
-			Description = 'This section contains the FB Pro recommendations.'
+			Description = "This section contains all FB Pro recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
