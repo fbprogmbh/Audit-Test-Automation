@@ -3,7 +3,7 @@
 	Title = "Windows Server 2016 Audit Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: 1.12, Date: 2020-06-17"
+		"DISA Windows Server 2016 Security Technical Implementation Guide, Version: V1R12, Date: 2020-06-17"
 		"CIS Microsoft Windows Server 2016 Benchmark, Version: 3.0.0, Date: 2024-04-19"
 		"Microsoft Security baseline for Windows Server 2016, Version: FINAL, Date 2016-10-17"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
@@ -16,29 +16,20 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R12AccountPolicies"
 				},
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R12#SecurityOptions"
 				},
 				[ReportSection] @{
 					Title = "Registry Permissions"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R12#RegistrySettings"
 				},
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R12#AuditPolicies"
 				}
-				[ReportSection] @{
-					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-1.12#SecurityOptions"
-				}
-				#,
-				# [ReportSection] @{
-				# 	Title = "Other"
-				# 	AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-#Other"
-				# }
 			)
 		}
 		[ReportSection] @{
