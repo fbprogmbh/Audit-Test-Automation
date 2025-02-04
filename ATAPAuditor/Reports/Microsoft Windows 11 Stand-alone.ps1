@@ -37,7 +37,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHuS Logging'
-			Description = "This section contains all BSI logging recommendations"
+			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -51,7 +51,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHus-BSI'
-			Description = "This section contains all BSI recommendations"
+			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -61,7 +61,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHuS NE'
-			Description = "This section contains all BSI NE recommendations"
+			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'

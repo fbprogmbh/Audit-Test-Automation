@@ -9,8 +9,8 @@
 	)
 	Sections = @(
 		[ReportSection] @{
-			Title = "Data Protection Microsoft"
-			Description = "This section contains all Microsoft recommendations"
+			Title = "BSI Recommendations"
+			Description = "This section contains the Telemetry-Recommendations of the Federal Office for Information Security (BSI)"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings"
@@ -19,8 +19,8 @@
 			)
 		}
 		[ReportSection] @{
-			Title = "BSI Recommendations"
-			Description = "This section contains all BSI recommendations"
+			Title = "Data Protection Microsoft"
+			Description = "This section contains all benchmarks given by Microsoft to be GDPR compliant"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Telemetry"

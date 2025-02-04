@@ -66,7 +66,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHuS Logging'
-			Description = "This section contains all BSI logging recommendations"
+			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -94,7 +94,7 @@
 		if ($domainRole -eq 1) {
 			[ReportSection] @{
 				Title = 'BSI Benchmarks SiSyPHuS HD'
-				Description = "This section contains all BSI HD recommendations"
+				Description = 'This section contains the BSI Benchmark results.'
 				SubSections = @(
 					[ReportSection] @{
 						Title = 'Registry Settings/Group Policies'
@@ -117,7 +117,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHus-BSI Telemetrie'
-			Description = "This section contains all BSI telemetry recommendations"
+			Description = 'This section contains the BSI Benchmark results.'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
