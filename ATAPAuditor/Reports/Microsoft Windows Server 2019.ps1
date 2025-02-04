@@ -3,7 +3,7 @@
 	Title = "Windows Server 2019 Audit Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-        "Windows Server 2019 Security Technical Implementation Guide, Version: 1.5, Date: 2020-06-17"
+        "Windows Server 2019 Security Technical Implementation Guide, Version: V1R5, Date: 2020-06-17"
 		"CIS Microsoft Windows Server 2019 Benchmark, Version: 3.0.0, Date: 2024-03-19"
 		"Microsoft Security baseline for Windows Server 2019, Version: FINAL, Date 2019-06-18"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
@@ -16,19 +16,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R5#RegistrySettings"
 				},
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R5#AccountPolicies"
 				},
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R5#SecurityOptions"
 				},
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-1.5#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2019-DISA-V1R5#AuditPolicies"
 				}
 			)
 		}
