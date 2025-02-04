@@ -693,3 +693,20 @@ $RootPath = Split-Path $RootPath -Parent
 		}
 	}
 }
+[AuditTest] @{
+	Id = "SBD-215"
+	Task = "Ensure system is on 64-bit version"
+	Test = {	
+		$is64bit = [Environment]::Is64BitOperatingSystem
+		if($is64bit -eq $True){
+			return @{
+				Message = "Compliant"
+				Status = "True"
+			}
+		}
+		return @{
+			Message = "System not 64bit."
+			Status = "False"
+		}
+	}
+}
