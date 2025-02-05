@@ -1,4 +1,4 @@
-$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
@@ -1329,6 +1329,44 @@ $windefrunning = CheckWindefRunning
         return @{
             Message = "Compliant"
             Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "59 B"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices that match any of these device IDs' is configured. (PCI\CC_0C0A)"
+    Test = {
+        try {
+            $valueNames = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs"
+        
+            $expectedValue = "PCI\CC_0C0A"
+
+            foreach ($obj in $valueNames.PSObject.Properties) {
+                if ($obj.Value -eq $expectedValue) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Registry value is missing: $expectedValue"
+            Status = "False"
         }
     }
 }
