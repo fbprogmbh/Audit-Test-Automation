@@ -1407,7 +1407,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "60"
+    Id = "60 A"
     Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured."
     Test = {
         try {
