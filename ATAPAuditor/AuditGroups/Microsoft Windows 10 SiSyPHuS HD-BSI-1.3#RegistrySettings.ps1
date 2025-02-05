@@ -2199,6 +2199,42 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
+    Id = "59 C"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices that match any of these device IDs' is configured. (DenyDeviceIDsRetroactive)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Name "DenyDeviceIDsRetroactive" `
+                | Select-Object -ExpandProperty "DenyDeviceIDsRetroactive"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id = "60"
     Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured."
     Test = {
