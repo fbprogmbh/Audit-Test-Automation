@@ -1,4 +1,4 @@
-﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 $avstatus = CheckForActiveAV
@@ -1297,7 +1297,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "59"
+    Id = "59 A"
     Task = "(ND, NE) Ensure 'Prevent installation of devices that match any of these device IDs' is configured."
     Test = {
         try {
