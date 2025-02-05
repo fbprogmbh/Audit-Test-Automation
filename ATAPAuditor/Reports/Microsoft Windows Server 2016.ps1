@@ -16,7 +16,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R12AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2016-DISA-V1R12#AccountPolicies"
 				},
 				[ReportSection] @{
 					Title = "Security Options"
