@@ -1,4 +1,3 @@
-# this function does NOT check for the same logging file in different paths for LogFilePaths (public, private, domain)
 function Test-FirewallPaths {
     [CmdletBinding()]
     [OutputType([Object])]
@@ -21,6 +20,23 @@ function Test-FirewallPaths {
             Status  = "False"
         }
     )
+    BEGIN {
+        $FirewallProfiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
+        if ($Key -eq "LogFilePath") {
+            if ($FirewallProfiles -eq $null -or $FirewallProfiles.Count -lt 3) {
+                ### if profiles are empty, skip comparison and continue with other checks
+            } else {
+                if (($FirewallProfiles[0].LogFileName -eq $FirewallProfiles[1].LogFileName) -or
+                    ($FirewallProfiles[0].LogFileName -eq $FirewallProfiles[2].LogFileName) -or
+                    ($FirewallProfiles[1].LogFileName -eq $FirewallProfiles[2].LogFileName)) {
+                        return $Result = @{
+                            Message = "For better organization and identification of specific issues within each profile consider using separate logfiles for each profile."
+                            Status  = "Warning"
+                        }
+                    }
+            }
+        }
+    }
     PROCESS {
         $regValue = Get-ItemProperty -ErrorAction SilentlyContinue `
             -Path $Path `
@@ -43,7 +59,7 @@ function Test-FirewallPaths {
         }
     }
     END {
-        $FirewallProfile = (Get-NetFirewallProfile -Name $ProfileType -ErrorAction SilentlyContinue)
+        $FirewallProfile = $FirewallProfiles | Where-Object {$_.Name -eq $ProfileType}
         $FirewallProfileValue = $FirewallProfile.$Key
         # check whether value is a number
         if ($FirewallProfileValue -is [int32] -or $FirewallProfileValue -is [uint32] -or $FirewallProfileValue -is [int64] -or $FirewallProfileValue -is [uint64]) {
