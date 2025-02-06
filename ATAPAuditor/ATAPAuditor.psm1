@@ -372,6 +372,9 @@ function checkReportNameWithOSSystem {
 	#helpers end
 
 	$osName = (Get-ComputerInfo OsName).OsName
+	if ([string]::IsNullOrEmpty($osName)) {
+		return $ReportName # return initial ReportName and skip comparison
+	}
 	function Get-OsType {		
 		switch ($ReportName) {
 			"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
