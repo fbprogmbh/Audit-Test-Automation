@@ -370,63 +370,67 @@ function checkReportNameWithOSSystem {
 		return $ReportName
 	}
 	#helpers end
-
-	$osName = (Get-ComputerInfo OsName).OsName
-	if ([string]::IsNullOrEmpty($osName)) {
-		return $ReportName # return initial ReportName and skip comparison
-	}
-	function Get-OsType {		
+	try {
+		$osName = (Get-ComputerInfo OsName).OsName
+		if ([string]::IsNullOrEmpty($osName)) {
+			return $ReportName # return initial ReportName and skip comparison
+		}
+		function Get-OsType {		
+			switch ($ReportName) {
+				"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
+				"Microsoft Windows Server 2019" { return "Microsoft Windows Server 2019" }
+				"Microsoft Windows Server 2016" { return "Microsoft Windows Server 2016" }
+				"Microsoft Windows Server 2012" { return "Microsoft Windows Server 2012" }
+				"Microsoft Windows 11" { return "Microsoft Windows 11" }
+				"Microsoft Windows 11 Stand-alone" { return "Microsoft Windows 11" }
+				"Microsoft Windows 10" { return "Microsoft Windows 10" }
+				"Microsoft Windows 10 Stand-alone" { return "Microsoft Windows 10" }
+				"Microsoft Windows 10 GDPR" { return "Microsoft Windows 10" }
+				"Microsoft Windows 10 BSI" { return "Microsoft Windows 10" }
+				"Microsoft Windows 7" { return "Microsoft Windows 7" }
+			}
+		}
+		$osType = Get-OsType
 		switch ($ReportName) {
-			"Microsoft Windows Server 2022" { return "Microsoft Windows Server 2022" }
-			"Microsoft Windows Server 2019" { return "Microsoft Windows Server 2019" }
-			"Microsoft Windows Server 2016" { return "Microsoft Windows Server 2016" }
-			"Microsoft Windows Server 2012" { return "Microsoft Windows Server 2012" }
-			"Microsoft Windows 11" { return "Microsoft Windows 11" }
-			"Microsoft Windows 11 Stand-alone" { return "Microsoft Windows 11" }
-			"Microsoft Windows 10" { return "Microsoft Windows 10" }
-			"Microsoft Windows 10 Stand-alone" { return "Microsoft Windows 10" }
-			"Microsoft Windows 10 GDPR" { return "Microsoft Windows 10" }
-			"Microsoft Windows 10 BSI" { return "Microsoft Windows 10" }
-			"Microsoft Windows 7" { return "Microsoft Windows 7" }
+			"Microsoft Windows Server 2022" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
+			}
+			"Microsoft Windows Server 2019" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows Server 2016" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows Server 2012" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows 11" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows 11 Stand-alone" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeStandAlone $True
+			}
+			"Microsoft Windows 10" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows 10 Stand-alone" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeStandAlone $True
+			}
+			"Microsoft Windows 10 GDPR" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows 10 BSI" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
+			"Microsoft Windows 7" { 
+				return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
+			}
 		}
+		return $ReportName
+	} catch {
+		return $ReportName
 	}
-	$osType = Get-OsType
-	switch ($ReportName) {
-		"Microsoft Windows Server 2022" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType
-		}
-		"Microsoft Windows Server 2019" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows Server 2016" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows Server 2012" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows 11" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows 11 Stand-alone" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeStandAlone $True
-		}
-		"Microsoft Windows 10" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows 10 Stand-alone" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType -ShouldBeStandAlone $True
-		}
-		"Microsoft Windows 10 GDPR" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows 10 BSI" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-		"Microsoft Windows 7" { 
-			return returnSuitingReportName -ReportName $ReportName -OsName $osName -OsType $osType 
-		}
-	}
-	return $ReportName
+	
 }
 
 ### begin Foundation functions ###
