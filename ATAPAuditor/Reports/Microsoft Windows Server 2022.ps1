@@ -68,19 +68,19 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#SecurityOptions"
 				}
 			)
 		}
