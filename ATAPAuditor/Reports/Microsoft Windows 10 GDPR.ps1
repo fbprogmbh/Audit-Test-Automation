@@ -20,7 +20,7 @@
 		}
 		[ReportSection] @{
 			Title = "Data Protection Microsoft"
-			Description = "This section contains all benchmarks given by Microsoft to be GDPR compliant"
+			Description = "This section contains all Microsoft recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Telemetry"

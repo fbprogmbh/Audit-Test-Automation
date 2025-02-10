@@ -3,9 +3,9 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 11 Enterprise 3.0.0 Benchmark, Version: 3.0.0, Date: 2024-02-22"
-		"Security baseline for Microsoft Windows 11, Version: 22H2, Date: 2022-09-20"
-		"Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
-		"SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
+		"Microsoft Security baseline for Microsoft Windows 11, Version: 22H2, Date: 2022-09-20"
+		"BSI Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
+		"BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
 	)
@@ -64,7 +64,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHuS Logging'
-			Description = 'This section contains the BSI Benchmark results.'
+			Description = 'This section contains all BSI logging recommendations'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -92,7 +92,7 @@
 		if ($domainRole -eq 1) {
 			[ReportSection] @{
 				Title = 'BSI Benchmarks SiSyPHuS HD'
-			Description = 'This section contains the BSI Benchmark results.'
+			Description = 'This section contains all BSI HD recommendations'
 				SubSections = @(
 					[ReportSection] @{
 						Title = 'Registry Settings/Group Policies'
@@ -115,7 +115,7 @@
 		} else {
 			[ReportSection] @{
 				Title = 'BSI Benchmarks SiSyPHuS NE'
-				Description = 'This section contains the BSI Benchmark results.'
+				Description = 'This section contains all BSI NE recommendations'
 				SubSections = @(
 					[ReportSection] @{
 						Title = 'Registry Settings/Group Policies'
@@ -138,7 +138,7 @@
 		}
 		[ReportSection] @{
 			Title = 'BSI Benchmarks SiSyPHus-BSI'
-			Description = 'This section contains the BSI Benchmark results.'
+			Description = 'This section contains all BSI telemetry recommendations'
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
