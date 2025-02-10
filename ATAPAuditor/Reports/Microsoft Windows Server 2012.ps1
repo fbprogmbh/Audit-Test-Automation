@@ -11,7 +11,7 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
-			Description = "This section contains all benchmarks from CIS"
+			Description = "This section contains all CIS recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
@@ -38,7 +38,7 @@
 
 		[ReportSection] @{
 			Title = "DISA Benchmarks"
-			Description = "This section contains all benchmarks from DISA Microsoft Windows Server 2012 R2 Benchmark v2.19"
+			Description = "This section contains all DISA recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
@@ -56,7 +56,7 @@
 		}
 		[ReportSection] @{
 			Title = 'FB Pro recommendations'
-			Description = 'This section contains the FB Pro recommendations.'
+			Description = "This section contains all FB Pro recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
