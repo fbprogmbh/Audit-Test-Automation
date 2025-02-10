@@ -22,20 +22,6 @@ function Test-FirewallPaths {
     )
     BEGIN {
         $FirewallProfiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
-        if ($Key -eq "LogFilePath") {
-            if ($FirewallProfiles -eq $null -or $FirewallProfiles.Count -lt 3) {
-                ### if profiles are empty, skip comparison and continue with other checks
-            } else {
-                if (($FirewallProfiles[0].LogFileName -eq $FirewallProfiles[1].LogFileName) -or
-                    ($FirewallProfiles[0].LogFileName -eq $FirewallProfiles[2].LogFileName) -or
-                    ($FirewallProfiles[1].LogFileName -eq $FirewallProfiles[2].LogFileName)) {
-                        return $Result = @{
-                            Message = "For better organization and identification of specific issues within each profile consider using separate logfiles for each profile."
-                            Status  = "Warning"
-                        }
-                    }
-            }
-        }
     }
     PROCESS {
         $regValue = Get-ItemProperty -ErrorAction SilentlyContinue `
@@ -75,6 +61,20 @@ function Test-FirewallPaths {
             $Result = @{
                 Message = "Compliant"
                 Status  = "True"
+            }
+        }
+        if ($Key -eq "LogFilePath") {
+            if ($FirewallProfiles -eq $null -or $FirewallProfiles.Count -lt 3) {
+                ### if profiles are empty, skip comparison and continue with other checks
+            } else {
+                if (($FirewallProfiles[0].LogFileName -eq $FirewallProfiles[1].LogFileName) -or
+                    ($FirewallProfiles[0].LogFileName -eq $FirewallProfiles[2].LogFileName) -or
+                    ($FirewallProfiles[1].LogFileName -eq $FirewallProfiles[2].LogFileName)) {
+                        $Result = @{
+                            Message = "For better organization and identification of specific issues within each profile consider using separate logfiles for each profile."
+                            Status  = "Warning"
+                        }
+                    }
             }
         }
         return $Result
