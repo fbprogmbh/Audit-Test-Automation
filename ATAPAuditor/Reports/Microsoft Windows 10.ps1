@@ -131,23 +131,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R23#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R23#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R23#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R23#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-1.23#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-DISA-V1R23#SecurityOptions"
 				}
 			)
 		}

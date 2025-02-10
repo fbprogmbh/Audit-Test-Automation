@@ -419,118 +419,9 @@ $RootPath = Split-Path $RootPath -Parent
         }
 	}
 }
-[AuditTest] @{
-	Id = "SBD-211"
-	Task = "Ensure Virtualization Based Security is enabled and running."
-	Test = {
-		$isWindows10OrNewer = isWindows10OrNewer
-		if($isWindows10OrNewer -eq $false){
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
-			}
-		}
-		$obj = (Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).VirtualizationBasedSecurityStatus
-		$status = switch ($obj) {
-			{$PSItem -eq 2} {
-				return @{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			{$PSItem -eq 1} {
-				return @{
-					Message = "VBS is activated but not running."
-					Status = "False"
-				}
-			}
-			{$PSItem -eq 0} {
-				return @{
-					Message = "VBS is not activated."
-					Status = "False"
-				}
-			}
-			default {
-				return @{
-					Message = "Cannot get the VBS status."
-					Status = "Error"
-				}
-			}
-		}
-		return $status
-	}
-}
-[AuditTest] @{
-	Id = "SBD-212"
-	Task = "Ensure Hypervisor-protected Code Integrity (HVCI) is running."
-	Test = {
-		$isWindows10OrNewer = isWindows10OrNewer
-		if($isWindows10OrNewer -eq $false){
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
-			}
-		}
-		if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 2) {
-			return @{
-				Message = "Compliant"
-				Status = "True"
-			}
-		}
-		else {
-			return @{
-				Message = "HVCI is not running."
-				Status = "False"
-			}
-		}
-	}
-}
-[AuditTest] @{
-	Id = "SBD-213"
-	Task = "Ensure Credential Guard is running."
-	Test = {
-		$value = isWindows10OrNewer
-		if($value -eq $false){
-			return @{
-				Message = "System does not support this feature (Windows 10 or newer required)."
-				Status = "None"
-			}
-		}
-		$systemSKU = (Get-CimInstance Win32_OperatingSystem).Caption
-		$supportedSKUs = @("Windows Enterprise", "Windows Education", "Windows Server")
-
-		$system = $systemSKU -replace "\d\s*", ""
-		$system = $system -replace "Microsoft ", ""
-		if($supportedSKUs.Contains($system)){
-			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesRunning -contains 1) {
-				return @{
-					Message = "Compliant"
-					Status = "True"
-				}
-			}
-			else {
-				return @{
-					Message = "Credential Guard is not running."
-					Status = "False"
-				}
-			}
-		}
-		else{
-			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesConfigured -contains 1) {
-				return @{
-					Message = "Credential Guard is configured but not running, due to incompatibility with $($systemSKU) <br/>See Microsoft documentation for further information: <a href='https://learn.microsoft.com/en-us/windows/security/identity-protection/credential-guard/#windows-edition-and-licensing-requirements'>Here</a>"
-					Status = "False"
-				}
-			}
-			else {
-				return @{
-					Message = "Credential Guard is not configured."
-					Status = "False"
-				}
-			}
-		}
-	}
-}
+### SBD - 211 Placeholder
+### SBD - 212 Placeholder
+### SBD - 213 Placeholder
 [AuditTest] @{
 	Id = "SBD-214"
 	Task = "Ensure Attack Surface Reduction (ASR) rules are enabled."
@@ -690,6 +581,23 @@ $RootPath = Split-Path $RootPath -Parent
 			}
 
 			return $status
+		}
+	}
+}
+[AuditTest] @{
+	Id = "SBD-215"
+	Task = "Ensure system is on 64-bit version"
+	Test = {	
+		$is64bit = [Environment]::Is64BitOperatingSystem
+		if($is64bit -eq $True){
+			return @{
+				Message = "Compliant"
+				Status = "True"
+			}
+		}
+		return @{
+			Message = "System not 64bit."
+			Status = "False"
 		}
 	}
 }
