@@ -9,7 +9,7 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = 'CIS Benchmarks'
-			Description = 'This section contains the CIS Benchmark results.'
+			Description = "This section contains all CIS recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
@@ -27,7 +27,7 @@
 		}
 		[ReportSection] @{
 			Title = 'FB Pro recommendations'
-			Description = 'This section contains the FB Pro recommendations.'
+			Description = "This section contains all FB Pro recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'

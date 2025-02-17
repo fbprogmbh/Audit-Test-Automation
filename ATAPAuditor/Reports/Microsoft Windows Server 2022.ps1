@@ -3,8 +3,8 @@
 	Title = "Windows Server 2022 Audit Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"Security baseline for Microsoft Windows Server 2022, Version: FINAL, Date 2021-09-27"
-		"CIS Microsoft Windows Server 2022, Version: 2.0.0, Date 2023-04-14"
+		"CIS Microsoft Windows Server 2022, Version: 3.0.0, Date 2023-04-14"
+		"Microsoft Security baseline for Microsoft Windows Server 2022, Version: FINAL, Date 2021-09-27"
 		"DISA Windows Server 2022, Version: V1R1, Date 2022-09-28"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
@@ -12,33 +12,33 @@
 	Sections = @(
 		[ReportSection] @{
 			Title = "CIS Benchmarks"
-			Description = "This section contains all benchmarks from CIS"
+			Description = "This section contains all CIS recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "User Rights Assignment"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#UserRights"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = "Security Options"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-2.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-CIS-3.0.0#SecurityOptions"
 				}
 			)
 		}
 		[ReportSection] @{
 			Title = "Microsoft Benchmarks"
-			Description = "This section contains all benchmarks from Microsoft"
+			Description = "This section contains all Microsoft recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
@@ -64,29 +64,29 @@
 		}
 		[ReportSection] @{
 			Title = "DISA Benchmarks"
-			Description = "This section contains all benchmarks from DISA"
+			Description = "This section contains all DISA recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = "Registry Settings/Group Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = "Account Policies"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = "Advanced Audit Policy Configuration"
-					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-1.1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Server 2022-DISA-V1R1#SecurityOptions"
 				}
 			)
 		}
 		[ReportSection] @{
 			Title = 'FB Pro recommendations'
-			Description = 'This section contains the FB Pro recommendations.'
+			Description = "This section contains all FB Pro recommendations"
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'

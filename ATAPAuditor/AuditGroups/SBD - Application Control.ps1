@@ -2,7 +2,7 @@ $RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
 [AuditTest] @{
-    Id = "SBD-074"
+    Id = "SBD-501"
 	Task = "Ensure Windows Defender Application Control (WDAC) is available."
 	Test = {
         # check newer than win10
@@ -27,7 +27,7 @@ $RootPath = Split-Path $RootPath -Parent
 	}
 }
 [AuditTest] @{
-	Id = "SBD-075"
+	Id = "SBD-502"
 	Task = "Ensure Windows Defender Application ID Service is running."
 	Test = {
         try{
