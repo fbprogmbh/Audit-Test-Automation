@@ -187,15 +187,31 @@
 	Id = "SBD-312"
 	Task = "Ensure .NET Framework version supports PowerShell Version 2 is uninstalled."
 	Test = {
-        $values = (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -Recurse -ErrorAction SilentlyContinue| Get-ItemProperty -Name Version -ErrorAction SilentlyContinue).Version
-        foreach($value in $values){
-            if($value -lt 4){
-                return @{
-                    Message = ".NET Framework does exist for PowerShell Version 2."
-                    Status = "False"
-                }
+        $ps2Found = $false
+        $messages = "The following PS2-related features are enabled:"
+
+        $PSV2State = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).State
+        if ($PSV2State -ne "Disabled") {
+            $messages += "MicrosoftWindowsPowerShellV2 "
+            $ps2Found = $true
+        }
+
+        $os = Get-CimInstance Win32_OperatingSystem
+        if ($os.ProductType -eq 1) {
+            $PSRootState = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root).State
+            if ($PSRootState -ne "Disabled") {
+                $messages += "MicrosoftWindowsPowerShellV2Root "
+                $ps2Found = $true
             }
         }
+
+        if ($ps2Found -eq $true) {
+            return @{
+                Message = $messages
+                Status = "False"
+            }
+        }
+
         return @{
             Message = "Compliant"
             Status = "True"
