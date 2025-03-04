@@ -18,15 +18,34 @@
 	Id = "SBD-302"
 	Task = "Ensure PowerShell Version 2 is uninstalled."
 	Test = {
-		if((Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).state -eq 'Disabled'){
-            return @{
-                Message = "Compliant"
-                Status = "True"
+        $ps2Found = $false
+        $messages = "The following PS2-related features are enabled:"
+
+        $PSV2State = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).State
+        if ($PSV2State -ne "Disabled") {
+            $messages += "MicrosoftWindowsPowerShellV2 "
+            $ps2Found = $true
+        }
+
+        $os = Get-CimInstance Win32_OperatingSystem
+        if ($os.ProductType -eq 1) {
+            $PSRootState = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root).State
+            if ($PSRootState -ne "Disabled") {
+                $messages += "MicrosoftWindowsPowerShellV2Root "
+                $ps2Found = $true
             }
         }
+
+        if ($ps2Found -eq $true) {
+            return @{
+                Message = $messages
+                Status = "False"
+            }
+        }
+
         return @{
-            Message = "PowerShell Version 2 is supported."
-            Status = "False"
+            Message = "Compliant"
+            Status = "True"
         }
 	}
 }
@@ -182,39 +201,4 @@
             Status = "False"
         }
     }
-}
-[AuditTest] @{
-	Id = "SBD-312"
-	Task = "Ensure .NET Framework version supports PowerShell Version 2 is uninstalled."
-	Test = {
-        $ps2Found = $false
-        $messages = "The following PS2-related features are enabled:"
-
-        $PSV2State = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).State
-        if ($PSV2State -ne "Disabled") {
-            $messages += "MicrosoftWindowsPowerShellV2 "
-            $ps2Found = $true
-        }
-
-        $os = Get-CimInstance Win32_OperatingSystem
-        if ($os.ProductType -eq 1) {
-            $PSRootState = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root).State
-            if ($PSRootState -ne "Disabled") {
-                $messages += "MicrosoftWindowsPowerShellV2Root "
-                $ps2Found = $true
-            }
-        }
-
-        if ($ps2Found -eq $true) {
-            return @{
-                Message = $messages
-                Status = "False"
-            }
-        }
-
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-	}
 }
