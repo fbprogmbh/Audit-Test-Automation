@@ -23,7 +23,7 @@
 
         $PSV2State = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).State
         if ($PSV2State -ne "Disabled") {
-            $messages += "MicrosoftWindowsPowerShellV2 "
+            $messages += "(Windows PowerShell 2.0 Engine) "
             $ps2Found = $true
         }
 
@@ -31,7 +31,7 @@
         if ($os.ProductType -eq 1) {
             $PSRootState = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root).State
             if ($PSRootState -ne "Disabled") {
-                $messages += "MicrosoftWindowsPowerShellV2Root "
+                $messages += "(Windows PowerShell 2.0) "
                 $ps2Found = $true
             }
         }
