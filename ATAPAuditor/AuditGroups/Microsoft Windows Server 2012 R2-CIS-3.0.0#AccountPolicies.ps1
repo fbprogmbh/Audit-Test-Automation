@@ -41,12 +41,12 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
+        if ($setPolicy -gt 365 -or $setPolicy -le 0) {
             if($setPolicy -eq -1){ #Setting 0 in GroupPolicy translates to -1 in AuditPolicy
                 $setPolicy = "Password never expires"
             }
             return @{
-                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 and x > 0"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365  and x > 0 "
                 Status = "False"
             }
         }
@@ -72,7 +72,7 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 1)) {
+        if ($setPolicy -lt 1) {
             return @{
                 Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1"
                 Status = "False"
@@ -184,9 +184,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 15)) {
+        if ($setPolicy -lt 15 -or $setPolicy -gt 99999) {
             return @{
-                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15"
+                Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15 and x <= 99999"
                 Status = "False"
             }
         }
@@ -226,34 +226,6 @@
     }
 }
 [AuditTest] @{
-    Id = "1.2.3"
-    Task = "(L1) Ensure 'Allow Administrator account lockout' is set to 'Enabled'"
-    Test = {
-        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-        $setPolicy = $securityPolicy['System Access']["AllowAdministratorLockout"]
-        
-        if ($null -eq $setPolicy) {
-            return @{
-                Message = "Currently not set."
-                Status = "False"
-            }
-        }
-        $setPolicy = [long]$setPolicy
-        
-        if ($setPolicy -ne 1) {
-            return @{
-                Message = "'AllowAdministratorLockout' currently set to: $setPolicy. Expected: 1"
-                Status = "False"
-            }
-        }
-        
-        return @{
-            Message = "Compliant"
-            Status = "True"
-        }
-    }
-}
-[AuditTest] @{
     Id = "1.2.4"
     Task = "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'"
     Test = {
@@ -268,9 +240,9 @@
         }
         $setPolicy = [long]$setPolicy
         
-        if (($setPolicy -lt 15)) {
+        if ($setPolicy -gt 99999 -or $setPolicy -lt 15) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x >= 15"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x <= 99999 and x >= 15"
                 Status = "False"
             }
         }

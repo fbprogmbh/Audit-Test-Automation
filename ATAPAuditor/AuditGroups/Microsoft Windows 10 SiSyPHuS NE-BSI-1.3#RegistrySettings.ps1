@@ -1297,7 +1297,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "59"
+    Id = "59 A"
     Task = "(ND, NE) Ensure 'Prevent installation of devices that match any of these device IDs' is configured."
     Test = {
         try {
@@ -1333,7 +1333,81 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "60"
+    Id = "59 B"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices that match any of these device IDs' is configured. (PCI\CC_0C0A)"
+    Test = {
+        try {
+            $valueNames = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs"
+        
+            $expectedValue = "PCI\CC_0C0A"
+
+            foreach ($obj in $valueNames.PSObject.Properties) {
+                if ($obj.Value -eq $expectedValue) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Registry value is missing: $expectedValue"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "59 C"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices that match any of these device IDs' is configured. (DenyDeviceIDsRetroactive)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Name "DenyDeviceIDsRetroactive" `
+                | Select-Object -ExpandProperty "DenyDeviceIDsRetroactive"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "60 A"
     Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured."
     Test = {
         try {
@@ -1341,6 +1415,194 @@ $windefrunning = CheckWindefRunning
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
                 -Name "DenyDeviceClasses" `
                 | Select-Object -ExpandProperty "DenyDeviceClasses"
+        
+            if ($regValue -ne 1) {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: 1"
+                    Status = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status = "True"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "60 B"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured. (Blocking the SBP-2 driver and Thunderbolt controllers to reduce 1394 DMA and Thunderbolt DMA threats to BitLocker)"
+    Test = {
+        try {
+            $valueNames = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
+        
+            $expectedValue = "{d48179be-ec20-11d1-b6b8-00c04fa372a7}"
+
+            foreach ($obj in $valueNames.PSObject.Properties) {
+                if ($obj.Value -eq $expectedValue) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Registry value is missing: $expectedValue"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "60 C"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured. (IEEE 1394 Devices That Support the 61883 Protocol)"
+    Test = {
+        try {
+            $valueNames = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
+        
+            $expectedValue = "{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}"
+
+            foreach ($obj in $valueNames.PSObject.Properties) {
+                if ($obj.Value -eq $expectedValue) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Registry value is missing: $expectedValue"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "60 D"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured. (IEEE 1394 Devices That Support the AVC Protocol)"
+    Test = {
+        try {
+            $valueNames = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
+        
+            $expectedValue = "{c06ff265-ae09-48f0-812c-16753d7cba83}"
+
+            foreach ($obj in $valueNames.PSObject.Properties) {
+                if ($obj.Value -eq $expectedValue) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Registry value is missing: $expectedValue"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "60 E"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured. (IEEE 1394 Host Bus Controller)"
+    Test = {
+        try {
+            $valueNames = Get-ItemProperty -ErrorAction Stop `
+            -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses"
+        
+            $expectedValue = "{6bdd1fc1-810f-11d0-bec7-08002be2092f}"
+
+            foreach ($obj in $valueNames.PSObject.Properties) {
+                if ($obj.Value -eq $expectedValue) {
+                    return @{
+                        Message = "Compliant"
+                        Status = "True"
+                    }
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status = "False"
+            }
+        }
+        
+        return @{
+            Message = "Registry value is missing: $expectedValue"
+            Status = "False"
+        }
+    }
+}
+[AuditTest] @{
+    Id = "60 F"
+    Task = "(ND, NE) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is configured. (DenyDeviceClassesRetroactive)"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\DeviceInstall\Restrictions" `
+                -Name "DenyDeviceClassesRetroactive" `
+                | Select-Object -ExpandProperty "DenyDeviceClassesRetroactive"
         
             if ($regValue -ne 1) {
                 return @{
@@ -5404,7 +5666,8 @@ $windefrunning = CheckWindefRunning
                 -Name "LegalNoticeCaption" `
                 | Select-Object -ExpandProperty "LegalNoticeCaption"
         
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"
@@ -5908,7 +6171,8 @@ $windefrunning = CheckWindefRunning
                 -Name "LegalNoticeText" `
                 | Select-Object -ExpandProperty "LegalNoticeText"
         
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status = "False"

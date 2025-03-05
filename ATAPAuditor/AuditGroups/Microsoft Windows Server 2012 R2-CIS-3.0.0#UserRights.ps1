@@ -15,26 +15,26 @@ function ConvertTo-NTAccountUser {
         try {
             # Convert Domaingroups to german
             $language = Get-UICulture
-            if ($language.Name -match "de-DE"){
-                if ($name -eq "Enterprise Admins"){
+            if ($language.Name -match "de-DE") {
+                if ($name -eq "Enterprise Admins") {
                     $name = "Organisations-Admins"
                 }
-                elseif ($name -eq "Domain Admins"){
+                elseif ($name -eq "Domain Admins") {
                     $name = "Domänen-Admins"
                 }
             }
 
             # Convert friendlynames to SID
             $map = @{
-                "Administrators" = "S-1-5-32-544"
-                "Guests" = "S-1-5-32-546"
-                "Local account" = "S-1-5-113"
-                "Local Service" = "S-1-5-19"
-                "Network Service" = "S-1-5-20"
-                "NT AUTHORITY\Authenticated Users" = "S-1-5-11"
-                "Remote Desktop Users" = "S-1-5-32-555"
-                "Service" = "S-1-5-6"
-                "Users" = "S-1-5-32-545"
+                "Administrators"                      = "S-1-5-32-544"
+                "Guests"                              = "S-1-5-32-546"
+                "Local account"                       = "S-1-5-113"
+                "Local Service"                       = "S-1-5-19"
+                "Network Service"                     = "S-1-5-20"
+                "NT AUTHORITY\Authenticated Users"    = "S-1-5-11"
+                "Remote Desktop Users"                = "S-1-5-32-555"
+                "Service"                             = "S-1-5-6"
+                "Users"                               = "S-1-5-32-545"
                 "NT VIRTUAL MACHINE\Virtual Machines" = "S-1-5-83-0"
             }
 
@@ -42,7 +42,7 @@ function ConvertTo-NTAccountUser {
                 $name = $map[$name]
             }
 
-            # Identity doesn't exist when Hyper-V isn't installed
+            # Identity doesn't exist on when Hyper-V isn't installed
             if ($Name -eq "S-1-5-83-0" -and $hyperVStatus -ne "Enabled") {
                 return $null
             }
@@ -54,16 +54,9 @@ function ConvertTo-NTAccountUser {
             else {
                 $sidAccount = ([System.Security.Principal.NTAccount]$Name).Translate([System.Security.Principal.SecurityIdentifier])
             }
-           if ($sidAccount.Translate([System.Security.Principal.NTAccount]) -eq "NULL SID") {
-                return @{
-                    Account = $null
-                    Sid = $sidAccount.Value
-                }
-            } else {
-                return @{
-                    Account = $sidAccount.Translate([System.Security.Principal.NTAccount])
-                    Sid = $sidAccount.Value
-                }
+            return @{
+                Account = $sidAccount.Translate([System.Security.Principal.NTAccount])
+                Sid = $sidAccount.Value
             }
         }
         catch {
@@ -112,7 +105,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.2"
-    Task = "(L1) Ensure 'Access this computer from the network' is set to  'Administrators, Authenticated Users, ENTERPRISE DOMAIN  CONTROLLERS' (DC only)"
+    Task = "(L1) Ensure 'Access this computer from the network' is set to 'Administrators, Authenticated Users, ENTERPRISE DOMAIN CONTROLLERS' (DC only)"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
@@ -120,8 +113,8 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-11"
+            "S-1-5-32-544"
             "S-1-5-9"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -152,7 +145,7 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.3"
-    Task = "(L1) Ensure 'Access this computer from the network' is set to  'Administrators, Authenticated Users' (MS only)"
+    Task = "(L1) Ensure 'Access this computer from the network' is set to 'Administrators, Authenticated Users' (MS only)"
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
@@ -160,8 +153,8 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeNetworkLogonRight"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-11"
+            "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -268,9 +261,9 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeIncreaseQuotaPrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
             "S-1-5-20"
+            "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -300,7 +293,10 @@ function ConvertTo-NTAccountUser {
 }
 [AuditTest] @{
     Id = "2.2.7"
-    Task = "(L1) Ensure 'Allow log on locally' is set to 'Administrators'"
+    Task = "(L1) Ensure 'Allow log on locally' is set to 'Administrators' (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeInteractiveLogonRight"]
@@ -377,7 +373,7 @@ function ConvertTo-NTAccountUser {
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
-    Test = {
+    Test        = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeRemoteInteractiveLogonRight"]
         $identityAccounts = @(
@@ -391,13 +387,13 @@ function ConvertTo-NTAccountUser {
             $messages += "The user right 'SeRemoteInteractiveLogonRight' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -480,8 +476,8 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeTimeZonePrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
+            "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -585,9 +581,9 @@ function ConvertTo-NTAccountUser {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateGlobalPrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
             "S-1-5-20"
+            "S-1-5-32-544"
             "S-1-5-6"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -688,84 +684,83 @@ function ConvertTo-NTAccountUser {
         }
     }
 }
-if($hyperVStatus -ne "Enabled"){
-    [AuditTest] @{
-        Id = "2.2.18"
-        Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators [Hyper-V-Feature NOT installed] (MS only)"
-        Constraints = @(
-            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-        )
-        Test = {
-            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-            $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
-            $identityAccounts = @(
-                "S-1-5-32-544"
-            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-
-            
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-                $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeCreateSymbolicLinkPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
-                $message = $messages -join [System.Environment]::NewLine
-            
-                return @{
-                    Status = "False"
-                    Message = $message
-                }
+if ($hyperVStatus -ne "Enabled") {
+[AuditTest] @{
+    Id = "2.2.18"
+    Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators [Hyper-V-Feature NOT installed] (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
+        $identityAccounts = @(
+            "S-1-5-32-544"
+        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        
+        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+        
+        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $messages = @()
+            if ($unexpectedUsers.Count -gt 0) {
+                $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             }
-            
+            if ($missingUsers.Count -gt 0) {
+                $messages += "The user 'SeCreateSymbolicLinkPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+            }
+            $message = $messages -join [System.Environment]::NewLine
+        
             return @{
-                Status = "True"
-                Message = "Compliant"
+                Status = "False"
+                Message = $message
             }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
         }
     }
 }
-else{
-    [AuditTest] @{
-        Id = "2.2.18"
-        Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\Virtual Machines' [Hyper-V-Feature installed] (MS only)"
-        Constraints = @(
-            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-        )
-        Test = {
-            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-            $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
-            $identityAccounts = @(
-                "S-1-5-32-544"
-                "S-1-5-83-0"
-            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-            
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-                $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeCreateSymbolicLinkPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
-                $message = $messages -join [System.Environment]::NewLine
-            
-                return @{
-                    Status = "False"
-                    Message = $message
-                }
+}
+else {
+[AuditTest] @{
+    Id = "2.2.18"
+    Task = "(L1) Ensure 'Create symbolic links' is set to 'Administrators, NT VIRTUAL MACHINE\Virtual Machines' [Hyper-V-Feature installed] (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreateSymbolicLinkPrivilege"]
+        $identityAccounts = @(
+            "S-1-5-32-544"
+            "S-1-5-83-0"
+        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        
+        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+        
+        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $messages = @()
+            if ($unexpectedUsers.Count -gt 0) {
+                $messages += "The user right 'SeCreateSymbolicLinkPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             }
-            
+            if ($missingUsers.Count -gt 0) {
+                $messages += "The user 'SeCreateSymbolicLinkPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+            }
+            $message = $messages -join [System.Environment]::NewLine
+        
             return @{
-                Status = "True"
-                Message = "Compliant"
+                Status = "False"
+                Message = $message
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
             }
         }
     }
@@ -786,31 +781,31 @@ else{
             $messages += "The user right 'SeDebugPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             $message = $messages -join [System.Environment]::NewLine
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         } 
         #No UserRights on System comparing to publisher recommendation
-        if($null -eq $currentUserRights -and $identityAccounts.Count -gt 0){
+        if ($null -eq $currentUserRights -and $identityAccounts.Count -gt 0) {
             return @{
-                Status = "True"
+                Status  = "True"
                 Message = "Compliant - No UserRights are assigned to this policy. This configuration is even more secure than publisher recommendation."
             }
         }
         #Less UserRights on System comparing to publisher recommendation
-        if($currentUserRights.Count -lt $identityAccounts.Count){
+        if ($currentUserRights.Count -lt $identityAccounts.Count) {
             $users = ""
-            foreach($currentUser in $currentUserRights){
+            foreach ($currentUser in $currentUserRights) {
                 $users += $currentUser.Values
             }
             return @{
-                Status = "True"
+                Status  = "True"
                 Message = "Compliant - Positive Deviation to publisher. Less UserRights are assigned to this policy than expected: $($users)"
             }
         }
         #Same UserRights on System comparing to publisher recommendation
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -821,7 +816,7 @@ else{
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
-    Test = {
+    Test        = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
         $identityAccounts = @(
@@ -839,13 +834,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -856,7 +851,7 @@ else{
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
-    Test = {
+    Test        = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyNetworkLogonRight"]
         $identityAccounts = @(
@@ -875,13 +870,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -907,13 +902,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -939,13 +934,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -971,13 +966,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -988,7 +983,7 @@ else{
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Primary Domain Controller", "Backup Domain Controller" }
     )
-    Test = {
+    Test        = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
         $identityAccounts = @(
@@ -1006,13 +1001,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -1023,7 +1018,7 @@ else{
     Constraints = @(
         @{ "Property" = "DomainRole"; "Values" = "Member Server" }
     )
-    Test = {
+    Test        = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeDenyRemoteInteractiveLogonRight"]
         $identityAccounts = @(
@@ -1042,13 +1037,13 @@ else{
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = $message
             }
         }
         
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
@@ -1163,81 +1158,80 @@ else{
         }
     }
 }
-$adfsModule = Get-Module -Name ADFS
-if($null -eq $adfsModule){
-    [AuditTest] @{
-        Id = "2.2.30 A"
-        Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE' (ADFS-ROLE NOT installed)"
-        Test = {
-            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-            $currentUserRights = $securityPolicy["Privilege Rights"]["SeAuditPrivilege"]
-            $identityAccounts = @(
-                "S-1-5-19"
-                "S-1-5-20"
-            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-            
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-                $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeAuditPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeAuditPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
-                $message = $messages -join [System.Environment]::NewLine
-            
-                return @{
-                    Status = "False"
-                    Message = $message
-                }
+if ($null -eq (Get-Module -Name ADFS)) {
+[AuditTest] @{
+    Id = "2.2.30 A"
+    Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE' [ADFS-ROLE NOT installed]"
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $currentUserRights = $securityPolicy["Privilege Rights"]["SeAuditPrivilege"]
+        $identityAccounts = @(
+            "S-1-5-19"
+            "S-1-5-20"
+        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        
+        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+        
+        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $messages = @()
+            if ($unexpectedUsers.Count -gt 0) {
+                $messages += "The user right 'SeAuditPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             }
-            
+            if ($missingUsers.Count -gt 0) {
+                $messages += "The user 'SeAuditPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+            }
+            $message = $messages -join [System.Environment]::NewLine
+        
             return @{
-                Status = "True"
-                Message = "Compliant"
+                Status = "False"
+                Message = $message
             }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
         }
     }
 }
+}
 else{
-    [AuditTest] @{
-        Id = "2.2.30 B"
-        Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE'  (ADFS-ROLE installed)"
-        Test = {
-            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-            $currentUserRights = $securityPolicy["Privilege Rights"]["SeAuditPrivilege"]
-            $identityAccounts = @(
-                "S-1-5-19"
-                "S-1-5-20"
-                "S-1-5-80-2246541699-21809830-3603976364-117610243-975697593"
-                "S-1-5-80-1321940109-3370001082-3650459431-215109509-2472514016"
-            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-            
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-                $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeAuditPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeAuditPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
-                $message = $messages -join [System.Environment]::NewLine
-            
-                return @{
-                    Status = "False"
-                    Message = $message
-                }
+[AuditTest] @{
+    Id = "2.2.30 B"
+    Task = "(L1) Ensure 'Generate security audits' is set to 'LOCAL SERVICE, NETWORK SERVICE' [ADFS-ROLE installed]"
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $currentUserRights = $securityPolicy["Privilege Rights"]["SeAuditPrivilege"]
+        $identityAccounts = @(
+            "S-1-5-19"
+            "S-1-5-20"
+            "S-1-5-80-1321940109-3370001082-3650459431-215109509-2472514016"
+            "S-1-5-80-2246541699-21809830-3603976364-117610243-975697593"
+        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        
+        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+        
+        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $messages = @()
+            if ($unexpectedUsers.Count -gt 0) {
+                $messages += "The user right 'SeAuditPrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             }
-            
+            if ($missingUsers.Count -gt 0) {
+                $messages += "The user 'SeAuditPrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+            }
+            $message = $messages -join [System.Environment]::NewLine
+        
             return @{
-                Status = "True"
-                Message = "Compliant"
+                Status = "False"
+                Message = $message
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
             }
         }
     }
@@ -1252,9 +1246,9 @@ else{
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
         $identityAccounts = @(
-            "S-1-5-32-544"
             "S-1-5-19"
             "S-1-5-20"
+            "S-1-5-32-544"
             "S-1-5-6"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
@@ -1283,102 +1277,101 @@ else{
         }
     }
 }
-if((Get-WindowsFeature -Name web-server).installed -ne $true){
-    [AuditTest] @{
-        Id = "2.2.32 A"
-        Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' (IIS Role NOT installed) (MS only)"
-        Constraints = @(
-            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-        )
-        Test = {
-            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-            $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
-            $identityAccounts = @(
-                "S-1-5-32-544"
-                "S-1-5-19"
-                "S-1-5-20"
-                "S-1-5-6"
-            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-            
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-                $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
-                $message = $messages -join [System.Environment]::NewLine
-            
-                return @{
-                    Status = "False"
-                    Message = $message
-                }
+if ((Get-WindowsFeature -Name web-server).installed -ne $true) {
+[AuditTest] @{
+    Id = "2.2.32 A"
+    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' [IIS Role NOT installed] (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
+        $identityAccounts = @(
+            "S-1-5-19"
+            "S-1-5-20"
+            "S-1-5-32-544"
+            "S-1-5-6"
+        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        
+        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+        
+        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $messages = @()
+            if ($unexpectedUsers.Count -gt 0) {
+                $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             }
-            
+            if ($missingUsers.Count -gt 0) {
+                $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+            }
+            $message = $messages -join [System.Environment]::NewLine
+        
             return @{
-                Status = "True"
-                Message = "Compliant"
+                Status = "False"
+                Message = $message
             }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
         }
     }
 }
-else{
-    [AuditTest] @{
-        Id = "2.2.32 B"
-        Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' (IIS Role installed) (MS only)"
-        Constraints = @(
-            @{ "Property" = "DomainRole"; "Values" = "Member Server" }
-        )
-        Test = {
-            $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
-            $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
-            $identityAccounts = @(
-                "S-1-5-32-544"
-                "S-1-5-19"
-                "S-1-5-20"
-                "S-1-5-6"
-                "S-1-5-32-568"
-            ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
-            
-            $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
-            $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
-            
-            if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
-                $messages = @()
-                if ($unexpectedUsers.Count -gt 0) {
-                    $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
-                }
-                if ($missingUsers.Count -gt 0) {
-                    $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
-                }
-                $message = $messages -join [System.Environment]::NewLine
-            
-                return @{
-                    Status = "False"
-                    Message = $message
-                }
+}
+else {
+[AuditTest] @{
+    Id = "2.2.32 B"
+    Task = "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, IIS_IUSRS' [IIS Role installed] (MS only)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Server" }
+    )
+    Test = {
+        $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
+        $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
+        $identityAccounts = @(
+            "S-1-5-19"
+            "S-1-5-20"
+            "S-1-5-32-544"
+            "S-1-5-32-568"
+            "S-1-5-6"
+        ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
+        
+        $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
+        $missingUsers = $identityAccounts.Account | Where-Object { $_ -notin $currentUserRights.Account }
+        
+        if (($unexpectedUsers.Count -gt 0) -or ($missingUsers.Count -gt 0)) {
+            $messages = @()
+            if ($unexpectedUsers.Count -gt 0) {
+                $messages += "The user right 'SeImpersonatePrivilege' contains following unexpected users: " + ($unexpectedUsers -join ", ")
             }
-            
+            if ($missingUsers.Count -gt 0) {
+                $messages += "The user 'SeImpersonatePrivilege' setting does not contain the following users: " + ($missingUsers -join ", ")
+            }
+            $message = $messages -join [System.Environment]::NewLine
+        
             return @{
-                Status = "True"
-                Message = "Compliant"
+                Status = "False"
+                Message = $message
+            }
+        }
+        
+        return @{
+            Status = "True"
+            Message = "Compliant"
             }
         }
     }
 }
 [AuditTest] @{
     Id = "2.2.33"
-    Task = "(L1) Ensure 'Increase scheduling priority' is set to 'Administrators, Window Manager\Window Manager Group'"
+    Task = "(L1) Ensure 'Increase scheduling priority' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeIncreaseBasePriorityPrivilege"]
         $identityAccounts = @(
             "S-1-5-32-544"
-            "S-1-5-90-0"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }

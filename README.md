@@ -17,7 +17,7 @@ ATAPHtmlReport:\
 			</td>
 			<td>
 
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.10.1)
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.11.0)
 			</td>
 		</tr>
 	</table>
@@ -112,7 +112,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. If your system's security configuration prevents direct execution or access to internet based ("untrusted") files, you may need to "unblock" the file first to allow execution. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.10.1.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.11.0.zip -Verbose
 ```
 The following screenshot shows the expected output:
 
@@ -121,7 +121,7 @@ The following screenshot shows the expected output:
 3. Extract the archive using PowerShell (adjust the version number as needed) or your preferred unzipping toolset.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.10.1.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.11.0.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy the `ATAPAuditor` and `ATAPHtmlReport` modules into one of the directories listed in `$env:PSModulePath` to make them accessible in PowerShell. Use the `$env:PSModulePath` command to view available directories.
 
@@ -189,10 +189,10 @@ Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
 Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 | - | 3.0.0 | 22H2 | SiSyPHuS 1.3 | -
-Microsoft Windows Server 2012 | 2.19 | 2.6.0 | - | - | -
-Microsoft Windows Server 2016 | 1.12 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2019 | 1.5 | 2.0.0 | FINAL | - | -
-Microsoft Windows Server 2022 | V1R1 | 2.0.0 | FINAL | - | -
+Microsoft Windows Server 2012 (R2) | V2R19 | 3.0.0 | - | - | -
+Microsoft Windows Server 2016 | V1R12 | 3.0.0 | FINAL | - | -
+Microsoft Windows Server 2019 | V1R5 | 3.0.0 | FINAL | - | -
+Microsoft Windows Server 2022 | V1R1 | 3.0.0 | FINAL | - | -
 
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
