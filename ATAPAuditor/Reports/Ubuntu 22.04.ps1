@@ -2,7 +2,7 @@
 	Title = "Ubuntu 22.04 Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Ubuntu Linux 22.04 version 1.0.0"
+		"CIS Ubuntu Linux 22.04 version 2.0.0"
     )
 	Sections = @(
 		[ReportSection] @{
@@ -11,7 +11,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'CIS Ubuntu Linux 22.04'
-					AuditInfos = Test-AuditGroup "Ubuntu Linux 22.04-CIS-1.0.0"
+					AuditInfos = Test-AuditGroup "Ubuntu Linux 22.04-CIS-2.0.0"
 				}
 			)
 		}
