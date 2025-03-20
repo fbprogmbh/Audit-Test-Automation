@@ -562,8 +562,24 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
-# MISSING RULE: 1.2.2.1 - Ensure updates, patches, and additional security software are installed
+[AuditTest] @{ # added: 1.9 Ensure updates, patches, and additional security software are installed
+    Id = "1.2.2.1"
+    Task = "Ensure updates, patches, and additional security software are installed"
+    Test = {
+        $output = apt -s upgrade
+        $output = $?
+        if($output -match "True"){
+            return @{
+                Message = "Compliant"
+                Status = "True"
+            }
+        }
+        return @{
+            Message = "Not-Compliant"
+            Status = "False"
+        }
+    }
+}
 [AuditTest] @{
     Id = "1.3.1.1"
     Task = "Ensure AppArmor is installed"
@@ -836,8 +852,30 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-# MISSING RULE: 1.6.5 - Ensure access to /etc/issue is configured
-# MISSING RULE: 1.6.6 - Ensure access to /etc/issue.net is configured
+[AuditTest] @{ # added: 1.7.5 Ensure permissions on /etc/issue are configured
+    Id = "1.6.5"
+    Task = "Ensure access to /etc/issue is configured"
+    Test = {
+        $output = stat -L /etc/issue | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
+        
+        if($output -ne $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 1.7.6 Ensure permissions on /etc/issue.net are configured
+    Id = "1.6.6"
+    Task = "Ensure access to /etc/issue.net is configured"
+    Test = {
+        $output = stat -L /etc/issue.net | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
+        
+        if($output -ne $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 [AuditTest] @{
     Id = "1.7.1"
     Task = "Ensure message of the day is configured properly"
@@ -1031,26 +1069,207 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-# MISSING RULE: 2.1.1 - Ensure autofs services are not in use
-# MISSING RULE: 2.1.2 - Ensure avahi daemon services are not in use
-# MISSING RULE: 2.1.3 - Ensure dhcp server services are not in use
-# MISSING RULE: 2.1.4 - Ensure dns server services are not in use
+[AuditTest] @{ # added: 1.1.23 Disable Automounting
+    Id = "2.1.1"
+    Task = "Ensure autofs services are not in use"
+    Test = {
+        $result = dpkg -l | grep -o autofs
+        if($result -eq $null){
+            return $retCompliant
+        }
+        else{
+            $result = systemctl is-enabled autofs
+            if($result -match "No such file or directory"){
+                return $retCompliant
+            }
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.3 Ensure Avahi Server is not installed
+    Id = "2.1.2"
+    Task = "Ensure avahi daemon services are not in use"
+    Test = {
+        $status = dpkg -l | grep -o avahi-daemon
+        if($status -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.5 Ensure DHCP Server is not installed
+    Id = "2.1.3"
+    Task = "Ensure dhcp server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o isc-dhcp-server
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.8 Ensure DNS Server is not installed
+    Id = "2.1.4"
+    Task = "Ensure dns server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o bind9
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 # MISSING RULE: 2.1.5 - Ensure dnsmasq services are not in use
-# MISSING RULE: 2.1.6 - Ensure ftp server services are not in use
-# MISSING RULE: 2.1.7 - Ensure ldap server services are not in use
-# MISSING RULE: 2.1.8 - Ensure message access server services are not in use
-# MISSING RULE: 2.1.9 - Ensure network file system services are not in use
-# MISSING RULE: 2.1.10 - Ensure nis server services are not in use
-# MISSING RULE: 2.1.11 - Ensure print server services are not in use
-# MISSING RULE: 2.1.12 - Ensure rpcbind services are not in use
-# MISSING RULE: 2.1.13 - Ensure rsync services are not in use
-# MISSING RULE: 2.1.14 - Ensure samba file server services are not in use
-# MISSING RULE: 2.1.15 - Ensure snmp services are not in use
+[AuditTest] @{ # added: 2.1.9 Ensure FTP Server is not installed
+    Id = "2.1.6"
+    Task = "Ensure ftp server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o vsftpd
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.6 Ensure LDAP server is not installed
+    Id = "2.1.7"
+    Task = "Ensure ldap server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o slapd
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.11 Ensure IMAP and POP3 server are not installed
+    Id = "2.1.8"
+    Task = "Ensure message access server services are not in use"
+    Test = {
+        $test1 =  dpkg -l | grep -o dovecot-imapd
+        $test2 = dpkg -l | grep -o dovecot-pop3d
+        if($test1 -eq $null -and $test2 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.7 Ensure NFS is not installed
+    Id = "2.1.9"
+    Task = "Ensure network file system services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o nfs-kernel-server
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.17 Ensure NIS Server is not installed
+    Id = "2.1.10"
+    Task = "Ensure nis server services are not in use"
+    Test = {
+        $test1 = dpkg -s nis
+        $test1 = $?
+        if($test1 -match "False"){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.4 Ensure CUPS is not installed
+    Id = "2.1.11"
+    Task = "Ensure print server services are not in use"
+    Test = {
+        $test1 = dpkg -s cups
+        $test1 = $?
+        if($test1 -match "False"){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.2.6 Ensure RPC is not installed
+    Id = "2.1.12"
+    Task = "Ensure rpcbind services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o rpcbind
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.16 Ensure rsync service is not installed
+    Id = "2.1.13"
+    Task = "Ensure rsync services are not in use"
+    Test = {
+        dpkg -s rsync | grep -E '(Status:|not installed)'
+        $test1 = $?
+        if($test1 -match "False"){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.12 Ensure Samba is not installed
+    Id = "2.1.14"
+    Task = "Ensure samba file server services are not in use"
+    Test = {
+        dpkg -s samba | grep -E '(Status:|not installed)'
+        $test1 = $?
+        if($test1 -match "False"){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.14 Ensure SNMP Server is not installed
+    Id = "2.1.15"
+    Task = "Ensure snmp services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o snmpd
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 # MISSING RULE: 2.1.16 - Ensure tftp server services are not in use
-# MISSING RULE: 2.1.17 - Ensure web proxy server services are not in use
-# MISSING RULE: 2.1.18 - Ensure web server services are not in use
+[AuditTest] @{ # added: 2.1.13 Ensure HTTP Proxy Server is not installed
+    Id = "2.1.17"
+    Task = "Ensure web proxy server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o squid
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 2.1.10 Ensure HTTP server is not installed
+    Id = "2.1.18"
+    Task = "Ensure web server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o apache2
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 # MISSING RULE: 2.1.19 - Ensure xinetd services are not in use
-# MISSING RULE: 2.1.20 - Ensure X window server services are not in use
+[AuditTest] @{ # added diff!: 2.1.2 Ensure X Window System is not installed
+    Id = "2.1.20"
+    Task = "Ensure X window server services are not in use"
+    Test = {
+        $test1 = dpkg -l | grep -o xserver-commen # previous: xorg*
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 [AuditTest] @{
     Id = "2.1.21"
     Task = "Ensure mail transfer agent is configured for local-only mode"
@@ -1070,6 +1289,8 @@ $retNonCompliantManualReviewRequired = @{
 }
 
 # MISSING RULE: 2.1.22 - Ensure only approved services are listening on a network interface
+# ^ this one's manual; 2.4 Ensure nonessential services are removed or masked
+# has no implementation?
 [AuditTest] @{
     Id = "2.2.1"
     Task = "Ensure NIS Client is not installed"
@@ -1201,8 +1422,23 @@ $retNonCompliantManualReviewRequired = @{
 }
 
 # MISSING RULE: 2.3.2.1 - Ensure systemd-timesyncd configured with authorized timeserver
-# MISSING RULE: 2.3.2.2 - Ensure systemd-timesyncd is enabled and running
+# ^ this one's manual; 2.1.3.1 Ensure systemd-timesyncd configured with authorized timeserver
+
+[AuditTest] @{ # added: 2.1.1.2 Ensure systemd-timesyncd is configured
+    Id = "2.3.2.2"
+    Task = "Ensure systemd-timesyncd is enabled and running"
+    Test = {
+        $test1 = systemctl is-enabled systemd-timesyncd.service
+        $time = timedatectl status
+        if($test1 -match "enabled" -and $time -ne $null){    
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 # MISSING RULE: 2.3.3.1 - Ensure chrony is configured with authorized timeserver
+# ^ this one's manual; 2.1.2.1 Ensure chrony is configured with authorized timeserver
+
 [AuditTest] @{
     Id = "2.3.3.2"
     Task = "Ensure chrony is running as user _chrony"
@@ -1218,7 +1454,19 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 2.3.3.3 - Ensure chrony is enabled and running
-# MISSING RULE: 2.4.1.1 - Ensure cron daemon is enabled and active
+
+[AuditTest] @{ # added diff: 5.1.1 Ensure cron daemon is enabled and running
+    Id = "2.4.1.1"
+    Task = "Ensure cron daemon is enabled and active"
+    Test = {
+        $test1 = systemctl is-enabled cron
+        $test2 = systemctl status cron | grep 'Active: active (running) '
+        if($test1 -eq "enabled" -and $test2 -match "running"){
+            return $retCompliant
+        }
+        return $retCompliant
+    }
+}
 [AuditTest] @{
     Id = "2.4.1.2"
     Task = "Ensure permissions on /etc/crontab are configured"
@@ -2119,14 +2367,12 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-# 3.5.3.3.2 ...
-# 3.5.3.3.3 ...
-# 3.5.3.3.4 ...
-
-
 # MISSING RULE: 4.3.3.2 - Ensure ip6tables loopback traffic is configured
+# 3.5.3.3.2 ...
 # MISSING RULE: 4.3.3.3 - Ensure ip6tables outbound and established connections are configured
+# ^this one's manual; 3.5.3.3.3 "
 # MISSING RULE: 4.3.3.4 - Ensure ip6tables firewall rules exist for all open ports
+# 3.5.3.3.4 ...
 [AuditTest] @{
     Id = "5.1.1"
     Task = "Ensure cron daemon is enabled and running"
@@ -2756,6 +3002,7 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 5.3.3.2.3 - Ensure password complexity is configured
+# This ones's manual
 [AuditTest] @{
     Id = "5.3.3.2.4"
     Task = "Ensure password same consecutive characters is configured"
@@ -3032,6 +3279,18 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 
+# [AuditTest] @{
+#     Id = "5.5.3"
+#     Task = "Ensure default group for the root account is GID 0"
+#     Test = {
+#         $test1 = grep "^root:" /etc/passwd | cut -f4 -d ':'
+#         if($test1 -eq 0){
+#             return $retCompliant
+#         }
+#         return $retNonCompliant
+#     }
+# }
+# ^This rule got split in the three below?
 # MISSING RULE: 5.4.2.2 - Ensure root is the only GID 0 account
 # MISSING RULE: 5.4.2.3 - Ensure group root is the only GID 0 group
 # MISSING RULE: 5.4.2.4 - Ensure root password is set
@@ -3083,7 +3342,18 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-# MISSING RULE: 5.4.2.8 - Ensure accounts without a valid login shell are locked
+[AuditTest] @{ # added: 5.5.2 Ensure system accounts are secured
+    Id = "5.4.2.8"
+    Task = "Ensure accounts without a valid login shell are locked"
+    Test = {
+        $test1 = awk -F: '$1!~/(root|sync|shutdown|halt|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}' /etc/login.defs)"' && $7!~/((\/usr)?\/sbin\/nologin)/ && $7!~/(\/bin)?\/false/ {print}' /etc/passwd
+        $test2 = awk -F: '($1!~/(root|^\+)/ && $3<'"$(awk '/^\s*UID_MIN/{print $2}'/etc/login.defs)"') {print $1}' /etc/passwd | xargs -I '{}' passwd -S '{}' | awk '($2!~/LK?/) {print $1}'
+        if($test1 -eq $null -and $test2 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 [AuditTest] @{
     Id = "5.4.3.1"
     Task = "Ensure nologin is not listed in /etc/shells"
@@ -3177,8 +3447,11 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 6.2.1.1.1 - Ensure journald service is enabled and active
+# 4.2.1.2 Ensure journald service is enabled
 # MISSING RULE: 6.2.1.1.2 - Ensure journald log file access is configured
+# ^this one's manual
 # MISSING RULE: 6.2.1.1.3 - Ensure journald log file rotation is configured
+# ^this one's manual
 [AuditTest] @{
     Id = "6.2.1.1.4"
     Task = "Ensure journald ForwardToSyslog is disabled"
@@ -3240,7 +3513,10 @@ $retNonCompliantManualReviewRequired = @{
 }
 
 # MISSING RULE: 6.2.1.2.2 - Ensure systemd-journal-remote authentication is configured
+# # ^this one's manual; 4.2.1.1.2 Ensure systemd-journal-remote is configured 
 # MISSING RULE: 6.2.1.2.3 - Ensure systemd-journal-upload is enabled and active
+# the rule was manual: 4.2.1.1.3 Ensure systemd-journal-remote is enabled
+# but isn't anymore!
 [AuditTest] @{
     Id = "6.2.1.2.4"
     Task = "Ensure systemd-journal-remote service is not in use"
@@ -3255,9 +3531,41 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-# MISSING RULE: 6.2.2.1 - Ensure access to all logfiles has been configured
-# MISSING RULE: 6.3.1.1 - Ensure auditd packages are installed
-# MISSING RULE: 6.3.1.2 - Ensure auditd service is enabled and active
+[AuditTest] @{ # added: 4.2.3 Ensure permissions on all logfiles are configured
+    Id = "6.2.2.1"
+    Task = "Ensure access to all logfiles has been configured"
+    Test = {
+        $fileListAll = find /var/log -type f -ls
+        $fileListFiltered = find /var/log -type f -ls | grep "\-....\-\-\-\-\-"
+        if($fileListAll.Count -eq $fileListFiltered.Count){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 4.1.1.1 Ensure auditd is installed
+    Id = "6.3.1.1"
+    Task = "Ensure auditd packages are installed"
+    Test = {
+        $test1 = dpkg -l | grep -o auditd
+        $test2 = dpkg -l | grep -o audispd-plugins
+        if($test1 -ne $null -and $test2 -ne $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # added: 4.1.1.2 Ensure auditd service is enabled
+    Id = "6.3.1.2"
+    Task = "Ensure auditd service is enabled and active"
+    Test = {
+        $test1 = systemctl is-enabled auditd
+        if($test1 -match "enabled"){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
 [AuditTest] @{
     Id = "6.3.1.3"
     Task = "Ensure auditing for processes that start prior to auditd is enabled"
@@ -3313,8 +3621,20 @@ $retNonCompliantManualReviewRequired = @{
             return $retNonCompliant
         }
     }
+} 
+[AuditTest] @{ # added: 4.1.2.3 Ensure system is disabled when audit logs are full
+    Id = "6.3.2.3"
+    Task = "Ensure system is disabled when audit logs are full"
+    Test = {
+        $test1 = grep space_left_action /etc/audit/auditd.conf
+        $test2 = grep action_mail_acct /etc/audit/auditd.conf
+        $test3 = grep admin_space_left_action /etc/audit/auditd.conf
+        if($test1 -match "space_left_action = email" -and $test2 -match "action_mail_acct = root" -and $test3 -match "admin_space_left_action = halt"){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
 }
-# MISSING RULE: 6.3.2.3 - Ensure system is disabled when audit logs are full
 # MISSING RULE: 6.3.2.4 - Ensure system warns when audit logs are low on space
 [AuditTest] @{
     Id = "6.3.3.1"
@@ -3757,6 +4077,8 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 6.3.4.10 - Ensure audit tools group owner is configured
+# this one is 4.1.4.8 Ensure audit tools are 755 or more restrictive
+# got all 4.1.4.X ensured by 4.1.4 Ensure events that modify user/group information are collected?
 [AuditTest] @{
     Id = "7.1.1"
     Task = "Ensure permissions on /etc/passwd are configured"
@@ -3903,9 +4225,52 @@ $retNonCompliantManualReviewRequired = @{
 
 # MISSING RULE: 7.1.9 - Ensure permissions on /etc/shells are configured
 # MISSING RULE: 7.1.10 - Ensure permissions on /etc/security/opasswd are configured
-# MISSING RULE: 7.1.11 - Ensure world writable files and directories are secured
-# MISSING RULE: 7.1.12 - Ensure no files or directories without an owner and a group exist
-# MISSING RULE: 7.1.13 - Ensure SUID and SGID files are reviewed
+[AuditTest] @{ # added diff: 6.1.10 Ensure no world writable files exist
+    Id = "7.1.11"
+    Task = "Ensure world writable files and directories are secured"
+    Test = {
+        #$partitions = mapfile -t partitions < (sudo fdisk -l | grep -o '/dev/[^ ]*')
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        if($test1 -eq $null){
+            return $retCompliant
+        }
+        return $retNonCompliant
+    }
+}
+[AuditTest] @{ # adde diff: 6.1.11 Ensure no unowned files or directories exist
+    Id = "7.1.12"
+    Task = "Ensure no files or directories without an owner and a group exist"
+    Test = {
+        try{
+            $test1 = df --local -P | awk "{if (NR -ne 1) { print `$6 }}" | xargs -I '{}' find '{}' -xdev -nouser
+            if($test1 -eq $null){
+                return $retCompliant
+            }
+            return $retNonCompliant
+        }
+        catch{
+            return @{
+                Message = "Command not found!"
+                Status = "False"
+            }  
+        }
+    }
+} 
+[AuditTest] @{ # added diff: 6.1.13 Audit SUID executables
+    Id = "7.1.13"
+    Task = "Ensure SUID and SGID files are reviewed"
+    Test = {
+        $test1 = df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -4000
+        $message = ""
+        foreach($line in $test1){
+            $message += "<br>$line"
+        }
+        return @{
+            Message = "Please review following list of files: $($message)"
+            Status = "None"
+        }
+    }
+}
 [AuditTest] @{
     Id = "7.2.1"
     Task = "Ensure accounts in /etc/passwd use shadowed passwords"
@@ -4062,4 +4427,8 @@ $retNonCompliantManualReviewRequired = @{
 }
 
 # MISSING RULE: 7.2.9 - Ensure local interactive user home directories are configured
-# MISSING RULE: 7.2.10 - Ensure local interactive user dot files access is configured 
+# 6.2.11-13?
+# MISSING RULE: 7.2.10 - Ensure local interactive user dot files access is configured
+# could be 6.2.17 Ensure local interactive user dot files are not group or world writable
+# but is not in 1.1.0?
+
