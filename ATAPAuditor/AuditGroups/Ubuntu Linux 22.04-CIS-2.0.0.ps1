@@ -22,11 +22,6 @@ $retNonCompliantManualReviewRequired = @{
     Message = $rcNonCompliantManualReviewRequired
     Status = $rcNone
 }
-
-# Ubuntu Linux 22.04-CIS-2.0.0.ps1
-# Generated from benchmarks_ubuntu.txt and Ubuntu Linux 22.04-CIS-1.0.0.ps1
-# Rules use either existing PowerShell checks or new Bash scripts if available.
-
 [AuditTest] @{
     Id = "1.1.1.1"
     Task = "Ensure cramfs kernel module is not available"
@@ -157,7 +152,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.1.2.1.2"
     Task = "Ensure nodev option set on /tmp partition"
@@ -266,7 +260,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.1.2.3.2"
     Task = "Ensure nodev option set on /home partition"
@@ -313,7 +306,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.1.2.4.2"
     Task = "Ensure nodev option set on /var partition"
@@ -360,7 +352,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.1.2.5.2"
     Task = "Ensure nodev option set on /var/tmp partition"
@@ -421,7 +412,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.1.2.6.2"
     Task = "Ensure nodev option set on /var/log partition"
@@ -482,7 +472,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.1.2.7.2"
     Task = "Ensure nodev option set on /var/log/audit partition"
@@ -543,7 +532,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.2.1.2"
     Task = "Ensure package manager repositories are configured"
@@ -562,7 +550,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{ # added: 1.9 Ensure updates, patches, and additional security software are installed
+[AuditTest] @{
     Id = "1.2.2.1"
     Task = "Ensure updates, patches, and additional security software are installed"
     Test = {
@@ -598,7 +586,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.3.1.2"
     Task = "Ensure AppArmor is enabled in the bootloader configuration"
@@ -636,7 +623,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.3.1.4"
     Task = "Ensure all AppArmor Profiles are enforcing"
@@ -669,7 +655,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.4.2"
     Task = "Ensure access to bootloader config is configured"
@@ -712,6 +697,8 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
+
+
 [AuditTest] @{
     Id = "1.5.3"
     Task = "Ensure core dumps are restricted"
@@ -726,48 +713,12 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{
-    Id = "1.5.4"
-    Task = "Ensure core dumps are restricted"
-    Test = {
-        try{
-            $result1 = grep -Es '^(\*|\s).*hard.*core.*(\s+#.*)?$' /etc/security/limits.conf /etc/security/limits.d/*
-            $result2 = sysctl fs.suid_dumpable
-            $result3 = grep "fs.suid_dumpable" /etc/sysctl.conf /etc/sysctl.d/*
-            try{
-                $result4 = systemctl is-enabled coredump.service
-                $message = "Compliant"
-                if($result4 -match "enabled" -or $result4 -match "masked" -or $result4 -match "disabled"){
-                    $message = "systemd-coredump is installed"
-                }
-            }
-            catch{
-                $message = "systemd-coredump not installed"
-            }
-            if($result1 -match ".*\s*hard\s*core\s*0{1}?\s*" -and $result2 -match "fs.suid_dumpable = 0" -and $result3 -match "fs.suid_dumpable = 0"){
-                return @{
-                    Message = $message
-                    Status = "True"
-                }
-            }
-            return @{
-                Message = "Not-Compliant"
-                Status = "False"
-            }
-        }
-        catch{
-            return @{
-                Message = "Command not found!"
-                Status = "False"
-            }
-        }
-    }
-}
 
+# MISSING RULE: 1.5.4 Ensure prelink is not installed
 
 [AuditTest] @{
     Id = "1.5.5"
-    Task = "Ensure automatic error reporting is not enabled"
+    Task = "Ensure Automatic Error Reporting is not enabled"
     Test = {
         $result1 = dpkg-query -s apport > /dev/null 2>&1 && grep -Psi -- '^\h*enabled\h*=\h*[^0]\b' /etc/default/apport
         $result2 = systemctl is-active apport.service | grep '^active'
@@ -783,7 +734,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.6.1"
     Task = "Ensure message of the day is configured properly"
@@ -817,7 +767,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.6.3"
     Task = "Ensure remote login warning banner is configured properly"
@@ -837,7 +786,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.6.4"
     Task = "Ensure access to /etc/motd is configured"
@@ -852,7 +800,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{ # added: 1.7.5 Ensure permissions on /etc/issue are configured
+[AuditTest] @{
     Id = "1.6.5"
     Task = "Ensure access to /etc/issue is configured"
     Test = {
@@ -864,7 +812,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 1.7.6 Ensure permissions on /etc/issue.net are configured
+[AuditTest] @{ 
     Id = "1.6.6"
     Task = "Ensure access to /etc/issue.net is configured"
     Test = {
@@ -876,122 +824,6 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{
-    Id = "1.7.1"
-    Task = "Ensure message of the day is configured properly"
-    Test = {
-        $output = grep -Eis "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/motd
-
-        if($output -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-
-[AuditTest] @{
-    Id = "1.7.2"
-    Task = "Ensure local login warning banner is configured properly"
-    Test = {
-        $output1 = cat /etc/issue
-        $output2 = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/issue
-        
-        if($output1 -ne $null -and $output2 -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-
-[AuditTest] @{
-    Id = "1.7.3"
-    Task = "Ensure remote login warning banner is configured properly"
-    Test = {
-        $output1 = cat /etc/issue.net
-        $output2 = grep -E -i "(\\\v|\\\r|\\\m|\\\s|$(grep '^ID=' /etc/os-release | cut -d= -f2 | sed -e 's/"//g'))" /etc/issue.net
-        
-        if($output1 -ne $null -and $output2 -eq $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-
-[AuditTest] @{
-    Id = "1.7.4"
-    Task = "Ensure permissions on /etc/motd are configured"
-    Test = {
-        $output = stat -L /etc/motd | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
-        
-        if($output -eq $null -or $output -match "Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-
-[AuditTest] @{
-    Id = "1.7.5"
-    Task = "Ensure permissions on /etc/issue are configured"
-    Test = {
-        $output = stat -L /etc/issue | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
-        
-        if($output -ne $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-
-[AuditTest] @{
-    Id = "1.7.6"
-    Task = "Ensure permissions on /etc/issue.net are configured"
-    Test = {
-        $output = stat -L /etc/issue.net | grep "Access:\s*(0644/-rw-r--r--)\s*Uid:\s*(\s*0/\s*root)\s*Gid:\s*(\s*0/\s*root)"
-        
-        if($output -ne $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-
 [AuditTest] @{
     Id = "1.7.7"
     Task = "Ensure GDM disabling automatic mounting of removable media is not overridden"
@@ -1012,7 +844,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.7.8"
     Task = "Ensure GDM autorun-never is enabled"
@@ -1033,7 +864,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.7.9"
     Task = "Ensure GDM autorun-never is not overridden"
@@ -1054,7 +884,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "1.7.10"
     Task = "Ensure XDCMP is not enabled"
@@ -1069,7 +898,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{ # added: 1.1.23 Disable Automounting
+[AuditTest] @{
     Id = "2.1.1"
     Task = "Ensure autofs services are not in use"
     Test = {
@@ -1086,7 +915,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.3 Ensure Avahi Server is not installed
+[AuditTest] @{
     Id = "2.1.2"
     Task = "Ensure avahi daemon services are not in use"
     Test = {
@@ -1097,7 +926,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.5 Ensure DHCP Server is not installed
+[AuditTest] @{
     Id = "2.1.3"
     Task = "Ensure dhcp server services are not in use"
     Test = {
@@ -1108,7 +937,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.8 Ensure DNS Server is not installed
+[AuditTest] @{
     Id = "2.1.4"
     Task = "Ensure dns server services are not in use"
     Test = {
@@ -1120,7 +949,8 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 2.1.5 - Ensure dnsmasq services are not in use
-[AuditTest] @{ # added: 2.1.9 Ensure FTP Server is not installed
+
+[AuditTest] @{
     Id = "2.1.6"
     Task = "Ensure ftp server services are not in use"
     Test = {
@@ -1131,7 +961,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.6 Ensure LDAP server is not installed
+[AuditTest] @{
     Id = "2.1.7"
     Task = "Ensure ldap server services are not in use"
     Test = {
@@ -1142,7 +972,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.11 Ensure IMAP and POP3 server are not installed
+[AuditTest] @{
     Id = "2.1.8"
     Task = "Ensure message access server services are not in use"
     Test = {
@@ -1154,7 +984,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.7 Ensure NFS is not installed
+[AuditTest] @{
     Id = "2.1.9"
     Task = "Ensure network file system services are not in use"
     Test = {
@@ -1165,7 +995,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.17 Ensure NIS Server is not installed
+[AuditTest] @{
     Id = "2.1.10"
     Task = "Ensure nis server services are not in use"
     Test = {
@@ -1177,7 +1007,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.4 Ensure CUPS is not installed
+[AuditTest] @{
     Id = "2.1.11"
     Task = "Ensure print server services are not in use"
     Test = {
@@ -1189,7 +1019,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.2.6 Ensure RPC is not installed
+[AuditTest] @{
     Id = "2.1.12"
     Task = "Ensure rpcbind services are not in use"
     Test = {
@@ -1200,7 +1030,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.16 Ensure rsync service is not installed
+[AuditTest] @{
     Id = "2.1.13"
     Task = "Ensure rsync services are not in use"
     Test = {
@@ -1212,7 +1042,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.12 Ensure Samba is not installed
+[AuditTest] @{
     Id = "2.1.14"
     Task = "Ensure samba file server services are not in use"
     Test = {
@@ -1224,7 +1054,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.14 Ensure SNMP Server is not installed
+[AuditTest] @{
     Id = "2.1.15"
     Task = "Ensure snmp services are not in use"
     Test = {
@@ -1236,7 +1066,7 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 2.1.16 - Ensure tftp server services are not in use
-[AuditTest] @{ # added: 2.1.13 Ensure HTTP Proxy Server is not installed
+[AuditTest] @{
     Id = "2.1.17"
     Task = "Ensure web proxy server services are not in use"
     Test = {
@@ -1247,7 +1077,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 2.1.10 Ensure HTTP server is not installed
+[AuditTest] @{
     Id = "2.1.18"
     Task = "Ensure web server services are not in use"
     Test = {
@@ -1259,7 +1089,7 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 2.1.19 - Ensure xinetd services are not in use
-[AuditTest] @{ # added diff!: 2.1.2 Ensure X Window System is not installed
+[AuditTest] @{
     Id = "2.1.20"
     Task = "Ensure X window server services are not in use"
     Test = {
@@ -1310,23 +1140,6 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 
-[AuditTest] @{
-    Id = "2.2.2"
-    Task = "Ensure Avahi Server is not installed"
-    Test = {
-        $status = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' avahi-daemon
-        if($status -match "avahi-daemon unknown ok not-installed not-installed"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
 
 [AuditTest] @{
     Id = "2.2.3"
@@ -1345,7 +1158,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.2.4"
     Task = "Ensure DHCP Server is not installed"
@@ -1363,7 +1175,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.2.5"
     Task = "Ensure LDAP server is not installed"
@@ -1381,7 +1192,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.2.6"
     Task = "Ensure NFS is not installed"
@@ -1399,7 +1209,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.3.1.1"
     Task = "Ensure a single time synchronization daemon is in use"
@@ -1424,7 +1233,7 @@ $retNonCompliantManualReviewRequired = @{
 # MISSING RULE: 2.3.2.1 - Ensure systemd-timesyncd configured with authorized timeserver
 # ^ this one's manual; 2.1.3.1 Ensure systemd-timesyncd configured with authorized timeserver
 
-[AuditTest] @{ # added: 2.1.1.2 Ensure systemd-timesyncd is configured
+[AuditTest] @{
     Id = "2.3.2.2"
     Task = "Ensure systemd-timesyncd is enabled and running"
     Test = {
@@ -1455,7 +1264,7 @@ $retNonCompliantManualReviewRequired = @{
 }
 # MISSING RULE: 2.3.3.3 - Ensure chrony is enabled and running
 
-[AuditTest] @{ # added diff: 5.1.1 Ensure cron daemon is enabled and running
+[AuditTest] @{
     Id = "2.4.1.1"
     Task = "Ensure cron daemon is enabled and active"
     Test = {
@@ -1484,7 +1293,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.4.1.3"
     Task = "Ensure permissions on /etc/cron.hourly are configured"
@@ -1502,7 +1310,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.4.1.4"
     Task = "Ensure permissions on /etc/cron.daily are configured"
@@ -1520,7 +1327,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.4.1.5"
     Task = "Ensure permissions on /etc/cron.weekly are configured"
@@ -1538,7 +1344,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.4.1.6"
     Task = "Ensure permissions on /etc/cron.monthly are configured"
@@ -1556,7 +1361,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.4.1.7"
     Task = "Ensure permissions on /etc/cron.d are configured"
@@ -1574,7 +1378,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "2.4.1.8"
     Task = "Ensure crontab is restricted to authorized users"
@@ -1622,7 +1425,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "3.1.2"
     Task = "Ensure wireless interfaces are disabled"
@@ -1865,7 +1667,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.1.2"
     Task = "Ensure iptables-persistent is not installed with ufw"
@@ -1883,7 +1684,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.1.3"
     Task = "Ensure ufw service is enabled"
@@ -1903,7 +1703,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.1.4"
     Task = "Ensure ufw loopback traffic is configured"
@@ -1921,7 +1720,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.1.5"
     Task = "Ensure ufw outbound connections are configured"
@@ -1939,7 +1737,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.1.6"
     Task = "Ensure ufw firewall rules exist for all open ports"
@@ -1959,7 +1756,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.1.7"
     Task = "Ensure ufw default deny firewall policy"
@@ -1977,7 +1773,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.1"
     Task = "Ensure nftables is installed"
@@ -1995,7 +1790,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.2"
     Task = "Ensure ufw is uninstalled or disabled with nftables"
@@ -2014,7 +1808,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
         Id = "4.2.3"
         Task = "Ensure all logfiles have appropriate permissions and ownership"
@@ -2034,7 +1827,6 @@ $retNonCompliantManualReviewRequired = @{
             }
         }
 }
-
 [AuditTest] @{
     Id = "4.2.4"
     Task = "Ensure a nftables table exists"
@@ -2060,7 +1852,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.5"
     Task = "Ensure nftables base chains exist"
@@ -2088,7 +1879,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.6"
     Task = "Ensure nftables loopback traffic is configured"
@@ -2126,7 +1916,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.7"
     Task = "Ensure nftables outbound and established connections are configured"
@@ -2153,7 +1942,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.8"
     Task = "Ensure nftables default deny firewall policy"
@@ -2181,7 +1969,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.9"
     Task = "Ensure nftables service is enabled"
@@ -2199,7 +1986,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.2.10"
     Task = "Ensure nftables rules are permanent"
@@ -2220,7 +2006,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.3.1.1"
     Task = "Ensure iptables packages are installed"
@@ -2238,7 +2023,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.3.1.2"
     Task = "Ensure nftables is not installed with iptables"
@@ -2256,7 +2040,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.3.1.3"
     Task = "Ensure ufw is uninstalled or disabled with iptables"
@@ -2276,7 +2059,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.3.2.1"
     Task = "Ensure iptables default deny firewall policy"
@@ -2297,7 +2079,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.3.2.2"
     Task = "Ensure iptables loopback traffic is configured"
@@ -2316,7 +2097,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "4.3.2.3"
     Task = "Ensure iptables outbound and established connections are configured"
@@ -2391,7 +2171,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.1.2"
     Task = "Ensure permissions on /etc/crontab are configured"
@@ -2409,7 +2188,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.1.3"
     Task = "Ensure permissions on SSH public host key files are configured"
@@ -2436,25 +2214,18 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.1.5"
     Task = "Ensure permissions on /etc/cron.weekly are configured"
     Test = {
-        $test1 = stat /etc/cron.weekly/
-        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        $test1 = bash -c "stat -c '%#a' /etc/cron.weekly/ | grep -q 700"
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.1.6"
     Task = "Ensure sshd Ciphers are configured"
@@ -2727,7 +2498,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.2.2"
     Task = "Ensure sudo commands use pty"
@@ -2782,7 +2552,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.2.5"
     Task = "Ensure SSH LogLevel is appropriate"
@@ -2817,7 +2586,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.2.6"
     Task = "Ensure sudo authentication timeout is configured correctly"
@@ -2997,7 +2765,6 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 5.3.3.2.3 - Ensure password complexity is configured
-# This ones's manual
 [AuditTest] @{
     Id = "5.3.3.2.4"
     Task = "Ensure password same consecutive characters is configured"
@@ -3255,7 +3022,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.4.2.1"
     Task = "Ensure root is the only UID 0 account"
@@ -3273,20 +3039,17 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
-# [AuditTest] @{
-#     Id = "5.5.3"
-#     Task = "Ensure default group for the root account is GID 0"
-#     Test = {
-#         $test1 = grep "^root:" /etc/passwd | cut -f4 -d ':'
-#         if($test1 -eq 0){
-#             return $retCompliant
-#         }
-#         return $retNonCompliant
-#     }
-# }
-# ^This rule got split in the three below?
-# MISSING RULE: 5.4.2.2 - Ensure root is the only GID 0 account
+[AuditTest] @{
+     Id = "5.4.2.2"
+     Task = "Ensure root is the only GID 0 account"
+     Test = {
+         $test1 = grep "^root:" /etc/passwd | cut -f4 -d ':'
+         if($test1 -eq 0){
+             return $retCompliant
+         }
+         return $retNonCompliant
+     }
+ }
 # MISSING RULE: 5.4.2.3 - Ensure group root is the only GID 0 group
 # MISSING RULE: 5.4.2.4 - Ensure root password is set
 [AuditTest] @{
@@ -3308,7 +3071,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "5.4.2.6"
     Task = "Ensure root user umask is configured"
@@ -3337,7 +3099,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{ # added: 5.5.2 Ensure system accounts are secured
+[AuditTest] @{
     Id = "5.4.2.8"
     Task = "Ensure accounts without a valid login shell are locked"
     Test = {
@@ -3408,7 +3170,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "6.1.2"
     Task = "Ensure permissions on /etc/passwd- are configured"
@@ -3426,7 +3187,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "6.1.3"
     Task = "Ensure cryptographic mechanisms are used to protect the integrity of audit tools"
@@ -3511,7 +3271,6 @@ $retNonCompliantManualReviewRequired = @{
 # # ^this one's manual; 4.2.1.1.2 Ensure systemd-journal-remote is configured 
 # MISSING RULE: 6.2.1.2.3 - Ensure systemd-journal-upload is enabled and active
 # the rule was manual: 4.2.1.1.3 Ensure systemd-journal-remote is enabled
-# but isn't anymore!
 [AuditTest] @{
     Id = "6.2.1.2.4"
     Task = "Ensure systemd-journal-remote service is not in use"
@@ -3526,7 +3285,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{ # added: 4.2.3 Ensure permissions on all logfiles are configured
+[AuditTest] @{
     Id = "6.2.2.1"
     Task = "Ensure access to all logfiles has been configured"
     Test = {
@@ -3538,7 +3297,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 4.1.1.1 Ensure auditd is installed
+[AuditTest] @{
     Id = "6.3.1.1"
     Task = "Ensure auditd packages are installed"
     Test = {
@@ -3550,7 +3309,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # added: 4.1.1.2 Ensure auditd service is enabled
+[AuditTest] @{
     Id = "6.3.1.2"
     Task = "Ensure auditd service is enabled and active"
     Test = {
@@ -3617,7 +3376,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 } 
-[AuditTest] @{ # added: 4.1.2.3 Ensure system is disabled when audit logs are full
+[AuditTest] @{
     Id = "6.3.2.3"
     Task = "Ensure system is disabled when audit logs are full"
     Test = {
@@ -3796,7 +3555,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "6.3.3.12"
     Task = "Ensure login and logout events are collected"
@@ -3926,7 +3684,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "6.3.3.21"
     Task = "Ensure the running and on disk configuration is the same"
@@ -3944,7 +3701,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "6.3.4.1"
     Task = "Ensure audit log files mode is configured"
@@ -4072,8 +3828,7 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 6.3.4.10 - Ensure audit tools group owner is configured
-# this one is 4.1.4.8 Ensure audit tools are 755 or more restrictive
-# got all 4.1.4.X ensured by 4.1.4 Ensure events that modify user/group information are collected?
+
 [AuditTest] @{
     Id = "7.1.1"
     Task = "Ensure permissions on /etc/passwd are configured"
@@ -4091,7 +3846,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.2"
     Task = "Ensure permissions on /etc/passwd- are configured"
@@ -4109,7 +3863,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.3"
     Task = "Ensure permissions on /etc/group are configured"
@@ -4127,7 +3880,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.4"
     Task = "Ensure permissions on /etc/group- are configured"
@@ -4145,7 +3897,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.5"
     Task = "Ensure permissions on /etc/shadow are configured"
@@ -4163,7 +3914,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.6"
     Task = "Ensure permissions on /etc/shadow- are configured"
@@ -4181,7 +3931,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.7"
     Task = "Ensure permissions on /etc/gshadow are configured"
@@ -4199,7 +3948,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.1.8"
     Task = "Ensure permissions on /etc/gshadow- are configured"
@@ -4220,7 +3968,7 @@ $retNonCompliantManualReviewRequired = @{
 
 # MISSING RULE: 7.1.9 - Ensure permissions on /etc/shells are configured
 # MISSING RULE: 7.1.10 - Ensure permissions on /etc/security/opasswd are configured
-[AuditTest] @{ # added diff: 6.1.10 Ensure no world writable files exist
+[AuditTest] @{
     Id = "7.1.11"
     Task = "Ensure world writable files and directories are secured"
     Test = {
@@ -4232,7 +3980,7 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-[AuditTest] @{ # adde diff: 6.1.11 Ensure no unowned files or directories exist
+[AuditTest] @{
     Id = "7.1.12"
     Task = "Ensure no files or directories without an owner and a group exist"
     Test = {
@@ -4251,7 +3999,7 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 } 
-[AuditTest] @{ # added diff: 6.1.13 Audit SUID executables
+[AuditTest] @{
     Id = "7.1.13"
     Task = "Ensure SUID and SGID files are reviewed"
     Test = {
@@ -4283,7 +4031,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.2"
     Task = "Ensure /etc/shadow password fields are not empty"
@@ -4301,7 +4048,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.3"
     Task = "Ensure all groups in /etc/passwd exist in /etc/group"
@@ -4321,7 +4067,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.4"
     Task = "Ensure shadow group is empty"
@@ -4340,7 +4085,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.5"
     Task = "Ensure no duplicate UIDs exist"
@@ -4360,7 +4104,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.6"
     Task = "Ensure no duplicate GIDs exist"
@@ -4380,7 +4123,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.7"
     Task = "Ensure no duplicate user names exist"
@@ -4400,7 +4142,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
 [AuditTest] @{
     Id = "7.2.8"
     Task = "Ensure no duplicate group names exist"
@@ -4422,8 +4163,4 @@ $retNonCompliantManualReviewRequired = @{
 }
 
 # MISSING RULE: 7.2.9 - Ensure local interactive user home directories are configured
-# 6.2.11-13?
 # MISSING RULE: 7.2.10 - Ensure local interactive user dot files access is configured
-# could be 6.2.17 Ensure local interactive user dot files are not group or world writable
-# but is not in 1.1.0?
-
