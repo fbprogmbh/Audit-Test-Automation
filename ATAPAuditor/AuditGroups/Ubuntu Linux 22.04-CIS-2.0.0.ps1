@@ -2428,16 +2428,11 @@ $retNonCompliantManualReviewRequired = @{
     Id = "5.1.4"
     Task = "Ensure permissions on /etc/cron.daily are configured"
     Test = {
-        $test1 = stat /etc/cron.daily/
-        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        $test1 = bash -c "stat -c '%#a' /etc/cron.daily/ | grep -q 700"
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
         }
     }
 }
