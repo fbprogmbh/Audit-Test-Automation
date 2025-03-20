@@ -997,7 +997,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure GDM disabling automatic mounting of removable media is not overridden"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.7.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/1.8.7.sh"
         $result=bash $path | grep " PASS "
         if($result -ne $null){
             return @{
@@ -1018,7 +1018,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure GDM autorun-never is enabled"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.8.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/1.8.8.sh"
         $result=bash $path
         if($result -match " PASS "){
             return @{
@@ -1039,7 +1039,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure GDM autorun-never is not overridden"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-1.8.9.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/1.8.9.sh"
         $result=bash $path
         if($result -match " PASS "){
             return @{
@@ -1405,7 +1405,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure a single time synchronization daemon is in use"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-2.1.1.1.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/2.1.1.1.sh"
         $result=bash $path
         if($result -match "PASS:"){
             return @{
@@ -1608,7 +1608,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure system is checked to determine if IPv6 is enabled"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.1.1.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/3.1.1.sh"
         $result=bash $path
         if($result -match "IPv6 is enabled on the system"){
             return @{
@@ -1945,7 +1945,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure ufw firewall rules exist for all open ports"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.5.1.6.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/3.5.1.6.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
@@ -2020,7 +2020,7 @@ $retNonCompliantManualReviewRequired = @{
         Task = "Ensure all logfiles have appropriate permissions and ownership"
         Test = {
             $parentPath = Split-Path -Parent -Path $PSScriptRoot
-            $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.2.3.sh"
+            $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/4.2.3.sh"
             $result = $path | grep "PASS"
             if($result -match "PASS"){
                 return @{
@@ -2205,9 +2205,9 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure nftables rules are permanent"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.5.2.10_1.sh"
-        $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.5.2.10_2.sh"
-        $path3 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-3.5.2.10_3.sh"
+        $path1 = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/3.5.2.10_1.sh"
+        $path2 = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/3.5.2.10_2.sh"
+        $path3 = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/3.5.2.10_3.sh"
         if($path1 -ne $null -and $path2 -ne $null -and $path3 -ne $null){
             return @{
                 Message = "Compliant"
@@ -3246,7 +3246,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure all users last password change date is in the past"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-5.5.1.5.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/5.5.1.5.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
@@ -3299,7 +3299,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure root PATH Integrity"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.9.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/6.2.9.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
@@ -3781,11 +3781,11 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure session initiation information is collected"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path1 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.11_1.sh"
+        $path1 = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/4.1.3.11_1.sh"
         $result11 = bash $path1 | grep "\-w /var/run/utmp -p wa -k session"
         $result12 = bash $path1 | grep "\-w /var/log/wtmp -p wa -k session"
         $result13 = bash $path1 | grep "\-w /var/log/btmp -p wa -k session"
-        $path2 = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-4.1.3.11_2.sh"
+        $path2 = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/4.1.3.11_2.sh"
         $result21 = bash $path2 | grep "\-w /var/run/utmp -p wa -k session"
         $result22 = bash $path2 | grep "\-w /var/log/wtmp -p wa -k session"
         $result23 = bash $path2 | grep "\-w /var/log/btmp -p wa -k session"
@@ -4312,7 +4312,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure all groups in /etc/passwd exist in /etc/group"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.3.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/6.2.3.sh"
         $result=bash $path
         if($result -match $null){
             return @{
@@ -4351,7 +4351,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure no duplicate UIDs exist"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.5.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/6.2.5.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
@@ -4371,7 +4371,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure no duplicate GIDs exist"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.6.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/6.2.6.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
@@ -4391,7 +4391,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure no duplicate user names exist"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.7.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/6.2.7.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
@@ -4411,7 +4411,7 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure no duplicate group names exist"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
-        $path = $parentPath+"/Helpers/ShellScripts/CIS-Ubuntu22.04_LTS-6.2.8.sh"
+        $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/6.2.8.sh"
         $result=bash $path
         if($result -eq $null){
             return @{
