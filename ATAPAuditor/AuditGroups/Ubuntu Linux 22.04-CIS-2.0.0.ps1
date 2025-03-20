@@ -824,6 +824,14 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
+
+# MISSING RULE 1.7.1 Ensure GDM is removed
+# MISSING RULE 1.7.2 Ensure GDM login banner is configured
+# MISSING RULE 1.7.3 Ensure GDM disable-user-list option is enabled
+# MISSING RULE 1.7.4 Ensure GDM screen locks when the user is idle
+# MISSING RULE 1.7.5 Ensure GDM screen locks cannot be overridden
+# MISSING RULE 1.7.6 Ensure GDM automatic mounting of removable media is disabled
+
 [AuditTest] @{
     Id = "1.7.7"
     Task = "Ensure GDM disabling automatic mounting of removable media is not overridden"
@@ -1140,75 +1148,12 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 
+# MISSING RULE 2.2.2 Ensure rsh client is not installed
+# MISSING RULE 2.2.3 Ensure talk client is not installed
+# MISSING RULE 2.2.4 Ensure telnet client is not installed
+# MISSING RULE 2.2.5 Ensure ldap client is not installed
+# MISSING RULE 2.2.6 Ensure ftp client is not installed
 
-[AuditTest] @{
-    Id = "2.2.3"
-    Task = "Ensure CUPS is not installed"
-    Test = {
-        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' cups
-        if($test1 -match "cups unknown ok not-installed not-installed"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.2.4"
-    Task = "Ensure DHCP Server is not installed"
-    Test = {
-        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' isc-dhcp-server
-        if($test1 -match "isc-dhcp-server unknown ok not-installed not-installed"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.2.5"
-    Task = "Ensure LDAP server is not installed"
-    Test = {
-        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' slapd
-        if($test1 -match "slapd unknown ok not-installed not-installed"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
-[AuditTest] @{
-    Id = "2.2.6"
-    Task = "Ensure NFS is not installed"
-    Test = {
-        $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' nfs-kernel-server
-        if($test1 -match "nfs-kernel-server unknown ok not-installed not-installed"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
-    }
-}
 [AuditTest] @{
     Id = "2.3.1.1"
     Task = "Ensure a single time synchronization daemon is in use"
@@ -1408,7 +1353,7 @@ $retNonCompliantManualReviewRequired = @{
 }
 [AuditTest] @{
     Id = "3.1.1"
-    Task = "Ensure system is checked to determine if IPv6 is enabled"
+    Task = "Ensure IPv6 status is identified"
     Test = {
         $parentPath = Split-Path -Parent -Path $PSScriptRoot
         $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/3.1.1.sh"
@@ -1808,25 +1753,9 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{
-        Id = "4.2.3"
-        Task = "Ensure all logfiles have appropriate permissions and ownership"
-        Test = {
-            $parentPath = Split-Path -Parent -Path $PSScriptRoot
-            $path = $parentPath+"/Helpers/ShellScripts/Ubuntu22.04-2.0.0/4.2.3.sh"
-            $result = $path | grep "PASS"
-            if($result -match "PASS"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            return @{
-                Message = "Not-Compliant"
-                Status = "False"
-            }
-        }
-}
+
+# MISSING RULE 4.2.3 Ensure iptables are flushed with nftables
+
 [AuditTest] @{
     Id = "4.2.4"
     Task = "Ensure a nftables table exists"
@@ -2202,30 +2131,8 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{
-    Id = "5.1.4"
-    Task = "Ensure permissions on /etc/cron.daily are configured"
-    Test = {
-        $test1 = bash -c "stat -c '%#a' /etc/cron.daily/ | grep -q 700"
-        if ($?) {
-            return $retCompliant
-        } else {
-            return $retNonCompliant
-        }
-    }
-}
-[AuditTest] @{
-    Id = "5.1.5"
-    Task = "Ensure permissions on /etc/cron.weekly are configured"
-    Test = {
-        $test1 = bash -c "stat -c '%#a' /etc/cron.weekly/ | grep -q 700"
-        if ($?) {
-            return $retCompliant
-        } else {
-            return $retNonCompliant
-        }
-    }
-}
+# MISSING RULE 5.1.4 Ensure sshd access is configured
+# MISSING RULE 5.1.5 Ensure sshd Banner is configured
 [AuditTest] @{
     Id = "5.1.6"
     Task = "Ensure sshd Ciphers are configured"
@@ -2464,40 +2371,8 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{
-    Id = "5.2.1"
-    Task = "Ensure permissions on /etc/ssh/sshd_config are configured"
-    Test = {
-        try{
-            try{
-                $test1 = stat /etc/ssh/sshd_config | grep 0600
-            }
-            catch{
-                return @{
-                    Message = "Path not found!"
-                    Status = "False"
-                }
-            }
+# MISSING RULE 5.2.1 Ensure sudo is installed
 
-            if($test1 -eq "Access: (0600/-rw-------)  Uid: (    0/    root)   Gid: (    0/    root)"){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            return @{
-                Message = "Not-Compliant"
-                Status = "False"
-            }
-        }
-        catch{
-            return @{
-                Message = "Path not found!"
-                Status = "False"
-            }
-        }
-    }
-}
 [AuditTest] @{
     Id = "5.2.2"
     Task = "Ensure sudo commands use pty"
@@ -2600,41 +2475,8 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-[AuditTest] @{
-    Id = "5.2.7"
-    Task = "Ensure SSH root login is disabled"
-    Test = {
-        try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname)/etc/hosts | awk '{print $1}')" | grep permitrootlogin
-            try{
-                $test2 = grep -Eis '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
-            }
-            catch{
-                return @{
-                    Message = "Path not found!"
-                    Status = "False"
-                }
-            }
-            if($test1 -match "permitrootlogin no" -and $test2 -eq $null){
-                return @{
-                    Message = "Compliant"
-                    Status = "True"
-                }
-            }
-            return @{
-                Message = "Not-Compliant"
-                Status = "False"
-            }
-        }
-        catch{
-            return @{
-                Message = "Command doesn't exist"
-                Status = "False"
-            }
-        }
-    }
-}
 
+# MISSING RULE 5.2.7 Ensure access to the su command is restricted
 # MISSING RULE: 5.3.1.1 - Ensure latest version of pam is installed
 # MISSING RULE: 5.3.1.2 - Ensure libpam-modules is installed
 # MISSING RULE: 5.3.1.3 - Ensure libpam-pwquality is installed
