@@ -518,36 +518,14 @@ $retNonCompliantManualReviewRequired = @{
     Id = "1.2.1.1"
     Task = "Ensure GPG keys are configured"
     Test = {
-        $result = apt-key list
-        if($result -ne $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
+        return $retNonCompliantManualReviewRequired
     }
 }
 [AuditTest] @{
     Id = "1.2.1.2"
     Task = "Ensure package manager repositories are configured"
     Test = {
-        $result = apt-cache policy
-        if($result -ne $null){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
-        }
+        return $retNonCompliantManualReviewRequired
     }
 }
 [AuditTest] @{
@@ -555,16 +533,10 @@ $retNonCompliantManualReviewRequired = @{
     Task = "Ensure updates, patches, and additional security software are installed"
     Test = {
         $output = apt -s upgrade
-        $output = $?
-        if($output -match "True"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
         }
     }
 }
@@ -1125,10 +1097,13 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
-# MISSING RULE: 2.1.22 - Ensure only approved services are listening on a network interface
-# ^ this one's manual; 2.4 Ensure nonessential services are removed or masked
-# has no implementation?
+[AuditTest] @{
+    Id = "2.1.22"
+    Task = "Ensure only approved services are listening on a network interface"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
 [AuditTest] @{
     Id = "2.2.1"
     Task = "Ensure NIS Client is not installed"
@@ -1190,9 +1165,13 @@ $retNonCompliantManualReviewRequired = @{
         return $retNonCompliant
     }
 }
-# MISSING RULE: 2.3.3.1 - Ensure chrony is configured with authorized timeserver
-# ^ this one's manual; 2.1.2.1 Ensure chrony is configured with authorized timeserver
-
+[AuditTest] @{
+    Id = "2.3.3.1"
+    Task = "Ensure chrony is configured with authorized timeserver"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
 [AuditTest] @{
     Id = "2.3.3.2"
     Task = "Ensure chrony is running as user _chrony"
@@ -1259,16 +1238,11 @@ $retNonCompliantManualReviewRequired = @{
     Id = "2.4.1.4"
     Task = "Ensure permissions on /etc/cron.daily are configured"
     Test = {
-        $test1 = stat /etc/cron.daily/
-        if($test1 -eq "Access: (0700/drwx------)  Uid: (    0/    root)   Gid: (    0/    root)"){
-            return @{
-                Message = "Compliant"
-                Status = "True"
-            }
-        }
-        return @{
-            Message = "Not-Compliant"
-            Status = "False"
+        $test1 = stat -c '%#a' /etc/cron.daily/ | grep -q 700
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
         }
     }
 }
@@ -1753,9 +1727,13 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
-# MISSING RULE 4.2.3 Ensure iptables are flushed with nftables
-
+[AuditTest] @{
+    Id = "4.2.3"
+    Task = "Ensure iptables are flushed with nftables"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
 [AuditTest] @{
     Id = "4.2.4"
     Task = "Ensure a nftables table exists"
@@ -2043,8 +2021,6 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-# 3.5.3.2.4 ...
-
 # MISSING RULE: 4.3.2.4 - Ensure iptables firewall rules exist for all open ports
 [AuditTest] @{
     Id = "4.3.3.1"
@@ -2077,9 +2053,13 @@ $retNonCompliantManualReviewRequired = @{
     }
 }
 # MISSING RULE: 4.3.3.2 - Ensure ip6tables loopback traffic is configured
-# 3.5.3.3.2 ...
-# MISSING RULE: 4.3.3.3 - Ensure ip6tables outbound and established connections are configured
-# ^this one's manual; 3.5.3.3.3 "
+[AuditTest] @{
+    Id = "4.3.3.3"
+    Task = "Ensure ip6tables outbound and established connections are configured"
+    Test = {
+        return $retNonCompliantManualReviewRequired
+    }
+}
 # MISSING RULE: 4.3.3.4 - Ensure ip6tables firewall rules exist for all open ports
 # 3.5.3.3.4 ...
 [AuditTest] @{
@@ -2892,8 +2872,34 @@ $retNonCompliantManualReviewRequired = @{
          return $retNonCompliant
      }
  }
-# MISSING RULE: 5.4.2.3 - Ensure group root is the only GID 0 group
-# MISSING RULE: 5.4.2.4 - Ensure root password is set
+ [AuditTest] @{
+    Id = "5.4.2.3"
+    Task = "Ensure group root is the only GID 0 group"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $script = Join-Path -Path $parentPath -ChildPath "Helpers/ShellScripts/Ubuntu22.04-2.0.0/5.4.2.3.sh"
+        $result = bash $script
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
+[AuditTest] @{
+    Id = "5.4.2.4"
+    Task = "Ensure root password is set"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $script = Join-Path -Path $parentPath -ChildPath "Helpers/ShellScripts/Ubuntu22.04-2.0.0/5.4.2.4.sh"
+        $result = bash $script
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
 [AuditTest] @{
     Id = "5.4.2.5"
     Task = "Ensure root PATH Integrity"
@@ -3807,8 +3813,20 @@ $retNonCompliantManualReviewRequired = @{
         }
     }
 }
-
-# MISSING RULE: 7.1.9 - Ensure permissions on /etc/shells are configured
+[AuditTest] @{
+    Id = "7.1.9"
+    Task = "Ensure permissions on /etc/shells are configured"
+    Test = {
+        $parentPath = Split-Path -Parent -Path $PSScriptRoot
+        $script = Join-Path -Path $parentPath -ChildPath "Helpers/ShellScripts/Ubuntu22.04-2.0.0/7.1.9.sh"
+        $result = bash $script
+        if ($?) {
+            return $retCompliant
+        } else {
+            return $retNonCompliant
+        }
+    }
+}
 # MISSING RULE: 7.1.10 - Ensure permissions on /etc/security/opasswd are configured
 [AuditTest] @{
     Id = "7.1.11"
