@@ -1,4 +1,72 @@
-﻿[AuditTest] @{
+﻿# Office root folder
+$officePaths = @(
+    # Office 365 / 2019 / 2021 (the standard install paths)
+    "C:\Program Files\Microsoft Office\root\Office16",
+    "C:\Program Files (x86)\Microsoft Office\root\Office16"
+    
+    # Office 2016 (MSI)
+    "C:\Program Files\Microsoft Office\Office16",
+    "C:\Program Files (x86)\Microsoft Office\Office16",
+
+    # Office 2016 (x32 MSI on x64 OS)
+    "C:\Program Files (x86)\Microsoft Office\root\Office16",
+    "C:\Program Files (x86)\Microsoft Office\Office16\",
+    
+    # Office 2016 (x64 MSI on x64 OS)
+    "C:\Program Files\Microsoft Office\Office16\"
+)
+
+# Mapping of applications to exe names
+$exeMap = @{
+    "Groove"              = "GROOVE.EXE"
+    "Excel"               = "EXCEL.EXE"
+    "Publisher"           = "MSPUB.EXE"
+    "PowerPoint"          = "POWERPNT.EXE"
+    "PowerPoint Viewer"   = "PPTVIEW.EXE"
+    "Project"             = "WINPROJ.EXE"
+    "Word"                = "WINWORD.EXE"
+    "Outlook"             = "OUTLOOK.EXE"
+    "SharePoint Designer" = "SPDESIGN.EXE"
+    "Expression Web"      = "EXPRWD.EXE"
+    "Access"              = "MSACCESS.EXE"
+    "OneNote"             = "ONENOTE.EXE"
+    "MS Script Editor"    = "MSE7.EXE"
+    "Visio"               = "VISIO.EXE"
+    
+}
+
+# Check if any Office installation path exists -> if not existend, then Office is not installed
+$OfficeInstalled = $false
+foreach ($path in $officePaths) {
+    if (Test-Path $path) {
+        $OfficeInstalled = $true
+        break
+    }
+}
+
+# Determine which Office apps are installed
+$installedOfficeApps = @{}
+
+if ($OfficeInstalled) {
+    foreach ($app in $exeMap.Keys) {
+        foreach ($path in $officePaths) {
+            $exePath = Join-Path $path $exeMap[$app]
+            if (Test-Path $exePath) {
+                $installedOfficeApps[$app] = $true
+                break
+            }
+        }
+        if (-not $installedOfficeApps.ContainsKey($app)) {
+            $installedOfficeApps[$app] = $false
+        }
+    }
+}
+else {
+    Write-Warning "Office could not be found on this system."
+    Write-Warning "If Office is installed, please leave a comment in Issue-718 (https://github.com/fbprogmbh/Hardening-Audit-Tool-AuditTAP/issues/718) and provide requested information from 'What happened?' section."
+}
+
+[AuditTest] @{
     Id   = "1.1.1"
     Task = "Ensure 'Add-on Management' is set to 'Enabled' (groove.exe)"
     Test = {
