@@ -15,5 +15,15 @@
                 }
             )
         }
+        [ReportSection] @{
+            Title       = "Microsoft Benchmarks"
+            Description = "This section contains all Microsoft recommendations"
+            SubSections = @(
+                [ReportSection] @{
+                    Title      = 'Registry Settings/Group Policies'
+                    AuditInfos = Test-AuditGroup "Security Baseline for Microsoft 365 Apps for Enterprise#RegistrySettings"
+                }
+            )
+        }
     )
 }
