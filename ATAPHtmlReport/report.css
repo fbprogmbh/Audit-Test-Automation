@@ -1,3 +1,14 @@
+:root {
+	--background-white: #ffffff;
+	--status-true: #27AE60;
+	--status-false: #A81A1B;
+	--status-warning: #F39C12;
+	--status-none: #95A5A6;
+	--status-error: #8E44AD;
+	--company-red: #A81A1B;
+	--color-black: #000000;
+}
+
 body {
 	font-family: Cambria, Georgia, serif;
 	margin: 0;
@@ -114,24 +125,30 @@ li a:hover {
 
 .gauge {
 	height: 25px;
-	background: #a7a7a7;
+	background: var(--status-none);
 	border-radius: 8px;
 	overflow: hidden;
+	display: flex;
 }
 
 .gauge .gauge-meter {
 	height: 100%;
-	float: left;
+	flex-grow: var(--weight);
+	flex-shrink: 0;
+	flex-basis: 0;
+	transition: flex-grow 0.5s ease;
 }
 
 .gauge-info {
 	margin: 0;
 	padding: 20px 0;
+	display: flex;
+	justify-content: space-between;
+	list-style: none;
 }
 
 .gauge-info .gauge-info-item {
-	display: table-cell;
-	width: 1%;
+	flex: 1;
 	text-align: center;
 	line-height: 30px;
 }
@@ -199,31 +216,41 @@ table.audit-info td:last-child {
 	width: 70px;
 }
 
+.error,
 .passed,
 .green,
 .failed,
 .red {
-	color: #fff;
+	color: var(--background-white);
 }
 
 .warning,
 .orange {
-	color: #000;
+	color: var(--color-black);
 }
 
 .passed,
 .green {
-	background-color: #33cca6;
+	background-color: var(--status-true);
 }
 
 .failed,
 .red {
-	background-color: #cc0000;
+	background-color: var(--status-false);
 }
 
 .warning,
 .orange {
-	background-color: #ff9933;
+	background-color: var(--status-warning);
+}
+
+.none,
+.grey {
+	background-color: var(--status-none);
+}
+
+.error {
+	background-color: var(--status-error);
 }
 
 h1 span.passed,
@@ -769,9 +796,6 @@ button {
 	font-family: Arial, sans-serif;
 }
 
-
-
-
 #riskScore th {
 	background-color: lightgray;
 }
@@ -915,7 +939,7 @@ button {
 	font-weight: bold;
 	margin: auto;
 	color: #fff;
-	background-color: #cc0000;
+	background-color: var(--status-false);
 }
 
 
@@ -926,7 +950,7 @@ button {
 	font-weight: bold;
 	margin: auto;
 	color: #fff;
-	background-color: #33cca6;
+	background-color: var(--status-true);
 }
 
 .severityResultNone,
@@ -936,6 +960,8 @@ button {
 	border-radius: 8px;
 	font-weight: bold;
 	margin: auto;
+	background-color: var(--status-error);
+	color: #efefef;
 }
 
 .severityResultWarning {
@@ -944,7 +970,7 @@ button {
 	border-radius: 8px;
 	font-weight: bold;
 	margin: auto;
-	background-color: #ff9933;
+	background-color: var(--status-warning);
 	color: #000;
 }
 
@@ -960,7 +986,7 @@ button {
 #complianceStatusFalse {
 	padding: 5px 10px;
 	border-radius: 8px;
-	background-color: #cc0000;
+	background-color: var(--status-false);
 	color: #fff;
 	margin-left: 6%;
 	font-weight: bold;
@@ -970,7 +996,7 @@ button {
 #complianceStatusTrue {
 	padding: 5px 10px;
 	border-radius: 8px;
-	background-color: #33cca6;
+	background-color: var(--status-true);
 	color: #fff;
 	margin-left: 6%;
 	font-weight: bold;
@@ -1173,7 +1199,7 @@ button {
 
 /* Contact Us button, that uses the company red color */
 #contactUsButton {
-	background-color: #A81A1B;
+	background-color: var(--company-red);
 }
 
 /*GitHub button, that uses the dark color of the GitHSub website*/
