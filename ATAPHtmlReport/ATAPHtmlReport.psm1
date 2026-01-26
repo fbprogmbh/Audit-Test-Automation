@@ -342,6 +342,8 @@ function Get-HtmlClassFromStatus {
 			'True' { 'passed' }
 			'False' { 'failed' }
 			'Warning' { 'warning' }
+			'None' { 'none' }
+			'Error' { 'error' }
 			Default { "" }
 		}
 	}
@@ -1452,14 +1454,16 @@ function Get-ATAPHtmlReport {
 						htmlElement 'div' @{ class = 'gauge' } {
 							foreach ($value in $StatusValues) {
 								$count = $completionStatus[$value].Count
-								$htmlClass = Get-HtmlClassFromStatus $value
-								$percent = $completionStatus[$value].Percent
-
-								htmlElement 'div' @{
-									class = "gauge-meter $htmlClass"
-									style = "width: $($percent)%"
-									title = "$value $count test(s), $($percent)%"
-								} { }
+								if($count -gt 0){
+									$htmlClass = Get-HtmlClassFromStatus $value
+									$percent = $completionStatus[$value].Percent
+									
+									htmlElement 'div' @{
+										class = "gauge-meter $htmlClass"
+										style = "--weight: $count;" #fills the gauge bar to some percent
+										title = "$value $count test(s), $($percent)%"
+									} { }
+								}
 							}
 						}
 						htmlElement 'ol' @{ class = 'gauge-info' } {
@@ -1469,8 +1473,8 @@ function Get-ATAPHtmlReport {
 								$percent = $completionStatus[$value].Percent
 
 								htmlElement 'li' @{ class = 'gauge-info-item' } {
-									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
-									" $count test(s) &#x2259; $($percent)%"
+									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { "$($percent)% $value" }
+									" (Tests: $count)"
 								}
 							}
 
@@ -1489,14 +1493,15 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{ class = 'gauge' } {
 								foreach ($value in $StatusValues) {
 									$count = $sectionCountHash[$section.Title + $value + "Count"]
-									$htmlClass = Get-HtmlClassFromStatus $value
-									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
-
-									htmlElement 'div' @{
-										class = "gauge-meter $htmlClass"
-										style = "width: $($percent)%"
-										title = "$value $count test(s), $($percent)%"
-									} { }
+									if ($count -gt 0) {
+										$htmlClass = Get-HtmlClassFromStatus $value
+										$percent = $sectionCountHash[$section.Title + $value + "Percent"]										
+										htmlElement 'div' @{
+											class = "gauge-meter $htmlClass"
+											style = "--weight: $count;" #fills the gauge bar to some percent
+											title = "$value $count test(s), $($percent)%"
+										} { }
+									}
 								}
 							}
 							htmlElement 'ol' @{ class = 'gauge-info' } {
@@ -1505,10 +1510,10 @@ function Get-ATAPHtmlReport {
 									$htmlClass = Get-HtmlClassFromStatus $value
 									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
 
-									htmlElement 'li' @{ class = 'gauge-info-item' } {
-										htmlElement 'span' @{ class = "auditstatus $htmlClass" } { $value }
-										" $count test(s) &#x2259; $($percent)%"
-									}
+							htmlElement 'li' @{ class = 'gauge-info-item' } {
+								htmlElement 'span' @{ class = "auditstatus $htmlClass" } { "$($percent)% $value" }
+								" (Tests: $count)"
+							}
 								}
 							}
 						}
