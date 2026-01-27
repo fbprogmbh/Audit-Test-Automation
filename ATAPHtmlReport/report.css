@@ -2,7 +2,9 @@
 	/* === Base colors ===
 	 * Raw color values without semantic meaning
 	 */
-	--company-red: #A81A1B; /* ! IMPORTANT " */
+	 /* ! IMPORTANT " */
+	--company-red: #A81A1B;
+
 	--color-white: #ffffff;
 	--color-black: #000000;
 	--color-green: #27AE60;
@@ -14,11 +16,16 @@
 	 * Use these variables in layouts and components
 	 */
 	--background-white: var(--color-white);
-	--status-true: var(--color-green); /* status true in checks*/
-	--status-false: var(--company-red); /* status false in checks*/
-	--status-warning: var(--color-orange); /* warning in checks  */
-	--status-none: var(--color-grey); /* neutral / status none in checks */
-	--status-error: var(--color-purple); /* critical error in checks*/
+	/* status true in checks*/
+	--status-true: var(--color-green);
+	/* status false in checks*/
+	--status-false: var(--company-red);
+	/* warning in checks  */
+	--status-warning: var(--color-orange);
+	/* neutral / status none in checks */
+	--status-none: var(--color-grey);
+	/* critical error in checks */
+	--status-error: var(--color-purple);
 
 }
 
@@ -28,6 +35,10 @@ body {
 
 	color: default;
 	background-color: default;
+}
+
+.header {
+	background-color: #c6c9cc;
 }
 
 .content {
@@ -53,7 +64,7 @@ html body div.header.content {
 
 #companyName {
 	font-size: 2.5rem;
-	color: #A81A1B !important;
+	color: var(--company-red);
 	font-weight: 900;
 }
 
