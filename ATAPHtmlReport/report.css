@@ -1,12 +1,25 @@
 :root {
-	--background-white: #ffffff;
-	--status-true: #27AE60;
-	--status-false: #A81A1B;
-	--status-warning: #F39C12;
-	--status-none: #95A5A6;
-	--status-error: #8E44AD;
-	--company-red: #A81A1B;
+	/* === Base colors ===
+	 * Raw color values without semantic meaning
+	 */
+	--company-red: #A81A1B; /* ! IMPORTANT " */
+	--color-white: #ffffff;
 	--color-black: #000000;
+	--color-green: #27AE60;
+	--color-orange: #F39C12;
+	--color-grey: #95A5A6;
+	--color-purple: #8E44AD;
+
+	/* === Semantic colors ===
+	 * Use these variables in layouts and components
+	 */
+	--background-white: var(--color-white);
+	--status-true: var(--color-green); /* status true in checks*/
+	--status-false: var(--company-red); /* status false in checks*/
+	--status-warning: var(--color-orange); /* warning in checks  */
+	--status-none: var(--color-grey); /* neutral / status none in checks */
+	--status-error: var(--color-purple); /* critical error in checks*/
+
 }
 
 body {
@@ -46,7 +59,7 @@ html body div.header.content {
 
 #companySlogan {
 	font-size: 1rem;
-	color: #000000;
+	color: var(--color-black);
 	font-weight: 600;
 	margin: 0;
 	margin-bottom: 1rem;
@@ -332,7 +345,7 @@ span.auditstatus {
 	left: 25px;
 	width: 150px;
 	height: 150px;
-	background: white;
+	background: var(--background-white);
 }
 
 .donut-chart .chart-center span {
