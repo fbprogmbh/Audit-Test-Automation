@@ -10,6 +10,17 @@ let AmountOfFailedSeverityRules;
 let SeverityCompliance;
 
 
+const cssVars = getComputedStyle(document.documentElement);
+
+const COLORS = {
+    green: cssVars.getPropertyValue('--color-green').trim(),
+    red: cssVars.getPropertyValue('--color-red').trim(),
+    orange: cssVars.getPropertyValue('--color-orange').trim(),
+    purple: cssVars.getPropertyValue('--color-purple').trim(),
+    white: cssVars.getPropertyValue('--color-white').trim()
+
+};
+
 function startConditions() {
     let isRiskScoreValue = document.getElementById("riskScore");
     let isMITREValue = document.getElementById("MITRE");
@@ -23,7 +34,7 @@ function startConditions() {
     document.getElementById("settingsOverview").style.display = "none";
 
 
-    document.getElementById("summaryBtn").style.backgroundColor = '#ff9933';
+    document.getElementById("summaryBtn").style.backgroundColor = COLORS.orange;
     document.getElementById("foundationDataBtn").style.backgroundColor = 'transparent';
     document.getElementById("referenceBtn").style.backgroundColor = 'transparent';
     document.getElementById("settingsOverviewBtn").style.backgroundColor = 'transparent';
@@ -93,32 +104,32 @@ function clickButton(value) {
     switch (buttonNumber) {
         case 1:
             document.getElementById("summary").style.display = "block";
-            document.getElementById("summaryBtn").style.backgroundColor = '#ff9933';
+            document.getElementById("summaryBtn").style.backgroundColor = COLORS.orange;
             break;
         case 2:
             document.getElementById("riskScore").style.display = "block";
-            document.getElementById("riskScoreBtn").style.backgroundColor = '#ff9933';
+            document.getElementById("riskScoreBtn").style.backgroundColor = COLORS.orange;
             calcDotPosition();
             break;
         case 3:
             document.getElementById("references").style.display = "block";
-            document.getElementById("referenceBtn").style.backgroundColor = '#ff9933';
+            document.getElementById("referenceBtn").style.backgroundColor = COLORS.orange;
             break;
         case 4:
             document.getElementById("settingsOverview").style.display = "block";
-            document.getElementById("settingsOverviewBtn").style.backgroundColor = '#ff9933';
+            document.getElementById("settingsOverviewBtn").style.backgroundColor = COLORS.orange;
             break;
         case 5:
             document.getElementById("foundationData").style.display = "block";
-            document.getElementById("foundationDataBtn").style.backgroundColor = '#ff9933';
+            document.getElementById("foundationDataBtn").style.backgroundColor = COLORS.orange;
             break;
         case 6:
             document.getElementById("MITRE").style.display = "block";
-            document.getElementById("MITREBtn").style.backgroundColor = '#ff9933';
+            document.getElementById("MITREBtn").style.backgroundColor = COLORS.orange;
             break;
         case 7:
             document.getElementById("CISA").style.display = "block";
-            document.getElementById("CISABtn").style.backgroundColor = '#ff9933';
+            document.getElementById("CISABtn").style.backgroundColor = COLORS.orange;
             break;
     }
 
@@ -176,8 +187,8 @@ function calcDotPosition() {
 
         document.getElementById("complianceStatus").style.padding = "5px 10px";
         document.getElementById("complianceStatus").style.borderRadius = "8px";
-        document.getElementById("complianceStatus").style.backgroundColor = "#33cca6";
-        document.getElementById("complianceStatus").style.color = "#fff";
+        document.getElementById("complianceStatus").style.backgroundColor = COLORS.green;
+        document.getElementById("complianceStatus").style.color = COLORS.white;
         document.getElementById("complianceStatus").style.marginLeft = "6%";
         document.getElementById("complianceStatus").style.fontWeight = "bold";
         document.getElementById("complianceStatus").style.display = "inline";
@@ -189,8 +200,8 @@ function calcDotPosition() {
         complianceValueSeverity = 4;
         document.getElementById("complianceStatus").style.padding = "5px 10px";
         document.getElementById("complianceStatus").style.borderRadius = "8px";
-        document.getElementById("complianceStatus").style.backgroundColor = "#cc0000";
-        document.getElementById("complianceStatus").style.color = "#fff";
+        document.getElementById("complianceStatus").style.backgroundColor = COLORS.red;
+        document.getElementById("complianceStatus").style.color = COLORS.white;
         document.getElementById("complianceStatus").style.marginLeft = "6%";
         document.getElementById("complianceStatus").style.fontWeight = "bold";
         document.getElementById("complianceStatus").style.display = "inline";
