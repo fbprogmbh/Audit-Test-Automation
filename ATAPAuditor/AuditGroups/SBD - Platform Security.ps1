@@ -491,7 +491,7 @@ $RootPath = Split-Path $RootPath -Parent
 		else{
 			if ((Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard).SecurityServicesConfigured -contains 1) {
 				return @{
-					Message = "Credential Guard is configured but not running, due to incompatibility with $($systemSKU) <br/>See Microsoft documentation for further information: <a href='https://learn.microsoft.com/en-us/windows/security/identity-protection/credential-guard/#windows-edition-and-licensing-requirements'>Here</a>"
+					Message = "Credential Guard is configured but not running, due to incompatibility with $($systemSKU) <br/>See Microsoft documentation for further information: <a href='https://learn.microsoft.com/en-us/windows/security/identity-protection/credential-guard/#windows-edition-and-licensing-requirements' target='_blank'>Here</a>"
 					Status = "False"
 				}
 			}
