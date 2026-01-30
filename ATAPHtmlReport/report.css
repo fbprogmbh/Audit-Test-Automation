@@ -327,6 +327,7 @@ span.auditstatus {
 button {
 	margin-left: 10px;
 	border-radius: 8px;
+	cursor: pointer;
 	font-weight: bold;
 }
 
