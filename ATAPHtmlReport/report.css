@@ -25,7 +25,7 @@
 	/* neutral / status none in checks */
 	--status-none: var(--color-grey);
 	/* critical error in checks */
-	--status-error: var(--color-purple);
+	--status-error: var(--color-black);
 
 }
 
