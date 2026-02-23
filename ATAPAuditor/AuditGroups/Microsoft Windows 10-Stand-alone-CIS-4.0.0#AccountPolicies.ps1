@@ -13,7 +13,7 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -ne 24)) {
+        if ($setPolicy -ne 24) {
             return @{
                 Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x == 24"
                 Status  = "False"
@@ -41,13 +41,17 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -gt 365 days -or $setPolicy -le 0 days)) {
+        if ($setPolicy -gt 365 -or $setPolicy -le 0) {
+            if ($setPolicy -eq -1) {
+                #Setting 0 in GroupPolicy translates to -1 in AuditPolicy
+                $setPolicy = "Password never expires"
+            }
             return @{
-                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 days and x > 0 days"
+                Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 and x > 0"
                 Status  = "False"
             }
         }
-
+        
         return @{
             Message = "Compliant"
             Status  = "True"
@@ -69,9 +73,9 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -lt 1 days)) {
+        if ($setPolicy -lt 1) {
             return @{
-                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1 days"
+                Message = "'MinimumPasswordAge' currently set to: $setPolicy. Expected: x >= 1"
                 Status  = "False"
             }
         }
@@ -181,7 +185,7 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -lt 15 minutes -or $setPolicy -gt 99999 minutes)) {
+        if ($setPolicy -lt 15 -or $setPolicy -gt 99999) {
             return @{
                 Message = "'LockoutDuration' currently set to: $setPolicy. Expected: x >= 15 minutes and x <= 99999 minutes"
                 Status  = "False"
@@ -209,7 +213,7 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -gt 5 -or $setPolicy -le 0)) {
+        if ($setPolicy -gt 5 -or $setPolicy -le 0) {
             return @{
                 Message = "'LockoutBadCount' currently set to: $setPolicy. Expected: x <= 5 and x > 0"
                 Status  = "False"
@@ -237,7 +241,7 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -gt 99999 minutes -or $setPolicy -lt 15 minutes)) {
+        if ($setPolicy -gt 99999 -or $setPolicy -lt 15 ) {
             return @{
                 Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x <= 99999 minutes and x >= 15 minutes"
                 Status  = "False"
