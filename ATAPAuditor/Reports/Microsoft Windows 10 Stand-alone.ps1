@@ -2,7 +2,7 @@
 	Title = "Windows 10 Stand-alone Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		"CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 2.0.0, Date: 2023-05-17"
+		"CIS Microsoft Windows 10 Stand-alone Benchmark, Version: 4.0.0, Date: 2025-04-06"
         "BSI Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2020-04-27"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
@@ -15,23 +15,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-4.0.0#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-4.0.0#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-4.0.0#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-4.0.0#SecurityOptions"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-2.0.0#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Stand-alone-CIS-4.0.0#UserRights"
 				}
 			)
 		}
