@@ -445,10 +445,10 @@ function CreateReportContent {
 	}
 	#if at least one test is failed
 	if ($amountOfFailedTests -gt 0) {
-		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #cc0000; display: inline;" } { "$($title)" }
+		htmlElement 'h2' @{ id = "$($title)"; class = "severityResultFalse" } { "$($title)" }
 	}
 	else {
-		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #33cca6; display: inline;" } { "$($title)" }
+		htmlElement 'h2' @{ id = "$($title)"; class = "severityResultTrue" } { "$($title)" }
 	}
 	htmlElement 'table' @{class = 'audit-info'; style = 'margin-bottom: 50px; margin-top: 20px;' } {
 		htmlElement 'tbody' @{} {
