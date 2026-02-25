@@ -2,7 +2,7 @@
 	/* === Base colors ===
 	 * Raw color values without semantic meaning
 	 */
-	 /* ! IMPORTANT " */
+	/* ! IMPORTANT " */
 	--company-red: #A81A1B;
 
 	--color-white: #ffffff;
@@ -15,7 +15,6 @@
 	/* === Semantic colors ===
 	 * Use these variables in layouts and components
 	 */
-	--background-white: var(--color-white);
 	/* status true in checks*/
 	--status-true: var(--color-green);
 	/* status false in checks*/
@@ -26,7 +25,8 @@
 	--status-none: var(--color-grey);
 	/* critical error in checks */
 	--status-error: var(--color-black);
-
+	/* github grey color*/
+	--github-grey: #24292e;
 }
 
 body {
@@ -121,7 +121,7 @@ html body div.header.content {
 
 /*H*/
 	{
-	fill: black;
+	fill: var(--color-black);
 }
 
 .header h1 {
@@ -245,7 +245,7 @@ table.audit-info td:last-child {
 .green,
 .failed,
 .red {
-	color: var(--background-white);
+	color: var(--color-white);
 }
 
 .warning,
@@ -356,7 +356,7 @@ span.auditstatus {
 	left: 25px;
 	width: 150px;
 	height: 150px;
-	background: var(--background-white);
+	background: var(--color-white);
 }
 
 .donut-chart .chart-center span {
@@ -364,7 +364,7 @@ span.auditstatus {
 	text-align: center;
 	font-size: 40px;
 	line-height: 150px;
-	color: black;
+	color: var(--color-black);
 }
 
 
@@ -394,7 +394,7 @@ button {
 	margin-right: 15%;
 	width: 85%;
 	border-collapse: collapse;
-	border: 1px solid #ffffff;
+	border: 1px solid var(--color-white);
 	font-family: Arial, sans-serif;
 }
 
@@ -410,7 +410,7 @@ button {
 .CISAMitreTechniqueIDs a {
 	border-radius: 0.3em;
 	background-color: #cc0000;
-	color: #ffffff;
+	color: var(--color-white);
 	padding: 0.2em;
 	margin: 0.2em;
 	text-decoration: none;
@@ -447,7 +447,7 @@ button {
 #MITRETable {
 	width: 100%;
 	border-collapse: collapse;
-	border: 1px solid #ffffff;
+	border: 1px solid var(--color-white);
 	font-family: Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
@@ -498,7 +498,7 @@ button {
 	visibility: hidden;
 	width: 120px;
 	background-color: black;
-	color: #fff;
+	color: var(--color-white);
 	text-align: center;
 	border-radius: 6px;
 	padding: 5px 0;
@@ -919,7 +919,7 @@ button {
 #dotRiskScoreTab {
 	height: 15px;
 	width: 15px;
-	background-color: black;
+	background-color: var(--color-black);
 	border-radius: 50%;
 	border-style: dotted;
 	display: inline-block;
@@ -932,7 +932,7 @@ button {
 #dotSummaryTab {
 	height: 15px;
 	width: 15px;
-	background-color: black;
+	background-color: var(--color-black);
 	border-radius: 50%;
 	border-style: dotted;
 	display: inline-block;
@@ -945,14 +945,14 @@ button {
 
 #quantityTable {
 	margin-top: 30px;
-	border: 1px solid black;
+	border: 1px solid var(--color-black);
 	margin-right: auto;
 }
 
 
 #severityTable {
 	margin-top: 30px;
-	border: 1px solid black;
+	border: 1px solid var(--color-black);
 	margin-right: auto;
 }
 
@@ -962,7 +962,7 @@ button {
 	border-radius: 8px;
 	font-weight: bold;
 	margin: auto;
-	color: #fff;
+	color: var(--color-white);
 	background-color: var(--status-false);
 }
 
@@ -973,7 +973,7 @@ button {
 	border-radius: 8px;
 	font-weight: bold;
 	margin: auto;
-	color: #fff;
+	color: var(--color-white);
 	background-color: var(--status-true);
 }
 
@@ -995,7 +995,7 @@ button {
 	font-weight: bold;
 	margin: auto;
 	background-color: var(--status-warning);
-	color: #000;
+	color: var(--color-black);
 }
 
 .tabContent#riskScore {
@@ -1011,7 +1011,7 @@ button {
 	padding: 5px 10px;
 	border-radius: 8px;
 	background-color: var(--status-false);
-	color: #fff;
+	color: var(--color-white);
 	margin-left: 6%;
 	font-weight: bold;
 	display: inline;
@@ -1021,7 +1021,7 @@ button {
 	padding: 5px 10px;
 	border-radius: 8px;
 	background-color: var(--status-true);
-	color: #fff;
+	color: var(--color-white);
 	margin-left: 6%;
 	font-weight: bold;
 	display: inline;
@@ -1090,7 +1090,7 @@ button {
 	grid-template-columns: 20% 20% 20% 20% 20%;
 	grid-template-rows: 20% 20% 20% 20% 20%;
 	margin-top: 30px;
-	border: 1px solid black;
+	border: 1px solid var(--color-black);
 	margin-right: auto;
 
 }
@@ -1213,8 +1213,8 @@ button {
 .contact-buttons .button-base {
 	border-radius: 4px;
 	padding: 15px 25px;
-	color: #fff;
-	box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+	color: var(--color-white);
+	box-shadow: 2px 2px var(--color-black);
 	border: none;
 	cursor: pointer;
 	font-size: 16px;
@@ -1228,7 +1228,7 @@ button {
 
 /*GitHub button, that uses the dark color of the GitHSub website*/
 #githubButton {
-	background-color: #24292e;
+	background-color: var(--github-grey);
 }
 
 /*this is the link of the company logo in the top right corner*/
