@@ -454,13 +454,13 @@ button {
 }
 
 #MITREthead a {
-	color: #000000;
+	color: var(--color-black);
 	text-decoration: none;
 	font-weight: bold;
 }
 
 #MITREtbody a {
-	color: #000000;
+	color: var(--color-black);
 	text-decoration: none;
 }
 
@@ -485,19 +485,19 @@ button {
 
 .MITRETechnique {
 	padding: 6px;
-	border: 1px solid #000000;
+	border: 1px solid var(--color-black);
 }
 
 .tooltip {
 	position: relative;
 	display: inline-block;
-	border-bottom: 1px dotted black;
+	border-bottom: 1px dotted var(--color-black);
 }
 
 .tooltip .tooltiptext {
 	visibility: hidden;
 	width: 120px;
-	background-color: black;
+	background-color: var(--color-black);
 	color: var(--color-white);
 	text-align: center;
 	border-radius: 6px;
@@ -527,7 +527,7 @@ button {
 .square {
 	width: 20px;
 	height: 20px;
-	border: 1px solid black;
+	border: 1px solid var(--color-black);
 }
 
 #riskMatrixContainer {
@@ -542,7 +542,7 @@ button {
 }
 
 #riskMatrixContainer div {
-	border: 1px solid black;
+	border: 1px solid var(--color-black);
 }
 
 
@@ -840,7 +840,7 @@ button {
 }
 
 #riskMatrixSummary div {
-	border: 1px solid black;
+	border: 1px solid var(--color-black);
 }
 
 #riskMatrixSummaryArea {
@@ -1166,7 +1166,7 @@ button {
 
 /* Contact section background and padding */
 .contact-block {
-	background-color: #f8f8f8;
+	background-color: var(--color-white);
 	padding: 20px 0;
 }
 
