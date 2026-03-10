@@ -7440,8 +7440,8 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
-                -Name "PwdExpirationProtectionEnabled" `
-            | Select-Object -ExpandProperty "PwdExpirationProtectionEnabled"
+                -Name "PassworddExpirationProtectionEnabled" `
+            | Select-Object -ExpandProperty "PassworddExpirationProtectionEnabled"
 
             if ($regValue -ne 1) {
                 return @{
@@ -7479,9 +7479,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "ADPasswordEncryptionEnabled" `
             | Select-Object -ExpandProperty "ADPasswordEncryptionEnabled"
 
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
