@@ -182,18 +182,41 @@ function Get-LicenseStatus {
 		$LicenseStatusCache = "License check has been skipped."
 		return $LicenseStatusCache
 	}
+	
+	Write-Host "Checking operating system activation status"
 
-	Write-Host "Checking operating system activation status. This may take a while..."
-	$license = Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | Where-Object { $_.PartialProductKey } | Select-Object -First 1
-	$LicenseStatusCache = switch ($license.LicenseStatus) {
-		"0" { "Unlicensed" }
-		"1" { "Licensed" }
-		"2" { "OOBGrace" }
-		"3" { "OOTGrace" }
-		"4" { "NonGenuineGrace" }
-		"5" { "Notification" }
-		"6" { "ExtendedGrace" }
+	
+	$license = ""
+	# Here we test whether the system is 32 or 64 Bit
+	# Using the 32 Bit version of cscript results in twice the performance when running slmgr
+	if(Test-Path -Path C:\Windows\SysWOW64){
+		# 64 Bit System, so we specifically use the 32 Bit executable of cscript
+		$license = (C:\Windows\SysWOW64\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
+	}else{
+		# 32 Bit System
+		$license = (C:\Windows\System32\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
 	}
+	# Trim it as the output has 4 spaces to the left by default
+	$license = $license.Trim()
+
+	# Since slmgr /xpr outputs license status 2 and 3 with a the end date
+	# we are simply going to match them, and replace the license string with the fixed value
+	if($license -match "(Initial grace period ends)" -or $license -match "(Additional grace period ends)"){
+		$license = $Matches[1]
+	}
+
+	$LicenseStatusCache = switch ($license) {
+		"Unlicensed" { "Unlicensed" }
+		"The machine is permanently activated." { "Licensed" }
+		"Initial grace period ends" { "OOBGrace" }
+		"Additional grace period ends" { "OOTGrace" }
+		"Non-genuine grace period ends" { "NonGenuineGrace" }
+		"Windows is in Notification mode" { "Notification" }
+		"Extended grace period ends" { "ExtendedGrace" }
+	}
+	
+	Write-Host "Operating system activation status retrieved"
+
 	return $LicenseStatusCache
 }
 
