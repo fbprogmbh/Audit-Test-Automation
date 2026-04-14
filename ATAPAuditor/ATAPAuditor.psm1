@@ -171,21 +171,8 @@ function Start-ModuleTest {
 }
 
 function Get-LicenseStatus {
-	param(
-		$SkipLicenseCheck
-	)
-	if ($LicenseStatusCache) {
-		return $LicenseStatusCache
-	}
-	
-	if ($SkipLicenseCheck -eq $true) {
-		$LicenseStatusCache = "License check has been skipped."
-		return $LicenseStatusCache
-	}
-	
 	Write-Host "Checking operating system activation status"
 
-	
 	$license = ""
 	# Here we test whether the system is 32 or 64 Bit
 	# Using the 32 Bit version of cscript results in twice the performance when running slmgr
@@ -852,10 +839,6 @@ function Save-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch]
 		$RiskScore,
-
-		[Parameter(Mandatory = $false)]
-		[switch]
-		$SkipLicenseCheck,
 		# [Parameter(Mandatory = $false)]
 		# [switch]
 		# $MITRE,
@@ -932,7 +915,7 @@ function Save-ATAPHtmlReport {
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
 	if (!$isUnix) {
-		$SystemInformation.SoftwareInformation.LicenseStatus = Get-LicenseStatus $SkipLicenseCheck
+		$SystemInformation.SoftwareInformation.LicenseStatus = Get-LicenseStatus
 	}
 	$hashtable_sha256 = GenerateHashTable $report
 	

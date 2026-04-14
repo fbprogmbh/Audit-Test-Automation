@@ -6,17 +6,11 @@ $RootPath = Split-Path $RootPath -Parent
 	Id   = "SBD-201"
 	Task = "Get License status."
 	Test = {
-		$lcStatus = Get-LicenseStatus $SkipLicenseCheck
+		$lcStatus = Get-LicenseStatus
 		if ($lcStatus -eq "Licensed") {
 			return @{
 				Message = "Compliant"
 				Status  = "True"
-			}
-		}
-		if ($lcStatus -eq "License check has been skipped.") {
-			return @{
-				Message = $lcStatus
-				Status  = "None"
 			}
 		}
 		return @{
