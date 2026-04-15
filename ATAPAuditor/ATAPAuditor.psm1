@@ -184,22 +184,37 @@ function Get-LicenseStatus {
 		$license = (C:\Windows\System32\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
 	}
 	# Trim it as the output has 4 spaces to the left by default
-	$license = $license.Trim()
+	# The output format for slmgr.vbs /xpr can be a bit hard to work with, so we are going to remove all . and " just to make sure it is clean
+	$license = $license.Trim().Replace(".", "").Replace('"', "")
 
-	# Since slmgr /xpr outputs license status 2 and 3 with a the end date
-	# we are simply going to match them, and replace the license string with the fixed value
-	if($license -match "(Initial grace period ends)" -or $license -match "(Additional grace period ends)"){
-		$license = $Matches[1]
+
+	
+	# Here we check the slmgr ini files (The translation files), compare the output from the command with this list, and then take the key from that string
+	$found 
+	Get-ChildItem C:\Windows\System32\slmgr | ForEach-Object($_){
+        $t1 = Get-Content C:\Windows\System32\slmgr\$_\slmgr.ini | Select-String -pattern "LicenseStatus" 
+        for ($i = 0; $i -lt $t1.Count; $i++) {
+            $t1[$i].Line = $t1[$i].Line.Replace(".", "").Replace('"', "").Replace("%ENDDATE%", "")
+        }
+        $t2 = $t1 | ConvertFrom-StringData
+        for ($i = 0; $i -lt $t2.Count; $i++) {
+            if($license -match $t2[$i].Values){
+                $found = $t2[$i].Keys
+                break
+            }
+        }
 	}
 
-	$LicenseStatusCache = switch ($license) {
-		"Unlicensed" { "Unlicensed" }
-		"The machine is permanently activated." { "Licensed" }
-		"Initial grace period ends" { "OOBGrace" }
-		"Additional grace period ends" { "OOTGrace" }
-		"Non-genuine grace period ends" { "NonGenuineGrace" }
-		"Windows is in Notification mode" { "Notification" }
-		"Extended grace period ends" { "ExtendedGrace" }
+
+	# Here we evaluate our findings, and return the actual name for the license status
+	$LicenseStatusCache = switch ($found) {
+		"L_MsgLicenseStatusUnlicensed" { "Unlicensed" }
+		"L_MsgLicenseStatusLicensed" { "Licensed" }
+		"L_MsgLicenseStatusInitialGrace" { "OOBGrace" }
+		"L_MsgLicenseStatusAdditionalGrace" { "OOTGrace" }
+		"L_MsgLicenseStatusNonGenuineGrace" { "NonGenuineGrace" }
+		"L_MsgLicenseStatusNotification" { "Notification" }
+		"L_MsgLicenseStatusExtendedGrace" { "ExtendedGrace" }
 	}
 	
 	Write-Host "Operating system activation status retrieved"
