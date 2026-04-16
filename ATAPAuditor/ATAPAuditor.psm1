@@ -171,29 +171,54 @@ function Start-ModuleTest {
 }
 
 function Get-LicenseStatus {
-	param(
-		$SkipLicenseCheck
-	)
-	if ($LicenseStatusCache) {
-		return $LicenseStatusCache
+	Write-Host "Checking operating system activation status"
+
+	$license = ""
+	# Here we test whether the system is 32 or 64 Bit
+	# Using the 32 Bit version of cscript results in twice the performance when running slmgr
+	if(Test-Path -Path C:\Windows\SysWOW64){
+		# 64 Bit System, so we specifically use the 32 Bit executable of cscript
+		$license = (C:\Windows\SysWOW64\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
+	}else{
+		# 32 Bit System
+		$license = (C:\Windows\System32\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
 	}
+	# Trim it as the output has 4 spaces to the left by default
+	# The output format for slmgr.vbs /xpr can be a bit hard to work with, so we are going to remove all . and " just to make sure it is clean
+	$license = $license.Trim().Replace(".", "").Replace('"', "")
+
+
 	
-	if ($SkipLicenseCheck -eq $true) {
-		$LicenseStatusCache = "License check has been skipped."
-		return $LicenseStatusCache
+	# Here we check the slmgr ini files (The translation files), compare the output from the command with this list, and then take the key from that string
+	$found 
+	Get-ChildItem C:\Windows\System32\slmgr | ForEach-Object($_){
+        $t1 = Get-Content C:\Windows\System32\slmgr\$_\slmgr.ini | Select-String -pattern "LicenseStatus" 
+        for ($i = 0; $i -lt $t1.Count; $i++) {
+            $t1[$i].Line = $t1[$i].Line.Replace(".", "").Replace('"', "").Replace("%ENDDATE%", "")
+        }
+        $t2 = $t1 | ConvertFrom-StringData
+        for ($i = 0; $i -lt $t2.Count; $i++) {
+            if($license -match $t2[$i].Values){
+                $found = $t2[$i].Keys
+                break
+            }
+        }
 	}
 
-	Write-Host "Checking operating system activation status. This may take a while..."
-	$license = Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | Where-Object { $_.PartialProductKey } | Select-Object -First 1
-	$LicenseStatusCache = switch ($license.LicenseStatus) {
-		"0" { "Unlicensed" }
-		"1" { "Licensed" }
-		"2" { "OOBGrace" }
-		"3" { "OOTGrace" }
-		"4" { "NonGenuineGrace" }
-		"5" { "Notification" }
-		"6" { "ExtendedGrace" }
+
+	# Here we evaluate our findings, and return the actual name for the license status
+	$LicenseStatusCache = switch ($found) {
+		"L_MsgLicenseStatusUnlicensed" { "Unlicensed" }
+		"L_MsgLicenseStatusLicensed" { "Licensed" }
+		"L_MsgLicenseStatusInitialGrace" { "OOBGrace" }
+		"L_MsgLicenseStatusAdditionalGrace" { "OOTGrace" }
+		"L_MsgLicenseStatusNonGenuineGrace" { "NonGenuineGrace" }
+		"L_MsgLicenseStatusNotification" { "Notification" }
+		"L_MsgLicenseStatusExtendedGrace" { "ExtendedGrace" }
 	}
+	
+	Write-Host "Operating system activation status retrieved"
+
 	return $LicenseStatusCache
 }
 
@@ -829,10 +854,6 @@ function Save-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch]
 		$RiskScore,
-
-		[Parameter(Mandatory = $false)]
-		[switch]
-		$SkipLicenseCheck,
 		# [Parameter(Mandatory = $false)]
 		# [switch]
 		# $MITRE,
@@ -909,7 +930,7 @@ function Save-ATAPHtmlReport {
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
 	if (!$isUnix) {
-		$SystemInformation.SoftwareInformation.LicenseStatus = Get-LicenseStatus $SkipLicenseCheck
+		$SystemInformation.SoftwareInformation.LicenseStatus = Get-LicenseStatus
 	}
 	$hashtable_sha256 = GenerateHashTable $report
 	
