@@ -18,25 +18,6 @@
 	Id = "SBD-302"
 	Task = "Ensure PowerShell Version 2 is uninstalled."
 	Test = {
-
-        # $features = @(
-        #     "MicrosoftWindowsPowerShellV2Root",
-        #     "MicrosoftWindowsPowerShellV2"
-        # )
-        # foreach ($feature in $features) {
-        
-        #     $featureInfo = Get-WindowsOptionalFeature -Online -FeatureName $feature -ErrorAction SilentlyContinue
-        
-        #     # Feature does not exist on this system
-        #     if (-not $featureInfo -or
-        #         -not $featureInfo.State -or
-        #         $featureInfo.State -ne 'Enabled') {
-        
-        #         Write-Host "$feature is not available on this system." -ForegroundColor DarkGray
-        #         continue
-        #     }
-        # }
-
         $ps2Found = $false
         $messages = "The following PS2-related features are enabled:"
 
