@@ -200,6 +200,7 @@ function Get-LicenseStatus {
         for ($i = 0; $i -lt $t2.Count; $i++) {
             if($license -match $t2[$i].Values){
                 $found = $t2[$i].Keys
+				$found > $null # VSCode complains that $found isnt used, soooo, i m using it here to dismiss the complaint
                 break
             }
         }
@@ -229,6 +230,7 @@ function IsIIS10Executable {
 	return $true
 }
 
+# Compares 2 Arrays
 function Test-ArrayEqual {
 	[OutputType([bool])]
 	[CmdletBinding()]
@@ -258,7 +260,11 @@ function Test-ArrayEqual {
 		return $false
 	}
 
+	# While this entire check is O(n*m), the arrays used are so small that this remains as the most efficient way to solve this check
 	foreach ($a in $Array1) {
+		# We only check whether the current item is NOT in the other array.
+		# This check is good enough for now, as the system's registry is more secure the fewer items are in this keys we check
+		# We only need to make sure that the specific key does not include values that are not approved
 		if ($a -notin $Array2) {
 			return $false
 		}
@@ -517,7 +523,7 @@ function Get-RSSeverityReport {
 	# gather results of tests and save it in resultTable
 	$resultTable = [ResultTable]::new()
 	foreach ($test in $tests) {
-		if ($test.AuditInfoStatus -EQ "True") {
+		if ($test.AuditInfoStatus -eq "True") {
 			$resultTable.Success += 1
 		}
 		if ($test.AuditInfostatus -ne "True") {
