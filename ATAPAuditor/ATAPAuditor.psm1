@@ -123,7 +123,7 @@ class ResultTable {
 #endregion
 
 #region helpers
-function IsIn-FullLanguageMode {
+function Get-FullLanguageMode {
 	try {
 		$languageMode = $ExecutionContext.SessionState.LanguageMode
 		if ($languageMode -eq "FullLanguage") {
@@ -223,7 +223,7 @@ function Get-LicenseStatus {
 }
 
 function IsIIS10Executable {
-	if ((Get-Module -ListAvailable IISAdministration) -eq $null) {
+	if ($null -eq (Get-Module -ListAvailable IISAdministration)) {
 		return $false
 	}
 	return $true
@@ -868,7 +868,8 @@ function Save-ATAPHtmlReport {
 		return;
 	}
 
-	if (($languagemode = IsIn-FullLanguageMode) -ne $true) {
+	# Only run the code if languagemode is not true (it can be true, false, or a string)
+	if (($languagemode = Get-FullLanguageMode) -ne $true) {
 		if ($languagemode -eq $false) {
 			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
 		}
