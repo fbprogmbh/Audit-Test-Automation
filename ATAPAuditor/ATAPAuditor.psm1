@@ -738,10 +738,10 @@ function Get-ATAPReport {
 	)
 	#Windows OS
 	if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
-		return Get-ChildItem "$RootPath\Reports\$ReportName.ps1" | Select-Object -Property BaseName
+		return Get-ChildItem "$RootPath\Reports\*$ReportName*.ps1" | Select-Object -Property BaseName
 	}
 	#Linux OS
-	return Get-ChildItem "$RootPath/Reports/$ReportName.ps1" | Select-Object -Property BaseName
+	return Get-ChildItem "$RootPath/Reports/*$ReportName*.ps1" | Select-Object -Property BaseName
 }
 
 <#
