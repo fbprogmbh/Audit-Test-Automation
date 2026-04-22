@@ -137,6 +137,7 @@ function Get-FullLanguageMode {
 	return $languageMode
 }
 
+# Test whether powershell has the listed modules installed and loaded
 function Start-ModuleTest {
 	$moduleList = @(Get-Module -ListAvailable).Name | Select-Object -Unique
 	$necessaryModules = @(
@@ -169,7 +170,7 @@ function Start-ModuleTest {
 	}
 
 }
-
+# Get Windows Activation Status
 function Get-LicenseStatus {
 	Write-Host "Checking operating system activation status"
 
@@ -602,7 +603,7 @@ function Test-AuditGroup {
 		$status = [AuditInfoStatus]::None
 		#if audit test contains datatype "Constraints", proceed
 		if ($test.Constraints) {
-			$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
+			$DomainRoleConstraint = $test.Constraints | Where-Object Property -eq "DomainRole"
 			#get domain role of system
 			$currentRole = Get-DomainRole
 			#get domain roles, which are listed in AuditTest
