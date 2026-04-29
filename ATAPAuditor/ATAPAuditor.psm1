@@ -934,7 +934,8 @@ function Save-ATAPHtmlReport {
 	}
 	$hashtable_sha256 = GenerateHashTable $report
 	
-	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
+	# $report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -MITRE:$MITRE -hashtable_sha256:$hashtable_sha256 -LicenseStatus:$LicenseStatus -SystemInformation:$SystemInformation
+	$report | Get-ATAPHtmlReport -Path $Path -RiskScore:$RiskScore -hashtable_sha256:$hashtable_sha256 -SystemInformation:$SystemInformation
 }
 
 New-Alias -Name 'shr' -Value Save-ATAPHtmlReport

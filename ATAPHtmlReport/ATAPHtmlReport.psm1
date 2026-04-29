@@ -364,15 +364,15 @@ function Convert-SectionTitleToHtmlId {
 	return ([char[]]$Title | ForEach-Object $charMap) -join ''
 }
 
-function CreateToc {
-	param(
-		[Parameter(Mandatory = $true)]
-		$title
-	)
-	htmlElement 'li' @{} {
-		htmlElement 'a' @{ href = "#$($title)" } { "$($title)" }
-	}
-}
+# function CreateToc {
+# 	param(
+# 		[Parameter(Mandatory = $true)]
+# 		$title
+# 	)
+# 	htmlElement 'li' @{} {
+# 		htmlElement 'a' @{ href = "#$($title)" } { "$($title)" }
+# 	}
+# }
 
 
 
@@ -428,71 +428,71 @@ function CreateHashTable {
 	}
 }
 
-function CreateReportContent {
-	param(
-		[Parameter(Mandatory = $true)]
-		$tests,
-		[Parameter(Mandatory = $true)]
-		$title
-	)
-	$amountOfFailedTests = 0
-	foreach ($test in $tests) {
-		if ($test.Status -eq 'False') {
-			$amountOfFailedTests ++
-		}
-	}
-	#if at least one test is failed
-	if ($amountOfFailedTests -gt 0) {
-		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #cc0000; display: inline;" } { "$($title)" }
-	}
-	else {
-		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #33cca6; display: inline;" } { "$($title)" }
-	}
-	htmlElement 'table' @{class = 'audit-info'; style = 'margin-bottom: 50px; margin-top: 20px;' } {
-		htmlElement 'tbody' @{} {
-			htmlElement 'tr' @{} {
-				htmlElement 'th' @{} { "Id" }
-				htmlElement 'th' @{} { "Task" }
-				htmlElement 'th' @{} { "Message" }
-				htmlElement 'th' @{} { "Status" }
-			}
-			foreach ($test in $tests) {
-				htmlElement 'tr' @{} {
-					htmlElement 'td' @{} { "$($test.Id)" }
-					htmlElement 'td' @{} { "$($test.Task)" }
-					htmlElement 'td' @{} { "$($test.Message)" }
-					htmlElement 'td' @{} { 
-						if ($test.Status -eq 'False') {
-							htmlElement 'span' @{class = "severityResultFalse" } {
-								"$($test.Status)"
-							}
-						}
-						elseif ($test.Status -eq 'True') {
-							htmlElement 'span' @{class = "severityResultTrue" } {
-								"$($test.Status)"
-							}
-						}
-						elseif ($test.Status -eq 'None') {
-							htmlElement 'span' @{class = "severityResultNone" } {
-								"$($test.Status)"
-							}
-						}
-						elseif ($test.Status -eq 'Warning') {
-							htmlElement 'span' @{class = "severityResultWarning" } {
-								"$($test.Status)"
-							}
-						}
-						elseif ($test.Status -eq 'Error') {
-							htmlElement 'span' @{class = "severityResultError" } {
-								"$($test.Status)"
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
+# function CreateReportContent {
+# 	param(
+# 		[Parameter(Mandatory = $true)]
+# 		$tests,
+# 		[Parameter(Mandatory = $true)]
+# 		$title
+# 	)
+# 	$amountOfFailedTests = 0
+# 	foreach ($test in $tests) {
+# 		if ($test.Status -eq 'False') {
+# 			$amountOfFailedTests ++
+# 		}
+# 	}
+# 	#if at least one test is failed
+# 	if ($amountOfFailedTests -gt 0) {
+# 		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #cc0000; display: inline;" } { "$($title)" }
+# 	}
+# 	else {
+# 		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #33cca6; display: inline;" } { "$($title)" }
+# 	}
+# 	htmlElement 'table' @{class = 'audit-info'; style = 'margin-bottom: 50px; margin-top: 20px;' } {
+# 		htmlElement 'tbody' @{} {
+# 			htmlElement 'tr' @{} {
+# 				htmlElement 'th' @{} { "Id" }
+# 				htmlElement 'th' @{} { "Task" }
+# 				htmlElement 'th' @{} { "Message" }
+# 				htmlElement 'th' @{} { "Status" }
+# 			}
+# 			foreach ($test in $tests) {
+# 				htmlElement 'tr' @{} {
+# 					htmlElement 'td' @{} { "$($test.Id)" }
+# 					htmlElement 'td' @{} { "$($test.Task)" }
+# 					htmlElement 'td' @{} { "$($test.Message)" }
+# 					htmlElement 'td' @{} { 
+# 						if ($test.Status -eq 'False') {
+# 							htmlElement 'span' @{class = "severityResultFalse" } {
+# 								"$($test.Status)"
+# 							}
+# 						}
+# 						elseif ($test.Status -eq 'True') {
+# 							htmlElement 'span' @{class = "severityResultTrue" } {
+# 								"$($test.Status)"
+# 							}
+# 						}
+# 						elseif ($test.Status -eq 'None') {
+# 							htmlElement 'span' @{class = "severityResultNone" } {
+# 								"$($test.Status)"
+# 							}
+# 						}
+# 						elseif ($test.Status -eq 'Warning') {
+# 							htmlElement 'span' @{class = "severityResultWarning" } {
+# 								"$($test.Status)"
+# 							}
+# 						}
+# 						elseif ($test.Status -eq 'Error') {
+# 							htmlElement 'span' @{class = "severityResultError" } {
+# 								"$($test.Status)"
+# 							}
+# 						}
+# 					}
+# 				}
+# 			}
+# 		}
+# 	}
+# }
 
 
 function Get-HtmlTableRow {
@@ -1000,25 +1000,25 @@ function Get-HtmlReportSection {
 	}
 }
 
-function Get-ATAPHostInformation {
-	$unixOS = [System.Environment]::OSVersion.Platform -eq 'Unix' # returns 'Unix' on Linux and MacOS and 'Win32NT' on Windows, PS v6+ has builtin environment variable for this
-	if ($unixOS) {
-		return @{
-			"Hostname"              = hostname
-			"Operating System"      = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
-			"Installation Language" = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
-			"Kernel Version"        = uname -r
-			"Free physical memory"  = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
-			"Free disk space"       = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
-			"System Uptime"         = Get-Uptime -p
-			"OS Architecture"       = lscpu | awk '/Architecture/ {print $2}'
-			"System Manufacturer"   = (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
-			"System SKU"            = (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
-			"System Serialnumber"   = (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
-			"BIOS Version"          = dmidecode -s bios-version
-		}
-	}
-}
+# function Get-ATAPHostInformation {
+# 	$unixOS = [System.Environment]::OSVersion.Platform -eq 'Unix' # returns 'Unix' on Linux and MacOS and 'Win32NT' on Windows, PS v6+ has builtin environment variable for this
+# 	if ($unixOS) {
+# 		return @{
+# 			"Hostname"              = hostname
+# 			"Operating System"      = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
+# 			"Installation Language" = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
+# 			"Kernel Version"        = uname -r
+# 			"Free physical memory"  = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
+# 			"Free disk space"       = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
+# 			"System Uptime"         = Get-Uptime -p
+# 			"OS Architecture"       = lscpu | awk '/Architecture/ {print $2}'
+# 			"System Manufacturer"   = (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
+# 			"System SKU"            = (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
+# 			"System Serialnumber"   = (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
+# 			"BIOS Version"          = dmidecode -s bios-version
+# 		}
+# 	}
+# }
 
 function Get-CompletionStatus {
 	param(
@@ -1125,6 +1125,7 @@ function Get-ATAPHtmlReport {
 		Generates an audit report in an html file.
 	.Description
 		The `Get-ATAPHtmlReport` cmdlet collects data from the current machine to generate an audit report.
+		This function creates the HTML file
 	.Parameter Path
 		Specifies the relative path to the file in which the report will be stored.
 	.Example
@@ -1134,59 +1135,73 @@ function Get-ATAPHtmlReport {
 	[CmdletBinding()]
 	[OutputType([string])]
 	param(
+		# Output Path for the report
 		[Parameter(Mandatory = $true)]
 		[string]
 		$Path,
 
-		[Parameter(Mandatory = $false)]
-		[hashtable]
-		$HostInformation = (Get-ATAPHostInformation),
+		# # Fully Unused
+		# [Parameter(Mandatory = $false)]
+		# [hashtable]
+		# $HostInformation,
 
+		# Title of the Report
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]
 		$Title,
 
-		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		[string]
-		$ModuleName,
+		# # Unused
+		# [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+		# [string]
+		# $ModuleName,
 
+		# Version of ATAPAuditor
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]
 		$AuditorVersion,
 
+		# The benchmarks used to create the report
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string[]]
 		$BasedOn,
 
+		# Contains all of the selected benchmark audit test results
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[array]
 		$Sections,
 
+		# # Fully Unused
+		# [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+		# [string]
+		# $LicenseStatus,
 
-		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		[string]
-		$LicenseStatus,
-
+		# Table Of Severity Rules
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[RSFullReport[]]
 		$RSReport,
 
+		# Security Base Data audit test results
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[FoundationReport]
 		$FoundationReport,
 
+		# Boolean to enable/disable the Risk Score table
 		[Parameter(Mandatory = $false)]
 		[switch] $RiskScore,
 
-		[Parameter(Mandatory = $false)]
-		[switch] $MITRE,
+		# # Unused
+		# [Parameter(Mandatory = $false)]
+		# [switch] $MITRE,
 
+		# Overall Integrity
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[hashtable]
 		$hashtable_sha256,
 
-		[switch] $ComplianceStatus,
+		# Unused atm but has functionality
+		# [switch] $ComplianceStatus,
 
+		# Hardware and Software Information
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[SystemInformation]
 		$SystemInformation
@@ -1974,48 +1989,6 @@ function Get-ATAPHtmlReport {
 		}
 
 		$html = "<!DOCTYPE html><html lang=`"en`">$($head)$($body)</body></html> "
-
-		$head = '
-		<head>
-			<title>A Meaningful Page Title</title>
-			<base target="_blank" rel="noopener noreferrer">
-			<style>
-				body{
-					font-family: Cambria, Georgia, serif;
-				}
-				.header {
-					background-color: #c6c9cc;
-				}
-				.green{
-					height: 160px; width: 160px;background-color:#33cca6;
-				}
-				.red{
-					height: 160px; width: 160px;background-color:#cc0000;
-				}
-				td{
-					text-align: center;
-				}
-				table{
-					margin-left: auto;
-    				margin-right: auto;
-				}
-				.riskMatrix{
-					margin: auto;
-					width: 50%;
-				}
-				h1{
-					text-align: center;
-					margin-bottom: 25px;
-				}
-				h1 p{
-					text-align: center;
-				}
-				td {
-					border: 1px solid #d2d2d2;
-				}
-			</style>
-		</head>
-		'
 	
 		#If Path exists to a folder exists
 		if ($Path -match ".html") {
