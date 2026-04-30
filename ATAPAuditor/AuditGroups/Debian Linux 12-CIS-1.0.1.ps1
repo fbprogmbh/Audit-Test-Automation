@@ -584,12 +584,12 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "1.3.1.3"
     Task = "Ensure all AppArmor Profiles are in enforce or complain mode"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
-        $profileMode3 = apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode3 = /usr/sbin/apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
         $result = expr $profileMode3 + $profileMode2
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if($result -eq $profileMode1 -and $unconfinedProcesses -eq 0){
             return $retCompliant
@@ -2256,7 +2256,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 2) {
             return $retUsingFW3
         }
-        $output = ip6tables -L
+        $output = /usr/sbin/ip6tables -L
         $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $test12 = $output -match "REJECT" | grep "Chain INPUT (policy REJECT)"
         $test21 = $output -match "DROP" | grep "Chain OUTPUT (policy DROP)"
@@ -3715,7 +3715,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "6.3.3.21"
     Task = "Ensure the running and on disk configuration is the same"
     Test = {
-        $test1 = augenrules --check
+        $test1 = /usr/sbin/augenrules --check
         if($test1 -match "/usr/sbin/augenrules: No change"){
             return $retCompliant
         }
