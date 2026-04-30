@@ -1750,7 +1750,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Task = "Ensure changes to system administration scope (sudoers) is collected"
     Test = {
         $result1 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $result2 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $result2 = /usr/sbin/auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
         if ($result1 -match "-w /etc/sudoers -p wa -k scope" -and $result1 -match "-w /etc/sudoers.d -p wa -k scope" -and $result2 -match "-w /etc/sudoers -p wa -k scope" -and $result2 -match "-w /etc/sudoers.d -p wa -k scope") {
             return $retCompliant
         } else {
@@ -1764,7 +1764,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Task = "Ensure actions as another user are always logged"
     Test = {
         $result1 = awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&(/ -C *euid!=uid/||/ -C *uid!=euid/) &&/ -S *execve/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
-        $result2 = auditctl -l | awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&(/ -C *euid!=uid/||/ -C *uid!=euid/) &&/ -S *execve/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+        $result2 = /usr/sbin/auditctl -l | awk '/^ *-a *always,exit/ &&/ -F *arch=b[2346]{2}/ &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/) &&(/ -C *euid!=uid/||/ -C *uid!=euid/) &&/ -S *execve/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
         if ($result1 -match "-a always,exit -F arch=b64 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $result1 -match "-a always,exit -F arch=b32 -C euid!=uid -F auid!=unset -S execve -k user_emulation" -and $result2 -match "-a always,exit -F arch=b64 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation" -and $result2 -match "-a always,exit -F arch=b32 -S execve -C uid!=euid -F auid!=-1 -F key=user_emulation") {
             return $retCompliant
         } else {
@@ -2795,7 +2795,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.4"
     Task = "Ensure SSH access is limited"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
         $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
         if ($test1 -match "allowusers " -or $test1 -match "allowgroups " -or $test1 -match "denyusers " -or $test1 -match "denygroups " -or
             $test2 -match "allowusers " -or $test2 -match "allowgroups " -or $test2 -match "denyusers " -or $test2 -match "denygroups ") {
@@ -2810,7 +2810,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.5"
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
         $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
         if (($test1 -match "allowusers " -or $test1 -match "allowgroups " -or $test1 -match "denyusers " -or $test1 -match "denygroups ") -and
             ($test2 -match "allowusers " -or $test2 -match "allowgroups " -or $test2 -match "denyusers " -or $test2 -match "denygroups ")) {
@@ -2825,7 +2825,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.6"
     Task = "Ensure SSH PAM is enabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
         $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
         if ($test1 -match "usepam yes" -and $test2 -eq $null) {
             return $retCompliant
@@ -2839,7 +2839,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.7"
     Task = "Ensure SSH root login is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
         $test2 = grep -Ei '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permitrootlogin no" -and $test2 -eq $null) {
             return $retCompliant
@@ -2853,7 +2853,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.8"
     Task = "Ensure SSH HostbasedAuthentication is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep hostbasedauthentication
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep hostbasedauthentication
         $test2 = grep -Ei '^\s*HostbasedAuthentication\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permitrootlogin no" -and $test2 -eq $null) {
             return $retCompliant
@@ -2867,7 +2867,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.9"
     Task = "Ensure SSH PermitEmptyPasswords is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
         $test2 = grep -Ei '^\s*PermitEmptyPasswords\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permitemptypasswords no" -and $test2 -eq $null) {
             return $retCompliant
@@ -2881,7 +2881,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.10"
     Task = "Ensure SSH PermitUserEnvironment is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
         $test2 = grep -Ei '^\s*PermitUserEnvironment\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permituserenvironment no" -and $test2 -eq $null) {
             return $retCompliant
@@ -2895,7 +2895,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.11"
     Task = "Ensure SSH IgnoreRhosts is enabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
         $test2 = grep -Ei '^\s*ignorerhosts\s+no\b' /etc/ssh/sshd_config
         if ($test1 -match "ignorerhosts yes" -and $test2 -eq $null) {
             return $retCompliant
@@ -2909,7 +2909,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.12"
     Task = "Ensure SSH X11 forwarding is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
         $test2 = grep -Ei '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "x11forwarding no" -and $test2 -eq $null) {
             return $retCompliant
@@ -2923,7 +2923,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.13"
     Task = "Ensure SSH AllowTcpForwarding is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
         $test2 = grep -Ei '^\s*AllowTcpForwarding\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "allowtcpforwarding no" -and $test2 -eq $null) {
             return $retCompliant
@@ -2950,7 +2950,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.15"
     Task = "Ensure SSH warning banner is configured"
     Test = {
-        $test = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
+        $test = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
         if ($test -match "banner /etc/issue.net") {
             return $retCompliant
         } else {
@@ -2963,7 +2963,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.16"
     Task = "Ensure SSH MaxAuthTries is set to 4 or less"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries
         $test2 = grep -Ei '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config
         if ($test1 -match "maxauthtries 4" -and $test2 -eq $null) {
             return $retCompliant
@@ -2977,7 +2977,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.17"
     Task = "Ensure SSH MaxStartups is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups
         $test2 = grep -Ei '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config
         if ($test1 -match "maxstartups 10:30:60" -and $test2 -eq $null) {
             return $retCompliant
@@ -2991,7 +2991,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.18"
     Task = "Ensure SSH MaxSessions is set to 10 or less"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions
         $test2 = grep -Ei '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)' /etc/ssh/sshd_config
         if ($test1 -match "maxsessions 10" -and $test2 -eq $null) {
             return $retCompliant
@@ -3005,7 +3005,7 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.19"
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime
         $test2 = grep -Ei '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config
         if ($test1 -match "logingracetime 60" -and $test2 -eq $null) {
             return $retCompliant
@@ -3019,8 +3019,8 @@ $scriptPath = $parentPath + "/Helpers/ShellScripts/RHEL9/"
     Id = "5.2.20"
     Task = "Ensure SSH Idle Timeout Interval is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
-        $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
+        $test2 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
         if ($test1 -gt 0 -and $test2 -gt 0) {
             return $retCompliant
         } else {
