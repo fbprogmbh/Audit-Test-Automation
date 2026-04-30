@@ -2331,7 +2331,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "5.1.4"
     Task = "Ensure sshd access is configured"
     Test = {
-        if (sshd -T | grep -Piq -- "^\h*(allow|deny)(users|groups)\h+\H+") {
+        if ( /usr/sbin/sshd -T | grep -Piq -- "^\h*(allow|deny)(users|groups)\h+\H+") {
             return $retCompliant
         }
         return $retNonCompliant
@@ -2341,7 +2341,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "5.1.5"
     Task = "Ensure sshd Banner is configured"
     Test = {
-        if (sshd -T | grep -Piq -- "^\h*banner\h+\H+") {
+        if ( /usr/sbin/sshd -T | grep -Piq -- "^\h*banner\h+\H+") {
             return $retCompliant
         }
         return $retCompliant

@@ -2968,7 +2968,7 @@ done
     Id = "5.4.1.5"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d= -f2
+        $test1 =  /usr/sbin/useradd -D | grep INACTIVE | cut -d= -f2
         $test2_script = @'
 #!/bin/bash
 for line in $(grep -E ^[^:]+:[^\*] /etc/shadow | cut -d: -f7)

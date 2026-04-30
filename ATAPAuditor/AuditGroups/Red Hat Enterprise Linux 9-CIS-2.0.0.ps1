@@ -3489,7 +3489,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         $script_string2 = @'
 #!/usr/bin/env bash
 {
-    auditctl -l | awk '/^ *-w/ &&(/\/var\/run\/utmp/ ||/\/var\/log\/wtmp/ ||/\/var\/log\/btmp/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+     /usr/sbin/auditctl -l | awk '/^ *-w/ &&(/\/var\/run\/utmp/ ||/\/var\/log\/wtmp/ ||/\/var\/log\/btmp/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
 }
 '@
         $result1 = bash -c $script_string1

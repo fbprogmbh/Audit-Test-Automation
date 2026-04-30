@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ -f /etc/sysconfig/sshd ]]; then
+if [[ -f /etc/sysconfig/ /usr/sbin/sshd ]]; then
 	if grep -Pi '^\s*CRYPTO_POLICY\s*=' /etc/sysconfig/sshd; then
 		echo "CRYPTO_POLICY ist set"
 		exit 1

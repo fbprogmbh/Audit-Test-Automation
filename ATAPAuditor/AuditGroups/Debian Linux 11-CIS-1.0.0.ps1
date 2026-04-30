@@ -3021,7 +3021,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
 SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
 '@
         $command2 = @'
-SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
+SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] &&  /usr/sbin/auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
 '@
         $test1 = bash -c $command1
         $test2 = bash -c $command2
@@ -3042,7 +3042,7 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
     Task = "Ensure events that modify date and time information are collected"
     Test = {
         $test1 = { awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules }
-        $test2 = { auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' auditctl -l | awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' }
+        $test2 = {  /usr/sbin/auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'  /usr/sbin/auditctl -l | awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' }
         if ($test1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday clock_settime -k time-change" -and $test1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $test1 -match "-w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $test2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday clock_settime -F key=time-change" -and $test3 -match "-w /etc/localtime -p wa -k time-change") {
             return @{
                 Message = "Compliant"
@@ -3985,7 +3985,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH access is limited"
     Test = {
         try {
-            $result = bash -c "sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
+            $result = bash -c " /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
             if ($result -match "allowusers" -or $result -match "allowgroups" -or $result -match "denyusers" -or $result -match "denygroups") {
                 return @{
                     Message = "Compliant"
@@ -4631,7 +4631,7 @@ dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Pack
     Id   = "5.5.1.4"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d '=' -f2
+        $test1 =  /usr/sbin/useradd -D | grep INACTIVE | cut -d '=' -f2
         if ($test1 -le 30) {
             return @{
                 Message = "Compliant"

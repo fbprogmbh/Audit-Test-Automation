@@ -3602,7 +3602,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH access is limited"
     Test = {
         try{
-            $result = bash -c "sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
+            $result = bash -c " /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
             if($result -match "allowusers" -or $result -match "allowgroups" -or $result -match "denyusers" -or $result -match "denygroups"){
                 return @{
                     Message = "Compliant"
@@ -4348,7 +4348,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "5.5.1.4"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d '=' -2
+        $test1 =  /usr/sbin/useradd -D | grep INACTIVE | cut -d '=' -2
         if($test1 -le 30){
             return @{
                 Message = "Compliant"
