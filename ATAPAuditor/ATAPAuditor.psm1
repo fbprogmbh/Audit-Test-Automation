@@ -123,52 +123,61 @@ class ResultTable {
 #endregion
 
 #region helpers
-function Get-FullLanguageMode {
-	try {
-		$languageMode = $ExecutionContext.SessionState.LanguageMode
-		if ($languageMode -eq "FullLanguage") {
-			return $true
-		}
-	}
- catch {
-		return $false
-	}
-	# returns alternate language modes if not FullLanguage
-	return $languageMode
-}
-
 # Test whether powershell has the listed modules installed and loaded
+# If called without parameter, it will do the full module test
+# If called with a parameter, it will test only for this module and return a boolean
 function Start-ModuleTest {
-	$moduleList = @(Get-Module -ListAvailable).Name | Select-Object -Unique
-	$necessaryModules = @(
-		"Microsoft.PowerShell.LocalAccounts",
-		"Microsoft.PowerShell.Management",
-		"Microsoft.PowerShell.Security",
-		"Microsoft.PowerShell.Utility",
-		"TrustedPlatformModule",
-		"NetSecurity",
-		"CimCmdlets",
-		"SmbShare",
-		"Defender",
-		"DISM"
-		#Modules only necessary for specific server tests
-		#"IISAdministration",
-		#"SQLServer",
-	)
-	$missingModules = @()
-	foreach ($module in $necessaryModules) {
-		if ($moduleList -notcontains $module) {
-			$missingModules += $module
-		}
-	}
-	if ($missingModules.Count -gt 0) {
-		Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
-		for ($i = 0; $i -lt $missingModules.Count; $i++) {
-			Write-Warning $missingModules[$i]
-		}
-		Write-Warning "Check out this link on how to install modules: https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-3.x"
-	}
-
+	param(
+        [Parameter(Mandatory = $false)]
+        [string]
+        $LookupModule = "*"
+    )
+    process {
+		# Here we handle the behavior when we only need to check for one module
+        if($LookupModule -ne "*"){
+            if($null -eq (Get-Module -Name $LookupModule)){
+                return $false
+            }
+            return $true
+        }
+		# Here we check for the for all the default required modules
+        $necessaryModules = @(
+            "Microsoft.PowerShell.LocalAccounts",
+            "Microsoft.PowerShell.Management",
+            "Microsoft.PowerShell.Security",
+            "Microsoft.PowerShell.Utility",
+            "TrustedPlatformModule",
+            "NetSecurity",
+            "CimCmdlets",
+            "SmbShare",
+            "Defender",
+            "DISM"
+        )
+        $missingModules = @()
+		# We create an ArrayList instead of normal array, as adding many items to a normal array is very inefficient
+        $ModuleArrayList = New-Object System.Collections.ArrayList
+		# We split the PSModule Path so we can iterate over it
+        $ModulePathSplit = $env:PSModulePath.Split(";")
+        for($i = 0; $i -lt $ModulePathSplit.Length; $i++){
+            Get-ChildItem $ModulePathSplit[$i] 2>$null | ForEach-Object($_) {
+				# Here we add all of the available modules to the ArrayList
+                $ModuleArrayList.Add($_.Name) > $null
+            }
+        }
+		# Here we check whether the defined modules are available
+        foreach($module in $necessaryModules){
+            if($module -notin $ModuleArrayList){
+                $missingModules += $module
+            }
+        }
+        if ($missingModules.Count -gt 0) {
+            Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
+            for ($i = 0; $i -lt $missingModules.Count; $i++) {
+                Write-Warning $missingModules[$i]
+            }
+            Write-Warning "Check out this link on how to install modules: https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-3.x"
+        }
+    }
 }
 # Get Windows Activation Status
 function Get-LicenseStatus {
@@ -222,13 +231,6 @@ function Get-LicenseStatus {
 	Write-Host "Operating system activation status retrieved"
 
 	return $LicenseStatusCache
-}
-
-function IsIIS10Executable {
-	if ($null -eq (Get-Module -ListAvailable IISAdministration)) {
-		return $false
-	}
-	return $true
 }
 
 # Compares 2 Arrays
@@ -875,14 +877,10 @@ function Save-ATAPHtmlReport {
 		return;
 	}
 
-	# Only run the code if languagemode is not true (it can be true, false, or a string)
-	if (($languagemode = Get-FullLanguageMode) -ne $true) {
-		if ($languagemode -eq $false) {
-			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
-		}
-		else {
-			Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
-		}
+	# Check if the system is in FullLanguage mode, and abort if not
+	$languageMode = $ExecutionContext.SessionState.LanguageMode
+	if ($languagemode -ne "FullLanguage") {
+		Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
 		return
 	}
 
@@ -913,14 +911,23 @@ function Save-ATAPHtmlReport {
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
-		Start-ModuleTest
-		if ($ReportName -eq "Microsoft IIS10") {
-			$isIIS10Executable = IsIIS10Executable
-			if ($isIIS10Executable -eq $false) {
-				Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
-				return;
+
+		# Here we define all the reports that need a special module check
+		switch ($ReportName) {
+			"Microsoft IIS10" { 
+				if ((Start-ModuleTest "IISAdministration") -eq $false) {
+					Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
+					return;
+				}
+			}
+			"Microsoft SQL Server 2016" { 
+				if ((Start-ModuleTest "SQLServer") -eq $false) {
+					Write-Warning "SQL Server 2016 Report not executable! SQLServer module not available. Please install this module and try again. Exiting..."
+					return;
+				}
 			}
 		}
+		Start-ModuleTest
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		#PowerShell Major version not 5.*
