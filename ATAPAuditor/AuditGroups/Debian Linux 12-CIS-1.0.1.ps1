@@ -45,9 +45,9 @@ function GetFirewallStatus {
 	# 2 - using ufw
 	# 3 - using iptables
 
-	$t_UFW = dpkg-query -f='${db:Status-Abbrev}' -W /usr/sbin/ufw 2>/dev/null
-	$t_NFT = dpkg-query -f='${db:Status-Abbrev}' -W /usr/sbin/nftables 2>/dev/null
-	$t_IPT = dpkg-query -f='${db:Status-Abbrev}' -W /usr/sbin/iptables 2>/dev/null
+	$t_UFW = dpkg-query -f='${db:Status-Abbrev}' -W ufw 2>/dev/null
+	$t_NFT = dpkg-query -f='${db:Status-Abbrev}' -W nftables 2>/dev/null
+	$t_IPT = dpkg-query -f='${db:Status-Abbrev}' -W iptables 2>/dev/null
 	$t_UFW_en = systemctl is-enabled ufw 2>/dev/null
 	if ($t_UFW -match "ii"){
         $t_UFW_inac = /usr/sbin/ufw status 2>/dev/null | grep -iE "Status: Ina[ck]tive?"
@@ -1775,7 +1775,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 3) {
             return $retUsingFW3
         }
-        $test1 = dpkg-query -f='${db:Status-Abbrev}' -W /usr/sbin/ufw 2>/dev/null
+        $test1 = dpkg-query -f='${db:Status-Abbrev}' -W ufw 2>/dev/null
         if($test1 -match "ii"){
             return $retCompliant
         }
@@ -1809,8 +1809,8 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 3) {
             return $retUsingFW3
         }
-        $test1 = systemctl is-enabled /usr/sbin/ufw 2>/dev/null
-        $test2 = systemctl is-active /usr/sbin/ufw 2>/dev/null
+        $test1 = systemctl is-enabled ufw 2>/dev/null
+        $test2 = systemctl is-active ufw 2>/dev/null
         if($test1 -match "enabled" -and $test2 -match "active"){
             $test3 = /usr/sbin/ufw status | grep -iE "Status: A[ck]tive?"
             if($test3 -ne $null){
