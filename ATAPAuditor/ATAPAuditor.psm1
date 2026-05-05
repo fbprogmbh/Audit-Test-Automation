@@ -902,6 +902,32 @@ function Save-ATAPHtmlReport {
 	$isUnix = [System.Environment]::OSVersion.Platform -eq 'Unix'
 	if ($isUnix) {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
+
+		# This is a code snippet that makes sure that the shellscripts dont have CRLF as EOL character
+		$BufferSize = 1024
+		$shellscripts = Get-ChildItem -Recurse -Include *.sh  -Path "$RootPath/Helpers/ShellScripts" -File
+		foreach($one_shellscript in $shellscripts){
+			try {
+				# We open the file input stream, create a buffer, read the first 1024 bytes into the buffer (doesnt matter if the file has less bytes in total), and fill ChunkBytes with the individual bytes
+				$Stream = [IO.File]::OpenRead($one_shellscript.FullName)
+				$Buffer = New-Object byte[] $BufferSize
+				$BytesRead = $Stream.Read($Buffer, 0, $BufferSize)
+				$Stream.close()
+				$ChunkBytes = $Buffer[0..($BytesRead-1)]
+				# Here we check whether the bytecodes 0x0D (13) and 0x0A (10) appear in the file
+				# If only 0x0A appears in the file, it is already in the LF format, if both appear (order doesnt matter here) then the file is in CRLF format
+				#                          CR                                LF
+				if(($ChunkBytes -contains 0x0D) -and ($ChunkBytes -contains 0x0A)) {
+					# If the file is in CRLF format, then replace CRLF with LF, otherwise continue with the next file
+					$one_shellscript_text = [IO.File]::ReadAllText($one_shellscript.FullName) -replace "`r`n", "`n"
+					[IO.File]::WriteAllText($one_shellscript.FullName, $one_shellscript_text)
+				}
+			}
+			catch {
+				Write-Host $one_shellscript.FullName
+				Write-Warning "This file had an error while fixing the EOL characters"
+			}
+		}
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
