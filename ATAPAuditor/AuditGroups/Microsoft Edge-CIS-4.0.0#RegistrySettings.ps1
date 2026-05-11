@@ -8,9 +8,9 @@
                 -Name "EnableMediaRouter" `
             | Select-Object -ExpandProperty "EnableMediaRouter"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -44,9 +44,9 @@
                 -Name "CACertificatemanagementAllowed" `
             | Select-Object -ExpandProperty "CACertificatemanagementAllowed"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -80,9 +80,9 @@
                 -Name "FileSystemReadAskForUrls" `
             | Select-Object -ExpandProperty "FileSystemReadAskForUrls"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -116,9 +116,9 @@
                 -Name "SpotlightExperiencesAndRecommendationsEnabled" `
             | Select-Object -ExpandProperty "SpotlightExperiencesAndRecommendationsEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -152,9 +152,9 @@
                 -Name "DefaultinsecurecontentSetting" `
             | Select-Object -ExpandProperty "DefaultinsecurecontentSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -188,9 +188,9 @@
                 -Name "DefaultJavaScriptJitSetting" `
             | Select-Object -ExpandProperty "DefaultJavaScriptJitSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -224,9 +224,9 @@
                 -Name "DefaultFileSystemReadGuardSetting" `
             | Select-Object -ExpandProperty "DefaultFileSystemReadGuardSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -260,9 +260,9 @@
                 -Name "DefaultFileSystemWriteGuardSetting" `
             | Select-Object -ExpandProperty "DefaultFileSystemWriteGuardSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -296,9 +296,9 @@
                 -Name "DefaultWebBluetoothGuardSetting" `
             | Select-Object -ExpandProperty "DefaultWebBluetoothGuardSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -332,9 +332,9 @@
                 -Name "DefaultWebHidGuardSetting" `
             | Select-Object -ExpandProperty "DefaultWebHidGuardSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -360,7 +360,7 @@
 }
 [AuditTest] @{
     Id   = "1.4.9"
-    Task = "(L1) Ensure 'Default automatic downloads setting' is set to 'Enabled: Don´t allow any website to perform automatic downloads'"
+    Task = "(L1) Ensure 'Default automatic downloads setting' is set to 'Enabled: Don't allow any website to perform automatic downloads'"
     Test = {
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
@@ -368,9 +368,9 @@
                 -Name "DefaultAutomaticDownloadsSetting" `
             | Select-Object -ExpandProperty "DefaultAutomaticDownloadsSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -404,9 +404,9 @@
                 -Name "DefaultGeolocationSetting" `
             | Select-Object -ExpandProperty "DefaultGeolocationSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -440,9 +440,9 @@
                 -Name "DefaultThirdPartyStoragePartitioningSetting" `
             | Select-Object -ExpandProperty "DefaultThirdPartyStoragePartitioningSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -476,9 +476,9 @@
                 -Name "ShowDownloadsInsecureWarningsEnabled" `
             | Select-Object -ExpandProperty "ShowDownloadsInsecureWarningsEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -512,9 +512,9 @@
                 -Name "TyposquattingCheckerEnabled" `
             | Select-Object -ExpandProperty "TyposquattingCheckerEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -548,9 +548,9 @@
                 -Name "FeatureFlagOverridesControl" `
             | Select-Object -ExpandProperty "FeatureFlagOverridesControl"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -584,9 +584,9 @@
                 -Name "BlockExternalExtensions" `
             | Select-Object -ExpandProperty "BlockExternalExtensions"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -657,9 +657,9 @@
                 -Name "GamerModeEnabled" `
             | Select-Object -ExpandProperty "GamerModeEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -693,9 +693,9 @@
                 -Name "BasicAuthOverHttpEnabled" `
             | Select-Object -ExpandProperty "BasicAuthOverHttpEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -729,9 +729,9 @@
                 -Name "AllowCrossOriginAuthPrompt" `
             | Select-Object -ExpandProperty "AllowCrossOriginAuthPrompt"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -801,9 +801,9 @@
                 -Name "GuidedSwitchEnabled" `
             | Select-Object -ExpandProperty "GuidedSwitchEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -837,9 +837,9 @@
                 -Name "localnetworkaccessRestrictionsEnabled" `
             | Select-Object -ExpandProperty "localnetworkaccessRestrictionsEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -873,9 +873,9 @@
                 -Name "PasswordManagerEnabled" `
             | Select-Object -ExpandProperty "PasswordManagerEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -909,9 +909,9 @@
                 -Name "StartupBoostEnabled" `
             | Select-Object -ExpandProperty "StartupBoostEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -945,9 +945,9 @@
                 -Name "SmartScreenEnabled" `
             | Select-Object -ExpandProperty "SmartScreenEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -981,9 +981,9 @@
                 -Name "SmartScreenPuaEnabled" `
             | Select-Object -ExpandProperty "SmartScreenPuaEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1017,9 +1017,9 @@
                 -Name "SmartScreenDnsRequestsEnabled" `
             | Select-Object -ExpandProperty "SmartScreenDnsRequestsEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1053,9 +1053,9 @@
                 -Name "SmartScreenForTrustedDownloadsEnabled" `
             | Select-Object -ExpandProperty "SmartScreenForTrustedDownloadsEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1089,9 +1089,9 @@
                 -Name "PreventSmartScreenPromptOverride" `
             | Select-Object -ExpandProperty "PreventSmartScreenPromptOverride"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1125,9 +1125,9 @@
                 -Name "PreventSmartScreenPromptOverrideForFiles" `
             | Select-Object -ExpandProperty "PreventSmartScreenPromptOverrideForFiles"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1161,9 +1161,9 @@
                 -Name "NewTabPageBingChatEnabled" `
             | Select-Object -ExpandProperty "NewTabPageBingChatEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1197,9 +1197,9 @@
                 -Name "AdsSettingForIntrusiveAdsSites" `
             | Select-Object -ExpandProperty "AdsSettingForIntrusiveAdsSites"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -1233,9 +1233,9 @@
                 -Name "DownloadRestrictions" `
             | Select-Object -ExpandProperty "DownloadRestrictions"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -1269,9 +1269,9 @@
                 -Name "EdgeAssetDeliveryServiceEnabled" `
             | Select-Object -ExpandProperty "EdgeAssetDeliveryServiceEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1305,9 +1305,9 @@
                 -Name "AllowFileSelectionDialogs" `
             | Select-Object -ExpandProperty "AllowFileSelectionDialogs"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1341,9 +1341,9 @@
                 -Name "MediaRouterCastAllowAllIPs" `
             | Select-Object -ExpandProperty "MediaRouterCastAllowAllIPs"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1377,9 +1377,9 @@
                 -Name "ImportOnEachLaunch" `
             | Select-Object -ExpandProperty "ImportOnEachLaunch"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1413,9 +1413,9 @@
                 -Name "ImportAutofillFormData" `
             | Select-Object -ExpandProperty "ImportAutofillFormData"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1449,9 +1449,9 @@
                 -Name "ImportBrowserSettings" `
             | Select-Object -ExpandProperty "ImportBrowserSettings"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1485,9 +1485,9 @@
                 -Name "ImportHomepage" `
             | Select-Object -ExpandProperty "ImportHomepage"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1521,9 +1521,9 @@
                 -Name "ImportPaymentInfo" `
             | Select-Object -ExpandProperty "ImportPaymentInfo"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1557,9 +1557,9 @@
                 -Name "ImportSavedPasswords" `
             | Select-Object -ExpandProperty "ImportSavedPasswords"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1593,9 +1593,9 @@
                 -Name "ImportSearchEngine" `
             | Select-Object -ExpandProperty "ImportSearchEngine"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1629,9 +1629,9 @@
                 -Name "EnterpriseHardwarePlatformAPIEnabled" `
             | Select-Object -ExpandProperty "EnterpriseHardwarePlatformAPIEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1665,9 +1665,9 @@
                 -Name "AudioCaptureAllowed" `
             | Select-Object -ExpandProperty "AudioCaptureAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1701,9 +1701,9 @@
                 -Name "VideoCaptureAllowed" `
             | Select-Object -ExpandProperty "VideoCaptureAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1737,9 +1737,9 @@
                 -Name "ScreenCaptureAllowed" `
             | Select-Object -ExpandProperty "ScreenCaptureAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1773,9 +1773,9 @@
                 -Name "PersonalizationReportingEnabled" `
             | Select-Object -ExpandProperty "PersonalizationReportingEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1809,9 +1809,9 @@
                 -Name "BrowserNetworkTimeQueriesEnabled" `
             | Select-Object -ExpandProperty "BrowserNetworkTimeQueriesEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1845,9 +1845,9 @@
                 -Name "RemoteDebuggingAllowed" `
             | Select-Object -ExpandProperty "RemoteDebuggingAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1881,9 +1881,9 @@
                 -Name "AudioSandboxEnabled" `
             | Select-Object -ExpandProperty "AudioSandboxEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -1917,9 +1917,9 @@
                 -Name "InternetExplorerIntegrationReloadInIEModeAllowed" `
             | Select-Object -ExpandProperty "InternetExplorerIntegrationReloadInIEModeAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1953,9 +1953,9 @@
                 -Name "UserFeedbackAllowed" `
             | Select-Object -ExpandProperty "UserFeedbackAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -1989,9 +1989,9 @@
                 -Name "ClickOnceEnabled" `
             | Select-Object -ExpandProperty "ClickOnceEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2025,9 +2025,9 @@
                 -Name "DirectInvokeEnabled" `
             | Select-Object -ExpandProperty "DirectInvokeEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2061,9 +2061,9 @@
                 -Name "SSLErrorOverrideAllowed" `
             | Select-Object -ExpandProperty "SSLErrorOverrideAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2097,9 +2097,9 @@
                 -Name "AllowWebAuthnWithBrokenTlsCerts" `
             | Select-Object -ExpandProperty "AllowWebAuthnWithBrokenTlsCerts"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2133,9 +2133,9 @@
                 -Name "PaymentMethodQueryEnabled" `
             | Select-Object -ExpandProperty "PaymentMethodQueryEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2169,9 +2169,9 @@
                 -Name "AutoLaunchProtocolsComponentEnabled" `
             | Select-Object -ExpandProperty "AutoLaunchProtocolsComponentEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2205,9 +2205,9 @@
                 -Name "AutoImportAtFirstRun" `
             | Select-Object -ExpandProperty "AutoImportAtFirstRun"
 
-            if (($regValue -ne 4)) {
+            if ($regValue -ne 4) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 4"
+                    Message = "Registry value is '$regValue'. Expected: 4"
                     Status  = "False"
                 }
             }
@@ -2241,9 +2241,9 @@
                 -Name "InternetExplorerIntegrationZoneIdentifierMhtFileAllowed" `
             | Select-Object -ExpandProperty "InternetExplorerIntegrationZoneIdentifierMhtFileAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2277,9 +2277,9 @@
                 -Name "BlockThirdPartyCookies" `
             | Select-Object -ExpandProperty "BlockThirdPartyCookies"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -2315,7 +2315,7 @@
 
             if (($regValue -ne 2) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 2 or 3"
                     Status  = "False"
                 }
             }
@@ -2349,9 +2349,9 @@
                 -Name "BrowserSignin" `
             | Select-Object -ExpandProperty "BrowserSignin"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2385,9 +2385,9 @@
                 -Name "ClearBrowsingDataOnExit" `
             | Select-Object -ExpandProperty "ClearBrowsingDataOnExit"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2421,9 +2421,9 @@
                 -Name "ClearCachedImagesAndFilesOnExit" `
             | Select-Object -ExpandProperty "ClearCachedImagesAndFilesOnExit"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2457,9 +2457,9 @@
                 -Name "InternetExplorerModeclearDataOnExitEnabled" `
             | Select-Object -ExpandProperty "InternetExplorerModeclearDataOnExitEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2493,9 +2493,9 @@
                 -Name "browserCodeIntegritySetting" `
             | Select-Object -ExpandProperty "browserCodeIntegritySetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -2529,9 +2529,9 @@
                 -Name "InPrivateModeAvailability" `
             | Select-Object -ExpandProperty "InPrivateModeAvailability"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -2565,9 +2565,9 @@
                 -Name "ConfigureOnlineTextToSpeech" `
             | Select-Object -ExpandProperty "ConfigureOnlineTextToSpeech"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2601,9 +2601,9 @@
                 -Name "RelatedMatchesCloudServiceEnabled" `
             | Select-Object -ExpandProperty "RelatedMatchesCloudServiceEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2637,9 +2637,9 @@
                 -Name "SpeechRecognitionEnabled" `
             | Select-Object -ExpandProperty "SpeechRecognitionEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2923,9 +2923,9 @@
                 -Name "ConfigureShare" `
             | Select-Object -ExpandProperty "ConfigureShare"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -2959,9 +2959,9 @@
                 -Name "BackgroundModeEnabled" `
             | Select-Object -ExpandProperty "BackgroundModeEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -2995,9 +2995,9 @@
                 -Name "ExperimentationAndConfigurationServiceControl" `
             | Select-Object -ExpandProperty "ExperimentationAndConfigurationServiceControl"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3031,9 +3031,9 @@
                 -Name "HeadlessModeEnabled" `
             | Select-Object -ExpandProperty "HeadlessModeEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3067,9 +3067,9 @@
                 -Name "DefaultSerialGuardSetting" `
             | Select-Object -ExpandProperty "DefaultSerialGuardSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -3137,9 +3137,9 @@
                 -Name "DefaultSensorsSetting" `
             | Select-Object -ExpandProperty "DefaultSensorsSetting"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -3173,9 +3173,9 @@
                 -Name "DeleteDataOnMigration" `
             | Select-Object -ExpandProperty "DeleteDataOnMigration"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3209,9 +3209,9 @@
                 -Name "SavingBrowserHistoryDisabled" `
             | Select-Object -ExpandProperty "SavingBrowserHistoryDisabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3245,9 +3245,9 @@
                 -Name "SyncDisabled" `
             | Select-Object -ExpandProperty "SyncDisabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3281,9 +3281,9 @@
                 -Name "DNSInterceptionChecksEnabled" `
             | Select-Object -ExpandProperty "DNSInterceptionChecksEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3317,9 +3317,9 @@
                 -Name "DynamicCodeSettings" `
             | Select-Object -ExpandProperty "DynamicCodeSettings"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3353,9 +3353,9 @@
                 -Name "Edge3PSerpTelemetryEnabled" `
             | Select-Object -ExpandProperty "Edge3PSerpTelemetryEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3389,9 +3389,9 @@
                 -Name "EdgeWalletEtreeEnabled" `
             | Select-Object -ExpandProperty "EdgeWalletEtreeEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3425,9 +3425,9 @@
                 -Name "ApplicationBoundEncryptionEnabled" `
             | Select-Object -ExpandProperty "ApplicationBoundEncryptionEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3461,9 +3461,9 @@
                 -Name "AutofillAddressEnabled" `
             | Select-Object -ExpandProperty "AutofillAddressEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3497,9 +3497,9 @@
                 -Name "AutofillCreditCardEnabled" `
             | Select-Object -ExpandProperty "AutofillCreditCardEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3533,9 +3533,9 @@
                 -Name "BrowserLegacyExtensionPointsBlockingEnabled" `
             | Select-Object -ExpandProperty "BrowserLegacyExtensionPointsBlockingEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3569,9 +3569,9 @@
                 -Name "ComponentUpdatesEnabled" `
             | Select-Object -ExpandProperty "ComponentUpdatesEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3605,9 +3605,9 @@
                 -Name "AllowDeletingBrowserHistory" `
             | Select-Object -ExpandProperty "AllowDeletingBrowserHistory"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3641,9 +3641,9 @@
                 -Name "EdgeEdropenabled" `
             | Select-Object -ExpandProperty "EdgeEdropenabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3677,9 +3677,9 @@
                 -Name "GloballyScopeHTTPAuthCacheEnabled" `
             | Select-Object -ExpandProperty "GloballyScopeHTTPAuthCacheEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3713,9 +3713,9 @@
                 -Name "BrowserGuestModeEnabled" `
             | Select-Object -ExpandProperty "BrowserGuestModeEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3749,9 +3749,9 @@
                 -Name "NetworkPredictionOptions" `
             | Select-Object -ExpandProperty "NetworkPredictionOptions"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -3785,9 +3785,9 @@
                 -Name "BrowserAddProfileEnabled" `
             | Select-Object -ExpandProperty "BrowserAddProfileEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3821,9 +3821,9 @@
                 -Name "ResolveNavigationErrorsUseWebService" `
             | Select-Object -ExpandProperty "ResolveNavigationErrorsUseWebService"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3857,9 +3857,9 @@
                 -Name "SearchSuggestEnabled" `
             | Select-Object -ExpandProperty "SearchSuggestEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -3893,9 +3893,9 @@
                 -Name "CommandLineFlagSecurityWarningsEnabled" `
             | Select-Object -ExpandProperty "CommandLineFlagSecurityWarningsEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3929,9 +3929,9 @@
                 -Name "SitePerProcess" `
             | Select-Object -ExpandProperty "SitePerProcess"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -3965,9 +3965,9 @@
                 -Name "SearchbarAllowed" `
             | Select-Object -ExpandProperty "SearchbarAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4001,9 +4001,9 @@
                 -Name "TabServicesEnabled" `
             | Select-Object -ExpandProperty "TabServicesEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4037,9 +4037,9 @@
                 -Name "TranslateEnabled" `
             | Select-Object -ExpandProperty "TranslateEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4073,9 +4073,9 @@
                 -Name "UploadFromPhoneEnabled" `
             | Select-Object -ExpandProperty "UploadFromPhoneEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4109,9 +4109,9 @@
                 -Name "ForceEphemeralProfiles" `
             | Select-Object -ExpandProperty "ForceEphemeralProfiles"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4145,9 +4145,9 @@
                 -Name "InsecureFormsWarningsEnabled" `
             | Select-Object -ExpandProperty "InsecureFormsWarningsEnabled"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -4181,9 +4181,9 @@
                 -Name "QRCodeGeneratorEnabled" `
             | Select-Object -ExpandProperty "QRCodeGeneratorEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4217,9 +4217,9 @@
                 -Name "AIGenThemesEnabled" `
             | Select-Object -ExpandProperty "AIGenThemesEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4253,9 +4253,9 @@
                 -Name "ForceBingSafeSearch" `
             | Select-Object -ExpandProperty "ForceBingSafeSearch"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -4289,9 +4289,9 @@
                 -Name "ForceGoogleSafeSearch" `
             | Select-Object -ExpandProperty "ForceGoogleSafeSearch"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -4327,7 +4327,7 @@
 
             if (($regValue -ne 1) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 3"
                     Status  = "False"
                 }
             }
@@ -4361,9 +4361,9 @@
                 -Name "EnhanceSecurityModeBypassIntranet" `
             | Select-Object -ExpandProperty "EnhanceSecurityModeBypassIntranet"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4397,9 +4397,9 @@
                 -Name "HideFirstRunExperience" `
             | Select-Object -ExpandProperty "HideFirstRunExperience"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -4433,9 +4433,9 @@
                 -Name "InAppSupportEnabled" `
             | Select-Object -ExpandProperty "InAppSupportEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4469,9 +4469,9 @@
                 -Name "LiveCaptionsAllowed" `
             | Select-Object -ExpandProperty "LiveCaptionsAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4539,9 +4539,9 @@
                 -Name "RelaunchNotification" `
             | Select-Object -ExpandProperty "RelaunchNotification"
 
-            if (($regValue -ne 2)) {
+            if ($regValue -ne 2) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 2"
+                    Message = "Registry value is '$regValue'. Expected: 2"
                     Status  = "False"
                 }
             }
@@ -4575,9 +4575,9 @@
                 -Name "DiskCacheSize" `
             | Select-Object -ExpandProperty "DiskCacheSize"
 
-            if (($regValue -ne 250609664)) {
+            if ($regValue -ne 250609664) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 250609664"
+                    Message = "Registry value is '$regValue'. Expected: 250609664"
                     Status  = "False"
                 }
             }
@@ -4611,9 +4611,9 @@
                 -Name "RelaunchNotificationPeriod" `
             | Select-Object -ExpandProperty "RelaunchNotificationPeriod"
 
-            if (($regValue -ne 86400000)) {
+            if ($regValue -ne 86400000) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 86400000"
+                    Message = "Registry value is '$regValue'. Expected: 86400000"
                     Status  = "False"
                 }
             }
@@ -4647,9 +4647,9 @@
                 -Name "EdgeShoppingAssistantEnabled" `
             | Select-Object -ExpandProperty "EdgeShoppingAssistantEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4683,9 +4683,9 @@
                 -Name "ExternalProtocolDialogShowAlwaysOpenCheckbox" `
             | Select-Object -ExpandProperty "ExternalProtocolDialogShowAlwaysOpenCheckbox"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4719,9 +4719,9 @@
                 -Name "ShowMicrosoftRewards" `
             | Select-Object -ExpandProperty "ShowMicrosoftRewards"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4755,9 +4755,9 @@
                 -Name "InternetExplorerModeToolbarButtonEnabled" `
             | Select-Object -ExpandProperty "InternetExplorerModeToolbarButtonEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4791,9 +4791,9 @@
                 -Name "SharedArrayBufferUnrestrictedAccessAllowed" `
             | Select-Object -ExpandProperty "SharedArrayBufferUnrestrictedAccessAllowed"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4827,9 +4827,9 @@
                 -Name "RequireOnlineRevocationChecksForLocalAnchors" `
             | Select-Object -ExpandProperty "RequireOnlineRevocationChecksForLocalAnchors"
 
-            if (($regValue -ne 1)) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -4863,9 +4863,9 @@
                 -Name "MicrosoftEditorProofingEnabled" `
             | Select-Object -ExpandProperty "MicrosoftEditorProofingEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4899,9 +4899,9 @@
                 -Name "StandaloneHubsSidebarEnabled" `
             | Select-Object -ExpandProperty "StandaloneHubsSidebarEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4935,9 +4935,9 @@
                 -Name "AlternateErrorPagesEnabled" `
             | Select-Object -ExpandProperty "AlternateErrorPagesEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -4971,9 +4971,9 @@
                 -Name "SuppressUnsupportedOSWarning" `
             | Select-Object -ExpandProperty "SuppressUnsupportedOSWarning"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -5007,9 +5007,9 @@
                 -Name "TextPredictionEnabled" `
             | Select-Object -ExpandProperty "TextPredictionEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -5043,9 +5043,9 @@
                 -Name "InternetExplorerIntegrationAlwayswaitForUnload" `
             | Select-Object -ExpandProperty "InternetExplorerIntegrationAlwayswaitForUnload"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -5079,9 +5079,9 @@
                 -Name "WalletDonationEnabled" `
             | Select-Object -ExpandProperty "WalletDonationEnabled"
 
-            if (($regValue -ne 0)) {
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -5117,7 +5117,7 @@
 
             if (($regValue -ne 1) -and ($regValue -ne 3)) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: x == 1 or x == 3"
+                    Message = "Registry value is '$regValue'. Expected: 1 or 3"
                     Status  = "False"
                 }
             }
@@ -5151,7 +5151,7 @@
                 -Name "AutoUpdateCheckPeriodMinutes" `
             | Select-Object -ExpandProperty "AutoUpdateCheckPeriodMinutes"
 
-            if (($regValue -eq 0)) {
+            if ($regValue -eq 0) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: x != 0"
                     Status  = "False"
