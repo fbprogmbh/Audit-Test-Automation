@@ -385,16 +385,16 @@ function CreateHashTable {
 		htmlElement 'table'@{ id = "hashTable" } {
 			htmlElement 'thead' @{} {
 				htmlElement 'tr' @{} {
-					htmlElement 'th'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } { "Integrity Check for following scopes" }
-					htmlElement 'th'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; background-color: lightgray;" } { "Checksum (SHA-256)" }
+					htmlElement 'th'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse; background-color: var(--color-dark-gray);" } { "Integrity Check for following scopes" }
+					htmlElement 'th'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse; background-color: var(--color-dark-gray);" } { "Checksum (SHA-256)" }
 				}
 			}
 			htmlElement 'tbody' @{id = "hashTableBody" } {
 				htmlElement 'tr' @{} {
 					#Scope
-					htmlElement 'td' @{style = "border: 1px solid #d2d2d2; border-collapse: collapse;vertical-align: middle; " } { "Overall integrity check" }
+					htmlElement 'td' @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse;vertical-align: middle; " } { "Overall integrity check" }
 					#Checksum
-					htmlElement 'td' @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+					htmlElement 'td' @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse; " } {
 						htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($Title))" }
 					}
 				}
@@ -402,24 +402,24 @@ function CreateHashTable {
 				$trColorSwitch = 0
 				foreach ($section in $Sections) {
 					if ($trColorSwitch -eq 0) {
-						htmlElement 'tr'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; background-color: #efefef;" } {
+						htmlElement 'tr'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse; background-color: #efefef;" } {
 							#Scope
-							htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "$($section.Title)" }
+							htmlElement 'td'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse:; vertical-align: middle; " } { "$($section.Title)" }
 							#Checksum
-							htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; " } {
+							htmlElement 'td'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse; " } {
 								htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($section.Title))" }
 							}
 						}
 						$trColorSwitch = 1
 					}
 					else {
-						htmlElement 'tr'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse;" } {
-							#Scope
-							htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "$($section.Title)" }
-							#Checksum
-							htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-								htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($section.Title))" }
-							}
+						htmlElement 'tr'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse;" } {
+						#Scope
+						htmlElement 'td'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse:; vertical-align: middle; " } { "$($section.Title)" }
+						#Checksum
+						htmlElement 'td'  @{style = "border: 1px solid var(--color-dark-gray); border-collapse: collapse; " } {
+							htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($section.Title))" }
+						}
 						}
 						$trColorSwitch = 0
 					}
@@ -1275,25 +1275,25 @@ function Get-ATAPHtmlReport {
 							# percentage of compliance quantity
 							$QuantityCompliance = [math]::round(($AmountOfCompliantRules / $TotalAmountOfRules) * 100, 2);	
 							# Variables, which will be evaluated in report.js
-							htmlElement 'div' @{id = "AmountOfNonCompliantRules" } { "$($AmountOfNonCompliantRules)" }
-							htmlElement 'div' @{id = "AmountOfCompliantRules" } { "$($AmountOfCompliantRules)" }
-							htmlElement 'div' @{id = "TotalAmountOfRules" } { "$($TotalAmountOfRules)" }
-							htmlElement 'div' @{id = "QuantityCompliance" } { "$($QuantityCompliance)" }
+							htmlElement 'div' @{id = "AmountOfNonCompliantRules"; hidden="hidden"} { "$($AmountOfNonCompliantRules)" }
+							htmlElement 'div' @{id = "AmountOfCompliantRules"; hidden="hidden"} { "$($AmountOfCompliantRules)" }
+							htmlElement 'div' @{id = "TotalAmountOfRules"; hidden="hidden"} { "$($TotalAmountOfRules)" }
+							htmlElement 'div' @{id = "QuantityCompliance"; hidden="hidden"} { "$($QuantityCompliance)" }
 		
 							# Severity
-							htmlElement 'div' @{id = "TotalAmountOfSeverityRules" } { "$($RSReport.RSSeverityReport.AuditInfos.Length)" }
+							htmlElement 'div' @{id = "TotalAmountOfSeverityRules"; hidden="hidden"} { "$($RSReport.RSSeverityReport.AuditInfos.Length)" }
 							$AmountOfFailedSeverityRules = 0;
 							foreach ($rule in $RSReport.RSSeverityReport.AuditInfos) {
 								if ($rule.Status -eq "False") {
 									$AmountOfFailedSeverityRules ++;
 								}
 							}
-							htmlElement 'div' @{id = "AmountOfFailedSeverityRules" } { "$($AmountOfFailedSeverityRules)" }
+							htmlElement 'div' @{id = "AmountOfFailedSeverityRules"; hidden="hidden"} { "$($AmountOfFailedSeverityRules)" }
 						}
 					}
 
 					htmlElement 'div' @{id = 'navigationButtons' } {
-						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark Compliance" }
+						htmlElement 'button' @{type = 'button'; class = 'navButton selectedNavButton'; id = 'summaryBtn'; onclick = "clickButton('1')" } { "Benchmark Compliance" }
 						htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'foundationDataBtn'; onclick = "clickButton('5')" } { "Security Base Data" }
 						if ($RiskScore -and ($os -match "Win32NT" -and $Title -match "Win")) {
 							htmlElement 'button' @{type = 'button'; class = 'navButton'; id = 'riskScoreBtn'; onclick = "clickButton('2')" } { "Risk Score" }
@@ -1309,7 +1309,7 @@ function Get-ATAPHtmlReport {
 					}
 
 					Write-Progress -Activity "Creating settings overview page" -Status "Progress:" -PercentComplete 25
-					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview' } {
+					htmlElement 'div' @{class = 'tabContent'; id = 'settingsOverview'; style = 'display:none' } {
 						# Table of Contents
 						htmlElement 'h1' @{ id = 'toc' } { 'Hardening Settings' }
 						CreateHashTable
@@ -1356,7 +1356,7 @@ function Get-ATAPHtmlReport {
 								htmlElement 'h2' @{id = 'CurrentRiskScore' } { "Current Risk Score of tested System: " }
 								htmlElement 'h3' @{} { 'For further information, please head to the tab "Risk Score".' }
 								htmlElement 'div' @{id = 'riskMatrixSummary' } {
-									htmlElement 'div' @{id = 'dotSummaryTab' } {}
+									htmlElement 'div' @{id = 'dotSummaryTab'; style = 'display:none'} {}
 									htmlElement 'div' @{id = 'severity' } {
 										htmlElement 'p' @{id = 'severityArea' } { 'Severity' }
 									}
@@ -1474,7 +1474,7 @@ function Get-ATAPHtmlReport {
 
 								htmlElement 'li' @{ class = 'gauge-info-item' } {
 									htmlElement 'span' @{ class = "auditstatus $htmlClass" } { "$($percent)% $value" }
-									" (Tests: $count)"
+									"<br> (Tests: $count)"
 								}
 							}
 
@@ -1510,17 +1510,17 @@ function Get-ATAPHtmlReport {
 									$htmlClass = Get-HtmlClassFromStatus $value
 									$percent = $sectionCountHash[$section.Title + $value + "Percent"]
 
-							htmlElement 'li' @{ class = 'gauge-info-item' } {
-								htmlElement 'span' @{ class = "auditstatus $htmlClass" } { "$($percent)% $value" }
-								" (Tests: $count)"
-							}
+									htmlElement 'li' @{ class = 'gauge-info-item' } {
+										htmlElement 'span' @{ class = "auditstatus $htmlClass" } { "$($percent)% $value" }
+										"<br> (Tests: $count)"
+									}
 								}
 							}
 						}
 					}
 
 					Write-Progress -Activity "Creating foundation data page" -Status "Progress:" -PercentComplete 50
-					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData' } {
+					htmlElement 'div' @{class = 'tabContent'; id = 'foundationData'; style = 'display:none' } {
 						#Tab: Foundation Data (Only works for Windows OS!)
 						htmlElement 'h1' @{} { "Security Base Data" }
 						htmlElement 'div' @{id = "testGrid" } {
@@ -1528,50 +1528,50 @@ function Get-ATAPHtmlReport {
 							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 3; grid-row-start: 2; grid-row-end: 3; font-weight: bold; background-color: lightgray;" } { "Software Information" }
 							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 6; grid-row-start: 2; grid-row-end: 3; font-weight: bold; background-color: lightgray;" } { "Hardware Information" }
 
-							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 3; grid-row-end: 4; background-color: #efefef; font-weight: bold;" } { "System Manufacturer" }
-							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 3; grid-row-end: 4; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.SystemManufacturer) }
+							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 3; grid-row-end: 4; background-color: var(--color-light-gray); font-weight: bold;" } { "System Manufacturer" }
+							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 3; grid-row-end: 4; background-color: var(--color-light-gray);" } { $($SystemInformation.HardwareInformation.SystemManufacturer) }
 								
 							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 4; grid-row-end: 5; font-weight: bold;" } { "System SKU" }
 							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 4; grid-row-end: 5;" } { $($SystemInformation.HardwareInformation.SystemSKU) }
 
-							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 5; grid-row-end: 6; background-color: #efefef; font-weight: bold;" } { "System Model" }
-							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 5; grid-row-end: 6; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.SystemModel) }
+							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 5; grid-row-end: 6; background-color: var(--color-light-gray); font-weight: bold;" } { "System Model" }
+							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 5; grid-row-end: 6; background-color: var(--color-light-gray);" } { $($SystemInformation.HardwareInformation.SystemModel) }
 
 							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 6; grid-row-end: 7; font-weight: bold;" } { "System Serialnumber" }
 							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 6; grid-row-end: 7;" } { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
 
-							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;" } { "BIOS Version" }
-							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.BIOSVersion) }
+							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 7; grid-row-end: 8; background-color: var(--color-light-gray); font-weight: bold;" } { "BIOS Version" }
+							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 7; grid-row-end: 8; background-color: var(--color-light-gray);" } { $($SystemInformation.HardwareInformation.BIOSVersion) }
 
 							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 8; grid-row-end: 9; font-weight: bold;" } { "Free disk space (C:)" }
 							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 8; grid-row-end: 9;" } { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
 
-							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;" } { "Free physical memory" }
-							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 9; grid-row-end: 10; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
+							htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 9; grid-row-end: 10; background-color: var(--color-light-gray); font-weight: bold;" } { "Free physical memory" }
+							htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 9; grid-row-end: 10; background-color: var(--color-light-gray);" } { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
 
 
 
 
-							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 3; grid-row-end: 4; background-color: #efefef; font-weight: bold;" } { "Hostname" }
-							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 3; grid-row-end: 4; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.Hostname) }
+							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 3; grid-row-end: 4; background-color: var(--color-light-gray); font-weight: bold;" } { "Hostname" }
+							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 3; grid-row-end: 4; background-color: var(--color-light-gray);" } { $($SystemInformation.SoftwareInformation.Hostname) }
 
 							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 4; grid-row-end: 5; font-weight: bold;" } { "System Uptime" }
 							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 4; grid-row-end: 5;" } { $($SystemInformation.SoftwareInformation.SystemUptime) }
 
-							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 5; grid-row-end: 6; background-color: #efefef; font-weight: bold;" } { "Operating System" }
-							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 5; grid-row-end: 6; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.OperatingSystem) }
+							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 5; grid-row-end: 6; background-color: var(--color-light-gray); font-weight: bold;" } { "Operating System" }
+							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 5; grid-row-end: 6; background-color: var(--color-light-gray);" } { $($SystemInformation.SoftwareInformation.OperatingSystem) }
 
 							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 6; grid-row-end: 7; font-weight: bold;" } { "Build Number" }
 							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 6; grid-row-end: 7;" } { $($SystemInformation.SoftwareInformation.BuildNumber) }
 
-							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;" } { "OS Architecture" }
-							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.OSArchitecture) }
+							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 7; grid-row-end: 8; background-color: var(--color-light-gray); font-weight: bold;" } { "OS Architecture" }
+							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 7; grid-row-end: 8; background-color: var(--color-light-gray);" } { $($SystemInformation.SoftwareInformation.OSArchitecture) }
 
 							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 8; grid-row-end: 9; font-weight: bold;" } { "License Status" }
 							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 8; grid-row-end: 9;" } { $($SystemInformation.SoftwareInformation.LicenseStatus) }
 
-							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;" } { "Installation Language" }
-							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 9; grid-row-end: 10; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
+							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 9; grid-row-end: 10; background-color: var(--color-light-gray); font-weight: bold;" } { "Installation Language" }
+							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 9; grid-row-end: 10; background-color: var(--color-light-gray);" } { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
 
 							htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 10; grid-row-end: 11; font-weight: bold;" } { "Domain role" }
 							htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 10; grid-row-end: 11;" } { $($SystemInformation.SoftwareInformation.DomainRole) }
@@ -1832,7 +1832,7 @@ function Get-ATAPHtmlReport {
 					}
 
 					Write-Progress -Activity "Creating references page" -Status "Progress:" -PercentComplete 83
-					htmlElement 'div' @{class = 'tabContent'; id = 'references' } {
+					htmlElement 'div' @{class = 'tabContent'; id = 'references'; style = 'display:none' } {
 
 						
 						htmlElement 'h1' @{} { "About us" }

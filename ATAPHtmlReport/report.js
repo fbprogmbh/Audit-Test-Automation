@@ -14,11 +14,13 @@ const cssVars = getComputedStyle(document.documentElement);
 
 const COLORS = {
     green: cssVars.getPropertyValue('--color-green').trim(),
-    red: cssVars.getPropertyValue('--color-red').trim(),
+    red: cssVars.getPropertyValue('--company-red').trim(),
     orange: cssVars.getPropertyValue('--color-orange').trim(),
     purple: cssVars.getPropertyValue('--color-purple').trim(),
-    white: cssVars.getPropertyValue('--color-white').trim()
-
+    white: cssVars.getPropertyValue('--color-white').trim(),
+    blue: cssVars.getPropertyValue('--color-blue').trim(),
+    dark_gray: cssVars.getPropertyValue('--color-dark-gray').trim(),
+    light_gray: cssVars.getPropertyValue('--color-light-gray').trim()
 };
 
 function startConditions() {
@@ -34,32 +36,23 @@ function startConditions() {
     document.getElementById("settingsOverview").style.display = "none";
 
 
-    document.getElementById("summaryBtn").style.backgroundColor = COLORS.orange;
+    /* document.getElementById("summaryBtn").style.backgroundColor = COLORS.orange; 
     document.getElementById("foundationDataBtn").style.backgroundColor = 'transparent';
     document.getElementById("referenceBtn").style.backgroundColor = 'transparent';
-    document.getElementById("settingsOverviewBtn").style.backgroundColor = 'transparent';
+    document.getElementById("settingsOverviewBtn").style.backgroundColor = 'transparent'; */
 
     if (isRiskScoreValue != null) {
         document.getElementById("riskScore").style.display = "none";
-        document.getElementById("riskScoreBtn").style.backgroundColor = 'transparent';
+        /* document.getElementById("riskScoreBtn").style.backgroundColor = 'transparent'; */
         /* Initialize necessary variables */
+
         AmountOfNonCompliantRules = document.getElementById("AmountOfNonCompliantRules").textContent;
-        document.getElementById("AmountOfNonCompliantRules").hidden = true;
-
         AmountOfCompliantRules = document.getElementById("AmountOfCompliantRules").textContent;
-        document.getElementById("AmountOfCompliantRules").hidden = true;
-
         TotalAmountOfRules = document.getElementById("TotalAmountOfRules").textContent;
-        document.getElementById("TotalAmountOfRules").hidden = true;
-
         QuantityCompliance = document.getElementById("QuantityCompliance").textContent;
-        document.getElementById("QuantityCompliance").hidden = true;
-
         TotalAmountOfSeverityRules = document.getElementById("TotalAmountOfSeverityRules").textContent;
-        document.getElementById("TotalAmountOfSeverityRules").hidden = true;
-
         AmountOfFailedSeverityRules = document.getElementById("AmountOfFailedSeverityRules").textContent;
-        document.getElementById("AmountOfFailedSeverityRules").hidden = true;
+
         calcDotPosition();
         let severityComplianceCollapseBtn = document.getElementById("severityComplianceCollapse");
         severityComplianceCollapseBtn.addEventListener("click", () => {
@@ -95,7 +88,8 @@ function clickButton(value) {
     /* Disable all buttons */
     let buttons = document.getElementsByClassName('navButton');
     for (let i = 0; i < buttons.length; i++) {
-        buttons.item(i).style.backgroundColor = 'transparent';
+        /* buttons.item(i).style.backgroundColor = 'transparent'; */
+        buttons.item(i).classList.remove("selectedNavButton");
     }
 
 
@@ -104,32 +98,39 @@ function clickButton(value) {
     switch (buttonNumber) {
         case 1:
             document.getElementById("summary").style.display = "block";
-            document.getElementById("summaryBtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("summaryBtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("summaryBtn").classList.add("selectedNavButton");
             break;
         case 2:
             document.getElementById("riskScore").style.display = "block";
-            document.getElementById("riskScoreBtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("riskScoreBtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("riskScoreBtn").classList.add("selectedNavButton");
             calcDotPosition();
             break;
         case 3:
             document.getElementById("references").style.display = "block";
-            document.getElementById("referenceBtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("referenceBtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("referenceBtn").classList.add("selectedNavButton");
             break;
         case 4:
             document.getElementById("settingsOverview").style.display = "block";
-            document.getElementById("settingsOverviewBtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("settingsOverviewBtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("settingsOverviewBtn").classList.add("selectedNavButton");
             break;
         case 5:
             document.getElementById("foundationData").style.display = "block";
-            document.getElementById("foundationDataBtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("foundationDataBtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("foundationDataBtn").classList.add("selectedNavButton");
             break;
         case 6:
             document.getElementById("MITRE").style.display = "block";
-            document.getElementById("MITREBtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("MITREBtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("MITREBtn").classList.add("selectedNavButton");
             break;
         case 7:
             document.getElementById("CISA").style.display = "block";
-            document.getElementById("CISABtn").style.backgroundColor = COLORS.orange;
+            /* document.getElementById("CISABtn").style.backgroundColor = COLORS.orange; */
+            document.getElementById("CISABtn").classList.add("selectedNavButton");
             break;
     }
 
@@ -185,27 +186,17 @@ function calcDotPosition() {
         complianceValueSeverity = 1;
 
 
-        document.getElementById("complianceStatus").style.padding = "5px 10px";
-        document.getElementById("complianceStatus").style.borderRadius = "8px";
         document.getElementById("complianceStatus").style.backgroundColor = COLORS.green;
-        document.getElementById("complianceStatus").style.color = COLORS.white;
-        document.getElementById("complianceStatus").style.marginLeft = "6%";
-        document.getElementById("complianceStatus").style.fontWeight = "bold";
-        document.getElementById("complianceStatus").style.display = "inline";
     }
     /*critical severity compliance*/
     else {
         dotRiskScoreTab.style.gridRowStart = 1;
         dotSummaryTab.style.gridRowStart = 1;
         complianceValueSeverity = 4;
-        document.getElementById("complianceStatus").style.padding = "5px 10px";
-        document.getElementById("complianceStatus").style.borderRadius = "8px";
         document.getElementById("complianceStatus").style.backgroundColor = COLORS.red;
-        document.getElementById("complianceStatus").style.color = COLORS.white;
-        document.getElementById("complianceStatus").style.marginLeft = "6%";
-        document.getElementById("complianceStatus").style.fontWeight = "bold";
-        document.getElementById("complianceStatus").style.display = "inline";
     }
+    /* Unhide the dot now that it has been positioned */
+    document.getElementById("dotSummaryTab").style.display = "inline-block";
 
     let totalComplianceValue = Math.max(complianceValueQuantity, complianceValueSeverity);
 
