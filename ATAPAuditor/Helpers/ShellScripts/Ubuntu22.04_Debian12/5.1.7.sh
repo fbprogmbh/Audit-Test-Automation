@@ -7,14 +7,14 @@ parameter_sshd_t1=clientalivecountmax
 parameter_sshd_config1=ClientAliveCountMax
 desired_value1=3
 
-if ! command -v sshd &>/dev/null; then
+if ! command -v  /usr/sbin/sshd &>/dev/null; then
 	echo "sshd command could not be found"
 	exit 0
 fi
 
 # Check using sshd -T output
-actual_value=$(sshd -T | grep -i "$parameter_sshd_t" | awk '{print $2}')
-actual_value1=$(sshd -T | grep -i "$parameter_sshd_t1" | awk '{print $2}')
+actual_value=$( /usr/sbin/sshd -T | grep -i "$parameter_sshd_t" | awk '{print $2}')
+actual_value1=$( /usr/sbin/sshd -T | grep -i "$parameter_sshd_t1" | awk '{print $2}')
 
 if [ -z "$actual_value" ] && [ -z "$actual_value1" ]; then
 	if (grep -iq '^$parameter_sshd_config' /etc/ssh/sshd_config) && (grep -iq '^$parameter_sshd_config1' /etc/ssh/sshd_config); then

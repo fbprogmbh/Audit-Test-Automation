@@ -13,7 +13,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.1"
     Task = "Ensure mounting of cramfs filesystems is disabled"
     Test = {
-        $result1 = modprobe -n -v cramfs | grep -E '(cramfs|install)'
+        $result1 = /usr/sbin/modprobe -n -v cramfs | grep -E '(cramfs|install)'
         $result2 = lsmod | grep cramfs
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return @{
@@ -32,7 +32,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.2"
     Task = "Ensure mounting of freevxfs filesystems is disabled"
     Test = {
-        $result1 = modprobe -n -v freevxfs | grep -E '(freevxfs|install)'
+        $result1 = /usr/sbin/modprobe -n -v freevxfs | grep -E '(freevxfs|install)'
         $result2 = lsmod | grep freevxfs
         
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
@@ -52,7 +52,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.3"
     Task = "Ensure mounting of jffs2 filesystetms is disabled"
     Test = {
-        $result1 = modprobe -n -v jffs2 | grep -E '(jffs2|install)'
+        $result1 = /usr/sbin/modprobe -n -v jffs2 | grep -E '(jffs2|install)'
         $result2 = lsmod | grep jffs2
         
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
@@ -72,7 +72,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.4"
     Task = "Ensure mounting of hfs filesystetms is disabled"
     Test = {
-        $result1 = modprobe -n -v hfs | grep -E '(hfs|install)'
+        $result1 = /usr/sbin/modprobe -n -v hfs | grep -E '(hfs|install)'
         $result2 = lsmod | grep hfs
         
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
@@ -92,7 +92,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.5"
     Task = "Ensure mounting of hfsplus filesystetms is disabled"
     Test = {
-        $result1 = modprobe -n -v hfsplus | grep -E '(hfsplus|install)'
+        $result1 = /usr/sbin/modprobe -n -v hfsplus | grep -E '(hfsplus|install)'
         $result2 = lsmod | grep hfsplus
         
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
@@ -112,7 +112,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.6"
     Task = "Ensure mounting of squashfs filesystems is disabled"
     Test = {
-        $result1 = modprobe -n -v squashfs | grep -E '(squashfs|install)'
+        $result1 = /usr/sbin/modprobe -n -v squashfs | grep -E '(squashfs|install)'
         $result2 = lsmod | grep squashfs
         
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
@@ -132,7 +132,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.1.7"
     Task = "Ensure mounting of udf filesystetms is disabled"
     Test = {
-        $result1 = modprobe -n -v udf | grep -E '(udf|install)'
+        $result1 = /usr/sbin/modprobe -n -v udf | grep -E '(udf|install)'
         $result2 = lsmod | grep udf
         
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
@@ -572,7 +572,7 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.1.24"
     Task = "Disable USB Storage"
     Test = {
-        $result1 = modprobe -n -v usb-storage
+        $result1 = /usr/sbin/modprobe -n -v usb-storage
         $result2 = lsmod | grep usb-storage
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return @{
@@ -862,12 +862,12 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.6.1.3"
     Task = "Ensure all AppArmor Profiles are in enforce or complain mode"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
-        $profileMode3 = apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode3 = /usr/sbin/apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
         $result = expr $profileMode3 + $profileMode2
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if($result -eq $profileMode1 -and $unconfinedProcesses -eq 0){
             return @{
@@ -885,10 +885,10 @@ $isIPv6Disabled = Get-IPv6Disabled
     Id = "1.6.1.4"
     Task = "Ensure all AppArmor Profiles are enforcing"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if($profileMode1 -eq $profileMode2 -and $unconfinedProcesses -eq 0){
             return @{
@@ -1885,7 +1885,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.4.1"
     Task = "Ensure DCCP is disabled"
     Test = {
-        $test1 = modprobe -n -v dccp
+        $test1 = /usr/sbin/modprobe -n -v dccp
         $test2 = lsmod | grep dccp
         if($test1 -match "install /bin/true" -and $test2 -eq $null){
             return @{
@@ -1903,7 +1903,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.4.2"
     Task = "Ensure SCTP is disabled"
     Test = {
-        $test1 = modprobe -n -v sctp | grep -E '(sctp|install)'
+        $test1 = /usr/sbin/modprobe -n -v sctp | grep -E '(sctp|install)'
         $test2 = lsmod | grep sctp
         if($test1 -match "install /bin/true" -and $test2 -eq $null){
             return @{
@@ -1921,7 +1921,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.4.3"
     Task = "Ensure RDS is disabled"
     Test = {
-        $test1 = modprobe -n -v rds
+        $test1 = /usr/sbin/modprobe -n -v rds
         $test2 = lsmod | grep rds
         if($test1 -match "install /bin/true" -and $test2 -eq $null){
             return @{
@@ -1939,7 +1939,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.4.4"
     Task = "Ensure TIPC is disabled"
     Test = {
-        $test1 = modprobe -n -v tipc | grep -E '(tipc|install)'
+        $test1 = /usr/sbin/modprobe -n -v tipc | grep -E '(tipc|install)'
         $test2 = lsmod | grep tipc
         if($test1 -match "install /bin/true" -and $test2 -eq $null){
             return @{
@@ -1993,7 +1993,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         $test1 = systemctl is-enabled ufw
         $test1 = $?
-        $test2 = ufw status | grep Status
+        $test2 = /usr/sbin/ufw status | grep Status
         if($test1 -match "True" -and $test2 -match "Status: active"){
             return @{
                 Message = "Compliant"
@@ -2010,7 +2010,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.1.4"
     Task = "Ensure ufw loopback traffic is configured"
     Test = {
-        $test1 = ufw status verbose
+        $test1 = /usr/sbin/ufw status verbose
         $result1 = $test1 -match "^Anywhere on lo\s+ALLOW IN\s+Anywhere$"
         $result2 = $test1 -match "^Anywhere\s+DENY IN\s+127.0.0.0/8$"
         $result3 = $test1 -match "^Anywhere (v6) on lo\s+ALLOW IN\s+Anywhere (v6)$"
@@ -2033,7 +2033,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.1.5"
     Task = "Ensure ufw outbound connections are configured"
     Test = {
-        $test1 = ufw status numbered
+        $test1 = /usr/sbin/ufw status numbered
         if($test1 -notmatch "Status: inactive"){
             return @{
                 Message = "Compliant"
@@ -2050,7 +2050,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.1.7"
     Task = "Ensure ufw default deny firewall policy"
     Test = {
-        $test1 = ufw status verbose
+        $test1 = /usr/sbin/ufw status verbose
         if($test1 -match "deny" -or $test1 -match "reject"){
             return @{
                 Message = "Compliant"
@@ -2104,8 +2104,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.2.3"
     Task = "Ensure iptables are flushed with nftables"
     Test = {
-        $test1 = iptables -L
-        $test2 = ip6tables -L
+        $test1 = /usr/sbin/iptables -L
+        $test2 = /usr/sbin/ip6tables -L
         if($test1 -notmatch "target" -and $test2 -notmatch "target"){
             return @{
                 Message = "Compliant"
@@ -2333,8 +2333,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.3.2.1"
     Task = "Ensure iptables loopback traffic is configured"
     Test = {
-        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
-        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        $test1 = /usr/sbin/iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = /usr/sbin/iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
         if($test1 -ne $null -and $test2 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2351,7 +2351,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.3.2.2"
     Task = "Ensure iptables outbound and established connections are configured"
     Test = {
-        $test1 = iptables -L -v -n
+        $test1 = /usr/sbin/iptables -L -v -n
         if($test1 -ne $null){
             return @{
                 Message = "Compliant"
@@ -2368,7 +2368,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "3.5.3.2.3"
     Task = "Ensure iptables default deny firewall policy"
     Test = {
-        $output = iptables -L
+        $output = /usr/sbin/iptables -L
         $test1 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $res1 = $?
         $test2 = $output -match "DROP" | grep "Chain FORWARD (policy DROP)"
@@ -2389,9 +2389,9 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
 }
 [AuditTest] @{
     Id = "3.5.3.3.3"
-    Task = "Ensure ip6tables default deny firewall policy"
+    Task = "Ensure /usr/sbin/ip6tables default deny firewall policy"
     Test = {
-        $output = ip6tables -L
+        $output = /usr/sbin/ip6tables -L
         $test1 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $res1 = $?
         $test2 = $output -match "DROP" | grep "Chain FORWARD (policy DROP)"
@@ -2554,7 +2554,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test2 = $output -match "-a always,exit -F arch=b32 -S clock_settime -k time-change"
                 $test3 = $output -match "-w /etc/localtime -p wa -k time-change"
                 
-                $output2 = auditctl -l | grep time-change
+                $output2 = /usr/sbin/auditctl -l | grep time-change
                 $test4 = $output2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change"
                 $test5 = $output2 -match "-a always,exit -F arch=b32 -S clock_settime -F key=time-change"
                 $test6 = $output2 -match "-w /etc/localtime -p wa -k time-change"
@@ -2574,7 +2574,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test3 = $output -match "-a always,exit -F arch=b64 -S clock_settime -k time-change"
                 $test4 = $output -match "-a always,exit -F arch=b32 -S clock_settime -k time-change"
                 $test5 = $output -match "-w /etc/localtime -p wa -k time-change"
-                $output2 = auditctl -l | grep time-change
+                $output2 = /usr/sbin/auditctl -l | grep time-change
                 $test6 = $output2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change"
                 $test7 = $output2 -match "-a always,exit -F arch=b32 -S stime,settimeofday,adjtimex -F key=time-change"
                 $test8 = $output2 -match "-a always,exit -F arch=b64 -S clock_settime -F key=time-change"
@@ -2611,7 +2611,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
             $test3 = $output -match "-w /etc/gshadow -p wa -k identity"
             $test4 = $output -match "-w /etc/shadow -p wa -k identity"
             $test5 = $output -match "-w /etc/security/opasswd -p wa -k identity"
-            $output2 = auditctl -l | grep identity
+            $output2 = /usr/sbin/auditctl -l | grep identity
             $test6 = $output2 -match "-w /etc/group -p wa -k identity"
             $test7 = $output2 -match "-w /etc/passwd -p wa -k identity"
             $test8 = $output2 -match "-w /etc/gshadow -p wa -k identity"
@@ -2650,7 +2650,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test3 = $output -match "-w /etc/issue.net -p wa -k system-locale"
                 $test4 = $output -match "-w /etc/hosts -p wa -k system-locale"
                 $test5 = $output -match "-w /etc/network -p wa -k system-locale"
-                $output2 = auditctl -l | grep system-locale
+                $output2 = /usr/sbin/auditctl -l | grep system-locale
                 $test6 = $output2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale"
                 $test7 = $output2 -match "-w /etc/issue -p wa -k system-locale"
                 $test8 = $output2 -match "-w /etc/issue.net -p wa -k system-locale"
@@ -2672,7 +2672,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test3 = $output -match "-w /etc/issue.net -p wa -k system-locale"
                 $test4 = $output -match "-w /etc/hosts -p wa -k system-locale"
                 $test5 = $output -match "-w /etc/network -p wa -k system-locale"
-                $output2 = auditctl -l | grep system-locale
+                $output2 = /usr/sbin/auditctl -l | grep system-locale
                 $test6 = $output2 -match "-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale"
                 $test6_2 = $output2 -match "-a always,exit -F arch=b32 -S sethostname,setdomainname -F key=system-locale"
                 $test7 = $output2 -match "-w /etc/issue -p wa -k system-locale"
@@ -2707,7 +2707,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
             $output = grep MAC-policy /etc/audit/rules.d/*.rules
             $test1 = $output -match "-w /etc/apparmor/ -p wa -k MAC-policy"
             $test2 = $output -match "-w /etc/apparmor.d/ -p wa -k MAC-policy"
-            $output2 = auditctl -l | grep MAC-policy
+            $output2 = /usr/sbin/auditctl -l | grep MAC-policy
             $test3 = $output2 -match "-w /etc/apparmor -p wa -k MAC-policy"
             $test4 = $output2 -match "-w /etc/apparmor.d -p wa -k MAC-policy"
             if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null){
@@ -2738,7 +2738,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
             $test1 = $output -match "-w /var/log/faillog -p wa -k logins"
             $test2 = $output -match "-w /var/log/lastlog -p wa -k logins"
             $test3 = $output -match "-w /var/log/tallylog -p wa -k logins"
-            $output2 = auditctl -l | grep logins
+            $output2 = /usr/sbin/auditctl -l | grep logins
             $test4 = $output2 -match "-w /var/log/faillog -p wa -k logins"
             $test5 = $output2 -match "-w /var/log/lastlog -p wa -k logins"
             $test6 = $output2 -match "-w /var/log/tallylog -p wa -k logins"
@@ -2770,7 +2770,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
             $test1 = $output -match "-w /var/run/utmp -p wa -k session"
             $test2 = $output -match "-w /var/log/wtmp -p wa -k logins"
             $test3 = $output -match "-w /var/log/btmp -p wa -k logins"
-            $output2 = auditctl -l | grep -E '(session|logins)'
+            $output2 = /usr/sbin/auditctl -l | grep -E '(session|logins)'
             $test4 = $output2 -match "-w /var/run/utmp -p wa -k session"
             $test5 = $output2 -match "-w /var/log/wtmp -p wa -k logins"
             $test6 = $output2 -match "-w /var/log/btmp -p wa -k logins"
@@ -2806,7 +2806,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test2 = $output -match "-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod"
                 $test3 = $output -match "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295"
                 $test4 = $output -match "-k perm_mod"
-                $output2 = auditctl -l | grep perm_mod
+                $output2 = /usr/sbin/auditctl -l | grep perm_mod
                 $test5 = $output2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1"
                 $test6 = $output2 -match "-F key=perm_mod"
                 $test7 = $output2 -match "-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
@@ -2831,7 +2831,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test6 = $output -match "-k perm_mod"
                 $test7 = $output -match "-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=1000 -F auid!=4294967295"
                 $test8 = $output -match "-k perm_mod"
-                $output2 = auditctl -l | grep perm_mod
+                $output2 = /usr/sbin/auditctl -l | grep perm_mod
                 $test9 = $output2 -match "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
                 $test10 = $output2 -match "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
                 $test11 = $output2 -match "-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=-1 -F key=perm_mod"
@@ -2868,7 +2868,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $output = grep access /etc/audit/rules.d/*.rules
                 $test1 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access"
                 $test2 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access"
-                $output2 = auditctl -l | grep access
+                $output2 = /usr/sbin/auditctl -l | grep access
                 $test3 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
                 $test4 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
                 if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null){
@@ -2884,7 +2884,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $test2 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access"
                 $test3 = $output -match "-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access"
                 $test4 = $output -match "-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access"
-                $output2 = auditctl -l | grep access
+                $output2 = /usr/sbin/auditctl -l | grep access
                 $test5 = $output2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
                 $test6 = $output2 -match "-a always,exit -F arch=b32 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -F auid>=1000 -F auid!=-1 -F key=access"
                 $test7 = $output2 -match "-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat -F exit=-EPERM -F auid>=1000 -F auid!=-1 -F key=access"
@@ -2950,7 +2950,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
             if($bitVersion -match "i386"){
                 $output = grep mounts /etc/audit/rules.d/*.rules
                 $test1 = $output -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts"
-                $output2 = auditctl -l | grep mounts
+                $output2 = /usr/sbin/auditctl -l | grep mounts
                 $test2 = $output2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
                 if($test1 -ne $null -and $test2 -ne $null){
                     return @{
@@ -2963,7 +2963,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
                 $output = grep mounts /etc/audit/rules.d/*.rules
                 $test1 = $output -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts"
                 $test2 = $output -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts"
-                $output2 = auditctl -l | grep mounts
+                $output2 = /usr/sbin/auditctl -l | grep mounts
                 $test3 = $output2 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
                 $test4 = $output2 -match "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts"
                 if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null -and $test4 -ne $null){
@@ -2992,7 +2992,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         try{
             $test1 = grep delete /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep delete
+            $test2 = /usr/sbin/auditctl -l | grep delete
             if($test1 -match "-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and $test2 -match "-a always,exit -F arch=b32 -S unlink,rename,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete"){
                 return @{
                     Message = "Compliant"
@@ -3018,7 +3018,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         try{
             $test1 = grep scope /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep scope
+            $test2 = /usr/sbin/auditctl -l | grep scope
             if($test1 -match "-w /etc/sudoers -p wa -k scope" -and $test1 -match "-w /etc/sudoers.d/ -p wa -k scope" -and $test2 -match "-w /etc/sudoers -p wa -k scope" -and $test2 -match "-w /etc/sudoers.d -p wa -k scope" ){
                 return @{
                     Message = "Compliant"
@@ -3044,7 +3044,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Test = {
         try{
             $test1 = grep actions /etc/audit/rules.d/*.rules
-            $test2 = auditctl -l | grep actions
+            $test2 = /usr/sbin/auditctl -l | grep actions
             $res1 = "-a always,exit -F arch=b64 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions"
             $res2 = "-a always,exit -F arch=b32 -C euid!=uid -F euid=0 -Fauid>=1000 -F auid!=4294967295 -S execve -k actions"
             $res3 = "-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F auid>=1000 -F auid!=-1 -F key=actions"
@@ -3073,7 +3073,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure kernel module loading and unloading is collected"
     Test = {
         $test1 = grep modules /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep modules
+        $test2 = /usr/sbin/auditctl -l | grep modules
         $res1 = "-w /sbin/insmod -p x -k modules"
         $res2 = "-w /sbin/rmmod -p x -k modules"
         $res3 = "-w /sbin/modprobe -p x -k modules"
@@ -3602,7 +3602,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH access is limited"
     Test = {
         try{
-            $result = bash -c "sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
+            $result = bash -c "/usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
             if($result -match "allowusers" -or $result -match "allowgroups" -or $result -match "denyusers" -or $result -match "denygroups"){
                 return @{
                     Message = "Compliant"
@@ -3627,7 +3627,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep loglevel
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep loglevel
             try{
                 $test2 = grep -is 'loglevel' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf | grep -Evi '(VERBOSE|INFO)'
             }
@@ -3661,7 +3661,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH X11 forwarding is disabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
             try{
                 $test2 = grep -Eis '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3695,7 +3695,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH MaxAuthTries is set to 4 or less"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries | cut -d ' ' -f 2
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries | cut -d ' ' -f 2
             try{
                 $test2 = grep -Eis '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3729,7 +3729,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH IgnoreRhosts is enabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
             try{
                 $test2 = grep -Eis '^\s*ignorerhosts\s+no\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3763,7 +3763,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH root login is disabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
             try{
                 $test2 = grep -Eis '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3797,7 +3797,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH PermitEmptyPasswords is disabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
             try{
                 $test2 = grep -Eis '^\s*PermitEmptyPasswords\s+yes' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3831,7 +3831,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH PermitUserEnvironment is disabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
             try{
                 $test2 = grep -Eis '^\s*PermitUserEnvironment\s+yes' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3865,7 +3865,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure only strong Ciphers are used"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b'
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b'
             try{
                 $test2 = grep -Eis '^\s*ciphers\s+([^#]+,)?(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc|arcfour|arcfour128|arcfour256|blowfish-cbc|cast128-cbc|rijndael-cbc@lysator.liu.se)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3899,7 +3899,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure only strong MAC algorithms are used"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b'
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b'
             try{
                 $test2 = grep -Eis '^\s*macs\s+([^#]+,)?(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh\.com|hmac-md5-etm@openssh\.com|hmac-md5-96-etm@openssh\.com|hmac-ripemd160-etm@openssh\.com|hmac-sha1-etm@openssh\.com|hmac-sha1-96-etm@openssh\.com|umac-64-etm@openssh\.com|umac-128-etm@openssh\.com)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -3933,7 +3933,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure only strong Key Exchange algorithms are used"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei'^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei'^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b'
             try{
                 $test2 = grep -Ei '^\s*kexalgorithms\s+([^#]+,)?(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)\b' /etc/ssh/sshd_config
             }
@@ -3967,8 +3967,8 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH Idle Timeout Interval is configured"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
-            $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval | cut -d ' ' -f 2
+            $test2 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax | cut -d ' ' -f 2
             try{
                 $test3 = grep -Eis '^\s*clientaliveinterval\s+(0|3[0-9][1-9]|[4-9][0-9][0-9]|[1-9][0-9][0-9][0-9]+|[6-9]m|[1-9][0-9]+m)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
                 $test4 = grep -Eis '^\s*ClientAliveCountMax\s+(0|[4-9]|[1-9][0-9]+)\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
@@ -4003,7 +4003,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
             try{
                 $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4037,7 +4037,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH warning banner is configured"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
             try{
                 $test2 = grep -Eis '^\s*Banner\s+"?none\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4071,7 +4071,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH PAM is enabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
             try{
                 $test2 = grep -Eis '^\s*UsePAM\s+no' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4105,7 +4105,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH AllowTcpForwarding is disabled"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
             try{
                 $test2 = grep -Eis '^\s*AllowTcpForwarding\s+yes\b' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4139,7 +4139,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH MaxStartups is configured"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups        
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups        
             try{
                 $test2 = grep -Eis '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4176,7 +4176,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Task = "Ensure SSH MaxSessions is limited"
     Test = {
         try{
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
             
             try{
                 $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
@@ -4348,7 +4348,7 @@ elseif($chrony -match "False" -and $timesyncd -notmatch "enabled"){
     Id = "5.5.1.4"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d '=' -2
+        $test1 =  /usr/sbin/useradd -D | grep INACTIVE | cut -d '=' -2
         if($test1 -le 30){
             return @{
                 Message = "Compliant"

@@ -12,7 +12,7 @@ for PARTITION in $(findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/files
 	done
 done
 
-RUNNING=$(auditctl -l)
+RUNNING=$( /usr/sbin/auditctl -l)
 if [ -n "${RUNNING}" ]; then
 	for PARTITION in $(findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid" | awk '{print $1}'); do
 		for PRIVILEGED in $(find "${PARTITION}" -xdev -perm /6000 -type f); do

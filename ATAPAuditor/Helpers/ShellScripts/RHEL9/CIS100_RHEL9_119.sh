@@ -2,8 +2,8 @@
 {
     l_output="" l_output2=""
     l_mname="usb-storage"
-    if [ -z '$(modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")' ]; then
-        l_loadable='$(modprobe -n -v "$l_mname")'
+    if [ -z '$(/usr/sbin/modprobe -n -v "$l_mname" 2>&1 | grep -Pi -- "\h*modprobe:\h+FATAL:\h+Module\h+$l_mname\h+not\h+found\h+in\h+directory")' ]; then
+        l_loadable='$(/usr/sbin/modprobe -n -v "$l_mname")'
         [ "$(wc -l <<< "$l_loadable")" -gt "1" ] && l_loadable="$(grep -P -- "(^\h*install|\b$l_mname)\b" <<< "$l_loadable")"
         if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
             l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
@@ -15,7 +15,7 @@
         else
             l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
         fi
-        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$(tr '-' '_' <<< "$l_mname")\b"; then
+        if /usr/sbin/modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$(tr '-' '_' <<< "$l_mname")\b"; then
             l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
         else
             l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"

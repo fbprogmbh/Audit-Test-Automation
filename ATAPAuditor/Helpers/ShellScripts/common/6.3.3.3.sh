@@ -4,7 +4,7 @@ SUDO_LOG_FILE=$(grep -r logfile /etc/sudoers* | grep -v "/etc/sudoers.bak" | sed
 
 if [ -n "$SUDO_LOG_FILE" ]; then
 	on_disk=$(grep -E "^\s*-w\s+$SUDO_LOG_FILE\s+-p\s+wa" /etc/audit/rules.d/*.rules)
-	loaded=$(auditctl -l | grep -E "^\s*-w\s+$SUDO_LOG_FILE\s+-p\s+wa")
+	loaded=$( /usr/sbin/auditctl -l | grep -E "^\s*-w\s+$SUDO_LOG_FILE\s+-p\s+wa")
 	if [[ -n "$on_disk" && -n "$loaded" ]]; then
 		echo "Audit rules are correctly set."
 		exit 0
