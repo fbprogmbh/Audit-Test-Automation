@@ -10080,6 +10080,18 @@ else {
     Id   = "1.1.183"
     Task = "Block Flash activation in Office documents (Office 16.0, ActivationFilterOverride, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\16.0\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10116,6 +10128,18 @@ else {
     Id   = "1.1.184"
     Task = "Block Flash activation in Office documents (Office 16.0, Compatibility Flags, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\16.0\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10152,6 +10176,18 @@ else {
     Id   = "1.1.185"
     Task = "Block Flash activation in Office documents (Office 16.0, ActivationFilterOverride, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\16.0\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10188,6 +10224,18 @@ else {
     Id   = "1.1.186"
     Task = "Block Flash activation in Office documents (Office 16.0, Compatibility Flags, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\16.0\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10224,6 +10272,18 @@ else {
     Id   = "1.1.187"
     Task = "Ensure 'Block Flash activation in Office documents' is set to '[Equaling `"Block all Flash activation`"]'."
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\Common\COM Compatibility" `
@@ -10260,6 +10320,18 @@ else {
     Id   = "1.1.188"
     Task = "Block Flash activation in Office documents (Office, ActivationFilterOverride, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10296,6 +10368,18 @@ else {
     Id   = "1.1.189"
     Task = "Block Flash activation in Office documents (Office, Compatibility Flags, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10332,6 +10416,18 @@ else {
     Id   = "1.1.190"
     Task = "Block Flash activation in Office documents (Office, ActivationFilterOverride, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10368,6 +10464,18 @@ else {
     Id   = "1.1.191"
     Task = "Block Flash activation in Office documents (Office, Compatibility Flags, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\microsoft\Office\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10404,6 +10512,18 @@ else {
     Id   = "1.1.192"
     Task = "Ensure 'Disable HTTP fallback for SIP connection' is set to 'Enabled' (lync)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\policies\microsoft\office\16.0\lync" `
@@ -10440,6 +10560,18 @@ else {
     Id   = "1.1.193"
     Task = "Ensure 'Configure SIP security mode' is set to 'Enabled' (lync)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\policies\microsoft\office\16.0\lync" `
@@ -10476,6 +10608,18 @@ else {
     Id   = "1.1.194"
     Task = "Block Flash activation in Office documents (WOW6432, Office 16.0, ActivationFilterOverride, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\16.0\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10512,6 +10656,18 @@ else {
     Id   = "1.1.195"
     Task = "Block Flash activation in Office documents (WOW6432, Office 16.0, Compatibility Flags, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\16.0\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10548,6 +10704,18 @@ else {
     Id   = "1.1.196"
     Task = "Block Flash activation in Office documents (WOW6432, Office 16.0, ActivationFilterOverride, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\16.0\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10584,6 +10752,18 @@ else {
     Id   = "1.1.197"
     Task = "Block Flash activation in Office documents (WOW6432, Office 16.0, Compatibility Flags, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\16.0\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10620,6 +10800,18 @@ else {
     Id   = "1.1.198"
     Task = "Block Flash activation in Office documents (WOW6432, Office, ActivationFilterOverride, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10656,6 +10848,18 @@ else {
     Id   = "1.1.199"
     Task = "Block Flash activation in Office documents (WOW6432, Office, Compatibility Flags, Shockwave Flash Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\Common\COM Compatibility\{D27CDB6E-AE6D-11CF-96B8-444553540000}" `
@@ -10692,6 +10896,18 @@ else {
     Id   = "1.1.200"
     Task = "Block Flash activation in Office documents (WOW6432, Office, ActivationFilterOverride, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
@@ -10728,6 +10944,18 @@ else {
     Id   = "1.1.201"
     Task = "Block Flash activation in Office documents (WOW6432, Office, Compatibility Flags, Macromedia Flash Factory Object)"
     Test = {
+        # new logic: 
+        # - if no Office installed at all -> skip test 
+        # - if Office installed but app not installed -> skip test
+        # - else run test as normal
+
+        if (-not $OfficeInstalled) {
+            return @{
+                Message = "No Office installation detected, skipping test."
+                Status  = "None"
+            }
+        }
+        
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\software\WOW6432Node\Microsoft\Office\Common\COM Compatibility\{D27CDB70-AE6D-11CF-96B8-444553540000}" `
