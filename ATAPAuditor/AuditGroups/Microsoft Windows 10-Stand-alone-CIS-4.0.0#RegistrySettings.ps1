@@ -1622,7 +1622,7 @@ $windefrunning = CheckWindefRunning
                 -Name "RestrictSendingNTLMTraffic" `
             | Select-Object -ExpandProperty "RestrictSendingNTLMTraffic"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or x == 2"
                     Status  = "False"
@@ -10260,7 +10260,7 @@ $windefrunning = CheckWindefRunning
                 -Name "RequirePinForPairing" `
             | Select-Object -ExpandProperty "RequirePinForPairing"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -11553,7 +11553,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11598,7 +11598,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11643,7 +11643,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11688,7 +11688,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11752,7 +11752,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11816,7 +11816,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11880,7 +11880,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -11944,7 +11944,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12008,7 +12008,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12072,7 +12072,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12136,7 +12136,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12200,7 +12200,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12264,7 +12264,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12328,7 +12328,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12392,7 +12392,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12456,7 +12456,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12520,7 +12520,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12565,7 +12565,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12610,7 +12610,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12655,7 +12655,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12700,7 +12700,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12745,7 +12745,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12790,7 +12790,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12835,7 +12835,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12880,7 +12880,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12892,7 +12892,7 @@ $windefrunning = CheckWindefRunning
                 -Name "BruteForceProtectionAggressiveness" `
             | Select-Object -ExpandProperty "BruteForceProtectionAggressiveness"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or x == 2"
                     Status  = "False"
@@ -12925,7 +12925,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -12937,7 +12937,7 @@ $windefrunning = CheckWindefRunning
                 -Name "BruteForceProtectionConfiguredState" `
             | Select-Object -ExpandProperty "BruteForceProtectionConfiguredState"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or x == 2"
                     Status  = "False"
@@ -12970,7 +12970,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13015,7 +13015,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13060,7 +13060,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13105,7 +13105,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13150,7 +13150,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13195,7 +13195,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13207,7 +13207,7 @@ $windefrunning = CheckWindefRunning
                 -Name "DaysUntilAggressiveCatchupQuickScan" `
             | Select-Object -ExpandProperty "DaysUntilAggressiveCatchupQuickScan"
 
-            if (($regValue -ne 7)) {
+            if ($regValue -ne 7) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: x == 7"
                     Status  = "False"
@@ -13240,7 +13240,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13285,7 +13285,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
@@ -13330,7 +13330,7 @@ $windefrunning = CheckWindefRunning
         try {
             if ($avstatus) {
 
-                if ((-not $windefrunning)) {
+                if (-not $windefrunning) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"

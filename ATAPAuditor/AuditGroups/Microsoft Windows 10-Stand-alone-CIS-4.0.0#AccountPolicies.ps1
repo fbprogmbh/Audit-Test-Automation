@@ -243,7 +243,7 @@
 
         if ($setPolicy -gt 99999 -or $setPolicy -lt 15 ) {
             return @{
-                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x <= 99999 minutes and x >= 15 minutes"
+                Message = "'ResetLockoutCount' currently set to: $setPolicy. Expected: x <= 99999 and x >= 15"
                 Status  = "False"
             }
         }
