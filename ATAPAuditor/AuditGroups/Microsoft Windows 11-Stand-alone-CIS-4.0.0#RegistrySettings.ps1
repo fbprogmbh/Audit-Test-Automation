@@ -338,7 +338,8 @@ $windefrunning = CheckWindefRunning
                 -Name "LegalNoticeText" `
             | Select-Object -ExpandProperty "LegalNoticeText"
 
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status  = "False"
@@ -374,7 +375,8 @@ $windefrunning = CheckWindefRunning
                 -Name "LegalNoticeCaption" `
             | Select-Object -ExpandProperty "LegalNoticeCaption"
 
-            if ($regValue -notmatch ".+") {
+            $regValue = $regValue.Trim([char]0x0000)    
+            if (($regValue -notmatch ".+") -or ([string]::IsNullOrEmpty($regValue)) -or ([string]::IsNullOrWhiteSpace($regValue))) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: Matching expression '.+'"
                     Status  = "False"
@@ -774,7 +776,7 @@ $windefrunning = CheckWindefRunning
                 -Name "SMBServerNameHardeningLevel" `
             | Select-Object -ExpandProperty "SMBServerNameHardeningLevel"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -1440,7 +1442,7 @@ $windefrunning = CheckWindefRunning
                 -Name "ldapclientconfidentiality" `
             | Select-Object -ExpandProperty "ldapclientconfidentiality"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or  2"
                     Status  = "False"
@@ -1476,7 +1478,7 @@ $windefrunning = CheckWindefRunning
                 -Name "LDAPClientIntegrity" `
             | Select-Object -ExpandProperty "LDAPClientIntegrity"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -1656,7 +1658,7 @@ $windefrunning = CheckWindefRunning
                 -Name "ForceKeyProtection" `
             | Select-Object -ExpandProperty "ForceKeyProtection"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -1800,7 +1802,7 @@ $windefrunning = CheckWindefRunning
                 -Name "ConsentPromptBehaviorAdmin" `
             | Select-Object -ExpandProperty "ConsentPromptBehaviorAdmin"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -3519,7 +3521,7 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id = "9.2.1"
+    Id   = "9.2.1"
     Task = "(L1) Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
@@ -3530,12 +3532,12 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id = "9.2.2"
+    Id   = "9.2.2"
     Task = "(L1) Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
     Test = {
         $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
@@ -3546,7 +3548,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3562,7 +3564,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3578,7 +3580,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3594,7 +3596,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3610,7 +3612,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3626,7 +3628,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3642,7 +3644,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3658,7 +3660,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3674,7 +3676,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3690,7 +3692,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3706,7 +3708,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3722,7 +3724,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3738,7 +3740,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3754,7 +3756,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3770,7 +3772,7 @@ $windefrunning = CheckWindefRunning
         $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
             Message = $($result.Message)
-            Status = $($result.Status)
+            Status  = $($result.Status)
         }
     }
 }
@@ -10646,7 +10648,7 @@ $windefrunning = CheckWindefRunning
                 -Name "RequirePinForPairing" `
             | Select-Object -ExpandProperty "RequirePinForPairing"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -11582,7 +11584,7 @@ $windefrunning = CheckWindefRunning
                 -Name "MaxSize" `
             | Select-Object -ExpandProperty "MaxSize"
 
-            if (($regValue -lt 32768)) {
+            if ($regValue -lt 32768) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: x >= 32768"
                     Status  = "False"
@@ -11973,6 +11975,15 @@ $windefrunning = CheckWindefRunning
     Task = "(L2) Ensure 'Join Microsoft MAPS' is set to 'Disabled'"
     Test = {
         try {
+            if ($avstatus) {
+
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status  = "None"
+                    }
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Spynet" `
                 -Name "SpynetReporting" `
@@ -12025,7 +12036,7 @@ $windefrunning = CheckWindefRunning
             
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12089,7 +12100,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12140,11 +12151,11 @@ $windefrunning = CheckWindefRunning
             if ($avstatus) {
 
                 if ((-not $windefrunning)) {
-                return @{
+                    return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
-            }
-        }
+                    }
+                }
             }                  
             $regValue = 0;
             $regValueTwo = 0;
@@ -12153,7 +12164,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12217,7 +12228,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12281,7 +12292,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12345,7 +12356,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12409,7 +12420,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12473,7 +12484,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12537,7 +12548,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12601,7 +12612,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12665,7 +12676,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12729,7 +12740,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -12793,7 +12804,7 @@ $windefrunning = CheckWindefRunning
 
             $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
             if ($asrTest1) {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
+                $regValue = Get-ItemProperty -ErrorAction Stop `
                     -Path $Path `
                     -Name $Value `
                 | Select-Object -ExpandProperty $Value
@@ -13197,7 +13208,7 @@ $windefrunning = CheckWindefRunning
                 -Name "BruteForceProtectionAggressiveness" `
             | Select-Object -ExpandProperty "BruteForceProtectionAggressiveness"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -13242,7 +13253,7 @@ $windefrunning = CheckWindefRunning
                 -Name "BruteForceProtectionConfiguredState" `
             | Select-Object -ExpandProperty "BruteForceProtectionConfiguredState"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -13287,7 +13298,7 @@ $windefrunning = CheckWindefRunning
                 -Name "RemoteEncryptionProtectionAggressiveness" `
             | Select-Object -ExpandProperty "RemoteEncryptionProtectionAggressiveness"
 
-            if (($regValue -ne 1) -and ($regValue -ne 2)) {
+            if ($regValue -ne 1 -and $regValue -ne 2) {
                 return @{
                     Message = "Registry value is '$regValue'. Expected: 1 or 2"
                     Status  = "False"
@@ -13399,6 +13410,15 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Scan packed executables' is set to 'Enabled'"
     Test = {
         try {
+            if ($avstatus) {
+
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status  = "None"
+                    }
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisablePackedExeScanning" `
@@ -13525,6 +13545,15 @@ $windefrunning = CheckWindefRunning
     Task = "(L1) Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
     Test = {
         try {
+            if ($avstatus) {
+
+                if ((-not $windefrunning)) {
+                    return @{
+                        Message = "This rule requires Windows Defender Antivirus to be enabled."
+                        Status  = "None"
+                    }
+                }
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan" `
                 -Name "DisableEmailScanning" `
