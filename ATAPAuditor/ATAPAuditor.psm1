@@ -123,87 +123,117 @@ class ResultTable {
 #endregion
 
 #region helpers
-function IsIn-FullLanguageMode {
-	try {
-		$languageMode = $ExecutionContext.SessionState.LanguageMode
-		if ($languageMode -eq "FullLanguage") {
-			return $true
-		}
-	}
- catch {
-		return $false
-	}
-	# returns alternate language modes if not FullLanguage
-	return $languageMode
-}
-
+# Test whether powershell has the listed modules installed and loaded
+# If called without parameter, it will do the full module test
+# If called with a parameter, it will test only for this module and return a boolean
 function Start-ModuleTest {
-	$moduleList = @(Get-Module -ListAvailable).Name | Select-Object -Unique
-	$necessaryModules = @(
-		"Microsoft.PowerShell.LocalAccounts",
-		"Microsoft.PowerShell.Management",
-		"Microsoft.PowerShell.Security",
-		"Microsoft.PowerShell.Utility",
-		"TrustedPlatformModule",
-		"NetSecurity",
-		"CimCmdlets",
-		"SmbShare",
-		"Defender",
-		"DISM"
-		#Modules only necessary for specific server tests
-		#"IISAdministration",
-		#"SQLServer",
-	)
-	$missingModules = @()
-	foreach ($module in $necessaryModules) {
-		if ($moduleList -notcontains $module) {
-			$missingModules += $module
-		}
-	}
-	if ($missingModules.Count -gt 0) {
-		Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
-		for ($i = 0; $i -lt $missingModules.Count; $i++) {
-			Write-Warning $missingModules[$i]
-		}
-		Write-Warning "Check out this link on how to install modules: https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-3.x"
-	}
-
-}
-
-function Get-LicenseStatus {
 	param(
-		$SkipLicenseCheck
-	)
-	if ($LicenseStatusCache) {
-		return $LicenseStatusCache
+        [Parameter(Mandatory = $false)]
+        [string]
+        $LookupModule = "*"
+    )
+    process {
+		# Here we handle the behavior when we only need to check for one module
+        if($LookupModule -ne "*"){
+            if($null -eq (Get-Module -Name $LookupModule)){
+                return $false
+            }
+            return $true
+        }
+		# Here we check for the for all the default required modules
+        $necessaryModules = @(
+            "Microsoft.PowerShell.LocalAccounts",
+            "Microsoft.PowerShell.Management",
+            "Microsoft.PowerShell.Security",
+            "Microsoft.PowerShell.Utility",
+            "TrustedPlatformModule",
+            "NetSecurity",
+            "CimCmdlets",
+            "SmbShare",
+            "Defender",
+            "DISM"
+        )
+        $missingModules = @()
+		# We create an ArrayList instead of normal array, as adding many items to a normal array is very inefficient
+        $ModuleArrayList = New-Object System.Collections.ArrayList
+		# We split the PSModule Path so we can iterate over it
+        $ModulePathSplit = $env:PSModulePath.Split(";")
+        for($i = 0; $i -lt $ModulePathSplit.Length; $i++){
+            Get-ChildItem $ModulePathSplit[$i] 2>$null | ForEach-Object($_) {
+				# Here we add all of the available modules to the ArrayList
+                $ModuleArrayList.Add($_.Name) > $null
+            }
+        }
+		# Here we check whether the defined modules are available
+        foreach($module in $necessaryModules){
+            if($module -notin $ModuleArrayList){
+                $missingModules += $module
+            }
+        }
+        if ($missingModules.Count -gt 0) {
+            Write-Warning "Missing module(s) found. Missing modules can lead to errors. Following modules are missing:"
+            for ($i = 0; $i -lt $missingModules.Count; $i++) {
+                Write-Warning $missingModules[$i]
+            }
+            Write-Warning "Check out this link on how to install modules: https://learn.microsoft.com/en-us/powershell/module/powershellget/install-module?view=powershellget-3.x"
+        }
+    }
+}
+# Get Windows Activation Status
+function Get-LicenseStatus {
+	Write-Host "Checking operating system activation status"
+
+	$license = ""
+	# Here we test whether the system is 32 or 64 Bit
+	# Using the 32 Bit version of cscript results in twice the performance when running slmgr
+	if(Test-Path -Path C:\Windows\SysWOW64){
+		# 64 Bit System, so we specifically use the 32 Bit executable of cscript
+		$license = (C:\Windows\SysWOW64\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
+	}else{
+		# 32 Bit System
+		$license = (C:\Windows\System32\cscript C:\Windows\System32\slmgr.vbs /xpr)[4]
+	}
+	# Trim it as the output has 4 spaces to the left by default
+	# The output format for slmgr.vbs /xpr can be a bit hard to work with, so we are going to remove all . and " just to make sure it is clean
+	$license = $license.Trim().Replace(".", "").Replace('"', "")
+
+
+	
+	# Here we check the slmgr ini files (The translation files), compare the output from the command with this list, and then take the key from that string
+	$found 
+	Get-ChildItem C:\Windows\System32\slmgr | ForEach-Object($_){
+        $t1 = Get-Content C:\Windows\System32\slmgr\$_\slmgr.ini | Select-String -pattern "LicenseStatus" 
+        for ($i = 0; $i -lt $t1.Count; $i++) {
+            $t1[$i].Line = $t1[$i].Line.Replace(".", "").Replace('"', "").Replace("%ENDDATE%", "")
+        }
+        $t2 = $t1 | ConvertFrom-StringData
+        for ($i = 0; $i -lt $t2.Count; $i++) {
+            if($license -match $t2[$i].Values){
+                $found = $t2[$i].Keys
+				$found > $null # VSCode complains that $found isnt used, soooo, i m using it here to dismiss the complaint
+                break
+            }
+        }
+	}
+
+
+	# Here we evaluate our findings, and return the actual name for the license status
+	$LicenseStatusCache = switch ($found) {
+		"L_MsgLicenseStatusUnlicensed" { "Unlicensed" }
+		"L_MsgLicenseStatusLicensed" { "Licensed" }
+		"L_MsgLicenseStatusInitialGrace" { "OOBGrace" }
+		"L_MsgLicenseStatusAdditionalGrace" { "OOTGrace" }
+		"L_MsgLicenseStatusNonGenuineGrace" { "NonGenuineGrace" }
+		"L_MsgLicenseStatusNotification" { "Notification" }
+		"L_MsgLicenseStatusExtendedGrace" { "ExtendedGrace" }
 	}
 	
-	if ($SkipLicenseCheck -eq $true) {
-		$LicenseStatusCache = "License check has been skipped."
-		return $LicenseStatusCache
-	}
+	Write-Host "Operating system activation status retrieved"
 
-	Write-Host "Checking operating system activation status. This may take a while..."
-	$license = Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | Where-Object { $_.PartialProductKey } | Select-Object -First 1
-	$LicenseStatusCache = switch ($license.LicenseStatus) {
-		"0" { "Unlicensed" }
-		"1" { "Licensed" }
-		"2" { "OOBGrace" }
-		"3" { "OOTGrace" }
-		"4" { "NonGenuineGrace" }
-		"5" { "Notification" }
-		"6" { "ExtendedGrace" }
-	}
 	return $LicenseStatusCache
 }
 
-function IsIIS10Executable {
-	if ((Get-Module -ListAvailable IISAdministration) -eq $null) {
-		return $false
-	}
-	return $true
-}
-
+# Compares 2 Arrays
 function Test-ArrayEqual {
 	[OutputType([bool])]
 	[CmdletBinding()]
@@ -233,7 +263,11 @@ function Test-ArrayEqual {
 		return $false
 	}
 
+	# While this entire check is O(n*m), the arrays used are so small that this remains as the most efficient way to solve this check
 	foreach ($a in $Array1) {
+		# We only check whether the current item is NOT in the other array.
+		# This check is good enough for now, as the system's registry is more secure the fewer items are in this keys we check
+		# We only need to make sure that the specific key does not include values that are not approved
 		if ($a -notin $Array2) {
 			return $false
 		}
@@ -492,7 +526,7 @@ function Get-RSSeverityReport {
 	# gather results of tests and save it in resultTable
 	$resultTable = [ResultTable]::new()
 	foreach ($test in $tests) {
-		if ($test.AuditInfoStatus -EQ "True") {
+		if ($test.AuditInfoStatus -eq "True") {
 			$resultTable.Success += 1
 		}
 		if ($test.AuditInfostatus -ne "True") {
@@ -571,7 +605,7 @@ function Test-AuditGroup {
 		$status = [AuditInfoStatus]::None
 		#if audit test contains datatype "Constraints", proceed
 		if ($test.Constraints) {
-			$DomainRoleConstraint = $test.Constraints | Where-Object Property -EQ "DomainRole"
+			$DomainRoleConstraint = $test.Constraints | Where-Object Property -eq "DomainRole"
 			#get domain role of system
 			$currentRole = Get-DomainRole
 			#get domain roles, which are listed in AuditTest
@@ -713,10 +747,10 @@ function Get-ATAPReport {
 	)
 	#Windows OS
 	if ([System.Environment]::OSVersion.Platform -ne 'Unix') {
-		return Get-ChildItem "$RootPath\Reports\$ReportName.ps1" | Select-Object -Property BaseName
+		return Get-ChildItem "$RootPath\Reports\*$ReportName*.ps1" | Select-Object -Property BaseName
 	}
 	#Linux OS
-	return Get-ChildItem "$RootPath/Reports/$ReportName.ps1" | Select-Object -Property BaseName
+	return Get-ChildItem "$RootPath/Reports/*$ReportName*.ps1" | Select-Object -Property BaseName
 }
 
 <#
@@ -829,10 +863,6 @@ function Save-ATAPHtmlReport {
 		[Parameter(Mandatory = $false)]
 		[switch]
 		$RiskScore,
-
-		[Parameter(Mandatory = $false)]
-		[switch]
-		$SkipLicenseCheck,
 		# [Parameter(Mandatory = $false)]
 		# [switch]
 		# $MITRE,
@@ -847,13 +877,10 @@ function Save-ATAPHtmlReport {
 		return;
 	}
 
-	if (($languagemode = IsIn-FullLanguageMode) -ne $true) {
-		if ($languagemode -eq $false) {
-			Write-Host "The current language mode could not be determined. Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
-		}
-		else {
-			Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
-		}
+	# Check if the system is in FullLanguage mode, and abort if not
+	$languageMode = $ExecutionContext.SessionState.LanguageMode
+	if ($languagemode -ne "FullLanguage") {
+		Write-Host "The current language mode is `"$languagemode`". Ensure that AuditTAP is run in `"FullLanguage`" mode. For further information, contact your administrator. Closing..." -ForegroundColor red
 		return
 	}
 
@@ -881,17 +908,52 @@ function Save-ATAPHtmlReport {
 	$isUnix = [System.Environment]::OSVersion.Platform -eq 'Unix'
 	if ($isUnix) {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportUnixOS.ps1")
+
+		# This is a code snippet that makes sure that the shellscripts dont have CRLF as EOL character
+		$BufferSize = 1024
+		$shellscripts = Get-ChildItem -Recurse -Include *.sh  -Path "$RootPath/Helpers/ShellScripts" -File
+		foreach($one_shellscript in $shellscripts){
+			try {
+				# We open the file input stream, create a buffer, read the first 1024 bytes into the buffer (doesnt matter if the file has less bytes in total), and fill ChunkBytes with the individual bytes
+				$Stream = [IO.File]::OpenRead($one_shellscript.FullName)
+				$Buffer = New-Object byte[] $BufferSize
+				$BytesRead = $Stream.Read($Buffer, 0, $BufferSize)
+				$Stream.close()
+				$ChunkBytes = $Buffer[0..($BytesRead-1)]
+				# Here we check whether the bytecodes 0x0D (13) and 0x0A (10) appear in the file
+				# If only 0x0A appears in the file, it is already in the LF format, if both appear (order doesnt matter here) then the file is in CRLF format
+				#                          CR                                LF
+				if(($ChunkBytes -contains 0x0D) -and ($ChunkBytes -contains 0x0A)) {
+					# If the file is in CRLF format, then replace CRLF with LF, otherwise continue with the next file
+					$one_shellscript_text = [IO.File]::ReadAllText($one_shellscript.FullName) -replace "`r`n", "`n"
+					[IO.File]::WriteAllText($one_shellscript.FullName, $one_shellscript_text)
+				}
+			}
+			catch {
+				Write-Host $one_shellscript.FullName
+				Write-Warning "This file had an error while fixing the EOL characters"
+			}
+		}
 	}
 	else {
 		[SystemInformation] $SystemInformation = (& "$PSScriptRoot\Helpers\ReportWindowsOS.ps1")
-		Start-ModuleTest
-		if ($ReportName -eq "Microsoft IIS10") {
-			$isIIS10Executable = IsIIS10Executable
-			if ($isIIS10Executable -eq $false) {
-				Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
-				return;
+
+		# Here we define all the reports that need a special module check
+		switch ($ReportName) {
+			"Microsoft IIS10" { 
+				if ((Start-ModuleTest "IISAdministration") -eq $false) {
+					Write-Warning "IIS10 Report not executable! IISAdministration module not available. Please install this module and try again. Exiting..."
+					return;
+				}
+			}
+			"Microsoft SQL Server 2016" { 
+				if ((Start-ModuleTest "SQLServer") -eq $false) {
+					Write-Warning "SQL Server 2016 Report not executable! SQLServer module not available. Please install this module and try again. Exiting..."
+					return;
+				}
 			}
 		}
+		Start-ModuleTest
 		Write-Verbose "PS-Check"
 		$psVersion = $PSVersionTable.PSVersion
 		#PowerShell Major version not 5.*
@@ -909,7 +971,7 @@ function Save-ATAPHtmlReport {
 	$report = Invoke-ATAPReport -ReportName $ReportName 
 	#hashes for each recommendation
 	if (!$isUnix) {
-		$SystemInformation.SoftwareInformation.LicenseStatus = Get-LicenseStatus $SkipLicenseCheck
+		$SystemInformation.SoftwareInformation.LicenseStatus = Get-LicenseStatus
 	}
 	$hashtable_sha256 = GenerateHashTable $report
 	

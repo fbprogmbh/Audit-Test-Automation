@@ -1,9 +1,9 @@
 ﻿# Common
 function Get-AuditPolicySubcategoryGUID {
-	Param(
+    Param(
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-		[string] $Subcategory
+        [string] $Subcategory
     )
 
     $map = @{
@@ -76,1540 +76,1540 @@ function Get-AuditPolicySubcategoryGUID {
 
 # Tests
 [AuditTest] @{
-    Id = "17.1.1"
+    Id   = "17.1.1"
     Task = "(L1) Ensure 'Audit Credential Validation' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Credential Validation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Credential Validation"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Credential Validation'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.2.1"
+    Id   = "17.2.1"
     Task = "(L1) Ensure 'Audit Application Group Management' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Application Group Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Application Group Management"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Application Group Management'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.2.2"
+    Id   = "17.2.2"
     Task = "(L1) Ensure 'Audit Security Group Management' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Security Group Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security Group Management"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Security Group Management'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.2.3"
+    Id   = "17.2.3"
     Task = "(L1) Ensure 'Audit User Account Management' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory User Account Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "User Account Management"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'User Account Management'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.3.1"
+    Id   = "17.3.1"
     Task = "(L1) Ensure 'Audit PNP Activity' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Plug and Play Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Plug and Play Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.3.2"
+    Id   = "17.3.2"
     Task = "(L1) Ensure 'Audit Process Creation' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Process Creation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Process Creation"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Process Creation'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.5.1"
+    Id   = "17.5.1"
     Task = "(L1) Ensure 'Audit Account Lockout' is set to include 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Account Lockout
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Account Lockout"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Account Lockout'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.5.2"
+    Id   = "17.5.2"
     Task = "(L1) Ensure 'Audit Group Membership' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Group Membership
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Group Membership"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Group Membership'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.5.3"
+    Id   = "17.5.3"
     Task = "(L1) Ensure 'Audit Logoff' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Logoff
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logoff"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Logoff'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.5.4"
+    Id   = "17.5.4"
     Task = "(L1) Ensure 'Audit Logon' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logon"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Logon'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.5.5"
+    Id   = "17.5.5"
     Task = "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Logon/Logoff Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other Logon/Logoff Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.5.6"
+    Id   = "17.5.6"
     Task = "(L1) Ensure 'Audit Special Logon' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Special Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Special Logon"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Special Logon'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.6.1"
+    Id   = "17.6.1"
     Task = "(L1) Ensure 'Audit Detailed File Share' is set to include 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Detailed File Share
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Detailed File Share"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Detailed File Share'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.6.2"
+    Id   = "17.6.2"
     Task = "(L1) Ensure 'Audit File Share' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory File Share
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "File Share"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'File Share'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.6.3"
+    Id   = "17.6.3"
     Task = "(L1) Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Object Access Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Object Access Events"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other Object Access Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.6.4"
+    Id   = "17.6.4"
     Task = "(L1) Ensure 'Audit Removable Storage' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Removable Storage
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Removable Storage"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Removable Storage'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.7.1"
+    Id   = "17.7.1"
     Task = "(L1) Ensure 'Audit Audit Policy Change' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Audit Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Audit Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.7.2"
+    Id   = "17.7.2"
     Task = "(L1) Ensure 'Audit Authentication Policy Change' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Authentication Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Authentication Policy Change"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Authentication Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.7.3"
+    Id   = "17.7.3"
     Task = "(L1) Ensure 'Audit Authorization Policy Change' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Authorization Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Authorization Policy Change"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Authorization Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.7.4"
+    Id   = "17.7.4"
     Task = "(L1) Ensure 'Audit MPSSVC Rule-Level Policy Change' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Mpssvc Rule-Level Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Mpssvc Rule-Level Policy Change"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Mpssvc Rule-Level Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.7.5"
+    Id   = "17.7.5"
     Task = "(L1) Ensure 'Audit Other Policy Change Events' is set to include 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Policy Change Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Policy Change Events"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other Policy Change Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.8.1"
+    Id   = "17.8.1"
     Task = "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Sensitive Privilege Use
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Sensitive Privilege Use"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Sensitive Privilege Use'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.9.1"
+    Id   = "17.9.1"
     Task = "(L1) Ensure 'Audit IPsec Driver' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Ipsec Driver
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Ipsec Driver"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Ipsec Driver'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.9.2"
+    Id   = "17.9.2"
     Task = "(L1) Ensure 'Audit Other System Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other System Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other System Events"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other System Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.9.3"
+    Id   = "17.9.3"
     Task = "(L1) Ensure 'Audit Security State Change' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Security State Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security State Change"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Security State Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.9.4"
+    Id   = "17.9.4"
     Task = "(L1) Ensure 'Audit Security System Extension' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Security System Extension
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security System Extension"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Security System Extension'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }
 }
 [AuditTest] @{
-    Id = "17.9.5"
+    Id   = "17.9.5"
     Task = "(L1) Ensure 'Audit System Integrity' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory System Integrity
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "System Integrity"
-        
+
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'System Integrity'"
-                Status = "None"
+                Status  = "None"
             }
         }
-        
+
         $auditPolicyString = auditpol /get /subcategory:"$subCategoryGUID"
-        
+
         # auditpol does not throw exceptions, so test the results and throw if needed
         if ($LASTEXITCODE -ne 0) {
             $errorString = "'auditpol /get /subcategory:'$subCategoryGUID' returned with exit code $LASTEXITCODE"
             throw [System.ArgumentException] $errorString
             Write-Error -Message $errorString
         }
-        
+
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
             }
         }
-        
+
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
-        
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
+
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
+                Status  = "Warning"
                 Message = "Couldn't get setting."
             }
         }
-        
+
         $setting = $Matches[0]
-        
+
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
+                Status  = "False"
                 Message = "Set to: $setting"
             }
         }
-        
+
         return @{
-            Status = "True"
+            Status  = "True"
             Message = "Compliant"
         }
     }

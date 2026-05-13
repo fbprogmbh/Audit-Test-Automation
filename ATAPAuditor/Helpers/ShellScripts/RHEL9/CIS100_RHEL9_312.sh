@@ -2,7 +2,7 @@
 {
     l_output="" l_output2=""
     module_chk() {
-        l_loadable="$(modprobe -n -v "$l_mname")"
+        l_loadable="$(/usr/sbin/modprobe -n -v "$l_mname")"
         if grep -Pq -- '^\h*install \/bin\/(true|false)' <<< "$l_loadable"; then
             l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
         else
@@ -13,7 +13,7 @@
         else
             l_output2="$l_output2\n - module: \"$l_mname\" is loaded"
         fi
-        if modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
+        if /usr/sbin/modprobe --showconfig | grep -Pq -- "^\h*blacklist\h+$l_mname\b"; then
             l_output="$l_output\n - module: \"$l_mname\" is deny listed in: \"$(grep -Pl -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*)\""
         else
             l_output2="$l_output2\n - module: \"$l_mname\" is not deny listed"

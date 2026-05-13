@@ -2,7 +2,7 @@
 
 expected_inactive_days=45
 
-if useradd -D | grep -Eq '^\s*INACTIVE\s*=\s*'$expected_inactive_days'\b'; then
+if  /usr/sbin/useradd -D | grep -Eq '^\s*INACTIVE\s*=\s*'$expected_inactive_days'\b'; then
 	echo "Default inactivity period is correct."
 else
 	echo "Default inactivity period is incorrect."

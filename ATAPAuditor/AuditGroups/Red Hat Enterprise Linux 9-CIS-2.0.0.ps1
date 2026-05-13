@@ -2380,7 +2380,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id   = "5.2.4"
     Task = "Ensure SSH access is limited"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
         $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
         if ($test1 -match "allowusers " -or $test1 -match "allowgroups " -or $test1 -match "denyusers " -or $test1 -match "denygroups " -or
             $test2 -match "allowusers " -or $test2 -match "allowgroups " -or $test2 -match "denyusers " -or $test2 -match "denygroups ") {
@@ -2397,7 +2397,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id   = "5.2.5"
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$'
         $test2 = grep -Pi '^\h*(allow|deny)(users|groups)\h+\H+(\h+.*)?$' /etc/ssh/sshd_config
         if (($test1 -match "allowusers " -or $test1 -match "allowgroups " -or $test1 -match "denyusers " -or $test1 -match "denygroups ") -and
             ($test2 -match "allowusers " -or $test2 -match "allowgroups " -or $test2 -match "denyusers " -or $test2 -match "denygroups ")) {
@@ -2428,7 +2428,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id   = "5.2.7"
     Task = "Ensure SSH root login is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
         $test2 = grep -Ei '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permitrootlogin no" -and $test2 -eq $null) {
             return $retCompliant
@@ -3489,7 +3489,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         $script_string2 = @'
 #!/usr/bin/env bash
 {
-    auditctl -l | awk '/^ *-w/ &&(/\/var\/run\/utmp/ ||/\/var\/log\/wtmp/ ||/\/var\/log\/btmp/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+     /usr/sbin/auditctl -l | awk '/^ *-w/ &&(/\/var\/run\/utmp/ ||/\/var\/log\/wtmp/ ||/\/var\/log\/btmp/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
 }
 '@
         $result1 = bash -c $script_string1

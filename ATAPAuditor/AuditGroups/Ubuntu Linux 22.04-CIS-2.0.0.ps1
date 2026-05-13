@@ -45,8 +45,8 @@ function GetFirewallStatus {
 	$t_IPT = Test-PackageInstalled -PackageName iptables
 	$t_UFW_en = systemctl is-enabled ufw 2>/dev/null
 	if ($t_UFW){
-        $t_UFW_inac = ufw status 2>/dev/null | grep -iE "Status: Ina[ck]tive?"
-        $t_UFW_ac = ufw status 2>/dev/null | grep -iE "Status: A[ck]tive?"
+        $t_UFW_inac = /usr/sbin/ufw status 2>/dev/null | grep -iE "Status: Ina[ck]tive?"
+        $t_UFW_ac = /usr/sbin/ufw status 2>/dev/null | grep -iE "Status: A[ck]tive?"
     } else {
         $t_UFW_ac = $null
         $t_UFW_inac = $null
@@ -578,12 +578,12 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "1.3.1.3"
     Task = "Ensure all AppArmor Profiles are in enforce or complain mode"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
-        $profileMode3 = apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode3 = /usr/sbin/apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
         $result = expr $profileMode3 + $profileMode2
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if($result -eq $profileMode1 -and $unconfinedProcesses -eq 0){
             return $retCompliant
@@ -1806,7 +1806,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         $test1 = systemctl is-enabled ufw 2>/dev/null
         $test2 = systemctl is-active ufw 2>/dev/null
         if($test1 -match "enabled" -and $test2 -match "active"){
-            $test3 = ufw status | grep -iE "Status: A[ck]tive?"
+            $test3 = /usr/sbin/ufw status | grep -iE "Status: A[ck]tive?"
             if($test3 -ne $null){
                 return $retCompliant
             }
@@ -1826,7 +1826,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         }
         $test1 = Test-PackageInstalled -PackageName ufw
         if($test1){
-            $test2 = ufw status verbose | grep -iE "Status: A[ck]tive?"
+            $test2 = /usr/sbin/ufw status verbose | grep -iE "Status: A[ck]tive?"
             if($test2 -eq $null){
                 return $retCompliant
             }
@@ -1846,7 +1846,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         }
         $test1 = Test-PackageInstalled -PackageName ufw
         if($test1){
-            $test2 = ufw status numbered | grep -iE "Status: Ina[ck]tive?"
+            $test2 = /usr/sbin/ufw status numbered | grep -iE "Status: Ina[ck]tive?"
             if($test2 -eq $null){
                 return $retCompliant
             }
@@ -1878,7 +1878,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Test = {
         $test1 = Test-PackageInstalled -PackageName ufw
         if($test1){
-            $test2 = ufw status verbose | grep -iE "allow"
+            $test2 = /usr/sbin/ufw status verbose | grep -iE "allow"
             if($test2 -eq $null){
                 return $retCompliant
             }
@@ -1917,7 +1917,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if(! $test1){
             return $retCompliant
         } else {
-            $test2 = ufw status | grep -iE "Status: Ina[ck]tive?"
+            $test2 = /usr/sbin/ufw status | grep -iE "Status: Ina[ck]tive?"
             if($test2 -ne $null) {
                 return $retCompliant
             }
@@ -2167,7 +2167,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if(! $test1){
             return $retCompliant
         } else {
-            $test2 = ufw status | grep -iE "Status: Ina[ck]tive?"
+            $test2 = /usr/sbin/ufw status | grep -iE "Status: Ina[ck]tive?"
             $test3 = systemctl is-enabled ufw
             if($test2 -ne $null -and $test3 -match "masked") {
                 return $retCompliant
@@ -2186,7 +2186,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 2) {
             return $retUsingFW3
         }
-        $output = iptables -L
+        $output = /usr/sbin/iptables -L
         $test1 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $test2 = $output -match "DROP" | grep "Chain FORWARD (policy DROP)"
         $test3 = $output -match "DROP" | grep "Chain OUTPUT (policy DROP)"
@@ -2206,8 +2206,8 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 2) {
             return $retUsingFW3
         }
-        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
-        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        $test1 = /usr/sbin/iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = /usr/sbin/iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
         if($test1 -ne $null -and $test2 -ne $null){
             return $retCompliant
         }
@@ -2224,7 +2224,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 2) {
             return $retUsingFW3
         }
-        $test1 = iptables -L -v -n
+        $test1 = /usr/sbin/iptables -L -v -n
         if($test1 -ne $null){
             return $retCompliant
         }
@@ -2250,7 +2250,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
         if ($FirewallStatus -match 2) {
             return $retUsingFW3
         }
-        $output = ip6tables -L
+        $output = /usr/sbin/ip6tables -L
         $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $test12 = $output -match "REJECT" | grep "Chain INPUT (policy REJECT)"
         $test21 = $output -match "DROP" | grep "Chain OUTPUT (policy DROP)"
@@ -2331,7 +2331,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "5.1.4"
     Task = "Ensure sshd access is configured"
     Test = {
-        if (sshd -T | grep -Piq -- "^\h*(allow|deny)(users|groups)\h+\H+") {
+        if ( /usr/sbin/sshd -T | grep -Piq -- "^\h*(allow|deny)(users|groups)\h+\H+") {
             return $retCompliant
         }
         return $retNonCompliant
@@ -2341,7 +2341,7 @@ $commonPath = $parentPath + "/Helpers/ShellScripts/common/"
     Id = "5.1.5"
     Task = "Ensure sshd Banner is configured"
     Test = {
-        if (sshd -T | grep -Piq -- "^\h*banner\h+\H+") {
+        if ( /usr/sbin/sshd -T | grep -Piq -- "^\h*banner\h+\H+") {
             return $retCompliant
         }
         return $retCompliant
