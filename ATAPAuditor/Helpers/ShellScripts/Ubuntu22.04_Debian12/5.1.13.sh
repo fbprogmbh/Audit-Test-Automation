@@ -5,13 +5,13 @@ parameter_sshd_t=logingracetime
 parameter_sshd_config=LoginGraceTime
 desired_value=60
 
-if ! command -v sshd &>/dev/null; then
+if ! command -v  /usr/sbin/sshd &>/dev/null; then
 	echo "sshd command could not be found"
 	exit 0
 fi
 
 # Check using sshd -T output
-actual_value=$(sshd -T | grep -i "$parameter_sshd_t" | awk '{print $2}')
+actual_value=$( /usr/sbin/sshd -T | grep -i "$parameter_sshd_t" | awk '{print $2}')
 
 if [ -z "$actual_value" ]; then
 	if grep -iq '^$parameter_sshd_config' /etc/ssh/sshd_config; then

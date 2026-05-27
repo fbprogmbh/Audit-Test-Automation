@@ -6,6 +6,6 @@ checkForRules() {
     $1 -L | awk -v RS="\n\n" '$0 !~ /\(0 references\)/ && $0 ~ /.+\n.+\n.+/ {print $0}'
 }
 
-[[ -n "$(checkForRules ip6tables)" || -n "$(checkForRules iptables)" ]] && exit 1
+[[ -n "$(checkForRules /usr/sbin/ip6tables)" || -n "$(checkForRules /usr/sbin/iptables)" ]] && exit 1
 
 exit 0

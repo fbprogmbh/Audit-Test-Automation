@@ -109,7 +109,7 @@ $FirewallStatus = GetFirewallStatus
     Id = "1.1.1.1"
     Task = "Ensure mounting of squashfs filesystems is disabled"
     Test = {
-        $result1 = modprobe -n -v squashfs | grep -E '(suqashfs|install)'
+        $result1 = /usr/sbin/modprobe -n -v squashfs | grep -E '(suqashfs|install)'
         $result2 = lsmod | grep squashfs
         if ($result1 -match "install /bin/true" -and $result2 -eq $null) {
             return $retCompliant
@@ -123,7 +123,7 @@ $FirewallStatus = GetFirewallStatus
     Id = "1.1.1.2"
     Task = "Ensure mounting of udf filesystems is disabled"
     Test = {
-        $result1 = modprobe -n -v udf | grep -E '(udf|install)'
+        $result1 = /usr/sbin/modprobe -n -v udf | grep -E '(udf|install)'
         $result2 = lsmod | grep udf
         if ($result1 -match "install /bin/true" -and $result2 -eq $null) {
             return $retCompliant
@@ -137,11 +137,11 @@ $FirewallStatus = GetFirewallStatus
     Id = "1.1.1.3"
     Task = "Ensure mounting of FAT filesystems is disabled"
     Test = {
-        $result1 = modprobe -n -v fat | grep -E '(fat|install)'
+        $result1 = /usr/sbin/modprobe -n -v fat | grep -E '(fat|install)'
         $result2 = lsmod | grep udf
-        $result3 = modprobe -n -v vfat | grep -E '(vfat|install)'
+        $result3 = /usr/sbin/modprobe -n -v vfat | grep -E '(vfat|install)'
         $result4 = lsmod | grep udf
-        $result5 = modprobe -n -v msdos | grep -E '(msdos|install)'
+        $result5 = /usr/sbin/modprobe -n -v msdos | grep -E '(msdos|install)'
         $result6 = lsmod | grep udf
         if ($result1 -match "install /bin/true" -and $result2 -eq $null -and $result3 -match "install /bin/true" -and $result4 -eq $null -and $result5 -match "install /bin/true" -and $result6 -eq $null) {
             return $retCompliant
@@ -652,11 +652,11 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.7.1.3"
     Task = "Ensure all AppArmor Profiles are in enforce or complain mode"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
-        $profileMode3 = apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode3 = /usr/sbin/apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
         $result = expr $profileMode3 + $profileMode2
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
         if ($result -eq $profileMode1 -and $unconfinedProcesses -eq 0) {
             return $retCompliant
         } else {
@@ -669,10 +669,10 @@ df --local -P 2>/dev/null | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}
     Id = "1.7.1.4"
     Task = "Ensure all AppArmor Profiles are enforcing"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if($profileMode1 -eq $profileMode2 -and $unconfinedProcesses -eq 0){
             return $retCompliant
@@ -1372,7 +1372,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "3.4.1"
     Task = "Ensure TCP SYN Cookies is enabled"
     Test = {
-        $result1 = modprobe -n -v dccp
+        $result1 = /usr/sbin/modprobe -n -v dccp
         $result2 = lsmod | grep dccp
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return $retCompliant
@@ -1386,7 +1386,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "3.4.2"
     Task = "Ensure SCTP is disabled"
     Test = {
-        $result1 = modprobe -n -v sctp
+        $result1 = /usr/sbin/modprobe -n -v sctp
         $result2 = lsmod | grep sctp
         if($result1 -match "install /bin/true" -and $result2 -eq $null){
             return $retCompliant
@@ -1762,7 +1762,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
-        $output = iptables -L
+        $output = /usr/sbin/iptables -L
         $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $result11 = $?
         $test12 = $output -match "REJECT" | grep "Chain INPUT (policy REJECT)"
@@ -1793,8 +1793,8 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
         if ($FirewallStatus -match 2) {
             return $retUsingFW2
         }
-        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
-        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        $test1 = /usr/sbin/iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = /usr/sbin/iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
         if($test1 -ne $null -and $test2 -ne $null){
             return $retCompliant
         }
@@ -1843,7 +1843,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
-        $output = ip6tables -L
+        $output = /usr/sbin/ip6tables -L
         $test11 = $output -match "DROP" | grep "Chain INPUT (policy DROP)"
         $result11 = $?
         $test12 = $output -match "REJECT" | grep "Chain INPUT (policy REJECT)"
@@ -1877,10 +1877,10 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
         if ($IPv6Status -match "disabled") {
             return $retCompliantIPv6Disabled
         }
-        $output1 = ip6tables -L INPUT -v -n
+        $output1 = /usr/sbin/ip6tables -L INPUT -v -n
         $test1 = $output1 | grep "ACCEPT\s*all\s*lo\s**\s*::/0\s*::/0"
         $test2 = $output1 | grep "DROP\s*all\s**\s**\s*::1\s*::/0"
-        $output2 = ip6tables -L OUTPUT -v -n
+        $output2 = /usr/sbin/ip6tables -L OUTPUT -v -n
         $test3 = $output2 | grep "ACCEPT\s*all\s*lo\s**\s*::/0\s*::/0"
         if($test1 -ne $null -and $test2 -ne $null -and $test3 -ne $null){
             return $retCompliant
@@ -2016,7 +2016,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure system is disabled when audit logs are full"
     Test = {
         $test1 = grep time-change /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep time-change
+        $test2 = /usr/sbin/auditctl -l | grep time-change
         if($test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change" -and
         $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change" -and
         $test1 -match "/etc/audit/rules.d/time_change.rules:-a always,exit -F arch=b64 -S clock_settime -k time-change" -and
@@ -2039,7 +2039,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure events that modify user/group information are collected"
     Test = {
         $test1 = grep identity /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep identity
+        $test2 = /usr/sbin/auditctl -l | grep identity
         if($test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/group -p wa -k identity" -and
         $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/passwd -p wa -k identity" -and
         $test1 -match "/etc/audit/rules.d/identity.rules:-w /etc/shadow -p wa -k identity" -and
@@ -2060,7 +2060,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure events that modify the system's network environment are collected"
     Test = {
         $test1 = grep system-locale /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep system-locale
+        $test2 = /usr/sbin/auditctl -l | grep system-locale
         if($test1 -match "/etc/audit/rules.d/system-locale.rules:-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale" -and
         $test1 -match "/etc/audit/rules.d/system-locale.rules:-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale" -and
         $test1 -match "/etc/audit/rules.d/system-locale.rules:-w /etc/issue -p wa -k system-locale" -and
@@ -2085,7 +2085,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure events that modify the system's Mandatory Access Controls are collected"
     Test = {
         $test1 = grep MAC-policy /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep MAC-policy
+        $test2 = /usr/sbin/auditctl -l | grep MAC-policy
         if($test1 -match "/etc/audit/rules.d/MAC_policy.rules:-w /etc/selinux/ -p wa -k MAC-policy" -and $test1 -match "/etc/audit/rules.d/MAC_policy.rules:-w /usr/share/selinux/ -p wa -k MAC-policy" -and $test2 -match "-w /etc/selinux/ -p wa -k MAC-policy" -and $test2 -match "-w /usr/share/selinux/ -p wa -k MAC-policy"){
             return $retCompliant
         } else {
@@ -2099,7 +2099,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure login and logout events are collected"
     Test = {
         $test1 = grep logins /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep logins
+        $test2 = /usr/sbin/auditctl -l | grep logins
         if($test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/faillog -p wa -k logins" -and
         $test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/lastlog -p wa -k logins" -and
         $test1 -match "/etc/audit/rules.d/logins.rules:-w /var/log/tallylog -p wa -k logins" -and
@@ -2118,7 +2118,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure session initiation information is collected"
     Test = {
         $test1 = grep -E '(session|logins)' /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep -E '(session|logins)'
+        $test2 = /usr/sbin/auditctl -l | grep -E '(session|logins)'
         if($test1 -match "/etc/audit/rules.d/session.rules:-w /var/run/utmp -p wa -k session" -and
         $test1 -match "/etc/audit/rules.d/session.rules:-w /var/log/wtmp -p wa -k logins" -and
         $test1 -match "/etc/audit/rules.d/session.rules:-w /var/log/btmp -p wa -k logins" -and
@@ -2137,7 +2137,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure discretionary access control permission modification events are collected"
     Test = {
         $test1 = grep perm_mod /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep perm_mod
+        $test2 = /usr/sbin/auditctl -l | grep perm_mod
         if($test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
         $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
         $test1 -match "/etc/audit/rules.d/perm_mod.rules:-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=1000 -F auid!=4294967295 -k perm_mod" -and
@@ -2162,7 +2162,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure discretionary access control permission modification events are collected"
     Test = {
         $test1 = grep access /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep access
+        $test2 = /usr/sbin/auditctl -l | grep access
         if($test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access" -and
         $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=4294967295 -k access" -and
         $test1 -match "/etc/audit/rules.d/access.rules:-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=4294967295 -k access" -and
@@ -2191,7 +2191,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure successful file system mounts are collected"
     Test = {
         $test1 = grep mounts /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep mounts
+        $test2 = /usr/sbin/auditctl -l | grep mounts
         if($test1 -match "/etc/audit/rules.d/mounts.rules:-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and
         $test1 -match "/etc/audit/rules.d/mounts.rules:-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts" -and
         $test2 -match "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=-1 -F key=mounts" -and
@@ -2208,7 +2208,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure file deletion events by users are collected"
     Test = {
         $test1 = grep delete /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep delete
+        $test2 = /usr/sbin/auditctl -l | grep delete
         if($test1 -match "/etc/audit/rules.d/deletion.rules:-a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and
         $test1 -match "/etc/audit/rules.d/deletion.rules:-a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=1000 -F auid!=4294967295 -k delete" -and
         $test2 -match "-a always,exit -F arch=b64 -S rename,unlink,unlinkat,renameat -F auid>=1000 -F auid!=-1 -F key=delete" -and
@@ -2225,7 +2225,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure changes to system administration scope (sudoers) is collected"
     Test = {
         $test1 = grep scope /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep scope
+        $test2 = /usr/sbin/auditctl -l | grep scope
         if($test1 -match "/etc/audit/rules.d/scope.rules:-w /etc/sudoers -p wa -k scope" -and
         $test1 -match "/etc/audit/rules.d/scope.rules:-w /etc/sudoers.d/ -p wa -k scope" -and
         $test2 -match "-w /etc/sudoers -p wa -k scope" -and
@@ -2242,7 +2242,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure system administrator actions (sudolog) are collected"
     Test = {
         $test1 = grep -E "^\s*-w\s+$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//')\s+-p\s+wa\s+-k\s+actions" /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep actions
+        $test2 = /usr/sbin/auditctl -l | grep actions
         $test3 = echo "-w $(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//') -p wa -k actions"
         if($test1 -match $test3 -and $test2 -match $test3){
             return $retCompliant
@@ -2257,7 +2257,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Task = "Ensure kernel module loading and unloading is collected"
     Test = {
         $test1 = grep modules /etc/audit/rules.d/*.rules
-        $test2 = auditctl -l | grep modules
+        $test2 = /usr/sbin/auditctl -l | grep modules
         if($test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/insmod -p x -k modules" -and
         $test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/rmmod -p x -k modules" -and
         $test1 -match "/etc/audit/rules.d/modules.rules:-w /sbin/modprobe -p x -k modules" -and
@@ -2575,7 +2575,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.4"
     Task = "Ensure SSH access is limited"
     Test = {
-        $test = sshd -T | grep -E '^\s*(allow|deny)(users|groups)\s+\S+'
+        $test = /usr/sbin/sshd -T | grep -E '^\s*(allow|deny)(users|groups)\s+\S+'
         if($test -match "allowusers " -or $test -match "allowgroups " -or $test -match "denyusers " -or $test -match "denygroups "){
             return $retCompliant
         } else {
@@ -2588,7 +2588,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.5"
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
-        $test = sshd -T | grep loglevel
+        $test = /usr/sbin/sshd -T | grep loglevel
         if($test -match "loglevel\s+VERBOSE" -or $test -match "loglevel\s+INFO"){
             return $retCompliant
         } else {
@@ -2601,7 +2601,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.6"
     Task = "Ensure SSH X11 forwarding is disabled"
     Test = {
-        $test = sshd -T | grep -i x11forwarding
+        $test = /usr/sbin/sshd -T | grep -i x11forwarding
         if($test -match "x11forwarding no"){
             return $retCompliant
         } else {
@@ -2615,7 +2615,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.7"
     Task = "Ensure SSH MaxAuthTries is set to 4 or less"
     Test = {
-        $test = sshd -T | grep maxauthtries | grep maxauthtries | cut -d ' ' -f 2
+        $test = /usr/sbin/sshd -T | grep maxauthtries | grep maxauthtries | cut -d ' ' -f 2
         if($test -le 4){
             return $retCompliant
         } else {
@@ -2628,7 +2628,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.8"
     Task = "Ensure SSH IgnoreRhosts is enabled"
     Test = {
-        $test = sshd -T | grep ignorerhosts
+        $test = /usr/sbin/sshd -T | grep ignorerhosts
         if($test -match "ignorehosts yes"){
             return $retCompliant
         } else {
@@ -2641,7 +2641,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.9"
     Task = "Ensure SSH HostbasedAuthentication is disabled"
     Test = {
-        $test = sshd -T | grep hostbasedauthentication
+        $test = /usr/sbin/sshd -T | grep hostbasedauthentication
         if($test -match "hostbasedauthentication no"){
             return $retCompliant
         } else {
@@ -2654,7 +2654,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.10"
     Task = "Ensure SSH root login is disabled"
     Test = {
-        $test = sshd -T | grep permitrootlogin
+        $test = /usr/sbin/sshd -T | grep permitrootlogin
         if($test -match "permitrootlogin no"){
             return $retCompliant
         } else {
@@ -2667,7 +2667,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.11"
     Task = "Ensure SSH PermitEmptyPasswords is disabled"
     Test = {
-        $test = sshd -T | grep permitemptypasswords
+        $test = /usr/sbin/sshd -T | grep permitemptypasswords
         if($test -match "permitemptypasswords no"){
             return $retCompliant
         } else {
@@ -2680,7 +2680,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.12"
     Task = "Ensure SSH PermitUserEnvironment is disabled"
     Test = {
-        $test = sshd -T | grep permituserenvironment
+        $test = /usr/sbin/sshd -T | grep permituserenvironment
         if($test -match "permituserenvironment no"){
             return $retCompliant
         } else {
@@ -2693,7 +2693,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.13"
     Task = "Ensure only strong Ciphers are used"
     Test = {
-        $test = sshd -T | grep ciphers
+        $test = /usr/sbin/sshd -T | grep ciphers
         if($test -match "3des-cbc" -or $test -match "aes128-cbc" -or $test -match "aes192-cbc" -or $test -match "aes256-cbc"){
             return $retNonCompliant
         } else {
@@ -2706,7 +2706,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.14"
     Task = "Ensure only strong MAC algorithms are used"
     Test = {
-        $test = sshd -T | grep -i "MACs"
+        $test = /usr/sbin/sshd -T | grep -i "MACs"
         if($test -match "hmac-md5" -or
         $test -match "hmac-md5-96" -or
         $test -match "hmac-ripemd160" -or
@@ -2732,7 +2732,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.15"
     Task = "Ensure only strong Key Exchange algorithms are used"
     Test = {
-        $test = sshd -T | grep kexalgorithms
+        $test = /usr/sbin/sshd -T | grep kexalgorithms
         if($test -match "diffie-hellman-group1-sha1" -or
         $test -match "diffie-hellman-group14-sha1" -or
         $test -match "diffie-hellman-group-exchange-sha1"){
@@ -2747,8 +2747,8 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.16"
     Task = "Ensure SSH Idle Timeout Interval is configured"
     Test = {
-        $test1 = sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
-        $test2 = sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
+        $test1 = /usr/sbin/sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
+        $test2 = /usr/sbin/sshd -T | grep clientaliveinterval | cut -d ' ' -f 2
         if($test1 -ge 1 -and $test1 -le 300 -and $test2 -ge 1 -and $test2 -le 3){
             return $retCompliant
         } else {
@@ -2761,7 +2761,7 @@ if( ($FirewallStatus -eq 0) -or ($FirewallStatus -eq 3) ){
     Id = "5.2.17"
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
-        $test = sshd -T | grep logingracetime | cut -d ' ' -f 2
+        $test = /usr/sbin/sshd -T | grep logingracetime | cut -d ' ' -f 2
         if($test -ge 1 -and $test1 -le 60){
             return $retCompliant
         } else {
@@ -2775,7 +2775,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "5.2.18"
     Task = "Ensure SSH warning banner is configured"
     Test = {
-        $test = sshd -T | grep banner
+        $test = /usr/sbin/sshd -T | grep banner
         if($test -match "banner /etc/issue.net"){
             return $retCompliant
         } else {
@@ -2789,7 +2789,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "5.2.19"
     Task = "Ensure SSH PAM is enabled"
     Test = {
-        $test = sshd -T | grep -i usepam
+        $test = /usr/sbin/sshd -T | grep -i usepam
         if($test -match "usepam yes"){
             return $retCompliant
         } else {
@@ -2802,7 +2802,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "5.2.20"
     Task = "Ensure SSH AllowTcpForwarding is disabled"
     Test = {
-        $test = sshd -T | grep -i allowtcpforwarding
+        $test = /usr/sbin/sshd -T | grep -i allowtcpforwarding
         if($test -match "allowtcpforwarding no"){
             return $retCompliant
         } else {
@@ -2815,7 +2815,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "5.2.21"
     Task = "Ensure SSH MaxStartups is configured"
     Test = {
-        $test = sshd -T | grep -i maxstartups
+        $test = /usr/sbin/sshd -T | grep -i maxstartups
         if($test -match "maxstartups 10:30:60"){
             return $retCompliant
         } else {
@@ -2828,7 +2828,7 @@ if (Test-Path -Path '/etc/issue.net') {
     Id = "5.2.22"
     Task = "Ensure SSH MaxSessions is limited"
     Test = {
-        $test = sshd -T | grep -i maxsessions | cut -d ' ' -f 2
+        $test = /usr/sbin/sshd -T | grep -i maxsessions | cut -d ' ' -f 2
         if($test -le 10){
             return $retCompliant
         } else {
@@ -2968,7 +2968,7 @@ done
     Id = "5.4.1.5"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d= -f2
+        $test1 =  /usr/sbin/useradd -D | grep INACTIVE | cut -d= -f2
         $test2_script = @'
 #!/bin/bash
 for line in $(grep -E ^[^:]+:[^\*] /etc/shadow | cut -d: -f7)

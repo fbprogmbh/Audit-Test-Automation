@@ -737,7 +737,7 @@ function ConvertTo-HtmlTable {
 					$TacticCount = Get-TacticCounter $tactic $Mappings
 					htmlElement 'td' @{} {
 						$tacticName = Get-MitreTacticName -TacticId $tactic
-						$link = htmlElement 'a' @{href = $url; target = "blank" } { "$tacticName" }
+						$link = htmlElement 'a' @{href = $url; target = "_blank" } { "$tacticName" }
 						htmlElement 'p' @{} { $link + "`n" + "$TacticCount/" + $Mappings[$tactic].Count }
 					}
 				}
@@ -1884,7 +1884,7 @@ function Get-ATAPHtmlReport {
 									# Flex-Container for each product item (order in column and centered)
 									htmlElement 'div' @{class = 'product-item ' } {
 										htmlElement 'h3'@{} { "Enforce Administrator" }
-										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-administrator-product/"; target = "_blank" } {
+										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-administrator-product/"} {
 											htmlElement 'img' @{
 												src   = $Settings.EA
 												alt   = "Enforce Administrator"
@@ -1894,7 +1894,7 @@ function Get-ATAPHtmlReport {
 									}
 									htmlElement 'div' @{class = 'product-item ' } {
 										htmlElement 'h3'@{} { "EnforceTAP" }
-										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-suite/"; target = "_blank" } {
+										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-suite/"} {
 											htmlElement 'img' @{
 												src   = $Settings.EnforceTAP
 												alt   = "EnforceTAP"
@@ -1975,9 +1975,10 @@ function Get-ATAPHtmlReport {
 
 		$html = "<!DOCTYPE html><html lang=`"en`">$($head)$($body)</body></html> "
 
-		$head = "
+		$head = '
 		<head>
 			<title>A Meaningful Page Title</title>
+			<base target="_blank" rel="noopener noreferrer">
 			<style>
 				body{
 					font-family: Cambria, Georgia, serif;
@@ -2014,7 +2015,7 @@ function Get-ATAPHtmlReport {
 				}
 			</style>
 		</head>
-		"
+		'
 	
 		#If Path exists to a folder exists
 		if ($Path -match ".html") {

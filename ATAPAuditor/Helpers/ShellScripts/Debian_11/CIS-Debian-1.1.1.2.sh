@@ -3,7 +3,7 @@
     l_output="" l_output2=""
     l_mname="squashfs" # set module name
     # Check how module will be loaded
-    l_loadable="$(modprobe -n -v "$l_mname")"
+    l_loadable="$(/usr/sbin/modprobe -n -v "$l_mname")"
     if grep -Pq -- '^\h*install \/bin\/(true|false)' <<<"$l_loadable"; then
         l_output="$l_output\n - module: \"$l_mname\" is not loadable: \"$l_loadable\""
     else

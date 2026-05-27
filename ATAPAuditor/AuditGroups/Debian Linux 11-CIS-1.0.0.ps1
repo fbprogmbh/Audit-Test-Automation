@@ -884,12 +884,12 @@ grep -Eq '^root:\$(y|[0-9])' /etc/shadow || echo 'root is locked'
     Id   = "1.6.1.3"
     Task = "Ensure all AppArmor Profiles are in enforce or complain mode"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
-        $profileMode3 = apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode3 = /usr/sbin/apparmor_status | grep profiles | sed '3!d' | cut -d ' ' -f 1
         $result = expr $profileMode3 + $profileMode2
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if ($result -eq $profileMode1 -and $unconfinedProcesses -eq 0) {
             return @{
@@ -907,10 +907,10 @@ grep -Eq '^root:\$(y|[0-9])' /etc/shadow || echo 'root is locked'
     Id   = "1.6.1.4"
     Task = "Ensure all AppArmor Profiles are enforcing"
     Test = {
-        $profileMode1 = apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
-        $profileMode2 = apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
+        $profileMode1 = /usr/sbin/apparmor_status | grep profiles | sed '1!d' | cut -d ' ' -f 1
+        $profileMode2 = /usr/sbin/apparmor_status | grep profiles | sed '2!d' | cut -d ' ' -f 1
         
-        $unconfinedProcesses = apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
+        $unconfinedProcesses = /usr/sbin/apparmor_status | grep processes | sed '4!d' | cut -d ' ' -f 1
 
         if ($profileMode1 -eq $profileMode2 -and $unconfinedProcesses -eq 0) {
             return @{
@@ -2308,7 +2308,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
         }
         $result1 = systemctl is-enabled ufw.service
         $result2 = systemctl is-active ufw
-        $result3 = ufw status
+        $result3 = /usr/sbin/ufw status
 
         if ($result1 -match "enabled" -and $result2 -match "active" -and $result3 -match "Status: active") {
             return @{
@@ -2334,7 +2334,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
                 Status  = "None"
             }
         }
-        $test1 = ufw status verbose
+        $test1 = /usr/sbin/ufw status verbose
         $result1 = $test1 -match "^Anywhere on lo\s+ALLOW IN\s+Anywhere$"
         $result2 = $test1 -match "^Anywhere\s+DENY IN\s+127.0.0.0/8$"
         $result3 = $test1 -match "^Anywhere (v6) on lo\s+ALLOW IN\s+Anywhere (v6)$"
@@ -2412,7 +2412,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
             }
         }
 
-        $result = ufw status verbose | grep Default:
+        $result = /usr/sbin/ufw status verbose | grep Default:
 
         if ($result -match "Default: (deny|reject|disabled) (incoming), (deny|reject|disabled) (outgoing), (deny|reject|disabled) (routed)") {
             return @{
@@ -2454,7 +2454,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
             $statusufw = $?
 
             if ($statusufw -match "True") {
-                $test2 = ufw status
+                $test2 = /usr/sbin/ufw status
                 if ($test2 -match "inactive") {
                     return @{
                         Message = "Compliant"
@@ -2728,7 +2728,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
         if ($statusipt -match "True") {
             if ($statusufw -match "True") {
                 $test1 = dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' ufw
-                $test2 = ufw status
+                $test2 = /usr/sbin/ufw status
                 $test3 = systemctl is-enabled ufw
                 if ($test1 -match "ufw\s+unknown ok not-installed\s+not-installed" -and $test2 -match "Status: inactive" -and $test3 -match "masked") {
                     return @{
@@ -2756,7 +2756,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "3.5.3.2.1"
     Task = "Ensure iptables default deny firewall policy"
     Test = {
-        $test1 = iptables -L
+        $test1 = /usr/sbin/iptables -L
         if ($test1 -match "Chain INPUT (policy (DROP|REJCET))" -and $test1 -match "Chain FORWARD (policy (DROP|REJCET))" -and $test1 -match "Chain OUTPUT (policy (DROP|REJCET))") {
             return @{
                 Message = "Compliant"
@@ -2773,8 +2773,8 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "3.5.3.2.2"
     Task = "Ensure iptables loopback traffic is configured"
     Test = {
-        $test1 = iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
-        $test2 = iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
+        $test1 = /usr/sbin/iptables -L INPUT -v -n | grep "Chain\s*INPUT\s*(policy\s*DROP"
+        $test2 = /usr/sbin/iptables -L OUTPUT -v -n | grep "Chain\s*OUTPUT\s*(policy\s*DROP"
         if ($test1 -ne $null -and $test2 -ne $null) {
             return @{
                 Message = "Compliant"
@@ -2808,7 +2808,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Id   = "3.5.3.3.1"
     Task = "Ensure ip6tables default deny firewall policy"
     Test = {
-        $test1 = ip6tables -L
+        $test1 = /usr/sbin/ip6tables -L
         if ($test1 -match "Chain INPUT (policy (DROP|REJCET))" -and $test1 -match "Chain FORWARD (policy (DROP|REJCET))" -and $test1 -match "Chain OUTPUT (policy (DROP|REJCET))") {
             return @{
                 Message = "Compliant"
@@ -2966,8 +2966,8 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
         try {
             $res1 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules | grep -- "-w /etc/sudoers -p wa -k scope"
             $res2 = awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules | grep -- "-w /etc/sudoers.d -p wa -k scope"
-            $res3 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep -- "-w /etc/sudoers -p wa -k scope"
-            $res4 = auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep -- "-w /etc/sudoers.d -p wa -k scope"
+            $res3 = /usr/sbin/auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep -- "-w /etc/sudoers -p wa -k scope"
+            $res4 = /usr/sbin/auditctl -l | awk '/^ *-w/ &&/\/etc\/sudoers/ &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' | grep -- "-w /etc/sudoers.d -p wa -k scope"
             if ($res1 -ne $null -and $res2 -ne $null -and $res3 -ne $null -and $res4 -ne $null) {
                 return @{
                     Message = "Compliant"
@@ -2993,7 +2993,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
     Test = {
         $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules 
         try {
-            $test2 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+            $test2 = /usr/sbin/auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b[2346]{2}/  &&(/ -F *auid!=unset/||/ -F *auid!=-1/||/ -F *auid!=4294967295/)  &&(/ -C *euid!=uid/||/ -C *uid!=euid/)  &&/ -S *execve/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
         }
         catch {
             return @{
@@ -3021,7 +3021,7 @@ find /etc/systemd -type f -name '*timesyncd*' -exec grep -Ehl '^NTP=|^FallbackNT
 SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
 '@
         $command2 = @'
-SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] && auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
+SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s/,? .*//' -e 's/"//g' -e 's|/|\\/|g') [ -n "${SUDO_LOG_FILE_ESCAPED}" ] &&  /usr/sbin/auditctl -l | awk "/^ *-w/ \ &&/"${SUDO_LOG_FILE_ESCAPED}"/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" \ || printf "ERROR: Variable 'SUDO_LOG_FILE_ESCAPED' is unset.\n"
 '@
         $test1 = bash -c $command1
         $test2 = bash -c $command2
@@ -3042,7 +3042,7 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
     Task = "Ensure events that modify date and time information are collected"
     Test = {
         $test1 = { awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules }
-        $test2 = { auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' auditctl -l | awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' }
+        $test2 = {  /usr/sbin/auditctl -l | awk '/^ *-a *always,exit/ \ &&/ -F *arch=b[2346]{2}/ \ &&/ -S/ \ &&(/adjtimex/ \ ||/settimeofday/ \ ||/clock_settime/ ) \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'  /usr/sbin/auditctl -l | awk '/^ *-w/ \ &&/\/etc\/localtime/ \ &&/ +-p *wa/ \ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' }
         if ($test1 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday clock_settime -k time-change" -and $test1 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday,clock_settime -k time-change" -and $test1 -match "-w /etc/localtime -p wa -k time-change" -and $test2 -match "-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F key=time-change" -and $test2 -match "-a always,exit -F arch=b32 -S adjtimex,settimeofday clock_settime -F key=time-change" -and $test3 -match "-w /etc/localtime -p wa -k time-change") {
             return @{
                 Message = "Compliant"
@@ -3062,8 +3062,8 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
         $test1 = awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)' /etc/audit/rules.d/*.rules
         $test2 = awk "/^ *-w/  &&(/\/etc\/issue/ ||/\/etc\/issue.net/  ||/\/etc\/hosts/  ||/\/etc\/network/)  &&/ +-p *wa/  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)" /etc/audit/rules.d/*.rules
         try {
-            $test3 = auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
-            $test4 = auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'        
+            $test3 = /usr/sbin/auditctl -l | awk '/^ *-a *always,exit/  &&/ -F *arch=b(32|64)/  &&/ -S/  &&(/sethostname/  ||/setdomainname/)  &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'
+            $test4 = /usr/sbin/auditctl -l | awk '/^ *-w/ &&(/\/etc\/issue/ ||/\/etc\/issue.net/ ||/\/etc\/hosts/ ||/\/etc\/network/) &&/ +-p *wa/ &&(/ key= *[!-~]* *$/||/ -k *[!-~]* *$/)'        
         }
         catch {
             return @{
@@ -3111,7 +3111,7 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
     Test = {
 
         try {
-            $dummy = auditctl -l 
+            $dummy = /usr/sbin/auditctl -l 
         }
         catch {
             return @{
@@ -3133,7 +3133,7 @@ SUDO_LOG_FILE_ESCAPED=$(grep -r logfile /etc/sudoers* | sed -e 's/.*logfile=//;s
         $result13 = $output1 | grep "\-w /etc/gshadow -p wa -k identity"
         $result14 = $output1 | grep "\-w /etc/shadow -p wa -k identity"
         $result15 = $output1 | grep "\-w /etc/security/opasswd -p wa -k identity"
-        $output2 = auditctl -l | awk '/^ *-w/ \
+        $output2 = /usr/sbin/auditctl -l | awk '/^ *-w/ \
         &&(/\/etc\/group/ \
          ||/\/etc\/passwd/ \
          ||/\/etc\/gshadow/ \
@@ -3985,7 +3985,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH access is limited"
     Test = {
         try {
-            $result = bash -c "sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
+            $result = bash -c "/usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -Ei '^\s*(allow|deny)(users|groups)\s+\S+'"
             if ($result -match "allowusers" -or $result -match "allowgroups" -or $result -match "denyusers" -or $result -match "denygroups") {
                 return @{
                     Message = "Compliant"
@@ -4010,7 +4010,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH LogLevel is appropriate"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep loglevel
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep loglevel
             try {
                 $test2 = grep -is 'loglevel' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf | grep -Evi '(VERBOSE|INFO)'
             }
@@ -4043,7 +4043,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.6"
     Task = "Ensure SSH PAM is enabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i usepam
         $test2 = grep -Ei '^\s*UsePAM\s+no' /etc/ssh/sshd_config
         if ($test1 -match "usepam yes" -and $test2 -eq $null) { 
             return @{
@@ -4061,7 +4061,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.7"
     Task = "Ensure SSH root login is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitrootlogin
         $test2 = grep -Ei '^\s*PermitRootLogin\s+no' /etc/ssh/sshd_config
         if ($test1 -match "permitrootlogin no" -and $test2 -match "PermitRootLogin no") { 
             return @{
@@ -4079,7 +4079,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.8"
     Task = "Ensure SSH HostbasedAuthentication is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep hostbasedauthentication
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep hostbasedauthentication
         $test2 = grep -Ei '^\s*HostbasedAuthentication\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "hostbasedauthentication no" -and $test2 -eq $null) { 
             return @{
@@ -4097,7 +4097,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.9"
     Task = "Ensure SSH PermitEmptyPasswords is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permitemptypasswords
         $test2 = grep -Ei '^\s*PermitEmptyPasswords\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permitemptypasswords no" -and $test2 -eq $null) { 
             return @{
@@ -4115,7 +4115,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.10"
     Task = "Ensure SSH PermitUserEnvironment is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep permituserenvironment
         $test2 = grep -Ei '^\s*PermitUserEnvironment\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "permituserenvironment no" -and $test2 -eq $null) { 
             return @{
@@ -4133,7 +4133,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.11"
     Task = "Ensure SSH IgnoreRhosts is enabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ignorerhosts
         $test2 = grep -Ei '^\s*ignorerhosts\s+no\b' /etc/ssh/sshd_config
         if ($test1 -match "ignorerhosts yes" -and $test2 -eq $null) { 
             return @{
@@ -4152,7 +4152,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH X11 forwarding is disabled"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i x11forwarding
             try {
                 $test2 = grep -Eis '^\s*x11forwarding\s+yes' /etc/ssh/sshd_config/etc/ssh/sshd_config.d/*.conf
             }
@@ -4185,7 +4185,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.13"
     Task = "Ensure only strong Ciphers are used"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ciphers
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep ciphers
         if ($test1 -notmatch "(3des-cbc|aes128-cbc|aes192-cbc|aes256-cbc)") { 
             return @{
                 Message = "Compliant"
@@ -4202,7 +4202,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.14"
     Task = "Ensure only strong MAC algorithms are used"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i "MACs"
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i "MACs"
         if ($test1 -notmatch "(hmac-md5|hmac-md5-96|hmac-ripemd160|hmac-sha1|hmac-sha1-96|umac-64@openssh.com|umac-128@openssh.com|hmac-md5-etm@openssh.com|hmac-md5-96-etm@openssh.com|hmac-ripemd160-etm@openssh.com|hmac-sha1-etm@openssh.com|hmac-sha1-96-etm@openssh.com|umac-64-etm@openssh.com|umac-128-etm@openssh.com)") { 
             return @{
                 Message = "Compliant"
@@ -4219,7 +4219,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.15"
     Task = "Ensure only strong Key Exchange algorithms are used"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep kexalgorithms
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep kexalgorithms
         if ($test1 -notmatch "(diffie-hellman-group1-sha1|diffie-hellman-group14-sha1|diffie-hellman-group-exchange-sha1)") { 
             return @{
                 Message = "Compliant"
@@ -4236,7 +4236,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.16"
     Task = "Ensure SSH AllowTcpForwarding is disabled"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i allowtcpforwarding
         $test2 = grep -Ei '^\s*AllowTcpForwarding\s+yes' /etc/ssh/sshd_config
         if ($test1 -match "allowtcpforwarding no" -and $test2 -eq $null) { 
             return @{
@@ -4254,7 +4254,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.17"
     Task = "Ensure SSH warning banner is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep banner
         if ($test1 -match "banner /etc/issue.net") { 
             return @{
                 Message = "Compliant"
@@ -4271,7 +4271,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.18"
     Task = "Ensure SSH MaxAuthTries is set to 4 or less"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep maxauthtries
         $test2 = grep -Ei '^\s*maxauthtries\s+([5-9]|[1-9][0-9]+)' /etc/ssh/sshd_config
         if ($test1 -match "maxauthtries 4" -and $test2 -eq $null) { 
             return @{
@@ -4289,7 +4289,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.19"
     Task = "Ensure SSH MaxStartups is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxstartups
         $test2 = grep -Ei '^\s*maxstartups\s+(((1[1-9]|[1-9][0-9][0-9]+):([0-9]+):([0-9]+))|(([0-9]+):(3[1-9]|[4-9][0-9]|[1-9][0-9][0-9]+):([0-9]+))|(([0-9]+):([0-9]+):(6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+)))' /etc/ssh/sshd_config
         if ($test1 -match "maxstartups 10:30:60" -and $test2 -eq $null) { 
             return @{
@@ -4308,7 +4308,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH MaxSessions is set to 10 or less"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep -i maxsessions | cut -d ' ' -f 2
             
             try {
                 $test2 = grep -Eis '^\s*MaxSessions\s+(1[1-9]|[2-9][0-9]|[1-9][0-9][0-9]+)'/etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
@@ -4343,7 +4343,7 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Task = "Ensure SSH LoginGraceTime is set to one minute or less"
     Test = {
         try {
-            $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
+            $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep logingracetime | cut -d ' ' -f 2
             try {
                 $test2 = grep -Eis '^\s*LoginGraceTime\s+(0|6[1-9]|[7-9][0-9]|[1-9][0-9][0-9]+|[^1]m)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf
             }
@@ -4376,8 +4376,8 @@ find /etc/audit/ -type f \( -name '*.conf' -o -name '*.rules' \) ! -group root
     Id   = "5.2.22"
     Task = "Ensure SSH Idle Timeout Interval is configured"
     Test = {
-        $test1 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval
-        $test2 = sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax
+        $test1 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientaliveinterval
+        $test2 = /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" | grep clientalivecountmax
         if ($test1 -match "clientaliveinterval 15" -and $test2 -match "clientalivecountmax 3") { 
             return @{
                 Message = "Compliant"
@@ -4631,7 +4631,7 @@ dpkg-query -W sudo sudo-ldap > /dev/null 2>&1 && dpkg-query -W -f='${binary:Pack
     Id   = "5.5.1.4"
     Task = "Ensure inactive password lock is 30 days or less"
     Test = {
-        $test1 = useradd -D | grep INACTIVE | cut -d '=' -f2
+        $test1 =  /usr/sbin/useradd -D | grep INACTIVE | cut -d '=' -f2
         if ($test1 -le 30) {
             return @{
                 Message = "Compliant"

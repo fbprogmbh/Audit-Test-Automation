@@ -184,8 +184,8 @@ Microsoft Windows 7 | - | 3.1.0 | - | - | -
 Microsoft Windows 10 | V1R23 | 4.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
-Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 10 Stand-alone | - | Stand-alone 4.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 11 Stand-alone | - | Stand-alone 4.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
 Microsoft Windows 11 | - | 4.0.0 | 22H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 (R2) | V2R19 | 3.0.0 | - | - | -
 Microsoft Windows Server 2016 | V1R12 | 3.0.0 | FINAL | - | -
@@ -214,7 +214,7 @@ Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
-Microsoft Edge | - | 2.0.0 | 117 | - | -
+Microsoft Edge | - | 4.0.0 | 117 | - | -
 Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
 Microsoft IIS10 | - | 1.1.1 | - | - | -
 Microsoft Office <br><sub>for Office 2016, 2019, 2021 and 365 | - | 1.2.0 | - | - | -
