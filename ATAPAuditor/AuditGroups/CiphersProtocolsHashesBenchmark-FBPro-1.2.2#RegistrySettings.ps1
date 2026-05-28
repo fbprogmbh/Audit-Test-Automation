@@ -1,12 +1,8 @@
-﻿# Common
-$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+﻿$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 $RootPath = Split-Path $RootPath -Parent
 . "$RootPath\Helpers\AuditGroupFunctions.ps1"
-$avstatus = CheckForActiveAV
-$windefrunning = CheckWindefRunning
-. "$RootPath\Helpers\Firewall.ps1"
-
-# Tests
+$listOfWeakCipherSuites = getListOfWeakCipherSuites
+$listOfInsecureCipherSuites = getListOfInsecureCipherSuites
 [AuditTest] @{
     Id   = "1.1 A"
     Task = "Disable SSLv2 Protocol (Server)"
@@ -27,13 +23,13 @@ $windefrunning = CheckWindefRunning
                 catch [System.Management.Automation.PSArgumentException] {
                     return @{
                         Message = "Registry value not found."
-                        Status  = "False"
+                Status  = "True"
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
                     return @{
-                        Message = "Registry key not found."
-                        Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -63,13 +59,13 @@ $windefrunning = CheckWindefRunning
                 catch [System.Management.Automation.PSArgumentException] {
                     return @{
                         Message = "Registry value not found."
-                        Status  = "False"
+                Status  = "True"
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
                     return @{
-                        Message = "Registry key not found."
-                        Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -99,13 +95,13 @@ $windefrunning = CheckWindefRunning
                 catch [System.Management.Automation.PSArgumentException] {
                     return @{
                         Message = "Registry value not found."
-                        Status  = "False"
+                Status  = "True"
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
                     return @{
-                        Message = "Registry key not found."
-                        Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -135,13 +131,13 @@ $windefrunning = CheckWindefRunning
                 catch [System.Management.Automation.PSArgumentException] {
                     return @{
                         Message = "Registry value not found."
-                        Status  = "False"
+                Status  = "True"
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
                     return @{
-                        Message = "Registry key not found."
-                        Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -175,9 +171,16 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if ($OS.Caption -match "Server 2012 R2") {
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
+                }
+            }
+            return @{
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -211,9 +214,16 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if ($OS.Caption -match "Server 2012 R2") {
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
+                }
+            }
+            return @{
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -247,9 +257,16 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if ($OS.Caption -match "Server 2012 R2") {
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
+                }
+            }
+            return @{
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -283,9 +300,16 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            $OS = Get-CimInstance Win32_OperatingSystem
+            if ($OS.Caption -match "Server 2012 R2") {
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
+                }
+            }
+            return @{
+                Message = "Compliant"
+                Status  = "True"
                     }
                 }
         
@@ -593,6 +617,14 @@ $windefrunning = CheckWindefRunning
                         -Name "Enabled" `
                         | Select-Object -ExpandProperty "Enabled"
         
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
+                        + '<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
+                        + 'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    Status  = "False"
+                }
+            }
                     if ($regValue -ne 1) {
                         return @{
                             Message = "Registry value is '$regValue'. Compliant value: 1"
@@ -659,12 +691,21 @@ $windefrunning = CheckWindefRunning
     Id   = "1.5 C"
     Task = "Enable TLS1.2 Protocol (Client)"
     Test = {
+        $OS = Get-CimInstance Win32_OperatingSystem | Select-Object Caption
         try {
                     $regValue = Get-ItemProperty -ErrorAction Stop `
                         -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client" `
                         -Name "Enabled" `
                         | Select-Object -ExpandProperty "Enabled"
         
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
+                        + '<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
+                        + 'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    Status  = "False"
+                }
+            }
                     if ($regValue -ne 1) {
                         return @{
                             Message = "Registry value is '$regValue'. Compliant value: 1"
@@ -673,12 +714,24 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.PSArgumentException] {
+            if ($OS -match "Server 2022" -or $OS -match "Windows 11") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
                     return @{
                         Message = "Registry value not found."
                         Status  = "False"
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            if ($OS -match "Server 2022" -or $OS -match "Windows 11") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
@@ -732,6 +785,21 @@ $windefrunning = CheckWindefRunning
     Task = "Enable TLS1.3 Protocol (Server)"
     Test = {
         try {
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if ($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11") {
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status  = "None"
+                }
+            }
+        }
+        catch {
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status  = "None"
+            }
+        }
+        try {
                     $regValue = Get-ItemProperty -ErrorAction Stop `
                         -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server" `
                         -Name "Enabled" `
@@ -751,6 +819,12 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            if ($OS -match "Server 2022" -or $OS -match "Windows 11") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
@@ -767,6 +841,21 @@ $windefrunning = CheckWindefRunning
     Id   = "1.6 B"
     Task = "Enable TLS1.3 Protocol (Server DisabledByDefault)"
     Test = {
+        try {
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if ($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11") {
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status  = "None"
+                }
+            }
+        }
+        catch {
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status  = "None"
+            }
+        }
         try {
                     $regValue = Get-ItemProperty -ErrorAction Stop `
                         -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server" `
@@ -787,6 +876,12 @@ $windefrunning = CheckWindefRunning
                     }
                 }
                 catch [System.Management.Automation.ItemNotFoundException] {
+            if ($OS -match "Server 2022" -or $OS -match "Windows 11") {
+                return @{
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
                     return @{
                         Message = "Registry key not found."
                         Status  = "False"
@@ -803,6 +898,21 @@ $windefrunning = CheckWindefRunning
     Id   = "1.6 C"
     Task = "Enable TLS1.3 Protocol (Client)"
     Test = {
+        try {
+            $OS = (Get-CimInstance Win32_OperatingSystem).Caption
+            if ($OS -notmatch "Server 2022" -and $OS -notmatch "Windows 11") {
+                return @{
+                    Message = "OS currently not supported. For more information check out this link:  <a href='https://learn.microsoft.com/en-us/windows/win32/secauthn/protocols-in-tls-ssl--schannel-ssp-#tls-protocol-version-support'>TLS protocol version support</a>"
+                    Status  = "None"
+                }
+            }
+        }
+        catch {
+            return @{
+                Message = "Test not successful. Cmdlet not found 'Get-CimInstance'. "
+                Status  = "None"
+            }
+        }
         try {
                     $regValue = Get-ItemProperty -ErrorAction Stop `
                         -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client" `
@@ -876,35 +986,35 @@ $windefrunning = CheckWindefRunning
     Task = "Disable NULL Cipher"
     Test = {
         try {
-                    $regValue = Get-ItemProperty -ErrorAction Stop `
-                        -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL" `
-                        -Name "Enabled" `
-                        | Select-Object -ExpandProperty "Enabled"
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL" `
+                -Name "Enabled" `
+            | Select-Object -ExpandProperty "Enabled"
         
-                    if ($regValue -ne 0) {
-                        return @{
-                            Message = "Registry value is '$regValue'. Compliant value: 0"
-                            Status  = "False"
-                        }
-                    }
-                }
-                catch [System.Management.Automation.PSArgumentException] {
-                    return @{
-                        Message = "Registry value not found."
-                        Status  = "False"
-                    }
-                }
-                catch [System.Management.Automation.ItemNotFoundException] {
-                    return @{
-                        Message = "Registry key not found."
-                        Status  = "False"
-                    }
-                }
-        
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Compliant"
-                    Status  = "True"
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status  = "False"
                 }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status  = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status  = "True"
+        }
     }
 }
 [AuditTest] @{
@@ -912,35 +1022,35 @@ $windefrunning = CheckWindefRunning
     Task = "Disable DES Cipher Suite"
     Test = {
         try {
-                    $regValue = Get-ItemProperty -ErrorAction Stop `
-                        -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56" `
-                        -Name "Enabled" `
-                        | Select-Object -ExpandProperty "Enabled"
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56" `
+                -Name "Enabled" `
+            | Select-Object -ExpandProperty "Enabled"
         
-                    if ($regValue -ne 0) {
-                        return @{
-                            Message = "Registry value is '$regValue'. Compliant value: 0"
-                            Status  = "False"
-                        }
-                    }
-                }
-                catch [System.Management.Automation.PSArgumentException] {
-                    return @{
-                        Message = "Registry value not found."
-                        Status  = "False"
-                    }
-                }
-                catch [System.Management.Automation.ItemNotFoundException] {
-                    return @{
-                        Message = "Registry key not found."
-                        Status  = "False"
-                    }
-                }
-        
+            if ($regValue -ne 0) {
                 return @{
-                    Message = "Compliant"
-                    Status  = "True"
+                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Status  = "False"
                 }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status  = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
+        
+        return @{
+            Message = "Compliant"
+            Status  = "True"
+        }
     }
 }
 [AuditTest] @{
@@ -1277,6 +1387,14 @@ $windefrunning = CheckWindefRunning
                         -Name "Enabled" `
                         | Select-Object -ExpandProperty "Enabled"
         
+            if ($regValue -eq 4294967295) {
+                return @{
+                    Message = "The current registry value is '$regValue', which is no longer supported by Microsoft. For more information, please refer to this link:<br/>"`
+                        + '<a href="https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman#tls-dtls-and-ssl-protocol-version-settings">'`
+                        + 'Learn.microsoft.com - TLS, DTLS, and SSL protocol version settings<a/>'
+                    Status  = "False"
+                }
+            }
                     if ($regValue -ne 1) {
                         return @{
                             Message = "Registry value is '$regValue'. Compliant value: 1"
@@ -1307,29 +1425,143 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1"
     Task = "Configure Cipher Suite Ordering"
     Test = {
+        #check if correct type 
+        $typeTable = @{
+            "String"   = "String Value"
+            "Byte"     = "Byte Value"
+            "Int32"    = "DWORD (32-bit) Value"
+            "Int64"    = "QWORD (64-bit) Value"
+            "String[]" = "Multi-String Value"
+        }
+        #Default status
+        $status = "Error"
+    
+        #Output
+        $verbInsecure = "rules have"
+        $verbWeak = "rules have"
+    
         try {
                     $regValue = Get-ItemProperty -ErrorAction Stop `
                         -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002" `
-                        -Name "Functions" `
-                        | Select-Object -ExpandProperty "Functions"
+                -Name "Functions"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $res = $regValue.Functions.GetType().Name
         
-                    if ($regValue -notmatch "(?<1>.+)") {
+    
+            $currentType = $typeTable[$res]
+            if ($res -ne [String]) {
                         return @{
-                            Message = "Registry value is '$regValue'. Compliant value: (?<1>.+)"
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'String Value'"
                             Status  = "False"
                         }
                     }
+    
+            #check if insecure or weak cipher is inside value
+            $regValues = $regValue.Split(',')
+            $regValues = $regValues -replace ' ', ''
+            $weakRulesFound = @()
+            $insecureRulesFound = @()
+            foreach ($element in $regValues) {
+                if ($listOfWeakCipherSuites.Contains($element)) {
+                    $weakRulesFound += $element
                 }
-                catch [System.Management.Automation.PSArgumentException] {
+                if ($listOfInsecureCipherSuites.Contains($element)) {
+                    $insecureRulesFound += $element
+                }
+            }
+            if ($insecureRulesFound.Count -eq 1) { $verbInsecure = "rule has" }
+            if ($weakRulesFound.Count -eq 1) { $verbWeak = "rule has" }
+            $insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+            $weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+    
+            #Preparing message
+            foreach ($member in $weakRulesFound) {
+                $status = "Warning"
+                $weakMessage += "$($member)<br/>"
+            }          
+            foreach ($member in $insecureRulesFound) {
+                $status = "False"
+                $insecureMessage += "$($member)<br/>"
+            }          
+            #Combine or shorten message
+            if ($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0) {
+                $message = ""
+                if ($weakRulesFound.Count -eq 0) { $weakMessage = "" }
+                if ($insecureRulesFound.Count -eq 0) { $insecureMessage = "" }
+    
+                $message = $insecureMessage + $weakMessage
                     return @{
-                        Message = "Registry value not found."
-                        Status  = "False"
+                    Message = $message
+                    Status  = $status
                     }
                 }
-                catch [System.Management.Automation.ItemNotFoundException] {
+    
+            if ($regValue -ne $reference) {
                     return @{
-                        Message = "Registry key not found."
+                    Message = "Compliant"
+                    Status  = "True"
+                }
+            }
+        }
+        catch {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002" `
+                -Name "Functions"
+            $reference = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+            $res = $regValue.Functions.GetType().Name
+    
+            $currentType = $typeTable[$res]
+            if ($res -ne [String[]]) {
+                return @{  
+                    Message = "Wrong Registry type! Registry type is '$currentType'. Expected: 'Multi-String Value'"
                         Status  = "False"
+                }
+            }
+    
+            #check if insecure or weak cipher is inside value
+            $regValues = $regValue -replace ' ', ''
+            $weakRulesFound = @()
+            $insecureRulesFound = @()
+            foreach ($element in $regValues) {
+                if ($listOfWeakCipherSuites.Contains($element)) {
+                    $weakRulesFound += $element
+                }
+                if ($listOfInsecureCipherSuites.Contains($element)) {
+                    $insecureRulesFound += $element
+                }
+            }
+            if ($insecureRulesFound.Count -eq 1) { $verbInsecure = "rule has" }
+            if ($weakRulesFound.Count -eq 1) { $verbWeak = "rule has" }
+            $insecureMessage = "$($insecureRulesFound.Count) insecure $($verbInsecure) been found! List of insecure rules: <br/>"
+            $weakMessage = "$($weakRulesFound.Count) weak $($verbWeak) been found! List of weak rules: <br/>"
+    
+            #Preparing message
+            foreach ($member in $weakRulesFound) {
+                $status = "Warning"
+                $weakMessage += "$($member)<br/>"
+            }          
+            foreach ($member in $insecureRulesFound) {
+                $status = "False"
+                $insecureMessage += "$($member)<br/>"
+            }          
+            #Combine or shorten message
+            if ($insecureRulesFound.Count -gt 0 -or $weakRulesFound.Count -gt 0) {
+                $message = ""
+                if ($weakRulesFound.Count -eq 0) { $weakMessage = "" }
+                if ($insecureRulesFound.Count -eq 0) { $insecureMessage = "" }
+    
+                $message = $insecureMessage + $weakMessage
+                return @{
+                    Message = $message
+                    Status  = $status
+                }
+            }
+    
+            if ($regValue -ne $reference) {
+                return @{                                                                               
+                    Message = "Compliant"
+                    Status  = "True"
+                }
                     }
                 }
         
