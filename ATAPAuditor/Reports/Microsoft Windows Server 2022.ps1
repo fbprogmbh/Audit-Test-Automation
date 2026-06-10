@@ -94,11 +94,11 @@
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - Registry Settings'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - User Rights'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.2#UserRights"
 				}
 			)
 		}
