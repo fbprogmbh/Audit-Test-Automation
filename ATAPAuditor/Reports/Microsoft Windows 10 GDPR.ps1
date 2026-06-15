@@ -4,8 +4,8 @@
 	BasedOn = @(
 		'Bundesamt für Sicherheit in der Informationstechnik (BSI), Version: V1.2, Date: 2020-04-27'
 		'GDPR settings by Microsoft, Version: 16082019, Date: 2019-08-16'
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
-		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.2, Date: 2026-03-17"
+		"FB Pro recommendations 'Enhanced settings', Version 1.2.2, Date: 2023-11-03"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -34,7 +34,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
-					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.2.2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows CiphersProtocolsHashesBenchmark-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - Registry Settings'
