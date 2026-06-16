@@ -364,18 +364,6 @@ function Convert-SectionTitleToHtmlId {
 	return ([char[]]$Title | ForEach-Object $charMap) -join ''
 }
 
-# function CreateToc {
-# 	param(
-# 		[Parameter(Mandatory = $true)]
-# 		$title
-# 	)
-# 	htmlElement 'li' @{} {
-# 		htmlElement 'a' @{ href = "#$($title)" } { "$($title)" }
-# 	}
-# }
-
-
-
 function CreateHashTable {
 	htmlElement 'div'@{id = "hashTableDiv" } {
 		htmlElement 'h2' @{style = "margin-top: 0;" } { "Overall integrity" }
@@ -396,34 +384,6 @@ function CreateHashTable {
 						htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($Title))" }
 					}
 				}
-
-				# $index = 0
-				# $trColorSwitch = 0
-				# foreach ($section in $Sections) {
-				# 	if ($trColorSwitch -eq 0) {
-				# 		htmlElement 'tr'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; background-color: #efefef;" } {
-				# 			#Scope
-				# 			htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "$($section.Title)" }
-				# 			#Checksum
-				# 			htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-				# 				htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($section.Title))" }
-				# 			}
-				# 		}
-				# 		$trColorSwitch = 1
-				# 	}
-				# 	else {
-				# 		htmlElement 'tr'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse;" } {
-				# 			#Scope
-				# 			htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse:; vertical-align: middle; " } { "$($section.Title)" }
-				# 			#Checksum
-				# 			htmlElement 'td'  @{style = "border: 1px solid #d2d2d2; border-collapse: collapse; " } {
-				# 				htmlElement 'p' @{style = "padding-right: 20px;" } { "$($hashtable_sha256.Get_Item($section.Title))" }
-				# 			}
-				# 		}
-				# 		$trColorSwitch = 0
-				# 	}
-				# 	$index += 1
-				# }
 
 				$index = 0
 				foreach ($section in $Sections) {
@@ -448,73 +408,6 @@ function CreateHashTable {
 		}
 	}
 }
-
-# function CreateReportContent {
-# 	param(
-# 		[Parameter(Mandatory = $true)]
-# 		$tests,
-# 		[Parameter(Mandatory = $true)]
-# 		$title
-# 	)
-# 	$amountOfFailedTests = 0
-# 	foreach ($test in $tests) {
-# 		if ($test.Status -eq 'False') {
-# 			$amountOfFailedTests ++
-# 		}
-# 	}
-# 	#if at least one test is failed
-# 	if ($amountOfFailedTests -gt 0) {
-# 		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #cc0000; display: inline;" } { "$($title)" }
-# 	}
-# 	else {
-# 		htmlElement 'h2' @{ id = "$($title)"; style = "padding: 5px 10px; border-radius: 8px; color:white; background-color: #33cca6; display: inline;" } { "$($title)" }
-# 	}
-# 	htmlElement 'table' @{class = 'audit-info'; style = 'margin-bottom: 50px; margin-top: 20px;' } {
-# 		htmlElement 'tbody' @{} {
-# 			htmlElement 'tr' @{} {
-# 				htmlElement 'th' @{} { "Id" }
-# 				htmlElement 'th' @{} { "Task" }
-# 				htmlElement 'th' @{} { "Message" }
-# 				htmlElement 'th' @{} { "Status" }
-# 			}
-# 			foreach ($test in $tests) {
-# 				htmlElement 'tr' @{} {
-# 					htmlElement 'td' @{} { "$($test.Id)" }
-# 					htmlElement 'td' @{} { "$($test.Task)" }
-# 					htmlElement 'td' @{} { "$($test.Message)" }
-# 					htmlElement 'td' @{} { 
-# 						if ($test.Status -eq 'False') {
-# 							htmlElement 'span' @{class = "severityResultFalse" } {
-# 								"$($test.Status)"
-# 							}
-# 						}
-# 						elseif ($test.Status -eq 'True') {
-# 							htmlElement 'span' @{class = "severityResultTrue" } {
-# 								"$($test.Status)"
-# 							}
-# 						}
-# 						elseif ($test.Status -eq 'None') {
-# 							htmlElement 'span' @{class = "severityResultNone" } {
-# 								"$($test.Status)"
-# 							}
-# 						}
-# 						elseif ($test.Status -eq 'Warning') {
-# 							htmlElement 'span' @{class = "severityResultWarning" } {
-# 								"$($test.Status)"
-# 							}
-# 						}
-# 						elseif ($test.Status -eq 'Error') {
-# 							htmlElement 'span' @{class = "severityResultError" } {
-# 								"$($test.Status)"
-# 							}
-# 						}
-# 					}
-# 				}
-# 			}
-# 		}
-# 	}
-# }
-
 
 function Get-HtmlTableRow {
 	param(
@@ -1021,26 +914,6 @@ function Get-HtmlReportSection {
 	}
 }
 
-# function Get-ATAPHostInformation {
-# 	$unixOS = [System.Environment]::OSVersion.Platform -eq 'Unix' # returns 'Unix' on Linux and MacOS and 'Win32NT' on Windows, PS v6+ has builtin environment variable for this
-# 	if ($unixOS) {
-# 		return @{
-# 			"Hostname"              = hostname
-# 			"Operating System"      = (Get-Content /etc/os-release | Select-String -Pattern '^PRETTY_NAME=\"(.*)\"$').Matches.Groups[1].Value
-# 			"Installation Language" = (($(locale) | Where-Object { $_ -match "LANG=" }) -split '=')[1]
-# 			"Kernel Version"        = uname -r
-# 			"Free physical memory"  = "{0:N1} GB" -f (( -split (Get-Content /proc/meminfo | Where-Object { $_ -match 'MemFree:' }))[1] / 1MB)
-# 			"Free disk space"       = "{0:N1} GB" -f ((Get-PSDrive | Where-Object { $_.Name -eq '/' }).Free / 1GB)
-# 			"System Uptime"         = Get-Uptime -p
-# 			"OS Architecture"       = lscpu | awk '/Architecture/ {print $2}'
-# 			"System Manufacturer"   = (dmidecode -t system)[6] | cut -d ':' -f 2 | xargs
-# 			"System SKU"            = (dmidecode -t system)[12] | cut -d ':' -f 2 | xargs
-# 			"System Serialnumber"   = (dmidecode -t system)[9] | cut -d ':' -f 2 | xargs
-# 			"BIOS Version"          = dmidecode -s bios-version
-# 		}
-# 	}
-# }
-
 function Get-CompletionStatus {
 	param(
 		[string[]]
@@ -1161,20 +1034,10 @@ function Get-ATAPHtmlReport {
 		[string]
 		$Path,
 
-		# # Fully Unused
-		# [Parameter(Mandatory = $false)]
-		# [hashtable]
-		# $HostInformation,
-
 		# Title of the Report
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]
 		$Title,
-
-		# # Unused
-		# [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-		# [string]
-		# $ModuleName,
 
 		# Version of ATAPAuditor
 		[Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -1191,11 +1054,6 @@ function Get-ATAPHtmlReport {
 		[array]
 		$Sections,
 
-		# # Fully Unused
-		# [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-		# [string]
-		# $LicenseStatus,
-
 		# Table Of Severity Rules
 		[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
 		[RSFullReport[]]
@@ -1211,6 +1069,7 @@ function Get-ATAPHtmlReport {
 		[switch] $RiskScore,
 
 		# # Unused
+		# # This Parameter is commented out on the side of ATAPAuditor (which calls this function to generate the report) due to it being too outdated
 		# [Parameter(Mandatory = $false)]
 		# [switch] $MITRE,
 
@@ -1616,56 +1475,6 @@ function Get-ATAPHtmlReport {
 								htmlElement 'div' @{style = "grid-column-start: $($systeminfo_array[$i].colStart+0); grid-column-end: $($systeminfo_array[$i].colStart+1); grid-row-start: $($systeminfo_array[$i].rowStart); grid-row-end: $($systeminfo_array[$i].rowStart+1); $($grayBackground) font-weight: bold;" } { "$($systeminfo_array[$i].name)" }
 								htmlElement 'div' @{style = "grid-column-start: $($systeminfo_array[$i].colStart+1); grid-column-end: $($systeminfo_array[$i].colStart+2); grid-row-start: $($systeminfo_array[$i].rowStart); grid-row-end: $($systeminfo_array[$i].rowStart+1); $($grayBackground)" } { "$($systeminfo_array[$i].value)" }
 							}
-
-
-
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 3; grid-row-end: 4; background-color: #efefef; font-weight: bold;" } { "System Manufacturer" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 3; grid-row-end: 4; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.SystemManufacturer) }
-								
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 4; grid-row-end: 5; font-weight: bold;" } { "System SKU" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 4; grid-row-end: 5;" } { $($SystemInformation.HardwareInformation.SystemSKU) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 5; grid-row-end: 6; background-color: #efefef; font-weight: bold;" } { "System Model" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 5; grid-row-end: 6; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.SystemModel) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 6; grid-row-end: 7; font-weight: bold;" } { "System Serialnumber" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 6; grid-row-end: 7;" } { $($SystemInformation.HardwareInformation.SystemSerialnumber) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;" } { "BIOS Version" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.BIOSVersion) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 8; grid-row-end: 9; font-weight: bold;" } { "Free disk space (C:)" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 8; grid-row-end: 9;" } { $($SystemInformation.HardwareInformation.FreeDiskSpace) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 4; grid-column-end: 5; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;" } { "Free physical memory" }
-							# htmlElement 'div' @{style = "grid-column-start: 5; grid-column-end: 6; grid-row-start: 9; grid-row-end: 10; background-color: #efefef;" } { $($SystemInformation.HardwareInformation.FreePhysicalMemory) }
-
-
-
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 3; grid-row-end: 4; background-color: #efefef; font-weight: bold;" } { "Hostname" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 3; grid-row-end: 4; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.Hostname) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 4; grid-row-end: 5; font-weight: bold;" } { "System Uptime" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 4; grid-row-end: 5;" } { $($SystemInformation.SoftwareInformation.SystemUptime) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 5; grid-row-end: 6; background-color: #efefef; font-weight: bold;" } { "Operating System" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 5; grid-row-end: 6; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.OperatingSystem) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 6; grid-row-end: 7; font-weight: bold;" } { "Build Number" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 6; grid-row-end: 7;" } { $($SystemInformation.SoftwareInformation.BuildNumber) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 7; grid-row-end: 8; background-color: #efefef; font-weight: bold;" } { "OS Architecture" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 7; grid-row-end: 8; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.OSArchitecture) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 8; grid-row-end: 9; font-weight: bold;" } { "License Status" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 8; grid-row-end: 9;" } { $($SystemInformation.SoftwareInformation.LicenseStatus) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 9; grid-row-end: 10; background-color: #efefef; font-weight: bold;" } { "Installation Language" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 9; grid-row-end: 10; background-color: #efefef;" } { $($SystemInformation.SoftwareInformation.InstallationLanguage) }
-
-							# htmlElement 'div' @{style = "grid-column-start: 1; grid-column-end: 2; grid-row-start: 10; grid-row-end: 11; font-weight: bold;" } { "Domain role" }
-							# htmlElement 'div' @{style = "grid-column-start: 2; grid-column-end: 3; grid-row-start: 10; grid-row-end: 11;" } { $($SystemInformation.SoftwareInformation.DomainRole) }
 						}
 						# htmlElement 'div' @{id="systemData"} {
 						# }
