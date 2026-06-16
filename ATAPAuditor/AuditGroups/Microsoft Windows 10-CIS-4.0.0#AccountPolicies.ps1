@@ -13,7 +13,7 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -ne 24)) {
+        if ($setPolicy -ne 24) {
             return @{
                 Message = "'PasswordHistorySize' currently set to: $setPolicy. Expected: x == 24"
                 Status  = "False"
@@ -41,7 +41,11 @@
         }
         $setPolicy = [long]$setPolicy
 
-        if (($setPolicy -gt 365 -or $setPolicy -le 0)) {
+        if ($setPolicy -gt 365 -or $setPolicy -le 0) {
+            if ($setPolicy -eq -1) {
+                #Setting 0 in GroupPolicy translates to -1 in AuditPolicy
+                $setPolicy = "Password never expires"
+            }
             return @{
                 Message = "'MaximumPasswordAge' currently set to: $setPolicy. Expected: x <= 365 days and x > 0 days"
                 Status  = "False"
