@@ -8,8 +8,8 @@
 		"BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2020-04-27"
 		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R23, Date: 2019-10-25"
 		"ACSC Hardening Microsoft Windows 10 version 21H1 Workstations, Version: 10.2021, Date 2021-10-01"
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
-		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.2, Date: 2026-03-17"
+		"FB Pro recommendations 'Enhanced settings', Version 1.2.2, Date: 2023-11-03"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -183,7 +183,7 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
-					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.2.2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows CiphersProtocolsHashesBenchmark-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - Registry Settings'
