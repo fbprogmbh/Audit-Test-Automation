@@ -5054,6 +5054,42 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
+    Id   = "18.5.10"
+    Task = "(L1) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires' is set to 'Enabled: 5 or fewer seconds'"
+    Test = {
+        try {
+            $regValue = Get-ItemProperty -ErrorAction Stop `
+                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" `
+                -Name "ScreenSaverGracePeriod" `
+            | Select-Object -ExpandProperty "ScreenSaverGracePeriod"
+
+            if ($regValue -notmatch "^[0-5]$") {
+                return @{
+                    Message = "Registry value is '$regValue'. Expected: Matching expression '^[0-5]$'"
+                    Status  = "False"
+                }
+            }
+        }
+        catch [System.Management.Automation.PSArgumentException] {
+            return @{
+                Message = "Registry value not found."
+                Status  = "False"
+            }
+        }
+        catch [System.Management.Automation.ItemNotFoundException] {
+            return @{
+                Message = "Registry key not found."
+                Status  = "False"
+            }
+        }
+
+        return @{
+            Message = "Compliant"
+            Status  = "True"
+        }
+    }
+}
+[AuditTest] @{
     Id   = "18.5.11"
     Task = "(L2) Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
     Test = {
