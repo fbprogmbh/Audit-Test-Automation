@@ -1240,7 +1240,7 @@ function Get-ATAPHtmlReport {
 									}
 								}
 								htmlElement 'div' @{} {
-									"Does your system show low benchmark compliance? Check out our <a href=`"$($Settings.SolutionsLink)`"target=`"blank`">hardening solutions</a>."
+									"Does your system show low benchmark compliance? Check out our <a href=`"$($Settings.SolutionsLink)`"target=`"_blank`">hardening solutions</a>."
 								}
 							}
 						}
@@ -1789,7 +1789,7 @@ function Get-ATAPHtmlReport {
 									# Flex-Container for each product item (order in column and centered)
 									htmlElement 'div' @{class = 'product-item ' } {
 										htmlElement 'h3'@{} { "Enforce Administrator" }
-										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-administrator-product/"} {
+										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-administrator-product/"; target = "_blank" } {
 											htmlElement 'img' @{
 												src   = $Settings.EA
 												alt   = "Enforce Administrator"
@@ -1799,7 +1799,7 @@ function Get-ATAPHtmlReport {
 									}
 									htmlElement 'div' @{class = 'product-item ' } {
 										htmlElement 'h3'@{} { "EnforceTAP" }
-										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-suite/"} {
+										htmlElement 'a' @{href = "https://www.fb-pro.com/enforce-suite/"; target = "_blank" } {
 											htmlElement 'img' @{
 												src   = $Settings.EnforceTAP
 												alt   = "EnforceTAP"
