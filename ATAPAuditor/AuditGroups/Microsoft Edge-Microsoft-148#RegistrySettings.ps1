@@ -53,7 +53,7 @@ $windefrunning = CheckWindefRunning
                 -Name "AuthSchemes" `
             | Select-Object -ExpandProperty "AuthSchemes"
         
-            if ($regValue -ne "ntlm, negotiate") {
+            if ($regValue -ne "^(ntlm\s*,\s*negotiate|negotiate\s*,\s*ntlm)$") {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: ntlm, negotiate"
                     Status  = "False"
