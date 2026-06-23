@@ -1,5 +1,5 @@
 ﻿[AuditTest] @{
-    Id = "SecurityOption-169"
+    Id   = "SecurityOption-169"
     Task = "Ensure 'LSAAnonymousNameLookup' is set to '0'"
     Test = {
         $securityOption = Get-AuditResource "WindowsSecurityPolicy"
@@ -8,19 +8,19 @@
         if ($null -eq $setOption) {
             return @{
                 Message = "Currently not set."
-                Status = "False"
+                Status  = "False"
             }
         }
         if ($setOption -ne 0) {
             return @{
                 Message = "'LSAAnonymousNameLookup' currently set to: $setOption. Expected: 0"
-                Status = "False"
+                Status  = "False"
             }
         }
         
         return @{
             Message = "Compliant"
-            Status = "True"
+            Status  = "True"
         }
     }
 }
