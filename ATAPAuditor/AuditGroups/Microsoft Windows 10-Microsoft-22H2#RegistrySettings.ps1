@@ -261,13 +261,13 @@ $windefrunning = CheckWindefRunning
     Test = {
         try {
             if ($avstatus) {
-                if (-not $windefrunning) {
+                if ((-not $windefrunning)) {
                     return @{
                         Message = "This rule requires Windows Defender Antivirus to be enabled."
                         Status  = "None"
                     }
                 }
-            }    
+            }
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" `
                 -Name "DisableBehaviorMonitoring" `
@@ -275,7 +275,7 @@ $windefrunning = CheckWindefRunning
         
             if ($regValue -ne 0) {
                 return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
+                    Message = "Registry value is '$regValue'. Expected: 0"
                     Status  = "False"
                 }
             }
@@ -488,12 +488,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR" `
-                -Name "ExploitGuard_ASR_Rules" `
-            | Select-Object -ExpandProperty "ExploitGuard_ASR_Rules"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value = "ExploitGuard_ASR_Rules"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+            $Value2 = "ExploitGuard_ASR_Rules"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne 1) {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -532,12 +551,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84" `
-            | Select-Object -ExpandProperty "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -576,12 +614,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "3b576869-a4ec-4529-8536-b80a7769e899" `
-            | Select-Object -ExpandProperty "3b576869-a4ec-4529-8536-b80a7769e899"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "3b576869-a4ec-4529-8536-b80a7769e899"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "3b576869-a4ec-4529-8536-b80a7769e899"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -620,12 +677,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d4f940ab-401b-4efc-aadc-ad5f3c50688a" `
-            | Select-Object -ExpandProperty "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "d4f940ab-401b-4efc-aadc-ad5f3c50688a"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -664,12 +740,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B" `
-            | Select-Object -ExpandProperty "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -708,12 +803,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "5beb7efe-fd9a-4556-801d-275e5ffc04cc" `
-            | Select-Object -ExpandProperty "5beb7efe-fd9a-4556-801d-275e5ffc04cc"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "5beb7efe-fd9a-4556-801d-275e5ffc04cc" 
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -752,12 +866,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "d3e037e1-3eb8-44c8-a917-57927947596d" `
-            | Select-Object -ExpandProperty "d3e037e1-3eb8-44c8-a917-57927947596d"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "d3e037e1-3eb8-44c8-a917-57927947596d"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "d3e037e1-3eb8-44c8-a917-57927947596d"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -796,12 +929,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550" `
-            | Select-Object -ExpandProperty "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "be9ba2d9-53ea-4cdc-84e5-9b1eeee46550"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -840,12 +992,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" `
-            | Select-Object -ExpandProperty "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -884,12 +1055,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" `
-            | Select-Object -ExpandProperty "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -928,12 +1118,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "26190899-1602-49e8-8b27-eb1d0a1ce869" `
-            | Select-Object -ExpandProperty "26190899-1602-49e8-8b27-eb1d0a1ce869"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "26190899-1602-49e8-8b27-eb1d0a1ce869"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -972,12 +1181,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" `
-            | Select-Object -ExpandProperty "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -1016,12 +1244,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "c1db55ab-c21a-4637-bb3f-a12568109d35" `
-            | Select-Object -ExpandProperty "c1db55ab-c21a-4637-bb3f-a12568109d35"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "c1db55ab-c21a-4637-bb3f-a12568109d35"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "c1db55ab-c21a-4637-bb3f-a12568109d35"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -1060,12 +1307,31 @@ $windefrunning = CheckWindefRunning
                     }
                 }
             }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "e6db77e5-3df2-4cf1-b95a-636979351e5b" `
-            | Select-Object -ExpandProperty "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "e6db77e5-3df2-4cf1-b95a-636979351e5b"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
         
-            if ($regValue -ne "1") {
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 1"
                     Status  = "False"
@@ -1103,15 +1369,34 @@ $windefrunning = CheckWindefRunning
                         Status  = "None"
                     }
                 }
-            }    
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules" `
-                -Name "56a863a9-875e-4185-98a7-b882c64b5ce5" `
-            | Select-Object -ExpandProperty "56a863a9-875e-4185-98a7-b882c64b5ce5"
-        
-            if ($regValue -ne "1") {
+            }                  
+            $regValue = 0;
+            $regValueTwo = 0;
+            $Path = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value = "56a863a9-875e-4185-98a7-b882c64b5ce5"
+
+            $asrTest1 = Test-ASRRules -Path $Path -Value $Value 
+            if ($asrTest1) {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path `
+                    -Name $Value `
+                | Select-Object -ExpandProperty $Value
+            }
+
+            $Path2 = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR\Rules"
+            $Value2 = "56a863a9-875e-4185-98a7-b882c64b5ce5"
+
+            $asrTest2 = Test-ASRRules -Path $Path2 -Value $Value2 
+            if ($asrTest2) {
+                $regValueTwo = Get-ItemProperty -ErrorAction Stop `
+                    -Path $Path2 `
+                    -Name $Value2 `
+                | Select-Object -ExpandProperty $Value2
+            }
+
+            if ($regValue -ne 1 -and $regValueTwo -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status  = "False"
                 }
             }
@@ -2197,7 +2482,7 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\SYSVOL" `
             | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -notmatch "^(?:RequireMutualAuthentication=1,\s*RequireIntegrity=1|RequireIntegrity=1,\s*RequireMutualAuthentication=1)$") {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 'RequireMutualAuthentication=1'"
                     Status  = "False"
@@ -2233,7 +2518,7 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\NETLOGON" `
             | Select-Object -ExpandProperty "\\*\NETLOGON"
         
-            if ($regValue -ne "RequireMutualAuthentication=1,RequireIntegrity=1") {
+            if ($regValue -notmatch "^(?:RequireMutualAuthentication=1,\s*RequireIntegrity=1|RequireIntegrity=1,\s*RequireMutualAuthentication=1)$") {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 'RequireMutualAuthentication=1'"
                     Status  = "False"
@@ -2377,21 +2662,23 @@ $windefrunning = CheckWindefRunning
                 -Name "EnableScriptBlockInvocationLogging" `
             | Select-Object -ExpandProperty "EnableScriptBlockInvocationLogging"
         
-            return @{
-                Status  = "False"
-                Message = "Registry value found."
+            if ($regValue -ne 0) {
+                return @{
+                    Message = "Registry value is '$regValue'. Compliant value: 0"
+                    Status  = "False"
+                }
             }
         }
         catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Compliant. Registry value not found."
-                Status  = "True"
+                Message = "Registry value not found."
+                Status  = "False"
             }
         }
         catch [System.Management.Automation.ItemNotFoundException] {
             return @{
-                Message = "Compliant. Registry key not found."
-                Status  = "True"
+                Message = "Registry key not found."
+                Status  = "False"
             }
         }
         
@@ -3402,254 +3689,135 @@ $windefrunning = CheckWindefRunning
     }
 }
 [AuditTest] @{
-    Id   = "3.1.64"
-    Task = "Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "DefaultOutboundAction" `
-            | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.64"
+    Task        = "Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 0;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id   = "3.1.65"
-    Task = "Ensure 'Windows Defender Firewall: Prohibit notifications' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "DisableNotifications" `
-            | Select-Object -ExpandProperty "DisableNotifications"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.65"
+    Task        = "Ensure 'Windows Defender Firewall: Prohibit notifications' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "DisableNotifications"
+        $expectedValue = 1;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id   = "3.1.66"
-    Task = "Ensure 'Windows Defender Firewall: Protect all network connections' is set to 'Enabled'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "EnableFirewall" `
-            | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.66"
+    Task        = "Ensure 'Windows Defender Firewall: Protect all network connections' is set to 'Enabled'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile";
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile";
+        $key = "EnableFirewall";
+        $expectedValue = 1;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType        
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id   = "3.1.67"
-    Task = "Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile" `
-                -Name "DefaultInboundAction" `
-            | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.67"
+    Task        = "Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id   = "3.1.68"
-    Task = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogDroppedPackets" `
-            | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.68"
+    Task        = "Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id   = "3.1.69"
-    Task = "Ensure 'Windows Defender Firewall: Allow logging' is set to '16384' (LogFileSize)"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogFileSize" `
-            | Select-Object -ExpandProperty "LogFileSize"
-        
-            if ($regValue -ne 16384) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 16384"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.69"
+    Task        = "Ensure 'Windows Defender Firewall: Allow logging' is set to '16384' (LogFileSize)"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
 [AuditTest] @{
-    Id   = "3.1.70"
-    Task = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
-    Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging" `
-                -Name "LogSuccessfulConnections" `
-            | Select-Object -ExpandProperty "LogSuccessfulConnections"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+    Id          = "3.1.70"
+    Task        = "Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
+    Constraints = @(
+        @{ "Property" = "DomainRole"; "Values" = "Member Workstation", "Member Server", "Primary Domain Controller", "Backup Domain Controller" }
+    )
+    Test        = {
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\Logging"      
+        $key = "LogSuccessfulConnections"
+        $expectedValue = 1;
+        $profileType = "Domain"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3657,35 +3825,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.71"
     Task = "Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "EnableFirewall" `
-            | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3693,35 +3841,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.72"
     Task = "Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DisableNotifications" `
-            | Select-Object -ExpandProperty "DisableNotifications"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DisableNotifications"
+        $expectedValue = 1;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3729,35 +3857,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.73"
     Task = "Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultInboundAction" `
-            | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3765,35 +3873,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.74"
     Task = "Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile" `
-                -Name "DefaultOutboundAction" `
-            | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 0;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3801,35 +3889,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.75"
     Task = "Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogSuccessfulConnections" `
-            | Select-Object -ExpandProperty "LogSuccessfulConnections"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"         
+        $key = "LogSuccessfulConnections"
+        $expectedValue = 1;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3837,35 +3905,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.76"
     Task = "Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogDroppedPackets" `
-            | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"         
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3873,35 +3921,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.77"
     Task = "Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging" `
-                -Name "LogFileSize" `
-            | Select-Object -ExpandProperty "LogFileSize"
-        
-            if ($regValue -ne 16384) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 16384"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\Logging"         
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $profileType = "Private"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3909,35 +3937,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.78"
     Task = "Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultOutboundAction" `
-            | Select-Object -ExpandProperty "DefaultOutboundAction"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultOutboundAction"
+        $expectedValue = 0;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3945,35 +3953,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.79"
     Task = "Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "EnableFirewall" `
-            | Select-Object -ExpandProperty "EnableFirewall"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "EnableFirewall"
+        $expectedValue = 1;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -3981,35 +3969,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.80"
     Task = "Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DisableNotifications" `
-            | Select-Object -ExpandProperty "DisableNotifications"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DisableNotifications"
+        $expectedValue = 1;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4017,35 +3985,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.81"
     Task = "Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "AllowLocalIPsecPolicyMerge" `
-            | Select-Object -ExpandProperty "AllowLocalIPsecPolicyMerge"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "AllowLocalIPsecPolicyMerge"
+        $expectedValue = 0;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4053,35 +4001,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.82"
     Task = "Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "AllowLocalPolicyMerge" `
-            | Select-Object -ExpandProperty "AllowLocalPolicyMerge"
-        
-            if ($regValue -ne 0) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "AllowLocalPolicyMerge"
+        $expectedValue = 0;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4089,35 +4017,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.83"
     Task = "Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile" `
-                -Name "DefaultInboundAction" `
-            | Select-Object -ExpandProperty "DefaultInboundAction"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile"       
+        $key = "DefaultInboundAction"
+        $expectedValue = 1;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4125,35 +4033,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.84"
     Task = "Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' set to '16,384' KB"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogFileSize" `
-            | Select-Object -ExpandProperty "LogFileSize"
-        
-            if ($regValue -ne 16384) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 16384"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogFileSize"
+        $expectedValue = 16384;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4161,35 +4049,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.85"
     Task = "Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogDroppedPackets" `
-            | Select-Object -ExpandProperty "LogDroppedPackets"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogDroppedPackets"
+        $expectedValue = 1;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4197,35 +4065,15 @@ $windefrunning = CheckWindefRunning
     Id   = "3.1.86"
     Task = "Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
     Test = {
-        try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging" `
-                -Name "LogSuccessfulConnections" `
-            | Select-Object -ExpandProperty "LogSuccessfulConnections"
-        
-            if ($regValue -ne 1) {
-                return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
-                    Status  = "False"
-                }
-            }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
-            return @{
-                Message = "Registry value not found."
-                Status  = "False"
-            }
-        }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
-        
+        $path1 = "Registry::HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging"
+        $path2 = "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\Logging"       
+        $key = "LogSuccessfulConnections"
+        $expectedValue = 1;
+        $profileType = "Public"
+        $result = $path1, $path2 | Test-FirewallPaths -Key $key -ExpectedValue $expectedValue -ProfileType $profileType
         return @{
-            Message = "Compliant"
-            Status  = "True"
+            Message = $($result.Message)
+            Status  = $($result.Status)
         }
     }
 }
@@ -4486,34 +4334,48 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Configure SMB v1 server' is set to 'Disabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" `
-                -Name "SMB1" `
-            | Select-Object -ExpandProperty "SMB1"
-        
-            if ($regValue -ne 0) {
+            if ((Get-SmbServerConfiguration -ErrorAction Stop).RequireSecuritySignature -ne $True) {
                 return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 0"
+                    Message = "RequireSecuritySignature is not set to True"
                     Status  = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
+        catch {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" `
+                    -Name "SMB1" `
+                | Select-Object -ExpandProperty "SMB1"
         
-        return @{
-            Message = "Compliant"
-            Status  = "True"
+                if ($regValue -ne 0) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Compliant value: 0"
+                        Status  = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status  = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status  = "False"
+                }
+            }
+        
+            return @{
+                Message = "Compliant"
+                Status  = "True"
+            }
         }
     }
 }
@@ -5242,34 +5104,48 @@ $windefrunning = CheckWindefRunning
     Task = "Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
     Test = {
         try {
-            $regValue = Get-ItemProperty -ErrorAction Stop `
-                -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
-                -Name "RequireSecuritySignature" `
-            | Select-Object -ExpandProperty "RequireSecuritySignature"
-        
-            if ($regValue -ne 1) {
+            if ((Get-SmbClientConfiguration).RequireSecuritySignature -ne $True) {
                 return @{
-                    Message = "Registry value is '$regValue'. Compliant value: 1"
+                    Message = "RequireSecuritySignature is not set to True"
                     Status  = "False"
                 }
             }
-        }
-        catch [System.Management.Automation.PSArgumentException] {
             return @{
-                Message = "Registry value not found."
-                Status  = "False"
+                Message = "Compliant"
+                Status  = "True"
             }
         }
-        catch [System.Management.Automation.ItemNotFoundException] {
-            return @{
-                Message = "Registry key not found."
-                Status  = "False"
-            }
-        }
+        catch {
+            try {
+                $regValue = Get-ItemProperty -ErrorAction Stop `
+                    -Path "Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" `
+                    -Name "RequireSecuritySignature" `
+                | Select-Object -ExpandProperty "RequireSecuritySignature"
         
-        return @{
-            Message = "Compliant"
-            Status  = "True"
+                if ($regValue -ne 1) {
+                    return @{
+                        Message = "Registry value is '$regValue'. Compliant value: 1"
+                        Status  = "False"
+                    }
+                }
+            }
+            catch [System.Management.Automation.PSArgumentException] {
+                return @{
+                    Message = "Registry value not found."
+                    Status  = "False"
+                }
+            }
+            catch [System.Management.Automation.ItemNotFoundException] {
+                return @{
+                    Message = "Registry key not found."
+                    Status  = "False"
+                }
+            }
+        
+            return @{
+                Message = "Compliant"
+                Status  = "True"
+            }
         }
     }
 }
