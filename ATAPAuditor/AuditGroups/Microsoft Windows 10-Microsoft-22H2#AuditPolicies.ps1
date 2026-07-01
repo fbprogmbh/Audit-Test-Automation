@@ -1,9 +1,9 @@
 ﻿# Common
 function Get-AuditPolicySubcategoryGUID {
-	Param(
+    Param(
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-		[string] $Subcategory
+        [string] $Subcategory
     )
 
     $map = @{
@@ -76,8 +76,8 @@ function Get-AuditPolicySubcategoryGUID {
 
 # Tests
 [AuditTest] @{
-    Id = "AuditPolicy-193"
-    Task = "Ensure 'Credential Validation' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.1"
+    Task = "Ensure 'Audit Credential Validation' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Credential Validation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Credential Validation"
@@ -85,7 +85,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Credential Validation'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -100,20 +100,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -121,20 +121,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-194"
-    Task = "Ensure 'Security Group Management' is set to 'Success'."
+    Id   = "3.4.2"
+    Task = "Ensure 'Security Group Management' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Security Group Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security Group Management"
@@ -142,7 +142,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Security Group Management'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -157,20 +157,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -178,20 +178,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-195"
-    Task = "Ensure 'User Account Management' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.3"
+    Task = "Ensure 'User Account Management' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory User Account Management
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "User Account Management"
@@ -199,7 +199,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'User Account Management'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -214,20 +214,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -235,20 +235,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-196"
-    Task = "Ensure 'Plug and Play Events' is set to 'Success'."
+    Id   = "3.4.4"
+    Task = "Ensure 'Plug and Play Events' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Plug and Play Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Plug and Play Events"
@@ -256,7 +256,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Plug and Play Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -271,20 +271,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -292,20 +292,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-197"
-    Task = "Ensure 'Process Creation' is set to 'Success'."
+    Id   = "3.4.5"
+    Task = "Ensure 'Process Creation' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Process Creation
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Process Creation"
@@ -313,7 +313,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Process Creation'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -328,20 +328,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -349,20 +349,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-198"
-    Task = "Ensure 'Account Lockout' is set to 'Failure'."
+    Id   = "3.4.6"
+    Task = "Ensure 'Account Lockout' is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Account Lockout
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Account Lockout"
@@ -370,7 +370,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Account Lockout'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -385,20 +385,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -406,20 +406,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-199"
-    Task = "Ensure 'Group Membership' is set to 'Success'."
+    Id   = "3.4.7"
+    Task = "Ensure 'Audit Group Membership' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Group Membership
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Group Membership"
@@ -427,7 +427,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Group Membership'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -442,20 +442,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -463,20 +463,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-200"
-    Task = "Ensure 'Logon' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.8"
+    Task = "Ensure 'Audit Logon' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Logon"
@@ -484,7 +484,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Logon'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -499,20 +499,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -520,20 +520,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-201"
-    Task = "Ensure 'Other Logon/Logoff Events' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.9"
+    Task = "Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Logon/Logoff Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Logon/Logoff Events"
@@ -541,7 +541,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other Logon/Logoff Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -556,20 +556,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -577,20 +577,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-202"
-    Task = "Ensure 'Special Logon' is set to 'Success'."
+    Id   = "3.4.10"
+    Task = "Ensure 'Audit Special Logon' is set to include 'Success'"
     Test = {
         # Get the audit policy for the subcategory Special Logon
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Special Logon"
@@ -598,7 +598,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Special Logon'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -613,20 +613,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -634,20 +634,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-203"
-    Task = "Ensure 'Detailed File Share' is set to 'Failure'."
+    Id   = "3.4.11"
+    Task = "Ensure 'Detailed File Share' is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Detailed File Share
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Detailed File Share"
@@ -655,7 +655,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Detailed File Share'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -670,20 +670,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -691,20 +691,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-204"
-    Task = "Ensure 'File Share' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.12"
+    Task = "Ensure 'File Share' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory File Share
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "File Share"
@@ -712,7 +712,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'File Share'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -727,20 +727,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -748,20 +748,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-205"
-    Task = "Ensure 'Other Object Access Events' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.13"
+    Task = "Ensure 'Other Object Access Events' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Object Access Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Object Access Events"
@@ -769,7 +769,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other Object Access Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -784,20 +784,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -805,20 +805,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-206"
-    Task = "Ensure 'Removable Storage' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.14"
+    Task = "Ensure 'Removable Storage' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Removable Storage
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Removable Storage"
@@ -826,7 +826,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Removable Storage'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -841,20 +841,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -862,20 +862,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-207"
-    Task = "Ensure 'Audit Policy Change' is set to 'Success'."
+    Id   = "3.4.15"
+    Task = "Ensure 'Audit Policy Change' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Audit Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Audit Policy Change"
@@ -883,7 +883,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Audit Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -898,20 +898,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -919,20 +919,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-208"
-    Task = "Ensure 'Authentication Policy Change' is set to 'Success'."
+    Id   = "3.4.16"
+    Task = "Ensure 'Authentication Policy Change' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Authentication Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Authentication Policy Change"
@@ -940,7 +940,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Authentication Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -955,20 +955,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -976,20 +976,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-209"
-    Task = "Ensure 'MPSSVC Rule-Level Policy Change' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.17"
+    Task = "Ensure 'MPSSVC Rule-Level Policy Change' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory MPSSVC Rule-Level Policy Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "MPSSVC Rule-Level Policy Change"
@@ -997,7 +997,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'MPSSVC Rule-Level Policy Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1012,20 +1012,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1033,20 +1033,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-210"
-    Task = "Ensure 'Other Policy Change Events' is set to 'Failure'."
+    Id   = "3.4.18"
+    Task = "Ensure 'Other Policy Change Events' is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Other Policy Change Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other Policy Change Events"
@@ -1054,7 +1054,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other Policy Change Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1069,20 +1069,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1090,20 +1090,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Failure" -and $setting -ne "Success and Failure" -And $setting -ne "Fehler" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-211"
-    Task = "Ensure 'Sensitive Privilege Use' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.19"
+    Task = "Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'"
     Test = {
         # Get the audit policy for the subcategory Sensitive Privilege Use
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Sensitive Privilege Use"
@@ -1111,7 +1111,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Sensitive Privilege Use'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1126,20 +1126,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1147,20 +1147,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-212"
-    Task = "Ensure 'Other System Events' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.20"
+    Task = "Ensure 'Other System Events' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory Other System Events
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Other System Events"
@@ -1168,7 +1168,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Other System Events'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1183,20 +1183,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1204,20 +1204,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-213"
-    Task = "Ensure 'Security State Change' is set to 'Success'."
+    Id   = "3.4.21"
+    Task = "Ensure 'Security State Change' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Security State Change
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security State Change"
@@ -1225,7 +1225,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Security State Change'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1240,20 +1240,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1261,20 +1261,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-214"
-    Task = "Ensure 'Security System Extension' is set to 'Success'."
+    Id   = "3.4.22"
+    Task = "Ensure 'Security System Extension' is set to 'Success'"
     Test = {
         # Get the audit policy for the subcategory Security System Extension
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "Security System Extension"
@@ -1282,7 +1282,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'Security System Extension'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1297,20 +1297,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1318,20 +1318,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success" -and $setting -ne "Success and Failure" -And $setting -ne "Erfolg" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id = "AuditPolicy-215"
-    Task = "Ensure 'System Integrity' is set to 'Success' and is set to 'Failure'."
+    Id   = "3.4.23"
+    Task = "Ensure 'System Integrity' is set to 'Success' and is set to 'Failure'"
     Test = {
         # Get the audit policy for the subcategory System Integrity
         $subCategoryGUID = Get-AuditPolicySubcategoryGUID -Subcategory "System Integrity"
@@ -1339,7 +1339,7 @@ function Get-AuditPolicySubcategoryGUID {
         if ([string]::IsNullOrEmpty($subCategoryGUID)) {
             return @{
                 Message = "Cannot get Subcategory 'System Integrity'"
-                Status = "None"
+                Status  = "None"
             }
         }
         
@@ -1354,20 +1354,20 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($null -eq $auditPolicyString) {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting. Auditpol returned nothing."
+                Status  = "Warning"
             }
         }
         
         # Remove empty lines and headers
         $line = $auditPolicyString `
-            | Where-Object { $_ } `
-            | Select-Object -Skip 3
+        | Where-Object { $_ } `
+        | Select-Object -Skip 3
         
         if ($line -notmatch "(No Auditing|Success and Failure|Success|Failure|Keine Überwachung|Erfolg und Fehler|Erfolg|Fehler)$") {
             return @{
-                Status = "Warning"
                 Message = "Couldn't get setting."
+                Status  = "Warning"
             }
         }
         
@@ -1375,14 +1375,14 @@ function Get-AuditPolicySubcategoryGUID {
         
         if ($setting -ne "Success and Failure" -And $setting -ne "Erfolg und Fehler") {
             return @{
-                Status = "False"
                 Message = "Set to: $setting"
+                Status  = "False"
             }
         }
         
         return @{
-            Status = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }

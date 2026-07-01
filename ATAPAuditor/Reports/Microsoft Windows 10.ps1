@@ -3,7 +3,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 10 Enterprise, Version: 4.0.0, Date: 2025-05-23"
-		"Microsoft Security baseline (FINAL) for Windows 10, Version: 21H1, Date: 2021-05-18"
+		"Microsoft Security baseline for Windows 10, Version: 22H2, Date: 2022-10-18"
 		"BSI Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2020-04-27"
 		"DISA Windows 10 Security Technical Implementation Guide, Version: V1R23, Date: 2019-10-25"
@@ -44,23 +44,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-22H2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-22H2#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-22H2#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-22H2#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-21H1#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10-Microsoft-22H2#SecurityOptions"
 				}
 			)
 		}
