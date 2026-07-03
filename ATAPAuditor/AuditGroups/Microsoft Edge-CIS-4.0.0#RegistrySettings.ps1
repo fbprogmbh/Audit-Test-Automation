@@ -1233,9 +1233,9 @@
                 -Name "DownloadRestrictions" `
             | Select-Object -ExpandProperty "DownloadRestrictions"
 
-            if ($regValue -ne 2) {
+            if ($regValue -ne 4) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 2"
+                    Message = "Registry value is '$regValue'. Expected: 4"
                     Status  = "False"
                 }
             }
