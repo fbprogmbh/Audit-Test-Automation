@@ -6830,8 +6830,8 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
-                -Name "PwdExpirationProtectionEnabled" `
-                | Select-Object -ExpandProperty "PwdExpirationProtectionEnabled"
+                -Name "PasswordExpirationProtectionEnabled" `
+                | Select-Object -ExpandProperty "PasswordExpirationProtectionEnabled"
         
             if ($regValue -ne 1) {
                 return @{
