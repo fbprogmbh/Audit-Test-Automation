@@ -13255,7 +13255,7 @@ $windefrunning = CheckWindefRunning
 }
 [AuditTest] @{
     Id   = "6.1.38"
-    Task = "Set registry value 'd1e49aac-8f56-4280-b9ba-993a6d77406c' to [Equaling `"2`"]."
+    Task = "Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured (Block process creations originating from PSExec and WMI commands)"
     Test = {
         try {
             if ($avstatus) {
