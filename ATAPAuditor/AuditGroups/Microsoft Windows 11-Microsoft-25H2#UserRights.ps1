@@ -1,4 +1,9 @@
 ﻿# Common
+$RootPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$RootPath = Split-Path $RootPath -Parent
+. "$RootPath\Helpers\AuditGroupFunctions.ps1"
+$hyperVStatus = CheckHyperVStatus
+
 function ConvertTo-NTAccountUser {
     [CmdletBinding()]
     [OutputType([hashtable])]
@@ -67,7 +72,7 @@ function ConvertTo-NTAccountUser {
 
 # Tests
 [AuditTest] @{
-    Id   = "UserRight-143"
+    Id   = "4.3.33"
     Task = "Ensure 'Manage auditing and security log' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -90,19 +95,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-144"
+    Id   = "4.3.34"
     Task = "Ensure 'Restore files and directories' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -125,19 +130,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-145"
+    Id   = "4.3.35"
     Task = "Ensure 'Take ownership of files or other objects' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -160,19 +165,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-146"
+    Id   = "4.3.36"
     Task = "Ensure 'Back up files and directories' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -195,19 +200,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-147"
+    Id   = "4.3.37"
     Task = "Ensure 'Deny log on through Remote Desktop Services' to include 'Local account'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -230,19 +235,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-148"
+    Id   = "4.3.38"
     Task = "Ensure 'Create permanent shared objects' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -264,19 +269,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-149"
+    Id   = "4.3.39"
     Task = "Ensure 'Perform volume maintenance tasks' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -299,19 +304,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-150"
+    Id   = "4.3.40"
     Task = "Ensure 'Load and unload device drivers' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -334,19 +339,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-151"
+    Id   = "4.3.41"
     Task = "Ensure 'SeLockMemoryPrivilege' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -368,19 +373,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-152"
+    Id   = "4.3.42"
     Task = "Ensure 'Deny access to this computer from the network' is set to 'Local account'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -403,19 +408,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-153"
+    Id   = "4.3.43"
     Task = "Ensure 'Access this computer from the network' is set to 'Administrators, Remote Desktop Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -439,28 +444,29 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-154"
-    Task = "Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE' [IIS Role NOT installed]"
+    Id   = "4.3.44"
+    Task = "Ensure 'SeImpersonatePrivilege' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE, PrintSpoolerService'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeImpersonatePrivilege"]
         $identityAccounts = @(
-            "S-1-5-19"
-            "S-1-5-20"
-            "S-1-5-32-544"
             "S-1-5-6"
+            "S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229"
+            "S-1-5-20"
+            "S-1-5-19"
+            "S-1-5-32-544"
         ) | ConvertTo-NTAccountUser | Where-Object { $null -ne $_ }
         
         $unexpectedUsers = $currentUserRights.Account | Where-Object { $_ -notin $identityAccounts.Account }
@@ -477,19 +483,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-155"
+    Id   = "4.3.45"
     Task = "Ensure 'Create a token object' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -511,19 +517,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-156"
+    Id   = "4.3.46"
     Task = "Ensure 'Create global objects' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -549,19 +555,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-157"
+    Id   = "4.3.47"
     Task = "Ensure 'Modify firmware environment values' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -584,20 +590,20 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-158"
-    Task = "The Create a pagefile user right must only be assigned to the Administrators group."
+    Id   = "4.3.48"
+    Task = "Ensure 'Create a pagefile' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
         $currentUserRights = $securityPolicy["Privilege Rights"]["SeCreatePagefilePrivilege"]
@@ -619,19 +625,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-159"
+    Id   = "4.3.49"
     Task = "Ensure 'Allow log on locally' is set to 'Administrators, Users'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -655,19 +661,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-160"
+    Id   = "4.3.50"
     Task = "Ensure 'Force shutdown from a remote system' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -690,19 +696,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-161"
+    Id   = "4.3.51"
     Task = "Ensure 'Debug programs' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -725,19 +731,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-162"
+    Id   = "4.3.52"
     Task = "Ensure 'Access Credential Manager as a trusted caller' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -759,19 +765,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-163"
+    Id   = "4.3.53"
     Task = "Ensure 'Profile single process' is set to 'Administrators'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -794,19 +800,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-164"
+    Id   = "4.3.54"
     Task = "Ensure 'Act as part of the operating system' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -828,19 +834,19 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
 [AuditTest] @{
-    Id   = "UserRight-165"
+    Id   = "4.3.55"
     Task = "Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One'"
     Test = {
         $securityPolicy = Get-AuditResource "WindowsSecurityPolicy"
@@ -862,14 +868,14 @@ function ConvertTo-NTAccountUser {
             $message = $messages -join [System.Environment]::NewLine
         
             return @{
-                Status  = "False"
                 Message = $message
+                Status  = "False"
             }
         }
         
         return @{
-            Status  = "True"
             Message = "Compliant"
+            Status  = "True"
         }
     }
 }
