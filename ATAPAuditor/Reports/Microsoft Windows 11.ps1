@@ -3,7 +3,7 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 11 Enterprise 4.0.0 Benchmark, Version: 4.0.0, Date: 2025-03-19"
-		"Microsoft Security baseline for Microsoft Windows 11, Version: 22H2, Date: 2022-09-20"
+		"Microsoft Security baseline for Microsoft Windows 11, Version: 25H2, Date: 2025-09-30"
 		"BSI Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.2, Date: 2026-03-17"
