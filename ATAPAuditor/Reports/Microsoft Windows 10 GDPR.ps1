@@ -2,7 +2,7 @@
 	Title = "Windows 10 GDPR Report"
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
-		'Bundesamt für Sicherheit in der Informationstechnik (BSI), Version: V1.2, Date: 2020-04-27'
+		'BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2020-04-27'
 		'GDPR settings by Microsoft, Version: 16082019, Date: 2019-08-16'
 		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.2, Date: 2026-03-17"
 		"FB Pro recommendations 'Enhanced settings', Version 1.2.2, Date: 2023-11-03"
@@ -13,8 +13,8 @@
 			Description = "This section contains the Telemetry-Recommendations of the Federal Office for Information Security (BSI)"
 			SubSections = @(
 				[ReportSection] @{
-					Title = "Registry Settings"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 GDPR-MS-16082019#RegistrySettings"
+					Title = "Telemetry"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
 				}
 			)
 		}
@@ -23,8 +23,8 @@
 			Description = "This section contains all Microsoft recommendations"
 			SubSections = @(
 				[ReportSection] @{
-					Title = "Telemetry"
-					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
+					Title = "Registry Settings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 10 GDPR-MS-16082019#RegistrySettings"
 				}
 			)
 		}

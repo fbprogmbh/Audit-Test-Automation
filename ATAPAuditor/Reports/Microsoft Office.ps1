@@ -22,7 +22,7 @@
             SubSections = @(
                 [ReportSection] @{
                     Title      = 'Registry Settings/Group Policies'
-                    AuditInfos = Test-AuditGroup "Security Baseline for Microsoft 365 Apps for Enterprise#RegistrySettings"
+                    AuditInfos = Test-AuditGroup "Microsoft 365 Apps for Enterprise-Microsoft-2412#RegistrySettings"
                 }
             )
         }
