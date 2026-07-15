@@ -191,7 +191,7 @@ Microsoft Windows Server 2012 (R2) | V2R19 | 3.0.0 | - | - | -
 Microsoft Windows Server 2016 | V1R12 | 3.0.0 | FINAL | - | -
 Microsoft Windows Server 2019 | V1R5 | 3.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 3.0.0 | FINAL | - | -
-Microsoft Windows Server 2025 | V1R1 | 1.0.0 | FINAL | - | -
+Microsoft Windows Server 2025 | - | 1.0.0 | - | - | -
 
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
@@ -217,7 +217,7 @@ Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
 Microsoft Edge | - | 4.0.0 | 148 | - | -
 Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
-Microsoft IIS10 | - | 1.1.1 | - | - | -
+Microsoft IIS10 | - | 1.1.0 | - | - | -
 Microsoft Office <br><sub>for Office 2016, 2019, 2021 and 365 | - | 1.2.0 | 2412 | - | -
 Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 
