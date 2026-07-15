@@ -13,7 +13,7 @@
 			Description = "This section contains the Telemetry-Recommendations of the Federal Office for Information Security (BSI)"
 			SubSections = @(
 				[ReportSection] @{
-					Title = "Registry Settings"
+					Title = "Telemetry"
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 SiSyPHus-Telemetrie-BSI-V1.2#RegistrySettings"
 				}
 			)
@@ -23,7 +23,7 @@
 			Description = "This section contains all Microsoft recommendations"
 			SubSections = @(
 				[ReportSection] @{
-					Title = "Telemetry"
+					Title = "Registry Settings"
 					AuditInfos = Test-AuditGroup "Microsoft Windows 10 GDPR-MS-16082019#RegistrySettings"
 				}
 			)
