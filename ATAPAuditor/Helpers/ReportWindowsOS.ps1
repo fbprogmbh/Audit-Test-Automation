@@ -9,7 +9,7 @@ $role = Switch ((Get-CimInstance -Class Win32_ComputerSystem).DomainRole) {
     "5"	{ "Primary Domain Controller" }
 }
 $freeMemory = ($infos.FreePhysicalMemory / 1024) / 1024;
-$totalMemory = ($infos.TotalVirtualMemorySize / 1024) / 1024;
+$totalMemory = ($infos.TotalVisibleMemorySize / 1024) / 1024;
 $uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime
 $v = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'	
 
