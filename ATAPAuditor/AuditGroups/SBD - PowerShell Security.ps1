@@ -21,18 +21,25 @@
         $ps2Found = $false
         $messages = "The following PS2-related features are enabled:"
 
-        $PSV2State = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2).State
-        if ($PSV2State -ne "Disabled") {
-            $messages += "<br>Windows PowerShell 2.0 Engine"
-            $ps2Found = $true
+        $PSV2Feature = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2)
+        if($null -ne $PSV2Feature){
+            $PSV2FeatureState = $PSV2Feature.State
+            if ($PSV2FeatureState -eq "Enabled") {
+                $messages += "<br>Windows PowerShell 2.0 Engine"
+                $ps2Found = $true
+            }
         }
+
 
         $os = Get-CimInstance Win32_OperatingSystem
         if ($os.ProductType -eq 1) {
-            $PSRootState = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root).State
-            if ($PSRootState -ne "Disabled") {
-                $messages += "<br>Windows PowerShell 2.0"
-                $ps2Found = $true
+            $PSRootFeature = (Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root)
+            if($null -ne $PSRootFeature){
+                $PSRootState = $PSRootFeature.State
+                if ($PSRootState -eq "Enabled") {
+                    $messages += "<br>Windows PowerShell 2.0"
+                    $ps2Found = $true
+                }
             }
         }
 

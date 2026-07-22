@@ -1154,7 +1154,7 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "RequireSecuritySignature"
         
                 return @{
-                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`" target='_blank'>here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`" target='_blank'>here</a>"
                     Status = "Warning"
             }
         }
@@ -1197,7 +1197,7 @@ $windefrunning = CheckWindefRunning
                 | Select-Object -ExpandProperty "EnableSecuritySignature"
         
                 return @{
-                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`">here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`">here</a>"
+                    Message = "Registry value is '$regValue'. Get-SMBServerConfiguration failed, resorted to checking registry, which might not be 100% accurate. See <a href=`"https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/overview-server-message-block-signing#policy-locations-for-smb-signing`" target='_blank'>here</a> and <a href=`"https://techcommunity.microsoft.com/t5/storage-at-microsoft/smb-signing-required-by-default-in-windows-insider/ba-p/3831704`" target='_blank'>here</a>"
                     Status = "Warning"
             }
         }
@@ -6830,8 +6830,8 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
         try {
             $regValue = Get-ItemProperty -ErrorAction Stop `
                 -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS" `
-                -Name "PwdExpirationProtectionEnabled" `
-                | Select-Object -ExpandProperty "PwdExpirationProtectionEnabled"
+                -Name "PasswordExpirationProtectionEnabled" `
+                | Select-Object -ExpandProperty "PasswordExpirationProtectionEnabled"
         
             if ($regValue -ne 1) {
                 return @{
@@ -6869,9 +6869,9 @@ $WINSStatus = (Get-WindowsFeature -Name WINS).Installed
                 -Name "ADPasswordEncryptionEnabled" `
                 | Select-Object -ExpandProperty "ADPasswordEncryptionEnabled"
         
-            if ($regValue -ne 0) {
+            if ($regValue -ne 1) {
                 return @{
-                    Message = "Registry value is '$regValue'. Expected: 0"
+                    Message = "Registry value is '$regValue'. Expected: 1"
                     Status = "False"
                 }
             }

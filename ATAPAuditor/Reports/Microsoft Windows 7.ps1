@@ -3,8 +3,8 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 7 Workstation Benchmark, Version: 3.1.0, Date: 2018-03-02"
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
-		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.2, Date: 2026-03-17"
+		"FB Pro recommendations 'Enhanced settings', Version 1.2.2, Date: 2023-11-03"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -31,15 +31,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
-					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.2.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows CiphersProtocolsHashesBenchmark-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - Registry Settings'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - User Rights'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.2#UserRights"
 				}
 			)
 		}

@@ -17,7 +17,7 @@ ATAPHtmlReport:\
 			</td>
 			<td>
 
-[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.12.1)
+[![ATAP](https://www.fb-pro.com/wp-content/uploads/2022/09/atap-download-button.png)](https://github.com/fbprogmbh/Audit-Test-Automation/releases/tag/v5.13.0)
 			</td>
 		</tr>
 	</table>
@@ -110,7 +110,7 @@ See the [Installing a PowerShell module](https://docs.microsoft.com/en-us/PowerS
 2. If your system's security configuration prevents direct execution or access to internet based ("untrusted") files, you may need to "unblock" the file first to allow execution. 
 
 ```PowerShell
-Unblock-File -Path .\Audit-Test-Automation-5.12.1.zip -Verbose
+Unblock-File -Path .\Audit-Test-Automation-5.13.0.zip -Verbose
 ```
 The following screenshot shows the expected output:
 
@@ -119,7 +119,7 @@ The following screenshot shows the expected output:
 3. Extract the archive using PowerShell (adjust the version number as needed) or your preferred unzipping toolset.
 
 ```PowerShell
-Expand-Archive -Path ".\Audit-Test-Automation-5.12.1.zip" -DestinationPath "AuditTAP"
+Expand-Archive -Path ".\Audit-Test-Automation-5.13.0.zip" -DestinationPath "AuditTAP"
 ```
 4. Copy the `ATAPAuditor` and `ATAPHtmlReport` modules into one of the directories listed in `$env:PSModulePath` to make them accessible in PowerShell. Use the `$env:PSModulePath` command to view available directories.
 
@@ -181,17 +181,17 @@ We currently support the following reports, based on these topics:
 Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
 Microsoft Windows 7 | - | 3.1.0 | - | - | -
-Microsoft Windows 10 | V1R23 | 2.0.0 | 21H1 | SiSyPHuS 1.3 | 21H1
+Microsoft Windows 10 | V1R23 | 4.0.0 | 22H2 | SiSyPHuS 1.3 | 21H1
 Microsoft Windows 10 GDPR | - | - | 16082019 | V1.1 | -
 Microsoft Windows 10 BSI | - | - | - | SiSyPHuS 1.3 | -
-Microsoft Windows 10 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 Stand-alone | - | Stand-alone 2.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
-Microsoft Windows 11 | - | 4.0.0 | 22H2 | SiSyPHuS 1.3 | -
+Microsoft Windows 10 Stand-alone | - | Stand-alone 4.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 11 Stand-alone | - | Stand-alone 4.0.0 | - | SiSyPHuS 1.3 (Stand-alone) | -
+Microsoft Windows 11 | - | 4.0.0 | 25H2 | SiSyPHuS 1.3 | -
 Microsoft Windows Server 2012 (R2) | V2R19 | 3.0.0 | - | - | -
 Microsoft Windows Server 2016 | V1R12 | 3.0.0 | FINAL | - | -
 Microsoft Windows Server 2019 | V1R5 | 3.0.0 | FINAL | - | -
 Microsoft Windows Server 2022 | V1R1 | 3.0.0 | FINAL | - | -
-Microsoft Windows Server 2025 | V1R1 | 1.0.0 | FINAL | - | -
+Microsoft Windows Server 2025 | - | 1.0.0 | - | - | -
 
 The report *Microsoft Windows 10 BSI* aggregates the results of all *BSI recommendations for Microsoft Windows 10* reports.
 
@@ -203,7 +203,8 @@ Debian 10 | - | - | - | - | - | Base
 Debian 11 | - | 1.0.0 | - | - | - | -
 Debian 12 | - | 1.0.1 | - | - | - | -
 Fedora 35 | - | - | - | - | - | Base
-Red Hat Enterprise Linux 9 | - | 1.0.0 | - | - | - | -
+Red Hat Enterprise Linux 9 | - | 2.0.0 | - | - | - | -
+Rocky Linux 9 | - | 2.0.0 | - | - | - | -
 SUSE Linux Enterprise 15 | - | 1.1.1 | - | - | - | -
 Ubuntu 20.04 | - | 1.1.0 | - | - | - | -
 Ubuntu 22.04 | - | 2.0.0 | - | - | - | -
@@ -214,10 +215,10 @@ Report | DISA | CIS | Microsoft | BSI | ACSC
 --------- | -----| --- | -- | --- | ---
 Google Chrome | V1R15 | 2.0.0 | - | - | -
 Mozilla Firefox | V4R24 | 1.0.0 | - | - | -
-Microsoft Edge | - | 2.0.0 | 117 | - | -
+Microsoft Edge | - | 4.0.0 | 148 | - | -
 Microsoft Internet Explorer 11 | V1R16 | 1.0.0 | 2004 | - | -
-Microsoft IIS10 | - | 1.1.1 | - | - | -
-Microsoft Office <br><sub>for Office 2016, 2019, 2021 and 365 | - | 1.2.0 | - | - | -
+Microsoft IIS10 | - | 1.1.0 | - | - | -
+Microsoft Office <br><sub>for Office 2016, 2019, 2021 and 365 | - | 1.2.0 | 2412 | - | -
 Microsoft SQL Server 2016 | - | 1.3.0 | - | - | -
 
 

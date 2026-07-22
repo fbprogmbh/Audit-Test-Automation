@@ -1,6 +1,6 @@
 ﻿@{
 RootModule = 'ATAPAuditor.psm1'
-ModuleVersion = '5.12.1'
+ModuleVersion = '5.13.0'
 GUID = '1662a599-4e3a-4f72-a844-9582077b589e'
 Author = 'Phan Quang Nguyen, Daniel Ströher, Robin Wernz'
 CompanyName = 'FB Pro GmbH'

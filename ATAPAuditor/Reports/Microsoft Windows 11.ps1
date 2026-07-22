@@ -3,11 +3,11 @@
 	ModuleName = "ATAPAuditor"
 	BasedOn = @(
 		"CIS Microsoft Windows 11 Enterprise 4.0.0 Benchmark, Version: 4.0.0, Date: 2025-03-19"
-		"Microsoft Security baseline for Microsoft Windows 11, Version: 22H2, Date: 2022-09-20"
+		"Microsoft Security baseline for Microsoft Windows 11, Version: 25H2, Date: 2025-09-30"
 		"BSI Configuration Recommendations for Hardening of Windows 10 Using Built-in Functionalities: Version 1.3, Date: 2021-05-03"
 		"BSI SiSyPHuS Recommendations for Telemetry Components: Version 1.2, Date: 2019-07-31"
-		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.1, Date: 2023-11-03"
-		"FB Pro recommendations 'Enhanced settings', Version 1.2.1, Date: 2023-11-03"
+		"FB Pro recommendations 'Ciphers Protocols and Hashes Benchmark', Version 1.2.2, Date: 2026-03-17"
+		"FB Pro recommendations 'Enhanced settings', Version 1.2.2, Date: 2023-11-03"
 	)
 	Sections = @(
 		[ReportSection] @{
@@ -42,23 +42,23 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Registry Settings/Group Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-22H2#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-25H2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'User Rights Assignment'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-22H2#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-25H2#UserRights"
 				}
 				[ReportSection] @{
 					Title = 'Account Policies'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-22H2#AccountPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-25H2#AccountPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Advanced Audit Policy Configuration'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-22H2#AuditPolicies"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-25H2#AuditPolicies"
 				}
 				[ReportSection] @{
 					Title = 'Security Options'
-					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-22H2#SecurityOptions"
+					AuditInfos = Test-AuditGroup "Microsoft Windows 11-Microsoft-25H2#SecurityOptions"
 				}
 			)
 		}
@@ -152,15 +152,15 @@
 			SubSections = @(
 				[ReportSection] @{
 					Title = 'Ciphers Suites and Hashes'
-					AuditInfos = Test-AuditGroup "CiphersProtocolsHashesBenchmark-FBPro-1.2.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows CiphersProtocolsHashesBenchmark-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - Registry Settings'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#RegistrySettings"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.2#RegistrySettings"
 				}
 				[ReportSection] @{
 					Title = 'Enhanced security settings - User Rights'
-					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.1#UserRights"
+					AuditInfos = Test-AuditGroup "Microsoft Windows Enhanced Security Settings-FB Pro GmbH-1.2.2#UserRights"
 				}
 			)
 		}
