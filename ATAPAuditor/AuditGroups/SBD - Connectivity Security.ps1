@@ -56,7 +56,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
 }
 [AuditTest] @{
 	Id = "SBD-404"
-	Task = "Ensure WinFW Service is running."
+	Task = "Ensure WinRM Service is running."
 	Test = {
         try{
             $value = (Get-Service WinRM -ErrorAction Stop).status
@@ -74,7 +74,7 @@ $listOfInsecureCipherSuites = getListOfInsecureCipherSuites
             }
         }
         return @{
-            Message = "WinFW Service is not running. Currently: $($value)"
+            Message = "WinRM Service is not running. Currently: $($value)"
             Status = "False"
         }
 	}
