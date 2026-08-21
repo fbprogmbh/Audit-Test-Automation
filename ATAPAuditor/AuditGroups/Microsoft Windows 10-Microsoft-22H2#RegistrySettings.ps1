@@ -2482,7 +2482,10 @@ $windefrunning = CheckWindefRunning
                 -Name "\\*\SYSVOL" `
             | Select-Object -ExpandProperty "\\*\SYSVOL"
         
-            if ($regValue -notmatch "^(?:RequireMutualAuthentication=1,\s*RequireIntegrity=1|RequireIntegrity=1,\s*RequireMutualAuthentication=1)$") {
+            if (
+                $regValue -notmatch 'RequireMutualAuthentication=1' -or
+                $regValue -notmatch 'RequireIntegrity=1'
+            ) {
                 return @{
                     Message = "Registry value is '$regValue'. Compliant value: 'RequireMutualAuthentication=1'"
                     Status  = "False"
